@@ -18,7 +18,7 @@ class CssDependency extends webpack.Dependency {
   }
 
   getResourceIdentifier() {
-    return `cssmodule${this.identifier}`;
+    return `css-module-${this.identifier}`;
   }
 }
 
@@ -45,14 +45,14 @@ class CssModule extends webpack.Module {
   }
 
   identifier() {
-    return `css-module ${this._identifier}`;
+    return `css ${this._identifier}`;
   }
 
   readableIdentifier(requestShortener) {
-    return `css-modules ${requestShortener.shorten(this._identifier)}`;
+    return `css ${requestShortener.shorten(this._identifier)}`;
   }
 
-  build(options, compilation, resolver, fs, callback) {
+  build(options, compilation, resolver, fileSystem, callback) {
     this.buildInfo = {};
     this.buildMeta = {};
     callback();
@@ -101,7 +101,20 @@ class MiniCssExtractPlugin {
             pathOptions: {
               chunk,
             },
-            identifier: `extract-text-webpack-plugin.${chunk.id}`,
+            identifier: `mini-css-extract-plugin.${chunk.id}`,
+          });
+        }
+      });
+      compilation.chunkTemplate.hooks.renderManifest.tap('mini-css-extract-plugin', (result, { chunk }) => {
+        const renderedModules = Array.from(chunk.modulesIterable).filter(module => module.type === NS);
+        if (renderedModules.length > 0) {
+          result.push({
+            render: () => this.renderContentAsset(renderedModules),
+            filenameTemplate: this.options.chunkFilename,
+            pathOptions: {
+              chunk,
+            },
+            identifier: `mini-css-extract-plugin.${chunk.id}`,
           });
         }
       });
@@ -112,13 +125,14 @@ class MiniCssExtractPlugin {
     // TODO put @import on top
     const source = new ConcatSource();
     for (const m of modules) {
+      if (m.media) {
+        source.add(`@media ${m.media} {\n`);
+      }
       source.add(m.content);
       source.add('\n');
       if (m.media) {
-        source.prepend(`@media ${m.media} {\n`);
         source.add('}\n');
       }
-      return source;
     }
     return source;
   }

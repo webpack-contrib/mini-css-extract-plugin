@@ -3,4 +3,7 @@ module.exports = {
     '/node_modules/',
     '<rootDir>/dist/',
   ],
+  watchPathIgnorePatterns: [
+    '<rootDir>/test/js',
+  ],
 };

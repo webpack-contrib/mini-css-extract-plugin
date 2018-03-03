@@ -4,7 +4,7 @@ import webpack from 'webpack';
 
 describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
-  const outputDirectory = path.resolve(__dirname, '../js');
+  const outputDirectory = path.resolve(__dirname, 'js');
   for (const directory of fs.readdirSync(casesDirectory)) {
     if (!/^(\.|_)/.test(directory)) {
       // eslint-disable-next-line no-loop-func
@@ -26,9 +26,16 @@ describe('TestCases', () => {
           }
           done();
           // eslint-disable-next-line no-console
-          console.log(stats.toString());
+          console.log(stats.toString({
+            context: path.resolve(__dirname, '..'),
+            chunks: true,
+            chunkModules: true,
+            modules: false,
+          }));
           if (stats.hasErrors()) {
-            done(new Error(stats.toString()));
+            done(new Error(stats.toString({
+              context: path.resolve(__dirname, '..'),
+            })));
             return;
           }
           const expectedDirectory = path.resolve(directoryForCase, 'expected');

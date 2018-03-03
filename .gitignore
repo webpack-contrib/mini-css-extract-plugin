@@ -4,7 +4,7 @@ npm-debug.log*
 .eslintcache
 /coverage
 /dist
-/js
+/test/js
 /local
 /reports
 /node_modules
