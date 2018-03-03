@@ -35,6 +35,7 @@ describe('TestCases', () => {
           if (stats.hasErrors()) {
             done(new Error(stats.toString({
               context: path.resolve(__dirname, '..'),
+              errorDetails: true,
             })));
             return;
           }
@@ -42,7 +43,7 @@ describe('TestCases', () => {
           for (const file of fs.readdirSync(expectedDirectory)) {
             const content = fs.readFileSync(path.resolve(expectedDirectory, file), 'utf-8');
             const actualContent = fs.readFileSync(path.resolve(outputDirectoryForCase, file), 'utf-8');
-            expect(actualContent).toBeEqual(content);
+            expect(actualContent).toEqual(content);
           }
           done();
         });

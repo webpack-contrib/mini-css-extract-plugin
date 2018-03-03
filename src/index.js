@@ -4,6 +4,7 @@ import webpack from 'webpack';
 import sources from 'webpack-sources';
 
 const { RawSource, ConcatSource } = sources;
+const { Template } = webpack;
 
 const NS = path.dirname(fs.realpathSync(__filename));
 
@@ -118,8 +119,75 @@ class MiniCssExtractPlugin {
           });
         }
       });
+      const { mainTemplate } = compilation;
+      mainTemplate.hooks.requireEnsure.tap(
+        'mini-css-extract-plugin',
+        (source, chunk, hash) => {
+          const chunkMap = this.getCssChunkObject(chunk);
+          if (Object.keys(chunkMap).length > 0) {
+            const chunkMaps = chunk.getChunkMaps();
+            const linkHrefPath = mainTemplate.getAssetPath(
+              JSON.stringify(this.options.chunkFilename),
+              {
+                hash: `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
+                hashWithLength: length =>
+                  `" + ${mainTemplate.renderCurrentHashCode(hash, length)} + "`,
+                chunk: {
+                  id: '" + chunkId + "',
+                  hash: `" + ${JSON.stringify(chunkMaps.hash)}[chunkId] + "`,
+                  hashWithLength(length) {
+                    const shortChunkHashMap = Object.create(null);
+                    for (const chunkId of Object.keys(chunkMaps.hash)) {
+                      if (typeof chunkMaps.hash[chunkId] === 'string') {
+                        shortChunkHashMap[chunkId] = chunkMaps.hash[chunkId].substr(0, length);
+                      }
+                    }
+                    return `" + ${JSON.stringify(shortChunkHashMap)}[chunkId] + "`;
+                  },
+                  name: `" + (${JSON.stringify(chunkMaps.name)}[chunkId]||chunkId) + "`,
+                },
+              },
+            );
+            return Template.asString([
+              source,
+              '',
+              '// mini-css-extract-plugin CSS loading',
+              `var cssChunks = ${JSON.stringify(chunkMap)};`,
+              'if(cssChunks[chunkId]) {',
+              Template.indent([
+                'promises.push(new Promise(function(resolve, reject) {',
+                Template.indent([
+                  'var linkTag = document.createElement("link");',
+                  'linkTag.rel = "stylesheet";',
+                  'linkTag.onload = resolve;',
+                  'linkTag.onerror = reject;',
+                  `linkTag.href = ${linkHrefPath};`,
+                  'var head = document.getElementsByTagName("head")[0];',
+                  'head.appendChild(linkTag);',
+                ]),
+                '}));',
+              ]),
+              '}',
+            ]);
+          }
+          return source;
+        });
     });
   }
+
+  getCssChunkObject(mainChunk) {
+    const obj = {};
+    for (const chunk of mainChunk.getAllAsyncChunks()) {
+      for (const module of chunk.modulesIterable) {
+        if (module.type === NS) {
+          obj[chunk.id] = 1;
+          break;
+        }
+      }
+    }
+    return obj;
+  }
+
   renderContentAsset(modules) {
     modules.sort((a, b) => a.index2 - b.index2);
     // TODO put @import on top
