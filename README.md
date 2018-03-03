@@ -14,6 +14,17 @@
   <p>desc</p>
 </div>
 
+This plugin extract CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS.
+
+It builds on top of a new webpack v4 feature (module types) and requires webpack 4 to work.
+
+Compared to the extract-text-webpack-plugin:
+
+* Async loading
+* No duplicate compilation (performance)
+* Easier to use
+* Specific to CSS
+
 <h2 align="center">Install</h2>
 
 ```bash
@@ -22,72 +33,41 @@ npm install --save-dev mini-css-extract-plugin
 
 <h2 align="center">Usage</h2>
 
-### Lorem
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-<h2 align="center">Examples</h2>
+### Configuration
 
 **webpack.config.js**
 
 ```js
-// Loader/plugin setup here..
-```
-
-**file.ext**
-
-```js
-// Source code here...
-```
-
-**bundle.js**
-
-```js
-require("mini-css-extract-plugin!./file.EXT");
-
-// Bundle code here...
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+      chunkFilename: "[id].css"
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader"
+        ]
+      }
+    ]
+  }
+}
 ```
 
 <h2 align="center">Maintainers</h2>
-
-```bash
-https://api.github.com/users/MAINTAINER
-```
 
 <table>
   <tbody>
     <tr>
       <td align="center">
-        <a href="https://github.com/">
-          <img width="150" height="150" src="https://avatars.githubusercontent.com/u/5419992?v=3&s=150">
-          </br>
-          Name
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/">
-          <img width="150" height="150" src="https://avatars.githubusercontent.com/u/5419992?v=3&s=150">
-          </br>
-          Name
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/">
-          <img width="150" height="150" src="https://avatars.githubusercontent.com/u/5419992?v=3&s=150">
-          </br>
-          Name
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/">
-          <img width="150" height="150" src="https://avatars.githubusercontent.com/u/5419992?v=3&s=150">
-          </br>
-          Name
-        </a>
-      </td>
-      <td align="center">
-        <a href="https://github.com/">
-          <img width="150" height="150" src="https://avatars.githubusercontent.com/u/5419992?v=3&s=150">
+        <a href="https://github.com/sokra">
+          <img width="150" height="150" src="https://github.com/sokra.png?size=150">
           </br>
           Name
         </a>
