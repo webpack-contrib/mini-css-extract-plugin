@@ -9,9 +9,10 @@ const { Template } = webpack;
 const NS = path.dirname(fs.realpathSync(__filename));
 
 class CssDependency extends webpack.Dependency {
-  constructor({ identifier, content, media, sourceMap }, context) {
+  constructor({ identifier, content, media, sourceMap }, context, identifierIndex) {
     super();
     this.identifier = identifier;
+    this.identifierIndex = identifierIndex;
     this.content = content;
     this.media = media;
     this.sourceMap = sourceMap;
@@ -19,7 +20,7 @@ class CssDependency extends webpack.Dependency {
   }
 
   getResourceIdentifier() {
-    return `css-module-${this.identifier}`;
+    return `css-module-${this.identifier}-${this.identifierIndex}`;
   }
 }
 
@@ -31,6 +32,7 @@ class CssModule extends webpack.Module {
   constructor(dependency) {
     super(NS, dependency.context);
     this._identifier = dependency.identifier;
+    this._identifierIndex = dependency.identifierIndex;
     this.content = dependency.content;
     this.media = dependency.media;
     this.sourceMap = dependency.sourceMap;
@@ -46,11 +48,11 @@ class CssModule extends webpack.Module {
   }
 
   identifier() {
-    return `css ${this._identifier}`;
+    return `css ${this._identifier} ${this._identifierIndex}`;
   }
 
   readableIdentifier(requestShortener) {
-    return `css ${requestShortener.shorten(this._identifier)}`;
+    return `css ${requestShortener.shorten(this._identifier)}${this._identifierIndex ? ` (${this._identifierIndex})` : ''}`;
   }
 
   build(options, compilation, resolver, fileSystem, callback) {
@@ -86,8 +88,11 @@ class MiniCssExtractPlugin {
           if (!Array.isArray(content) && content != null) {
             throw new Error(`Exported value was not extracted as an array: ${JSON.stringify(content)}`);
           }
+          const identifierCountMap = new Map();
           for (const line of content) {
-            module.addDependency(new CssDependency(line, m.context));
+            const count = identifierCountMap.get(line.identifier) || 0;
+            module.addDependency(new CssDependency(line, m.context, count));
+            identifierCountMap.set(line.identifier, count + 1);
           }
         };
       });
@@ -190,19 +195,33 @@ class MiniCssExtractPlugin {
 
   renderContentAsset(modules) {
     modules.sort((a, b) => a.index2 - b.index2);
-    // TODO put @import on top
     const source = new ConcatSource();
+    const externalsSource = new ConcatSource();
     for (const m of modules) {
-      if (m.media) {
-        source.add(`@media ${m.media} {\n`);
-      }
-      source.add(m.content);
-      source.add('\n');
-      if (m.media) {
-        source.add('}\n');
+      if (/^@import url/.test(m.content)) {
+        // HACK for IE
+        // http://stackoverflow.com/a/14676665/1458162
+        let { content } = m;
+        if (m.media) {
+          // insert media into the @import
+          // this is rar
+          // TODO improve this and parse the CSS to support multiple medias
+          content = content.replace(/;|\s*$/, m.media);
+        }
+        externalsSource.add(content);
+        externalsSource.add('\n');
+      } else {
+        if (m.media) {
+          source.add(`@media ${m.media} {\n`);
+        }
+        source.add(m.content);
+        source.add('\n');
+        if (m.media) {
+          source.add('}\n');
+        }
       }
     }
-    return source;
+    return new ConcatSource(externalsSource, source);
   }
 }
 
