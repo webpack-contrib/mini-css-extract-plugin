@@ -5,7 +5,7 @@
       {
         "useBuiltIns": true,
         "targets": {
-          "node": "4.3"
+          "node": "6.11.5"
         },
         "exclude": [
           "transform-async-to-generator",
