@@ -3,7 +3,7 @@ import path from 'path';
 import webpack from 'webpack';
 import sources from 'webpack-sources';
 
-const { RawSource, ConcatSource } = sources;
+const { ConcatSource } = sources;
 const { Template } = webpack;
 
 const NS = path.dirname(fs.realpathSync(__filename));
@@ -38,10 +38,7 @@ class CssModule extends webpack.Module {
     this.sourceMap = dependency.sourceMap;
   }
 
-  source() {
-    // TODO add webpack support for omitting js source
-    return new RawSource('// extracted by mini-css-extract-plugin');
-  }
+  // no source() so webpack doesn't do add stuff to the bundle
 
   size() {
     return 0;

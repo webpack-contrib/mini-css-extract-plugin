@@ -107,7 +107,7 @@ export function pitch(request) {
     } catch (e) {
       return callback(e);
     }
-    let resultSource = '';
+    let resultSource = '// extracted by mini-css-extract-plugin';
     if (text.locals && typeof resultSource !== 'undefined') {
       resultSource = `module.exports = ${JSON.stringify(text.locals)};`;
     }
