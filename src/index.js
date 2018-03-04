@@ -41,7 +41,7 @@ class CssModule extends webpack.Module {
   // no source() so webpack doesn't do add stuff to the bundle
 
   size() {
-    return 0;
+    return this.content.length;
   }
 
   identifier() {
