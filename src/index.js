@@ -3,7 +3,7 @@ import path from 'path';
 import webpack from 'webpack';
 import sources from 'webpack-sources';
 
-const { ConcatSource } = sources;
+const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const { Template } = webpack;
 
 const NS = path.dirname(fs.realpathSync(__filename));
@@ -99,7 +99,7 @@ class MiniCssExtractPlugin {
         const renderedModules = Array.from(chunk.modulesIterable).filter(module => module.type === NS);
         if (renderedModules.length > 0) {
           result.push({
-            render: () => this.renderContentAsset(renderedModules),
+            render: () => this.renderContentAsset(renderedModules, compilation.runtimeTemplate.requestShortener),
             filenameTemplate: this.options.filename,
             pathOptions: {
               chunk,
@@ -112,7 +112,7 @@ class MiniCssExtractPlugin {
         const renderedModules = Array.from(chunk.modulesIterable).filter(module => module.type === NS);
         if (renderedModules.length > 0) {
           result.push({
-            render: () => this.renderContentAsset(renderedModules),
+            render: () => this.renderContentAsset(renderedModules, compilation.runtimeTemplate.requestShortener),
             filenameTemplate: this.options.chunkFilename,
             pathOptions: {
               chunk,
@@ -190,7 +190,7 @@ class MiniCssExtractPlugin {
     return obj;
   }
 
-  renderContentAsset(modules) {
+  renderContentAsset(modules, requestShortener) {
     modules.sort((a, b) => a.index2 - b.index2);
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
@@ -211,7 +211,11 @@ class MiniCssExtractPlugin {
         if (m.media) {
           source.add(`@media ${m.media} {\n`);
         }
-        source.add(m.content);
+        if (m.sourceMap) {
+          source.add(new SourceMapSource(m.content, m.readableIdentifier(requestShortener), m.sourceMap));
+        } else {
+          source.add(new OriginalSource(m.content, m.readableIdentifier(requestShortener)));
+        }
         source.add('\n');
         if (m.media) {
           source.add('}\n');
