@@ -71,8 +71,17 @@ class MiniCssExtractPlugin {
       filename: '[name].css',
     }, options);
     if (!this.options.chunkFilename) {
-      // TODO use webpack conversion style here
-      this.options.chunkFilename = this.options.filename;
+      const { filename } = this.options;
+      const hasName = filename.includes('[name]');
+      const hasId = filename.includes('[id]');
+      const hasChunkHash = filename.includes('[chunkhash]');
+      // Anything changing depending on chunk is fine
+      if (hasChunkHash || hasName || hasId) {
+        this.options.chunkFilename = filename;
+      } else {
+        // Elsewise prefix '[id].' in front of the basename to make it changing
+        this.options.chunkFilename = filename.replace(/(^|\/)([^/]*(?:\?|$))/, '$1[id].$2');
+      }
     }
   }
 
