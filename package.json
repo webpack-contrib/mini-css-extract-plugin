@@ -53,7 +53,7 @@
     "node": ">= 6.11.5"
   },
   "peerDependencies": {
-    "webpack": "^4.0.1"
+    "webpack": "^4.1.0"
   },
   "pre-commit": "lint-staged",
   "lint-staged": {
