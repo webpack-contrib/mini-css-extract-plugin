@@ -14,7 +14,7 @@
   <p>desc</p>
 </div>
 
-This plugin extract CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS.
+This plugin extract CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS and SourceMaps.
 
 It builds on top of a new webpack v4 feature (module types) and requires webpack 4 to work.
 
@@ -24,6 +24,10 @@ Compared to the extract-text-webpack-plugin:
 * No duplicate compilation (performance)
 * Easier to use
 * Specific to CSS
+
+TODO:
+
+* HMR support
 
 <h2 align="center">Install</h2>
 
