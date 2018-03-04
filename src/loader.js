@@ -29,7 +29,7 @@ export function pitch(request) {
   const query = loaderUtils.getOptions(this) || {};
   const loaders = this.loaders.slice(this.loaderIndex + 1);
   this.addDependency(this.resourcePath);
-  const childFilename = 'mini-css-extract-plugin-output-filename'; // eslint-disable-line no-path-concat
+  const childFilename = '*'; // eslint-disable-line no-path-concat
   const publicPath = typeof query.publicPath === 'string' ? query.publicPath : this._compilation.outputOptions.publicPath;
   const outputOptions = {
     filename: childFilename,
@@ -39,7 +39,7 @@ export function pitch(request) {
   childCompiler.apply(new NodeTemplatePlugin(outputOptions));
   childCompiler.apply(new LibraryTemplatePlugin(null, 'commonjs2'));
   childCompiler.apply(new NodeTargetPlugin());
-  childCompiler.apply(new SingleEntryPlugin(this.context, `!!${request}`));
+  childCompiler.apply(new SingleEntryPlugin(this.context, `!!${request}`, 'mini-css-extract-plugin'));
   childCompiler.apply(new LimitChunkCountPlugin({ maxChunks: 1 }));
   // We set loaderContext[NS] = false to indicate we already in
   // a child compiler so we don't spawn another child compilers from there.
