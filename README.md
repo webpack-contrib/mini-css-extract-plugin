@@ -75,7 +75,7 @@ module.exports = {
         <a href="https://github.com/sokra">
           <img width="150" height="150" src="https://github.com/sokra.png?size=150">
           </br>
-          Name
+          Tobias Koppers
         </a>
       </td>
     </tr>
