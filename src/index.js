@@ -172,7 +172,7 @@ class MiniCssExtractPlugin {
                   'linkTag.rel = "stylesheet";',
                   'linkTag.onload = resolve;',
                   'linkTag.onerror = reject;',
-                  `linkTag.href = ${linkHrefPath};`,
+                  `linkTag.href = ${mainTemplate.requireFn}.p + ${linkHrefPath};`,
                   'var head = document.getElementsByTagName("head")[0];',
                   'head.appendChild(linkTag);',
                 ]),
