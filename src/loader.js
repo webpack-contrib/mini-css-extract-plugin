@@ -87,9 +87,10 @@ export function pitch(request) {
     if (!source) {
       return callback(new Error("Didn't get a result from child compiler"));
     }
-    let text;
+    let text, locals;
     try {
       text = exec(this, source, request);
+      locals = text && text.locals;
       if (!Array.isArray(text)) {
         text = [[null, text]];
       } else {
@@ -108,8 +109,8 @@ export function pitch(request) {
       return callback(e);
     }
     let resultSource = '// extracted by mini-css-extract-plugin';
-    if (text.locals && typeof resultSource !== 'undefined') {
-      resultSource = `module.exports = ${JSON.stringify(text.locals)};`;
+    if (locals && typeof resultSource !== 'undefined') {
+      resultSource += `\nmodule.exports = ${JSON.stringify(locals)};`;
     }
 
     return callback(null, resultSource);
