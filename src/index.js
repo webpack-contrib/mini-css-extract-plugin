@@ -131,6 +131,25 @@ class MiniCssExtractPlugin {
         }
       });
       const { mainTemplate } = compilation;
+      mainTemplate.hooks.localVars.tap(
+        'mini-css-extract-plugin',
+        (source, chunk) => {
+          const chunkMap = this.getCssChunkObject(chunk);
+          if (Object.keys(chunkMap).length > 0) {
+            return Template.asString([
+              source,
+              '',
+              '// object to store loaded CSS chunks',
+              'var installedCssChunks = {',
+              Template.indent(
+                chunk.ids.map(id => `${JSON.stringify(id)}: 0`).join(',\n'),
+              ),
+              '}',
+            ]);
+          }
+          return source;
+        },
+      );
       mainTemplate.hooks.requireEnsure.tap(
         'mini-css-extract-plugin',
         (source, chunk, hash) => {
@@ -164,9 +183,10 @@ class MiniCssExtractPlugin {
               '',
               '// mini-css-extract-plugin CSS loading',
               `var cssChunks = ${JSON.stringify(chunkMap)};`,
-              'if(cssChunks[chunkId]) {',
+              'if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);',
+              'else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {',
               Template.indent([
-                'promises.push(new Promise(function(resolve, reject) {',
+                'promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {',
                 Template.indent([
                   'var linkTag = document.createElement("link");',
                   'linkTag.rel = "stylesheet";',
@@ -175,6 +195,7 @@ class MiniCssExtractPlugin {
                   `linkTag.href = ${mainTemplate.requireFn}.p + ${linkHrefPath};`,
                   'var head = document.getElementsByTagName("head")[0];',
                   'head.appendChild(linkTag);',
+                  'installedCssChunks[chunkId] = 0;',
                 ]),
                 '}));',
               ]),
