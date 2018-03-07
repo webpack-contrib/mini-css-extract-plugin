@@ -36,11 +36,11 @@ export function pitch(request) {
     publicPath,
   };
   const childCompiler = this._compilation.createChildCompiler(`mini-css-extract-plugin ${NS} ${request}`, outputOptions);
-  childCompiler.apply(new NodeTemplatePlugin(outputOptions));
-  childCompiler.apply(new LibraryTemplatePlugin(null, 'commonjs2'));
-  childCompiler.apply(new NodeTargetPlugin());
-  childCompiler.apply(new SingleEntryPlugin(this.context, `!!${request}`, 'mini-css-extract-plugin'));
-  childCompiler.apply(new LimitChunkCountPlugin({ maxChunks: 1 }));
+  new NodeTemplatePlugin(outputOptions).apply(childCompiler);
+  new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
+  new NodeTargetPlugin().apply(childCompiler);
+  new SingleEntryPlugin(this.context, `!!${request}`, 'mini-css-extract-plugin').apply(childCompiler);
+  new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
   // We set loaderContext[NS] = false to indicate we already in
   // a child compiler so we don't spawn another child compilers from there.
   childCompiler.hooks.thisCompilation.tap('mini-css-extract-plugin loader', (compilation) => {
@@ -58,7 +58,7 @@ export function pitch(request) {
   });
 
   let source;
-  childCompiler.plugin('after-compile', (compilation, callback) => {
+  childCompiler.hooks.afterCompile.tap('mini-css-extract-plugin', (compilation) => {
     source = compilation.assets[childFilename] && compilation.assets[childFilename].source();
 
     // Remove all chunk assets
@@ -67,8 +67,6 @@ export function pitch(request) {
         delete compilation.assets[file]; // eslint-disable-line no-param-reassign
       });
     });
-
-    callback();
   });
 
   const callback = this.async();
@@ -87,7 +85,8 @@ export function pitch(request) {
     if (!source) {
       return callback(new Error("Didn't get a result from child compiler"));
     }
-    let text, locals;
+    let text;
+    let locals;
     try {
       text = exec(this, source, request);
       locals = text && text.locals;
