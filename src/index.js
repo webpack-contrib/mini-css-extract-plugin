@@ -52,6 +52,13 @@ class CssModule extends webpack.Module {
     return `css ${requestShortener.shorten(this._identifier)}${this._identifierIndex ? ` (${this._identifierIndex})` : ''}`;
   }
 
+  nameForCondition() {
+    const resource = this._identifier.split('!').pop();
+    const idx = resource.indexOf('?');
+    if (idx >= 0) return resource.substr(0, idx);
+    return resource;
+  }
+
   build(options, compilation, resolver, fileSystem, callback) {
     this.buildInfo = {};
     this.buildMeta = {};
