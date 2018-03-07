@@ -35,7 +35,7 @@ export function pitch(request) {
     filename: childFilename,
     publicPath,
   };
-  const childCompiler = this._compilation.createChildCompiler(`mini-css-extract-plugin ${NS} ${request}`, outputOptions);
+  const childCompiler = this._compilation.createChildCompiler(`mini-css-extract-plugin ${request}`, outputOptions);
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
   new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
