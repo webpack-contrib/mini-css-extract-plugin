@@ -51,6 +51,7 @@ export function pitch(request) {
           return ({
             loader: loader.path,
             options: loader.options,
+            ident: loader.ident,
           });
         });
       }
