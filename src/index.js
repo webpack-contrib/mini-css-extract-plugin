@@ -8,6 +8,8 @@ const { Template } = webpack;
 
 const NS = path.dirname(fs.realpathSync(__filename));
 
+const pluginName = 'mini-css-extract-plugin';
+
 class CssDependency extends webpack.Dependency {
   constructor({ identifier, content, media, sourceMap }, context, identifierIndex) {
     super();
@@ -93,8 +95,8 @@ class MiniCssExtractPlugin {
   }
 
   apply(compiler) {
-    compiler.hooks.thisCompilation.tap('mini-css-extract-plugin', (compilation) => {
-      compilation.hooks.normalModuleLoader.tap('mini-css-extract-plugin', (lc, m) => {
+    compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+      compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
         loaderContext[NS] = (content) => {
@@ -111,7 +113,7 @@ class MiniCssExtractPlugin {
       });
       compilation.dependencyFactories.set(CssDependency, new CssModuleFactory());
       compilation.dependencyTemplates.set(CssDependency, new CssDependencyTemplate());
-      compilation.mainTemplate.hooks.renderManifest.tap('mini-css-extract-plugin', (result, { chunk }) => {
+      compilation.mainTemplate.hooks.renderManifest.tap(pluginName, (result, { chunk }) => {
         const renderedModules = Array.from(chunk.modulesIterable).filter(module => module.type === NS);
         if (renderedModules.length > 0) {
           result.push({
@@ -124,7 +126,7 @@ class MiniCssExtractPlugin {
           });
         }
       });
-      compilation.chunkTemplate.hooks.renderManifest.tap('mini-css-extract-plugin', (result, { chunk }) => {
+      compilation.chunkTemplate.hooks.renderManifest.tap(pluginName, (result, { chunk }) => {
         const renderedModules = Array.from(chunk.modulesIterable).filter(module => module.type === NS);
         if (renderedModules.length > 0) {
           result.push({
@@ -139,7 +141,7 @@ class MiniCssExtractPlugin {
       });
       const { mainTemplate } = compilation;
       mainTemplate.hooks.localVars.tap(
-        'mini-css-extract-plugin',
+        pluginName,
         (source, chunk) => {
           const chunkMap = this.getCssChunkObject(chunk);
           if (Object.keys(chunkMap).length > 0) {
@@ -158,7 +160,7 @@ class MiniCssExtractPlugin {
         },
       );
       mainTemplate.hooks.requireEnsure.tap(
-        'mini-css-extract-plugin',
+        pluginName,
         (source, chunk, hash) => {
           const chunkMap = this.getCssChunkObject(chunk);
           if (Object.keys(chunkMap).length > 0) {
