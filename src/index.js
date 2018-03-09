@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import webpack from 'webpack';
 import sources from 'webpack-sources';
+import loaderUtils from 'loader-utils';
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const { Template } = webpack;
@@ -95,6 +96,19 @@ class MiniCssExtractPlugin {
   }
 
   apply(compiler) {
+    // add contenthash support
+    compiler.hooks.emit.tap(pluginName, (compilation) => {
+      const regexp = /\[(?:(\w+):)?contenthash(?::([a-z]+\d*))?(?::(\d+))?\]/ig;
+      Object.keys(compilation.assets).forEach((filename) => {
+        if (regexp.test(filename)) {
+          const source = compilation.assets[filename].source();
+          const getHashDigest = (...args) => loaderUtils.getHashDigest(source, args[1], args[2], parseInt(args[3], 10));
+          const newFilename = filename.replace(regexp, getHashDigest);
+          compilation.assets[newFilename] = compilation.assets[filename]; // eslint-disable-line no-param-reassign
+          delete compilation.assets[filename]; // eslint-disable-line no-param-reassign
+        }
+      });
+    });
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
