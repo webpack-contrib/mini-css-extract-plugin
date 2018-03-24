@@ -13,13 +13,16 @@ describe('TestCases', () => {
         const outputDirectoryForCase = path.resolve(outputDirectory, directory);
         // eslint-disable-next-line import/no-dynamic-require, global-require
         const webpackConfig = require(path.resolve(directoryForCase, 'webpack.config.js'));
-        webpack(Object.assign({
-          mode: 'none',
-          context: directoryForCase,
-          output: {
-            path: outputDirectoryForCase,
-          },
-        }, webpackConfig), (err, stats) => {
+        for (const config of [].concat(webpackConfig)) {
+          Object.assign(config, {
+            mode: 'none',
+            context: directoryForCase,
+            output: Object.assign({
+              path: outputDirectoryForCase,
+            }, config.output),
+          }, config);
+        }
+        webpack(webpackConfig, (err, stats) => {
           if (err) {
             done(err);
             return;

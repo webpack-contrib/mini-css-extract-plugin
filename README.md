@@ -92,6 +92,11 @@ When inlining CSS `data-href` must be used.
   <tbody>
 </table>
 
+#### Long Term Caching
+
+For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
+
+
 [npm]: https://img.shields.io/npm/v/mini-css-extract-plugin.svg
 [npm-url]: https://npmjs.com/package/mini-css-extract-plugin
 

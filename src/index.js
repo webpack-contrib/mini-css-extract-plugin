@@ -4,7 +4,7 @@ import webpack from 'webpack';
 import sources from 'webpack-sources';
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
-const { Template } = webpack;
+const { Template, util: { createHash } } = webpack;
 
 const NS = path.dirname(fs.realpathSync(__filename));
 
@@ -66,6 +66,13 @@ class CssModule extends webpack.Module {
     this.buildMeta = {};
     callback();
   }
+
+  updateHash(hash) {
+    super.updateHash(hash);
+    hash.update(this.content);
+    hash.update(this.media || '');
+    hash.update(JSON.stringify(this.sourceMap || ''));
+  }
 }
 
 class CssModuleFactory {
@@ -121,6 +128,7 @@ class MiniCssExtractPlugin {
             filenameTemplate: this.options.filename,
             pathOptions: {
               chunk,
+              contentHashType: NS,
             },
             identifier: `mini-css-extract-plugin.${chunk.id}`,
           });
@@ -134,10 +142,25 @@ class MiniCssExtractPlugin {
             filenameTemplate: this.options.chunkFilename,
             pathOptions: {
               chunk,
+              contentHashType: NS,
             },
             identifier: `mini-css-extract-plugin.${chunk.id}`,
           });
         }
+      });
+      compilation.hooks.contentHash.tap(pluginName, (chunk) => {
+        const { outputOptions } = compilation;
+        const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
+        const hash = createHash(hashFunction);
+        for (const m of chunk.modulesIterable) {
+          if (m.type === NS) {
+            m.updateHash(hash);
+          }
+        }
+        const { contentHash } = chunk;
+        contentHash[NS] = hash
+          .digest(hashDigest)
+          .substr(0, hashDigestLength);
       });
       const { mainTemplate } = compilation;
       mainTemplate.hooks.localVars.tap(
@@ -183,8 +206,30 @@ class MiniCssExtractPlugin {
                     }
                     return `" + ${JSON.stringify(shortChunkHashMap)}[chunkId] + "`;
                   },
+                  contentHash: {
+                    [NS]: `" + ${JSON.stringify(
+                      chunkMaps.contentHash[NS],
+                    )}[chunkId] + "`,
+                  },
+                  contentHashWithLength: {
+                    [NS]: (length) => {
+                      const shortContentHashMap = {};
+                      const contentHash = chunkMaps.contentHash[NS];
+                      for (const chunkId of Object.keys(contentHash)) {
+                        if (typeof contentHash[chunkId] === 'string') {
+                          shortContentHashMap[chunkId] = contentHash[
+                            chunkId
+                          ].substr(0, length);
+                        }
+                      }
+                      return `" + ${JSON.stringify(
+                        shortContentHashMap,
+                      )}[chunkId] + "`;
+                    },
+                  },
                   name: `" + (${JSON.stringify(chunkMaps.name)}[chunkId]||chunkId) + "`,
                 },
+                contentHashType: NS,
               },
             );
             return Template.asString([
