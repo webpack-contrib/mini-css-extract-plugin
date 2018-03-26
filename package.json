@@ -22,6 +22,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --collectCoverageFrom='src/**/*.js' --coverage",
+    "test:manual": "webpack-dev-server test/manual/src/index.js --open --config test/manual/webpack.config.js",
     "travis:lint": "npm run lint && npm run security",
     "travis:test": "npm run test -- --runInBand",
     "travis:coverage": "npm run test:coverage -- --runInBand"
@@ -44,7 +45,9 @@
     "pre-commit": "^1.2.2",
     "standard-version": "^4.3.0",
     "webpack": "^4.1.0",
-    "webpack-defaults": "^1.6.0"
+    "webpack-cli": "^2.0.13",
+    "webpack-defaults": "^1.6.0",
+    "webpack-dev-server": "^3.1.1"
   },
   "files": [
     "dist"
