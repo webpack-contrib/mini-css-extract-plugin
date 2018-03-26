@@ -66,6 +66,16 @@ module.exports = {
 }
 ```
 
+### Features
+
+#### Using preloaded or inlined CSS
+
+The runtime code detects already added CSS via `<link>` or `<style>` tag.
+This can be useful when injecting CSS on server-side for Server-Side-Rendering.
+The `href` of the `<link>` tag has to match the URL that will be used for loading the CSS chunk.
+The `data-href` attribute can be used for `<link>` and `<style>` too.
+When inlining CSS `data-href` must be used.
+
 <h2 align="center">Maintainers</h2>
 
 <table>
