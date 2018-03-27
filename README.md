@@ -76,6 +76,47 @@ The `href` of the `<link>` tag has to match the URL that will be used for loadin
 The `data-href` attribute can be used for `<link>` and `<style>` too.
 When inlining CSS `data-href` must be used.
 
+#### Extracting all CSS in a single file
+
+Similar to what [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin) does, the CSS
+can be extracted in one CSS file using `optimization.splitChunks.cacheGroups`.
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module.exports = {
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    }
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader"
+        ]
+      }
+    ]
+  }
+}
+```
+
 <h2 align="center">Maintainers</h2>
 
 <table>
