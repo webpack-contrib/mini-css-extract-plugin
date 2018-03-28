@@ -4,7 +4,7 @@ import webpack from 'webpack';
 import sources from 'webpack-sources';
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
-const { Template } = webpack;
+const { Template, util: { createHash } } = webpack;
 
 const NS = path.dirname(fs.realpathSync(__filename));
 
@@ -57,7 +57,7 @@ class CssModule extends webpack.Module {
   nameForCondition() {
     const resource = this._identifier.split('!').pop();
     const idx = resource.indexOf('?');
-    if (idx >= 0) return resource.substr(0, idx);
+    if (idx >= 0) return resource.substring(0, idx);
     return resource;
   }
 
@@ -65,6 +65,13 @@ class CssModule extends webpack.Module {
     this.buildInfo = {};
     this.buildMeta = {};
     callback();
+  }
+
+  updateHash(hash) {
+    super.updateHash(hash);
+    hash.update(this.content);
+    hash.update(this.media || '');
+    hash.update(JSON.stringify(this.sourceMap || ''));
   }
 }
 
@@ -121,6 +128,7 @@ class MiniCssExtractPlugin {
             filenameTemplate: this.options.filename,
             pathOptions: {
               chunk,
+              contentHashType: NS,
             },
             identifier: `mini-css-extract-plugin.${chunk.id}`,
           });
@@ -134,10 +142,25 @@ class MiniCssExtractPlugin {
             filenameTemplate: this.options.chunkFilename,
             pathOptions: {
               chunk,
+              contentHashType: NS,
             },
             identifier: `mini-css-extract-plugin.${chunk.id}`,
           });
         }
+      });
+      compilation.hooks.contentHash.tap(pluginName, (chunk) => {
+        const { outputOptions } = compilation;
+        const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
+        const hash = createHash(hashFunction);
+        for (const m of chunk.modulesIterable) {
+          if (m.type === NS) {
+            m.updateHash(hash);
+          }
+        }
+        const { contentHash } = chunk;
+        contentHash[NS] = hash
+          .digest(hashDigest)
+          .substring(0, hashDigestLength);
       });
       const { mainTemplate } = compilation;
       mainTemplate.hooks.localVars.tap(
@@ -178,13 +201,35 @@ class MiniCssExtractPlugin {
                     const shortChunkHashMap = Object.create(null);
                     for (const chunkId of Object.keys(chunkMaps.hash)) {
                       if (typeof chunkMaps.hash[chunkId] === 'string') {
-                        shortChunkHashMap[chunkId] = chunkMaps.hash[chunkId].substr(0, length);
+                        shortChunkHashMap[chunkId] = chunkMaps.hash[chunkId].substring(0, length);
                       }
                     }
                     return `" + ${JSON.stringify(shortChunkHashMap)}[chunkId] + "`;
                   },
+                  contentHash: {
+                    [NS]: `" + ${JSON.stringify(
+                      chunkMaps.contentHash[NS],
+                    )}[chunkId] + "`,
+                  },
+                  contentHashWithLength: {
+                    [NS]: (length) => {
+                      const shortContentHashMap = {};
+                      const contentHash = chunkMaps.contentHash[NS];
+                      for (const chunkId of Object.keys(contentHash)) {
+                        if (typeof contentHash[chunkId] === 'string') {
+                          shortContentHashMap[chunkId] = contentHash[
+                            chunkId
+                          ].substring(0, length);
+                        }
+                      }
+                      return `" + ${JSON.stringify(
+                        shortContentHashMap,
+                      )}[chunkId] + "`;
+                    },
+                  },
                   name: `" + (${JSON.stringify(chunkMaps.name)}[chunkId]||chunkId) + "`,
                 },
+                contentHashType: NS,
               },
             );
             return Template.asString([
