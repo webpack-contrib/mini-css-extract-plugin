@@ -1,6 +1,6 @@
 {
   "name": "mini-css-extract-plugin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "desc",
   "main": "dist/cjs.js",
   "repository": "https://github.com/webpack-contrib/mini-css-extract-plugin",
