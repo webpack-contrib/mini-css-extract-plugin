@@ -57,7 +57,7 @@ class CssModule extends webpack.Module {
   nameForCondition() {
     const resource = this._identifier.split('!').pop();
     const idx = resource.indexOf('?');
-    if (idx >= 0) return resource.substr(0, idx);
+    if (idx >= 0) return resource.substring(0, idx);
     return resource;
   }
 
@@ -160,7 +160,7 @@ class MiniCssExtractPlugin {
         const { contentHash } = chunk;
         contentHash[NS] = hash
           .digest(hashDigest)
-          .substr(0, hashDigestLength);
+          .substring(0, hashDigestLength);
       });
       const { mainTemplate } = compilation;
       mainTemplate.hooks.localVars.tap(
@@ -201,7 +201,7 @@ class MiniCssExtractPlugin {
                     const shortChunkHashMap = Object.create(null);
                     for (const chunkId of Object.keys(chunkMaps.hash)) {
                       if (typeof chunkMaps.hash[chunkId] === 'string') {
-                        shortChunkHashMap[chunkId] = chunkMaps.hash[chunkId].substr(0, length);
+                        shortChunkHashMap[chunkId] = chunkMaps.hash[chunkId].substring(0, length);
                       }
                     }
                     return `" + ${JSON.stringify(shortChunkHashMap)}[chunkId] + "`;
@@ -219,7 +219,7 @@ class MiniCssExtractPlugin {
                         if (typeof contentHash[chunkId] === 'string') {
                           shortContentHashMap[chunkId] = contentHash[
                             chunkId
-                          ].substr(0, length);
+                          ].substring(0, length);
                         }
                       }
                       return `" + ${JSON.stringify(
