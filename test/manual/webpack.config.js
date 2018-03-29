@@ -3,6 +3,7 @@ const Self = require('../../');
 module.exports = {
   mode: 'development',
   output: {
+    chunkFilename: "[contenthash].js",
     publicPath: '/dist/',
   },
   module: {
@@ -19,6 +20,7 @@ module.exports = {
   plugins: [
     new Self({
       filename: '[name].css',
+      chunkFilename: "[contenthash].css",
     }),
   ],
   devServer: {

@@ -10,6 +10,10 @@ const NS = path.dirname(fs.realpathSync(__filename));
 
 const pluginName = 'mini-css-extract-plugin';
 
+const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
+const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
+const REGEXP_NAME = /\[name\]/i;
+
 class CssDependency extends webpack.Dependency {
   constructor({ identifier, content, media, sourceMap }, context, identifierIndex) {
     super();
@@ -59,6 +63,16 @@ class CssModule extends webpack.Module {
     const idx = resource.indexOf('?');
     if (idx >= 0) return resource.substring(0, idx);
     return resource;
+  }
+
+  updateCacheModule(module) {
+    this.content = module.content;
+    this.media = module.media;
+    this.sourceMap = module.sourceMap;
+  }
+
+  needRebuild() {
+    return true;
   }
 
   build(options, compilation, resolver, fileSystem, callback) {
@@ -131,6 +145,7 @@ class MiniCssExtractPlugin {
               contentHashType: NS,
             },
             identifier: `mini-css-extract-plugin.${chunk.id}`,
+            hash: chunk.contentHash[NS],
           });
         }
       });
@@ -145,9 +160,29 @@ class MiniCssExtractPlugin {
               contentHashType: NS,
             },
             identifier: `mini-css-extract-plugin.${chunk.id}`,
+            hash: chunk.contentHash[NS],
           });
         }
       });
+      compilation.mainTemplate.hooks.hashForChunk.tap(
+        pluginName,
+        (hash, chunk) => {
+          const { chunkFilename } = this.options;
+          if (REGEXP_CHUNKHASH.test(chunkFilename)) {
+            hash.update(JSON.stringify(chunk.getChunkMaps(true).hash));
+          }
+          if (REGEXP_CONTENTHASH.test(chunkFilename)) {
+            hash.update(
+              JSON.stringify(
+                chunk.getChunkMaps(true).contentHash[NS] || {},
+              ),
+            );
+          }
+          if (REGEXP_NAME.test(chunkFilename)) {
+            hash.update(JSON.stringify(chunk.getChunkMaps(true).name));
+          }
+        },
+      );
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions } = compilation;
         const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
