@@ -1,7 +1,0 @@
-{
-  "extends": "webpack",
-  "rules": {
-    "class-methods-use-this": "off",
-    "no-undefined": "off"
-  }
-}

@@ -1,5 +1,35 @@
 <!--
-1. [Read and sign the CLA](https://cla.js.foundation/webpack/webpack.js.org). This needs to be done only once. PRs that haven't signed it won't be accepted.
-2. Check out the [development guide](https://webpack.js.org/development/) for the API and development guidelines.
-3. Read through the PR diff carefully as sometimes this can reveal issues. The work will be reviewed, but this can save some effort.
+  HOLY CRAP a Pull Request. We ❤️ those!
+
+  If you remove or skip this template, you'll make the 🐼 sad and the mighty god
+  of Github will appear and pile-drive the close button from a great height
+  while making animal noises.
+
+  Please place an x (no spaces!) in all [ ] that apply
 -->
+
+This PR contains a:
+
+- [ ] **bugfix**
+- [ ] new **feature**
+- [ ] **code refactor**
+- [ ] **test update** <!-- if bug or feature is checked, this should be too -->
+- [ ] **typo fix**
+- [ ] **metadata update**
+
+### Motivation / Use-Case
+
+<!--
+  Please explain the motivation or use-case for your change.
+  What existing problem does the PR solve?
+  If this PR addresses an issue, please link to the issue.
+-->
+
+### Breaking Changes
+
+<!--
+  If this PR introduces a breaking change, please describe the impact and a
+  migration path for existing applications.
+-->
+
+### Additional Info
