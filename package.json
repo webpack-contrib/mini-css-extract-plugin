@@ -30,6 +30,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --collectCoverageFrom='src/**/*.js' --coverage",
+    "test:manual": "webpack-dev-server test/manual/src/index.js --open --config test/manual/webpack.config.js",
     "ci:lint": "npm run lint && npm run security",
     "ci:test": "npm run test -- --runInBand",
     "ci:coverage": "npm run test:coverage -- --runInBand",
