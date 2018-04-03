@@ -7,5 +7,7 @@ module.exports = {
       'error',
       { singleQuote: true, trailingComma: 'es5', arrowParens: 'always' },
     ],
+    'class-methods-use-this': 'off',
+    'no-undefined': 'off',
   },
 };
