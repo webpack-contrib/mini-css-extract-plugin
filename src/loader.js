@@ -7,6 +7,7 @@ import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
 import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
 import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
+import styleLoader from 'style-loader';
 
 const NS = path.dirname(fs.realpathSync(__filename));
 
@@ -25,8 +26,13 @@ const findModuleById = (modules, id) => {
   return null;
 };
 
-export function pitch(request) {
+export function pitch(request) { // eslint-disable-line consistent-return
   const query = loaderUtils.getOptions(this) || {};
+
+  if (query.hmr !== false) {
+    return styleLoader.pitch(request);
+  }
+
   const loaders = this.loaders.slice(this.loaderIndex + 1);
   this.addDependency(this.resourcePath);
   const childFilename = '*'; // eslint-disable-line no-path-concat
