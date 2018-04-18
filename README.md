@@ -11,7 +11,6 @@
     <img width="200" height="200" vspace="" hspace="25" src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon-square-big.svg">
   </a>
   <h1>mini-css-extract-plugin</h1>
-  <p>desc</p>
 </div>
 
 This plugin extract CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS and SourceMaps.
@@ -39,6 +38,8 @@ npm install --save-dev mini-css-extract-plugin
 
 ### Configuration
 
+#### Minimal example
+
 **webpack.config.js**
 
 ```js
@@ -60,6 +61,46 @@ module.exports = {
           MiniCssExtractPlugin.loader,
           "css-loader"
         ]
+      }
+    ]
+  }
+}
+```
+
+#### Advanced configuration example
+
+This plugin should be used only on `production` builds without `style-loader` in the loaders chain, especially if you want to have HMR in `development`.
+
+Here is an example to have both HMR in `development` and your styles extracted in a file for `production` builds.
+
+(Loaders options left out for clarity, adapt accordingly to your needs.)
+
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const devMode = process.env.NODE_ENV !== 'production'
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: devMode ? '[name].css' : '[name].[hash].css',
+      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.s?[ac]ss$/,
+        use: [
+          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          'sass-loader',
+        ],
       }
     ]
   }
