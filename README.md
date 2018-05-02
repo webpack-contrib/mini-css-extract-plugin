@@ -199,6 +199,87 @@ module.exports = {
 }
 ```
 
+<<<<<<< HEAD
+=======
+#### Extracting CSS based on entry
+
+You may also extract the CSS based on the webpack entry name. This is especially useful if you import routes dynamically
+but want to keep your CSS bundled according to entry. This also prevents the CSS duplication issue one had with the
+ExtractTextPlugin.
+
+```javascript
+const path = require('path');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+function recursiveIssuer(m) {
+  if (m.issuer) {
+    return recursiveIssuer(m.issuer);
+  } else if (m.name) {
+    return m.name;
+  } else {
+    return false;
+  }
+}
+
+module.exports = {
+  entry: {
+    foo: path.resolve(__dirname, 'src/foo'),
+    bar: path.resolve(__dirname, 'src/bar')
+  },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        fooStyles: {
+          name: 'foo',
+          test: (m,c,entry = 'foo') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === e,
+          chunks: 'all',
+          enforce: true
+        },
+        barStyles: {
+          name: 'bar',
+          test: (m,c,entry = 'bar') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === e,
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    }
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader"
+        ]
+      }
+    ]
+  }
+}
+```
+
+<h2 align="center">Maintainers</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/sokra">
+          <img width="150" height="150" src="https://github.com/sokra.png?size=150">
+          </br>
+          Tobias Koppers
+        </a>
+      </td>
+    </tr>
+  <tbody>
+</table>
+
+>>>>>>> Added CSS extract based on entry
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
