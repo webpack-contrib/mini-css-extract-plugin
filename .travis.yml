@@ -23,13 +23,17 @@ jobs:
       env: WEBPACK_VERSION=latest JOB_PART=coverage
       script: npm run travis:$JOB_PART
       after_success: 'bash <(curl -s https://codecov.io/bash)'
+    - <<: *test-latest
+      node_js: 10
+      env: WEBPACK_VERSION=latest JOB_PART=test
+      script: npm run travis:$JOB_PART
     - stage: Webpack canary
       before_script: yarn add git://github.com/webpack/webpack.git#master
       script: npm run travis:$JOB_PART
       node_js: 8
       env: WEBPACK_VERSION=canary JOB_PART=test
 before_install:
-  - 'if [[ `npm -v` != 5* ]]; then npm i -g npm@^5.0.0; fi'
+  - npm i -g npm@latest
   - nvm --version
   - node --version
   - npm --version
