@@ -24,6 +24,8 @@ Compared to the extract-text-webpack-plugin:
 * Easier to use
 * Specific to CSS
 
+ci test
+
 TODO:
 
 * HMR support
