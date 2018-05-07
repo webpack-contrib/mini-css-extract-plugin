@@ -199,8 +199,6 @@ module.exports = {
 }
 ```
 
-<<<<<<< HEAD
-=======
 #### Extracting CSS based on entry
 
 You may also extract the CSS based on the webpack entry name. This is especially useful if you import routes dynamically
@@ -279,7 +277,6 @@ module.exports = {
   <tbody>
 </table>
 
->>>>>>> Added CSS extract based on entry
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
