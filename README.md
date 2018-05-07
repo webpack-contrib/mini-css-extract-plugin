@@ -1,9 +1,3 @@
-[![npm][npm]][npm-url]
-[![deps][deps]][deps-url]
-[![test][test]][test-url]
-[![coverage][cover]][cover-url]
-[![chat][chat]][chat-url]
-
 <div align="center">
   <!-- replace with accurate logo e.g from https://worldvectorlogo.com/ -->
   <img width="200" height="200" src="https://cdn.worldvectorlogo.com/logos/javascript.svg">
@@ -12,6 +6,12 @@
   </a>
   <h1>mini-css-extract-plugin</h1>
 </div>
+
+[![npm][npm]][npm-url]
+[![deps][deps]][deps-url]
+[![tests][tests]][tests-url]
+[![coverage][cover]][cover-url]
+[![chat][chat]][chat-url]
 
 This plugin extract CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS and SourceMaps.
 
@@ -199,38 +199,29 @@ module.exports = {
 }
 ```
 
-<h2 align="center">Maintainers</h2>
-
-<table>
-  <tbody>
-    <tr>
-      <td align="center">
-        <a href="https://github.com/sokra">
-          <img width="150" height="150" src="https://github.com/sokra.png?size=150">
-          </br>
-          Tobias Koppers
-        </a>
-      </td>
-    </tr>
-  <tbody>
-</table>
-
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
 
 
-[npm]: https://img.shields.io/npm/v/mini-css-extract-plugin.svg
+## License
+
+#### [MIT](./LICENSE)
+
+[npm]: https://img.shields.io/npm/v/webpack-contrib/mini-css-extract-plugin.svg
 [npm-url]: https://npmjs.com/package/mini-css-extract-plugin
+
+[node]: https://img.shields.io/node/v/webpack-contrib/mini-css-extract-plugin.svg
+[node-url]: https://nodejs.org
 
 [deps]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin.svg
 [deps-url]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin
 
-[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
-[chat-url]: https://gitter.im/webpack/webpack
-
-[test]: http://img.shields.io/travis/webpack-contrib/mini-css-extract-plugin.svg
-[test-url]: https://travis-ci.org/webpack-contrib/mini-css-extract-plugin
+[tests]: 	https://img.shields.io/circleci/project/github/webpack-contrib/mini-css-extract-plugin.svg
+[tests-url]: https://circleci.com/gh/webpack-contrib/mini-css-extract-plugin
 
 [cover]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin/branch/master/graph/badge.svg
 [cover-url]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin
+
+[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
+[chat-url]: https://gitter.im/webpack/webpack
