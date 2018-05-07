@@ -383,7 +383,7 @@ class MiniCssExtractPlugin {
 
   getCssModulesRecursiveHelper(module) {
     return module.dependencies
-      .filter(dependency => dependency.module)
+      .filter((dependency) => dependency.module)
       .map((dependency) => {
         if (dependency.module instanceof CssModule) {
           return dependency.module;
@@ -394,7 +394,9 @@ class MiniCssExtractPlugin {
       })
       .reduce((flattenedModules, dependency) => {
         if (Array.isArray(dependency)) {
-          dependency.forEach((dep) => { if (dep) flattenedModules.push(dep); });
+          dependency.forEach((dep) => {
+            if (dep) flattenedModules.push(dep);
+          });
         } else if (dependency) {
           flattenedModules.push(dependency);
         }
@@ -403,14 +405,18 @@ class MiniCssExtractPlugin {
   }
 
   getCssModulesOrderMap(chunk) {
-    const [shallowestModule] = Array.from(chunk.modulesIterable).sort((a, b) => a.depth - b.depth);
+    const [shallowestModule] = Array.from(chunk.modulesIterable).sort(
+      (a, b) => a.depth - b.depth
+    );
 
-    return this.getCssModulesRecursiveHelper(shallowestModule)
-      .reduce((indexMap, module, i) => {
+    return this.getCssModulesRecursiveHelper(shallowestModule).reduce(
+      (indexMap, module, i) => {
         // Only keep the first occurrence
         if (module.id in indexMap) return indexMap;
         return Object.assign(indexMap, { [module.id]: i });
-      }, {});
+      },
+      {}
+    );
   }
 
   renderContentAsset(chunk, modules, requestShortener) {
