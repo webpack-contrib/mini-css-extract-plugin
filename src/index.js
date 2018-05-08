@@ -338,7 +338,7 @@ class MiniCssExtractPlugin {
                   ]),
                   '}',
                   'var linkTag = document.createElement("link");',
-                  'var isOldWebKit = Number(UA.replace(/.*AppleWebKit/(d+)..*/, "$1")) < 536;',
+                  'var isOldWebKit = Number(navigator.userAgent.replace(/.*AppleWebKit\\/(\\d+)..*/, "$1")) < 536;',
                   'linkTag.rel = "stylesheet";',
                   'linkTag.type = "text/css";',
                   'if (!isOldWebKit) {',
