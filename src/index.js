@@ -268,7 +268,9 @@ class MiniCssExtractPlugin {
           if (Object.keys(chunkMap).length > 0) {
             const chunkMaps = chunk.getChunkMaps();
             const linkHrefPath = mainTemplate.getAssetPath(
-              JSON.stringify(this.options.chunkFilename),
+              JSON.stringify(
+                this.getFilename(chunk, this.options.chunkFilename)
+              ),
               {
                 hash: `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
                 hashWithLength: (length) =>
