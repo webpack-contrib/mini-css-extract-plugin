@@ -111,6 +111,11 @@ class MiniCssExtractPlugin {
       options
     );
     if (!this.options.chunkFilename) {
+      if (this.isFunction(this.options.filename)) {
+        throw new Error(
+          `You are required to provide a value for chunkFilename when using a Function for this.options.filename, please specify the [name], [id] or [chunkhash] in this function`
+        );
+      }
       const { filename } = this.options;
       const hasName = filename.includes('[name]');
       const hasId = filename.includes('[id]');
@@ -170,7 +175,7 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.options.filename,
+              filenameTemplate: this.getFilename(chunk, this.options.filename),
               pathOptions: {
                 chunk,
                 contentHashType: NS,
@@ -194,7 +199,10 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.options.chunkFilename,
+              filenameTemplate: this.getFilename(
+                chunk,
+                this.options.chunkFilename
+              ),
               pathOptions: {
                 chunk,
                 contentHashType: NS,
@@ -364,6 +372,17 @@ class MiniCssExtractPlugin {
         }
       );
     });
+  }
+
+  getFilename(chunk, filename) {
+    return this.isFunction(filename) ? filename(chunk) : filename;
+  }
+
+  isFunction(functionToCheck) {
+    return (
+      functionToCheck &&
+      {}.toString.call(functionToCheck) === '[object Function]'
+    );
   }
 
   getCssChunkObject(mainChunk) {
