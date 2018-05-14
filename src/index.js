@@ -372,7 +372,9 @@ class MiniCssExtractPlugin {
   }
 
   getFilename(chunk, filename) {
-    return this.isFunction(filename) ? filename(chunk) : filename;
+    return this.isFunction(filename)
+      ? filename(chunk.chunk || chunk)
+      : filename;
   }
 
   isFunction(functionToCheck) {
