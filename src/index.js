@@ -111,11 +111,6 @@ class MiniCssExtractPlugin {
       options
     );
     if (!this.options.chunkFilename) {
-      if (this.isFunction(this.options.filename)) {
-        throw new Error(
-          `You are required to provide a value for chunkFilename when using a Function for this.options.filename, please specify the [name], [id] or [chunkhash] in this function`
-        );
-      }
       const { filename } = this.options;
       const hasName = filename.includes('[name]');
       const hasId = filename.includes('[id]');
@@ -381,10 +376,7 @@ class MiniCssExtractPlugin {
   }
 
   isFunction(functionToCheck) {
-    return (
-      functionToCheck &&
-      {}.toString.call(functionToCheck) === '[object Function]'
-    );
+    return typeof functionToCheck === 'function';
   }
 
   getCssChunkObject(mainChunk) {
