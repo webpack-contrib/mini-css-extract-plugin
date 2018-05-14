@@ -18,8 +18,8 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: (data) => data.chunk.name == 'app' ? 'this.is.app.css' : `[name].css`,
-      chunkFilename: (data) => '[name].css',
+      filename: (chunk) => chunk.name == 'app' ? 'this.is.app.css' : `[name].css`,
+      chunkFilename: (chunk) => '[name].css',
     }),
   ],
 };
