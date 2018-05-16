@@ -319,6 +319,11 @@ class MiniCssExtractPlugin {
               Template.indent([
                 'promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {',
                 Template.indent([
+                  'if(typeof document === "undefined") {',
+                  Template.indent([
+                    'return resolve();'
+                  ]),
+                  '}',
                   `var href = ${linkHrefPath};`,
                   `var fullhref = ${mainTemplate.requireFn}.p + href;`,
                   'var existingLinkTags = document.getElementsByTagName("link");',
