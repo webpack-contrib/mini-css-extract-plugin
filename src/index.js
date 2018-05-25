@@ -170,7 +170,11 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.getFilename(chunk, this.options.filename),
+              filenameTemplate: this.getFilename(
+                chunk,
+                this.options.filename,
+                this.options.processedFilename
+              ),
               pathOptions: {
                 chunk,
                 contentHashType: NS,
@@ -196,7 +200,8 @@ class MiniCssExtractPlugin {
                 ),
               filenameTemplate: this.getFilename(
                 chunk,
-                this.options.chunkFilename
+                this.options.chunkFilename,
+                this.options.processedChunkFilename
               ),
               pathOptions: {
                 chunk,
@@ -264,7 +269,11 @@ class MiniCssExtractPlugin {
             const chunkMaps = chunk.getChunkMaps();
             const linkHrefPath = mainTemplate.getAssetPath(
               JSON.stringify(
-                this.getFilename(chunk, this.options.chunkFilename)
+                this.getFilename(
+                  chunk,
+                  this.options.chunkFilename,
+                  this.options.processedChunkFilename
+                )
               ),
               {
                 hash: `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
@@ -371,10 +380,13 @@ class MiniCssExtractPlugin {
     });
   }
 
-  getFilename(chunk, filename) {
-    console.log('--chunk--');
-    console.log(chunk);
-    return this.isFunction(filename) ? filename(chunk) : filename;
+  getFilename(chunk, filename, processedFilename) {
+    if (!processedFilename) {
+      processedFilename = this.isFunction(filename)
+        ? filename(chunk)
+        : filename;
+    }
+    return processedFilename;
   }
 
   isFunction(functionToCheck) {
