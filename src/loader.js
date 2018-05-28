@@ -10,6 +10,7 @@ import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
 
 const NS = path.dirname(fs.realpathSync(__filename));
+const pluginName = 'mini-css-extract-plugin';
 
 const exec = (loaderContext, code, filename) => {
   const module = new NativeModule(filename, loaderContext);
@@ -42,25 +43,23 @@ export function pitch(request) {
     publicPath,
   };
   const childCompiler = this._compilation.createChildCompiler(
-    `mini-css-extract-plugin ${request}`,
+    `${pluginName} ${request}`,
     outputOptions
   );
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
   new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
-  new SingleEntryPlugin(
-    this.context,
-    `!!${request}`,
-    'mini-css-extract-plugin'
-  ).apply(childCompiler);
+  new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
+    childCompiler
+  );
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
   // We set loaderContext[NS] = false to indicate we already in
   // a child compiler so we don't spawn another child compilers from there.
   childCompiler.hooks.thisCompilation.tap(
-    'mini-css-extract-plugin loader',
+    `${pluginName} loader`,
     (compilation) => {
       compilation.hooks.normalModuleLoader.tap(
-        'mini-css-extract-plugin loader',
+        `${pluginName} loader`,
         (loaderContext, module) => {
           loaderContext[NS] = false; // eslint-disable-line no-param-reassign
           if (module.request === request) {
@@ -79,21 +78,18 @@ export function pitch(request) {
   );
 
   let source;
-  childCompiler.hooks.afterCompile.tap(
-    'mini-css-extract-plugin',
-    (compilation) => {
-      source =
-        compilation.assets[childFilename] &&
-        compilation.assets[childFilename].source();
+  childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+    source =
+      compilation.assets[childFilename] &&
+      compilation.assets[childFilename].source();
 
-      // Remove all chunk assets
-      compilation.chunks.forEach((chunk) => {
-        chunk.files.forEach((file) => {
-          delete compilation.assets[file]; // eslint-disable-line no-param-reassign
-        });
+    // Remove all chunk assets
+    compilation.chunks.forEach((chunk) => {
+      chunk.files.forEach((file) => {
+        delete compilation.assets[file]; // eslint-disable-line no-param-reassign
       });
-    }
-  );
+    });
+  });
 
   const callback = this.async();
   childCompiler.runAsChild((err, entries, compilation) => {
@@ -133,7 +129,7 @@ export function pitch(request) {
     } catch (e) {
       return callback(e);
     }
-    let resultSource = '// extracted by mini-css-extract-plugin';
+    let resultSource = `// extracted by ${pluginName}`;
     if (locals && typeof resultSource !== 'undefined') {
       resultSource += `\nmodule.exports = ${JSON.stringify(locals)};`;
     }
