@@ -15,14 +15,16 @@ const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 
 class CssDependency extends webpack.Dependency {
-  constructor({ identifier, content, media, sourceMap }, context, identifierIndex) {
+  constructor({ identifier, content, media, sourceMap }, module, identifierIndex) {
     super();
     this.identifier = identifier;
     this.identifierIndex = identifierIndex;
     this.content = content;
     this.media = media;
     this.sourceMap = sourceMap;
-    this.context = context;
+    this.context = module.context;
+    this.request = module.request;
+    this.userRequest = module.userRequest;
   }
 
   getResourceIdentifier() {
@@ -42,6 +44,8 @@ class CssModule extends webpack.Module {
     this.content = dependency.content;
     this.media = dependency.media;
     this.sourceMap = dependency.sourceMap;
+    this.request = dependency.request;
+    this.userRequest = dependency.userRequest;
   }
 
   // no source() so webpack doesn't do add stuff to the bundle
@@ -127,7 +131,7 @@ class MiniCssExtractPlugin {
           const identifierCountMap = new Map();
           for (const line of content) {
             const count = identifierCountMap.get(line.identifier) || 0;
-            module.addDependency(new CssDependency(line, m.context, count));
+            module.addDependency(new CssDependency(line, m, count));
             identifierCountMap.set(line.identifier, count + 1);
           }
         };
