@@ -76,10 +76,18 @@ export function pitch(request) {
   );
 
   let source;
+  let assets = {};
   childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
     source =
       compilation.assets[childFilename] &&
       compilation.assets[childFilename].source();
+
+    // Collect assets from modules
+    compilation.modules.forEach((module) => {
+      if (module.buildInfo && module.buildInfo.assets) {
+        assets = { ...assets, ...module.buildInfo.assets };
+      }
+    });
 
     // Remove all chunk assets
     compilation.chunks.forEach((chunk) => {
@@ -123,7 +131,7 @@ export function pitch(request) {
           };
         });
       }
-      this[MODULE_TYPE](text);
+      this[MODULE_TYPE](text, assets);
     } catch (e) {
       return callback(e);
     }
