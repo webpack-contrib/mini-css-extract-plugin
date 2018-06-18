@@ -76,7 +76,7 @@ export function pitch(request) {
   );
 
   let source;
-  let assets = {};
+  const assets = {};
   childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
     source =
       compilation.assets[childFilename] &&
@@ -85,7 +85,7 @@ export function pitch(request) {
     // Collect assets from modules
     compilation.modules.forEach((module) => {
       if (module.buildInfo && module.buildInfo.assets) {
-        assets = { ...assets, ...module.buildInfo.assets };
+        Object.assign(assets, module.buildInfo.assets);
       }
     });
 

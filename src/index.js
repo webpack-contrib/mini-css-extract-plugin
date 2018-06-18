@@ -147,7 +147,7 @@ class MiniCssExtractPlugin {
             );
           }
 
-          module.buildInfo = module.buildInfo || { assets: {} };
+          module.buildInfo = module.buildInfo || {};
           module.buildInfo.assets = {
             ...module.buildInfo.assets,
             ...assets,
