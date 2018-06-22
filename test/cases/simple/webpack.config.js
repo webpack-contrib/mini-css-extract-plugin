@@ -7,10 +7,23 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          Self.loader,
+          {
+            loader: Self.loader,
+            options: {
+              publicPath: '../'
+            }
+          },
           'css-loader',
         ],
-      },
+      }, {
+        test: /\.(svg|png)$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            filename: '[name].[ext]'
+          }
+        }]
+      }
     ],
   },
   plugins: [
