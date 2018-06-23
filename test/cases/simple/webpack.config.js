@@ -9,8 +9,8 @@ module.exports = {
         use: [
           Self.loader,
           'css-loader',
-        ]
-      }
+        ],
+      },
     ],
   },
   plugins: [
