@@ -7,22 +7,9 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          {
-            loader: Self.loader,
-            options: {
-              publicPath: '../'
-            }
-          },
+          Self.loader,
           'css-loader',
-        ],
-      }, {
-        test: /\.(svg|png)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            filename: '[name].[ext]'
-          }
-        }]
+        ]
       }
     ],
   },
