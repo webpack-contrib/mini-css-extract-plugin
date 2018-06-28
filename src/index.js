@@ -175,7 +175,7 @@ class MiniCssExtractPlugin {
                 chunk,
                 contentHashType: NS,
               },
-              identifier: `${pluginName}.${chunk.id}`,
+              identifier: `${pluginName}.${chunk.contentHash[NS]}`,
               hash: chunk.contentHash[NS],
             });
           }
@@ -199,7 +199,7 @@ class MiniCssExtractPlugin {
                 chunk,
                 contentHashType: NS,
               },
-              identifier: `${pluginName}.${chunk.id}`,
+              identifier: `${pluginName}.${chunk.contentHash[NS]}`,
               hash: chunk.contentHash[NS],
             });
           }
