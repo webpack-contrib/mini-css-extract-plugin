@@ -157,6 +157,7 @@ class MiniCssExtractPlugin {
         CssDependency,
         new CssDependencyTemplate()
       );
+      const renderedContentAssetMap = new Map();
       compilation.mainTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
@@ -164,18 +165,27 @@ class MiniCssExtractPlugin {
             (module) => module.type === NS
           );
           if (renderedModules.length > 0) {
+            const identifier = `${pluginName}.${chunk.contentHash[NS]}`;
+            let renderedContentAsset;
+
+            if (renderedContentAssetMap.has(identifier)) {
+              renderedContentAsset = renderedContentAssetMap.get(identifier);
+            } else {
+              renderedContentAsset = this.renderContentAsset(
+                renderedModules,
+                compilation.runtimeTemplate.requestShortener
+              );
+              renderedContentAssetMap.set(identifier, renderedContentAsset);
+            }
+
             result.push({
-              render: () =>
-                this.renderContentAsset(
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
+              render: () => renderedContentAsset,
               filenameTemplate: this.options.filename,
               pathOptions: {
                 chunk,
                 contentHashType: NS,
               },
-              identifier: `${pluginName}.${chunk.contentHash[NS]}`,
+              identifier,
               hash: chunk.contentHash[NS],
             });
           }
@@ -188,18 +198,27 @@ class MiniCssExtractPlugin {
             (module) => module.type === NS
           );
           if (renderedModules.length > 0) {
+            const identifier = `${pluginName}.${chunk.contentHash[NS]}`;
+            let renderedContentAsset;
+
+            if (renderedContentAssetMap.has(identifier)) {
+              renderedContentAsset = renderedContentAssetMap.get(identifier);
+            } else {
+              renderedContentAsset = this.renderContentAsset(
+                renderedModules,
+                compilation.runtimeTemplate.requestShortener
+              );
+              renderedContentAssetMap.set(identifier, renderedContentAsset);
+            }
+
             result.push({
-              render: () =>
-                this.renderContentAsset(
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
+              render: () => renderedContentAsset,
               filenameTemplate: this.options.chunkFilename,
               pathOptions: {
                 chunk,
                 contentHashType: NS,
               },
-              identifier: `${pluginName}.${chunk.contentHash[NS]}`,
+              identifier,
               hash: chunk.contentHash[NS],
             });
           }
