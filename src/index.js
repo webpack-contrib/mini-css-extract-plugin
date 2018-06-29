@@ -167,7 +167,6 @@ class MiniCssExtractPlugin {
             result.push({
               render: () =>
                 this.renderContentAsset(
-                  chunk,
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
@@ -192,7 +191,6 @@ class MiniCssExtractPlugin {
             result.push({
               render: () =>
                 this.renderContentAsset(
-                  chunk,
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
@@ -381,48 +379,8 @@ class MiniCssExtractPlugin {
     return obj;
   }
 
-  getCssModulesRecursiveHelper(module) {
-    return module.dependencies
-      .filter((dependency) => dependency.module)
-      .map((dependency) => {
-        if (dependency.module instanceof CssModule) {
-          return dependency.module;
-        } else if (dependency.module.dependencies) {
-          return this.getCssModulesRecursiveHelper(dependency.module);
-        }
-        return [];
-      })
-      .reduce((flattenedModules, dependency) => {
-        if (Array.isArray(dependency)) {
-          dependency.forEach((dep) => {
-            if (dep) flattenedModules.push(dep);
-          });
-        } else if (dependency) {
-          flattenedModules.push(dependency);
-        }
-        return flattenedModules;
-      }, []);
-  }
-
-  getCssModulesOrderMap(chunk) {
-    const [shallowestModule] = Array.from(chunk.modulesIterable).sort(
-      (a, b) => a.depth - b.depth
-    );
-
-    return this.getCssModulesRecursiveHelper(shallowestModule).reduce(
-      (indexMap, module, i) => {
-        // Only keep the first occurrence
-        if (module.id in indexMap) return indexMap;
-        return Object.assign(indexMap, { [module.id]: i });
-      },
-      {}
-    );
-  }
-
-  renderContentAsset(chunk, modules, requestShortener) {
-    const idToIndexMap = this.getCssModulesOrderMap(chunk);
-    modules.sort((a, b) => idToIndexMap[a.id] - idToIndexMap[b.id]);
-
+  renderContentAsset(modules, requestShortener) {
+    modules.sort((a, b) => a.index2 - b.index2);
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
     for (const m of modules) {
