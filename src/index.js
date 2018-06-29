@@ -167,6 +167,7 @@ class MiniCssExtractPlugin {
             result.push({
               render: () =>
                 this.renderContentAsset(
+                  chunk,
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
@@ -191,6 +192,7 @@ class MiniCssExtractPlugin {
             result.push({
               render: () =>
                 this.renderContentAsset(
+                  chunk,
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
@@ -379,8 +381,24 @@ class MiniCssExtractPlugin {
     return obj;
   }
 
-  renderContentAsset(modules, requestShortener) {
-    modules.sort((a, b) => a.index2 - b.index2);
+  renderContentAsset(chunk, modules, requestShortener) {
+    // get first chunk group and take ordr from this one
+    // When a chunk is shared between multiple chunk groups
+    // with different order this can lead to wrong order
+    // but it's not possible to create a correct order in
+    // this case. Don't share chunks if you don't like it.
+    const [chunkGroup] = chunk.groupsIterable;
+    if (typeof chunkGroup.getModuleIndex2 === 'function') {
+      modules.sort(
+        (a, b) => chunkGroup.getModuleIndex2(a) - chunkGroup.getModuleIndex2(b)
+      );
+    } else {
+      // fallback for older webpack versions
+      // (to avoid a breaking change)
+      // TODO remove this in next mayor version
+      // and increase minimum webpack version to 4.12.0
+      modules.sort((a, b) => a.index2 - b.index2);
+    }
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
     for (const m of modules) {
