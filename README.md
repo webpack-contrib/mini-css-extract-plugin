@@ -13,7 +13,7 @@
 [![coverage][cover]][cover-url]
 [![chat][chat]][chat-url]
 
-This plugin extract CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS and SourceMaps.
+This plugin extracts CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS and SourceMaps.
 
 It builds on top of a new webpack v4 feature (module types) and requires webpack 4 to work.
 
@@ -58,7 +58,14 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it use publicPath in webpackOptions.output
+              publicPath: '../'
+            }
+          },
           "css-loader"
         ]
       }
@@ -94,7 +101,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.s?[ac]ss$/,
+        test: /\.(sa|sc|c)ss$/,
         use: [
           devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',

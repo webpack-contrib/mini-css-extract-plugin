@@ -176,7 +176,7 @@ class MiniCssExtractPlugin {
                 chunk,
                 contentHashType: NS,
               },
-              identifier: `mini-css-extract-plugin.${chunk.id}`,
+              identifier: `${pluginName}.${chunk.id}`,
               hash: chunk.contentHash[NS],
             });
           }
@@ -201,7 +201,7 @@ class MiniCssExtractPlugin {
                 chunk,
                 contentHashType: NS,
               },
-              identifier: `mini-css-extract-plugin.${chunk.id}`,
+              identifier: `${pluginName}.${chunk.id}`,
               hash: chunk.contentHash[NS],
             });
           }
@@ -314,7 +314,7 @@ class MiniCssExtractPlugin {
             return Template.asString([
               source,
               '',
-              '// mini-css-extract-plugin CSS loading',
+              `// ${pluginName} CSS loading`,
               `var cssChunks = ${JSON.stringify(chunkMap)};`,
               'if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);',
               'else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {',
