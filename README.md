@@ -199,6 +199,23 @@ module.exports = {
 }
 ```
 
+
+#### Filename as function instead of string
+You might also like more finely grained control over filename output.
+Particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk.
+
+```javascript
+ const miniCssExtractPlugin = new MiniCssExtractPlugin({
+        filename: (chunk) => {
+            if (chunk.indexOf('admin') > -1 || chunk.indexOf('client') > -1) {
+                 return 'app.css';
+             }
+
+            return chunk + '.css';
+         }
+    });
+```
+
 #### Extracting CSS based on entry
 
 You may also extract the CSS based on the webpack entry name. This is especially useful if you import routes dynamically
