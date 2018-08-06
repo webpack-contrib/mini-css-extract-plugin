@@ -268,6 +268,10 @@ module.exports = {
 }
 ```
 
+#### Long Term Caching
+
+For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
+
 <h2 align="center">Maintainers</h2>
 
 <table>
@@ -283,10 +287,6 @@ module.exports = {
     </tr>
   <tbody>
 </table>
-
-#### Long Term Caching
-
-For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
 
 
 ## License
