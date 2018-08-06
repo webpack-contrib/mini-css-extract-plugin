@@ -80,8 +80,11 @@ This plugin should be used only on `production` builds without `style-loader` in
 
 Here is an example to have both HMR in `development` and your styles extracted in a file for `production` builds.
 
-(Loaders options left out for clarity, adapt accordingly to your needs.)
+Please note that there is an open issue with Webpack's `mode` configuration ([#7074](https://github.com/webpack/webpack/issues/7074)), you need to set NODE_ENV in the command line instead of relying on the `mode` argument of `webpack-cli`.
 
+e.g. `NODE_ENV=production webpack` and not `webpack --mode=production`
+
+(Loaders options left out for clarity, adapt accordingly to your needs.)
 
 **webpack.config.js**
 
@@ -90,6 +93,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const devMode = process.env.NODE_ENV !== 'production'
 
 module.exports = {
+  mode: process.env.NODE_ENV,
   plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
