@@ -262,68 +262,64 @@ class MiniCssExtractPlugin {
           const chunkMap = this.getCssChunkObject(chunk);
           if (Object.keys(chunkMap).length > 0) {
             const chunkMaps = chunk.getChunkMaps();
-            let linkHrefPath;
+            let chunkFilename;
             try {
-              linkHrefPath = mainTemplate.getAssetPath(
-                JSON.stringify(
-                  this.getFilename(chunk, this.options.chunkFilename)
-                ),
-                {
-                  hash: `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
-                  hashWithLength: (length) =>
-                    `" + ${mainTemplate.renderCurrentHashCode(
-                      hash,
-                      length
-                    )} + "`,
-                  chunk: {
-                    id: '" + chunkId + "',
-                    hash: `" + ${JSON.stringify(chunkMaps.hash)}[chunkId] + "`,
-                    hashWithLength(length) {
-                      const shortChunkHashMap = Object.create(null);
-                      for (const chunkId of Object.keys(chunkMaps.hash)) {
-                        if (typeof chunkMaps.hash[chunkId] === 'string') {
-                          shortChunkHashMap[chunkId] = chunkMaps.hash[
-                            chunkId
-                          ].substring(0, length);
-                        }
-                      }
-                      return `" + ${JSON.stringify(
-                        shortChunkHashMap
-                      )}[chunkId] + "`;
-                    },
-                    contentHash: {
-                      [NS]: `" + ${JSON.stringify(
-                        chunkMaps.contentHash[NS]
-                      )}[chunkId] + "`,
-                    },
-                    contentHashWithLength: {
-                      [NS]: (length) => {
-                        const shortContentHashMap = {};
-                        const contentHash = chunkMaps.contentHash[NS];
-                        for (const chunkId of Object.keys(contentHash)) {
-                          if (typeof contentHash[chunkId] === 'string') {
-                            shortContentHashMap[chunkId] = contentHash[
-                              chunkId
-                            ].substring(0, length);
-                          }
-                        }
-                        return `" + ${JSON.stringify(
-                          shortContentHashMap
-                        )}[chunkId] + "`;
-                      },
-                    },
-                    name: `" + (${JSON.stringify(
-                      chunkMaps.name
-                    )}[chunkId]||chunkId) + "`,
-                  },
-                  contentHashType: NS,
-                }
+              chunkFilename = JSON.stringify(
+                this.getFilename(chunk, this.options.chunkFilename)
               );
             } catch (err) {
               throw new Error(
-                `Couldn't stringify JSON for filename provided as function: ${err}`
+                `Mini CSS Extract Plugin\n\nCouldn't stringify JSON for filename {Function}: ${err}\n`
               );
             }
+
+            const linkHrefPath = mainTemplate.getAssetPath(chunkFilename, {
+              hash: `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
+              hashWithLength: (length) => `"
+               + ${mainTemplate.renderCurrentHashCode(hash, length)} + "`,
+              chunk: {
+                id: '" + chunkId + "',
+                hash: `" + ${JSON.stringify(chunkMaps.hash)}[chunkId] + "`,
+                hashWithLength(length) {
+                  const shortChunkHashMap = Object.create(null);
+                  for (const chunkId of Object.keys(chunkMaps.hash)) {
+                    if (typeof chunkMaps.hash[chunkId] === 'string') {
+                      shortChunkHashMap[chunkId] = chunkMaps.hash[
+                        chunkId
+                      ].substring(0, length);
+                    }
+                  }
+                  return `" + ${JSON.stringify(
+                    shortChunkHashMap
+                  )}[chunkId] + "`;
+                },
+                contentHash: {
+                  [NS]: `" + ${JSON.stringify(
+                    chunkMaps.contentHash[NS]
+                  )}[chunkId] + "`,
+                },
+                contentHashWithLength: {
+                  [NS]: (length) => {
+                    const shortContentHashMap = {};
+                    const contentHash = chunkMaps.contentHash[NS];
+                    for (const chunkId of Object.keys(contentHash)) {
+                      if (typeof contentHash[chunkId] === 'string') {
+                        shortContentHashMap[chunkId] = contentHash[
+                          chunkId
+                        ].substring(0, length);
+                      }
+                    }
+                    return `" + ${JSON.stringify(
+                      shortContentHashMap
+                    )}[chunkId] + "`;
+                  },
+                },
+                name: `" + (${JSON.stringify(
+                  chunkMaps.name
+                )}[chunkId]||chunkId) + "`,
+              },
+              contentHashType: NS,
+            });
 
             return Template.asString([
               source,

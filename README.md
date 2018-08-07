@@ -206,7 +206,7 @@ Particularly useful when dealing with multiple entry points and wanting to get m
 
 ```javascript
  const miniCssExtractPlugin = new MiniCssExtractPlugin({
-        filename: (chunk) => {
+        filename(chunk) {
             if (chunk.indexOf('admin') > -1 || chunk.indexOf('client') > -1) {
                  return 'app.css';
              }
@@ -312,7 +312,7 @@ For long term caching use `filename: "[contenthash].css"`. Optionally add `[name
 [deps]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin.svg
 [deps-url]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin
 
-[tests]: 	https://img.shields.io/circleci/project/github/webpack-contrib/mini-css-extract-plugin.svg
+[tests]:  https://img.shields.io/circleci/project/github/webpack-contrib/mini-css-extract-plugin.svg
 [tests-url]: https://circleci.com/gh/webpack-contrib/mini-css-extract-plugin
 
 [cover]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin/branch/master/graph/badge.svg
