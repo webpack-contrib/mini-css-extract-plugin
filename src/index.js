@@ -390,14 +390,14 @@ class MiniCssExtractPlugin {
     const [chunkGroup] = chunk.groupsIterable;
     if (typeof chunkGroup.getModuleIndex2 === 'function') {
       modules.sort(
-        (a, b) => chunkGroup.getModuleIndex2(a) - chunkGroup.getModuleIndex2(b)
+        (a, b) => chunkGroup.getModuleIndex2(b) - chunkGroup.getModuleIndex2(a)
       );
     } else {
       // fallback for older webpack versions
       // (to avoid a breaking change)
       // TODO remove this in next mayor version
       // and increase minimum webpack version to 4.12.0
-      modules.sort((a, b) => a.index2 - b.index2);
+      modules.sort((a, b) => b.index2 - a.index2);
     }
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
