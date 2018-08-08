@@ -278,32 +278,64 @@ When writing CSS with the help of a framework (such as [Bootstrap](https://getbo
 
 To improve this you can use the [media-query-plugin](https://github.com/SassNinja/media-query-plugin) which plays together well with the mini-css-extract-plugin. It will extract the defined media queries and emit them as separate files (or inject into existing chunks if working with dynamic imports).
 
-Afterwards a mobile user only needs to load this
+Afterwards a mobile user needs to load initially
 
-```scss
-.foo { color: red }
-.bar { font-size: 1rem }
+**`example.css`**
+```css
+.foo {
+  color: red;
+}
+.bar {
+  font-size: 1rem;
+}
 ```
 
-instead of this
+and only if necessary 
 
+**`example-desktop.css`**
 ```css
-.foo { color: red }
 @media (min-width: 75em) {
-    .foo { color: blue }
+    .foo {
+      color: blue;
+    }
 }
-.bar { font-size: 1rem }
+```
+
+instead of always the full
+
+**`example.css`**
+```css
+.foo {
+  color: red;
+}
+@media (min-width: 75em) {
+    .foo {
+      color: blue;
+    }
+}
+.bar {
+  font-size: 1rem;
+}
 ```
 
 #### Usage
 
 Using the media-query-plugin is quite easy. Add the included loader to your rules and the plugin to your plugins. It will take over the filename option of the mini-css-extract-plugin and recognize its generated CSS chunks.
 
+**`example.js`**
+```javascript
+import './example.scss';
+```
+
+**`webpack.config.js`**
 ```javascript
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MediaQueryPlugin = require('media-query-plugin');
 
 module.exports = {
+    entry: {
+      example: './example.js'
+    },
     module: {
       rules: [
         {
