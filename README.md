@@ -272,6 +272,68 @@ module.exports = {
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
 
+### Media Query
+
+When writing CSS with the help of a framework (such as [Bootstrap](https://getbootstrap.com/) or [Foundation](https://foundation.zurb.com/sites.html)) and with a modular design pattern your emited CSS files will probably contain many media queries. This is quite bad for mobile users who have to load all desktop specific CSS which they will never need.
+
+To improve this you can use the [media-query-plugin](https://github.com/SassNinja/media-query-plugin) which plays together well with the mini-css-extract-plugin. It will extract the defined media queries and emit them as separate files (or inject into existing chunks if working with dynamic imports).
+
+Afterwards a mobile user only needs to load this
+
+```scss
+.foo { color: red }
+.bar { font-size: 1rem }
+```
+
+instead of this
+
+```css
+.foo { color: red }
+@media (min-width: 75em) {
+    .foo { color: blue }
+}
+.bar { font-size: 1rem }
+```
+
+#### Usage
+
+Using the media-query-plugin is quite easy. Add the included loader to your rules and the plugin to your plugins. It will take over the filename option of the mini-css-extract-plugin and recognize its generated CSS chunks.
+
+```javascript
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MediaQueryPlugin = require('media-query-plugin');
+
+module.exports = {
+    module: {
+      rules: [
+        {
+          test: /\.scss$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            MediaQueryPlugin.loader,
+            'postcss-loader',
+            'sass-loader'
+          ]
+        }
+      ]
+    },
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: '[name].css'
+      }),
+      new MediaQueryPlugin({
+        include: true,
+        queries: {
+          '(min-width: 75em)': 'desktop'
+        }
+      })
+    ]
+};
+```
+
+For more information please check the media-query-plugin [docs](https://github.com/SassNinja/media-query-plugin) and [examples](https://github.com/SassNinja/media-query-plugin/tree/master/examples).
+
 <h2 align="center">Maintainers</h2>
 
 <table>
