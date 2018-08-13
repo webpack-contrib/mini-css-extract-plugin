@@ -387,10 +387,12 @@ class MiniCssExtractPlugin {
     // with different order this can lead to wrong order
     // but it's not possible to create a correct order in
     // this case. Don't share chunks if you don't like it.
+
+
     const [chunkGroup] = chunk.groupsIterable;
     if (typeof chunkGroup.getModuleIndex2 === 'function') {
       modules.sort(
-        (a, b) => chunkGroup.getModuleIndex2(a) - chunkGroup.getModuleIndex2(b)
+        (a, b) => (chunkGroup.getModuleIndex2(a) || 0) < (chunkGroup.getModuleIndex2(b) || 0) ? 1 : -1
       );
     } else {
       // fallback for older webpack versions
