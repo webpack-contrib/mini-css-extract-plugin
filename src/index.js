@@ -387,8 +387,6 @@ class MiniCssExtractPlugin {
     // with different order this can lead to wrong order
     // but it's not possible to create a correct order in
     // this case. Don't share chunks if you don't like it.
-
-
     const [chunkGroup] = chunk.groupsIterable;
     if (typeof chunkGroup.getModuleIndex2 === 'function') {
       modules.sort(
