@@ -397,7 +397,7 @@ class MiniCssExtractPlugin {
       // (to avoid a breaking change)
       // TODO remove this in next mayor version
       // and increase minimum webpack version to 4.12.0
-      modules.sort((a, b) => b.index2 - a.index2);
+      modules.sort((a, b) => a.index2 - b.index2);
     }
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
