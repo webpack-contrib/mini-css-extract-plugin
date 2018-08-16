@@ -276,7 +276,6 @@ For long term caching use `filename: "[contenthash].css"`. Optionally add `[name
 
 If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop specific CSS anymore) you should use the [media-query-plugin](https://github.com/SassNinja/media-query-plugin). It will take over the filename option of the mini-css-extract-plugin and recognize its generated CSS chunks.
 
----
 
 <h2 align="center">Maintainers</h2>
 
