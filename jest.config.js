@@ -1,9 +1,5 @@
 module.exports = {
-  transformIgnorePatterns: [
-    '/node_modules/',
-    '<rootDir>/dist/',
-  ],
-  watchPathIgnorePatterns: [
-    '<rootDir>/test/js',
-  ],
+  transformIgnorePatterns: ['/node_modules/', '<rootDir>/dist/'],
+  watchPathIgnorePatterns: ['<rootDir>/test/js'],
+  testEnvironment: 'node',
 };
