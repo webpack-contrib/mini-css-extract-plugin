@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.4.3"></a>
+## [0.4.3](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v0.4.0...v0.4.3) (2018-08-21)
+
+
+### Bug Fixes
+
+* conflict multiple asset error ([#194](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/194)) ([1023d22](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/1023d22))
+* CSS ordering for config with multiple entry points ([#130](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/130)) ([79373eb](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/79373eb))
+* update webpack version ([#197](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/197)) ([e00bcda](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/e00bcda))
+* **order:** use correct order when multiple chunk groups are merged ([#246](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/246)) ([c3b363d](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/c3b363d))
+
+
+
 <a name="0.4.2"></a>
 ## [0.4.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v0.4.0...v0.4.2) (2018-08-21)
 
