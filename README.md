@@ -293,10 +293,10 @@ For long term caching use `filename: "[contenthash].css"`. Optionally add `[name
 
 #### [MIT](./LICENSE)
 
-[npm]: https://img.shields.io/npm/v/webpack-contrib/mini-css-extract-plugin.svg
+[npm]: https://img.shields.io/npm/v/mini-css-extract-plugin.svg
 [npm-url]: https://npmjs.com/package/mini-css-extract-plugin
 
-[node]: https://img.shields.io/node/v/webpack-contrib/mini-css-extract-plugin.svg
+[node]: https://img.shields.io/node/v/mini-css-extract-plugin.svg
 [node-url]: https://nodejs.org
 
 [deps]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin.svg
