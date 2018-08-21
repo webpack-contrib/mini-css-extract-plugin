@@ -172,7 +172,11 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.options.filename,
+              filenameTemplate: this.getFilename(
+                chunk,
+                this.options.filename,
+                this.options.processedFilename
+              ),
               pathOptions: {
                 chunk,
                 contentHashType: NS,
@@ -198,7 +202,11 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.options.chunkFilename,
+              filenameTemplate: this.getFilename(
+                chunk,
+                this.options.chunkFilename,
+                this.options.processedChunkFilename
+              ),
               pathOptions: {
                 chunk,
                 contentHashType: NS,
@@ -264,7 +272,13 @@ class MiniCssExtractPlugin {
           if (Object.keys(chunkMap).length > 0) {
             const chunkMaps = chunk.getChunkMaps();
             const linkHrefPath = mainTemplate.getAssetPath(
-              JSON.stringify(this.options.chunkFilename),
+              JSON.stringify(
+                this.getFilename(
+                  chunk,
+                  this.options.chunkFilename,
+                  this.options.processedChunkFilename
+                )
+              ),
               {
                 hash: `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
                 hashWithLength: (length) =>
@@ -368,6 +382,19 @@ class MiniCssExtractPlugin {
         }
       );
     });
+  }
+
+  getFilename(chunk, filename, processedFilename) {
+    if (!processedFilename) {
+      processedFilename = this.isFunction(filename)
+        ? filename(chunk)
+        : filename;
+    }
+    return processedFilename;
+  }
+
+  isFunction(functionToCheck) {
+    return typeof functionToCheck === 'function';
   }
 
   getCssChunkObject(mainChunk) {
