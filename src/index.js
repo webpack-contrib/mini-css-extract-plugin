@@ -5,7 +5,10 @@ import webpack from 'webpack';
 import sources from 'webpack-sources';
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
-const { Template, util: { createHash } } = webpack;
+const {
+  Template,
+  util: { createHash },
+} = webpack;
 
 const NS = path.dirname(fs.realpathSync(__filename));
 
@@ -97,7 +100,12 @@ class CssModule extends webpack.Module {
 }
 
 class CssModuleFactory {
-  create({ dependencies: [dependency] }, callback) {
+  create(
+    {
+      dependencies: [dependency],
+    },
+    callback
+  ) {
     callback(null, new CssModule(dependency));
   }
 }
