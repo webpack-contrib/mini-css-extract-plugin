@@ -63,8 +63,8 @@ export function pitch(request) {
         (loaderContext, module) => {
           loaderContext[NS] = false; // eslint-disable-line no-param-reassign
           if (module.request === request) {
+            // eslint-disable-next-line no-param-reassign
             module.loaders = loaders.map((loader) => {
-              // eslint-disable-line no-param-reassign
               return {
                 loader: loader.path,
                 options: loader.options,
