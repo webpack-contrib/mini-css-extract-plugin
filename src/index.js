@@ -116,7 +116,6 @@ class MiniCssExtractPlugin {
       {
         filename: '[name].css',
         checkCssChunk: true,
-        forceHookRuntime: false,
       },
       options
     );
@@ -253,7 +252,7 @@ class MiniCssExtractPlugin {
       const { mainTemplate } = compilation;
       mainTemplate.hooks.localVars.tap(pluginName, (source, chunk, hash) => {
         const chunkMap = this.getCssChunkObject(chunk);
-        if (this.options.forceHookRuntime || Object.keys(chunkMap).length > 0) {
+        if (Object.keys(chunkMap).length > 0) {
           const chunkMaps = chunk.getChunkMaps();
           const linkHrefPath = mainTemplate.getAssetPath(
             JSON.stringify(this.options.chunkFilename),
@@ -328,7 +327,7 @@ class MiniCssExtractPlugin {
       });
       mainTemplate.hooks.requireEnsure.tap(pluginName, (source, chunk) => {
         const chunkMap = this.getCssChunkObject(chunk);
-        if (this.options.forceHookRuntime || Object.keys(chunkMap).length > 0) {
+        if (Object.keys(chunkMap).length > 0) {
           const checkCssChunk = this.options.checkCssChunk;
           return Template.asString([
             source,
