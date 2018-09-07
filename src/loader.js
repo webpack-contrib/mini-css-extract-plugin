@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import NativeModule from 'module';
 
 import loaderUtils from 'loader-utils';
@@ -9,7 +7,7 @@ import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
 import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
 
-const NS = path.dirname(fs.realpathSync(__filename));
+const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
 
 const exec = (loaderContext, code, filename) => {
@@ -53,7 +51,7 @@ export function pitch(request) {
     childCompiler
   );
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
-  // We set loaderContext[NS] = false to indicate we already in
+  // We set loaderContext[MODULE_TYPE] = false to indicate we already in
   // a child compiler so we don't spawn another child compilers from there.
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
@@ -61,7 +59,7 @@ export function pitch(request) {
       compilation.hooks.normalModuleLoader.tap(
         `${pluginName} loader`,
         (loaderContext, module) => {
-          loaderContext[NS] = false; // eslint-disable-line no-param-reassign
+          loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
           if (module.request === request) {
             // eslint-disable-next-line no-param-reassign
             module.loaders = loaders.map((loader) => {
@@ -125,7 +123,7 @@ export function pitch(request) {
           };
         });
       }
-      this[NS](text);
+      this[MODULE_TYPE](text);
     } catch (e) {
       return callback(e);
     }
