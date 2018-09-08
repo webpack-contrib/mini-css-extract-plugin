@@ -1,11 +1,7 @@
-const Self = require('../../');
+const Self = require('../../../');
 
 module.exports = {
-  mode: 'development',
-  output: {
-    chunkFilename: "[contenthash].js",
-    publicPath: '/dist/',
-  },
+  entry: './index.js',
   module: {
     rules: [
       {
@@ -20,11 +16,7 @@ module.exports = {
   plugins: [
     new Self({
       filename: '[name].css',
-      chunkFilename: "[contenthash].css",
       minSize: 30,
     }),
   ],
-  devServer: {
-    contentBase: __dirname,
-  },
 };

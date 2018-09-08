@@ -112,6 +112,7 @@ class MiniCssExtractPlugin {
     this.options = Object.assign(
       {
         filename: '[name].css',
+        minSize: 0,
       },
       options
     );
@@ -146,6 +147,11 @@ class MiniCssExtractPlugin {
               )}`
             );
           }
+
+          if (m.content && m.content.length > this.options.minSize) {
+            return;
+          }
+
           const identifierCountMap = new Map();
           for (const line of content) {
             const count = identifierCountMap.get(line.identifier) || 0;
