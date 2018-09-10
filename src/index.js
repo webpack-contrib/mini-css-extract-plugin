@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 import webpack from 'webpack';
 import sources from 'webpack-sources';
 
@@ -10,7 +7,7 @@ const {
   util: { createHash },
 } = webpack;
 
-const NS = path.dirname(fs.realpathSync(__filename));
+const MODULE_TYPE = 'css/mini-extract';
 
 const pluginName = 'mini-css-extract-plugin';
 
@@ -44,7 +41,7 @@ class CssDependencyTemplate {
 
 class CssModule extends webpack.Module {
   constructor(dependency) {
-    super(NS, dependency.context);
+    super(MODULE_TYPE, dependency.context);
     this._identifier = dependency.identifier;
     this._identifierIndex = dependency.identifierIndex;
     this.content = dependency.content;
@@ -142,7 +139,7 @@ class MiniCssExtractPlugin {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
-        loaderContext[NS] = (content) => {
+        loaderContext[MODULE_TYPE] = (content) => {
           if (!Array.isArray(content) && content != null) {
             throw new Error(
               `Exported value was not extracted as an array: ${JSON.stringify(
@@ -170,7 +167,7 @@ class MiniCssExtractPlugin {
         pluginName,
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === NS
+            (module) => module.type === MODULE_TYPE
           );
           if (renderedModules.length > 0) {
             result.push({
@@ -184,10 +181,10 @@ class MiniCssExtractPlugin {
               filenameTemplate: this.options.filename,
               pathOptions: {
                 chunk,
-                contentHashType: NS,
+                contentHashType: MODULE_TYPE,
               },
               identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[NS],
+              hash: chunk.contentHash[MODULE_TYPE],
             });
           }
         }
@@ -196,7 +193,7 @@ class MiniCssExtractPlugin {
         pluginName,
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === NS
+            (module) => module.type === MODULE_TYPE
           );
           if (renderedModules.length > 0) {
             result.push({
@@ -210,10 +207,10 @@ class MiniCssExtractPlugin {
               filenameTemplate: this.options.chunkFilename,
               pathOptions: {
                 chunk,
-                contentHashType: NS,
+                contentHashType: MODULE_TYPE,
               },
               identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[NS],
+              hash: chunk.contentHash[MODULE_TYPE],
             });
           }
         }
@@ -227,7 +224,9 @@ class MiniCssExtractPlugin {
           }
           if (REGEXP_CONTENTHASH.test(chunkFilename)) {
             hash.update(
-              JSON.stringify(chunk.getChunkMaps(true).contentHash[NS] || {})
+              JSON.stringify(
+                chunk.getChunkMaps(true).contentHash[MODULE_TYPE] || {}
+              )
             );
           }
           if (REGEXP_NAME.test(chunkFilename)) {
@@ -240,12 +239,12 @@ class MiniCssExtractPlugin {
         const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
         const hash = createHash(hashFunction);
         for (const m of chunk.modulesIterable) {
-          if (m.type === NS) {
+          if (m.type === MODULE_TYPE) {
             m.updateHash(hash);
           }
         }
         const { contentHash } = chunk;
-        contentHash[NS] = hash
+        contentHash[MODULE_TYPE] = hash
           .digest(hashDigest)
           .substring(0, hashDigestLength);
       });
@@ -277,14 +276,14 @@ class MiniCssExtractPlugin {
                   )}[chunkId] + "`;
                 },
                 contentHash: {
-                  [NS]: `" + ${JSON.stringify(
-                    chunkMaps.contentHash[NS]
+                  [MODULE_TYPE]: `" + ${JSON.stringify(
+                    chunkMaps.contentHash[MODULE_TYPE]
                   )}[chunkId] + "`,
                 },
                 contentHashWithLength: {
-                  [NS]: (length) => {
+                  [MODULE_TYPE]: (length) => {
                     const shortContentHashMap = {};
-                    const contentHash = chunkMaps.contentHash[NS];
+                    const contentHash = chunkMaps.contentHash[MODULE_TYPE];
                     for (const chunkId of Object.keys(contentHash)) {
                       if (typeof contentHash[chunkId] === 'string') {
                         shortContentHashMap[chunkId] = contentHash[
@@ -301,7 +300,7 @@ class MiniCssExtractPlugin {
                   chunkMaps.name
                 )}[chunkId]||chunkId) + "`,
               },
-              contentHashType: NS,
+              contentHashType: MODULE_TYPE,
             }
           );
           return Template.asString([
@@ -392,7 +391,7 @@ class MiniCssExtractPlugin {
     const obj = {};
     for (const chunk of mainChunk.getAllAsyncChunks()) {
       for (const module of chunk.modulesIterable) {
-        if (module.type === NS) {
+        if (module.type === MODULE_TYPE) {
           obj[chunk.id] = 1;
           break;
         }
