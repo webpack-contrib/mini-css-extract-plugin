@@ -274,9 +274,10 @@ For long term caching use `filename: "[contenthash].css"`. Optionally add `[name
 
 ### Media Query Plugin
 
-If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop specific CSS anymore) you should use the [media-query-plugin](https://github.com/SassNinja/media-query-plugin). It will take over the filename option of the mini-css-extract-plugin and recognize its generated CSS chunks.
+If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop or tablet specific CSS anymore) you should use one of the the following plugins:
 
-Or you can use [media-query-splitting-plugin](https://github.com/mike-diamond/media-query-splitting-plugin), it will handle mobile, tablet and desktop styles splitting for each CSS chunk in your bundle without any configuration, just add it to the webpack plugins.
+- [Media Query Plugin](https://github.com/SassNinja/media-query-plugin)
+- [Media Query Splitting Plugin](https://github.com/mike-diamond/media-query-splitting-plugin)
 
 
 <h2 align="center">Maintainers</h2>
