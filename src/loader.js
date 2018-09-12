@@ -59,6 +59,7 @@ export function pitch(request) {
       compilation.hooks.normalModuleLoader.tap(
         `${pluginName} loader`,
         (loaderContext, module) => {
+          loaderContext.emitFile = this.emitFile;
           loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
           if (module.request === request) {
             // eslint-disable-next-line no-param-reassign
@@ -76,18 +77,10 @@ export function pitch(request) {
   );
 
   let source;
-  const assets = {};
   childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
     source =
       compilation.assets[childFilename] &&
       compilation.assets[childFilename].source();
-
-    // Collect assets from modules
-    compilation.modules.forEach((module) => {
-      if (module.buildInfo && module.buildInfo.assets) {
-        Object.assign(assets, module.buildInfo.assets);
-      }
-    });
 
     // Remove all chunk assets
     compilation.chunks.forEach((chunk) => {
@@ -131,7 +124,7 @@ export function pitch(request) {
           };
         });
       }
-      this[MODULE_TYPE](text, assets);
+      this[MODULE_TYPE](text);
     } catch (e) {
       return callback(e);
     }

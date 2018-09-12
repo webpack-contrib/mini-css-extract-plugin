@@ -138,7 +138,7 @@ class MiniCssExtractPlugin {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
-        loaderContext[MODULE_TYPE] = (content, assets) => {
+        loaderContext[MODULE_TYPE] = (content) => {
           if (!Array.isArray(content) && content != null) {
             throw new Error(
               `Exported value was not extracted as an array: ${JSON.stringify(
@@ -146,12 +146,6 @@ class MiniCssExtractPlugin {
               )}`
             );
           }
-
-          module.buildInfo = module.buildInfo || {};
-          module.buildInfo.assets = {
-            ...module.buildInfo.assets,
-            ...assets,
-          };
 
           const identifierCountMap = new Map();
           for (const line of content) {
