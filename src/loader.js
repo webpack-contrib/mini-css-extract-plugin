@@ -59,6 +59,7 @@ export function pitch(request) {
       compilation.hooks.normalModuleLoader.tap(
         `${pluginName} loader`,
         (loaderContext, module) => {
+          loaderContext.emitFile = this.emitFile;
           loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
           if (module.request === request) {
             // eslint-disable-next-line no-param-reassign

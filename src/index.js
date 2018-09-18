@@ -146,6 +146,7 @@ class MiniCssExtractPlugin {
               )}`
             );
           }
+
           const identifierCountMap = new Map();
           for (const line of content) {
             const count = identifierCountMap.get(line.identifier) || 0;
