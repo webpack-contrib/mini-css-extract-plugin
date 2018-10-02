@@ -50,7 +50,8 @@ module.exports = {
       // Options similar to the same options in webpackOptions.output
       // both options are optional
       filename: "[name].css",
-      chunkFilename: "[id].css"
+      chunkFilename: "[id].css",
+      orderWarning: true // Disable to remove warnings about conflicting order
     })
   ],
   module: {
