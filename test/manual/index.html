@@ -42,6 +42,11 @@
     <p>Preloaded inlined CSS: Must be green.</p>
     <p><button class="preloaded-button2">Pressing this button</button> displays an alert and should turn red.</p>
   </div>
+  <div class="test lazy-failure-css">
+    <p>Lazy CSS: Turn off the network and <button class="lazy-failure-button">press this button</button>.</p>
+    <p>An error should have appeared.</p>
+    <p>Now if you turn the network back on and click it again, it should turn aqua.</p>
+  </div>
   <div class="errors"></div>
   <script async defer src="/dist/main.js"></script>
 </body>
