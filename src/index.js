@@ -42,6 +42,7 @@ class CssDependencyTemplate {
 class CssModule extends webpack.Module {
   constructor(dependency) {
     super(MODULE_TYPE, dependency.context);
+    this.id = '';
     this._identifier = dependency.identifier;
     this._identifierIndex = dependency.identifierIndex;
     this.content = dependency.content;
@@ -92,7 +93,7 @@ class CssModule extends webpack.Module {
     super.updateHash(hash);
     hash.update(this.content);
     hash.update(this.media || '');
-    hash.update(JSON.stringify(this.sourceMap || ''));
+    hash.update(this.sourceMap ? JSON.stringify(this.sourceMap) : '');
   }
 }
 

@@ -1,0 +1,21 @@
+const Self = require('../../../');
+
+module.exports = {
+  entry: './index.css',
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          Self.loader,
+          'css-loader',
+        ],
+      },
+    ],
+  },
+  plugins: [
+    new Self({
+      filename: '[name].css',
+    }),
+  ],
+};
