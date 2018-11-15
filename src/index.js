@@ -461,6 +461,9 @@ class MiniCssExtractPlugin {
         }
 
         if (!success) {
+          if (!bestMatch) {
+            break;
+          }
           // no module found => there is a conflict
           // use list with fewest failed deps
           // and emit a warning
