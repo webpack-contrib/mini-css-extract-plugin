@@ -359,6 +359,8 @@ class MiniCssExtractPlugin {
                     'var request = event && event.target && event.target.src || fullhref;',
                     'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
                     'err.request = request;',
+                    'delete installedCssChunks[chunkId]',
+                    'linkTag.parentNode.removeChild(linkTag)',
                     'reject(err);',
                   ]),
                   '};',
