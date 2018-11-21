@@ -17,6 +17,7 @@ describe('TestMemoryFS', () => {
       ...webpackConfig,
       mode: 'development',
       context: directoryForCase,
+      cache: false,
     });
     compiler.outputFileSystem = new MemoryFS();
     compiler.run((err1, stats1) => {
