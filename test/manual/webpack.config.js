@@ -5,6 +5,7 @@ module.exports = {
   output: {
     chunkFilename: "[contenthash].js",
     publicPath: '/dist/',
+    crossOriginLoading: 'anonymous',
   },
   module: {
     rules: [
@@ -25,5 +26,8 @@ module.exports = {
   ],
   devServer: {
     contentBase: __dirname,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    }
   },
 };

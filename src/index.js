@@ -272,6 +272,7 @@ class MiniCssExtractPlugin {
           const chunkMap = this.getCssChunkObject(chunk);
           if (Object.keys(chunkMap).length > 0) {
             const chunkMaps = chunk.getChunkMaps();
+            const { crossOriginLoading } = mainTemplate.outputOptions;
             const linkHrefPath = mainTemplate.getAssetPath(
               JSON.stringify(this.options.chunkFilename),
               {
@@ -365,6 +366,17 @@ class MiniCssExtractPlugin {
                   ]),
                   '};',
                   'linkTag.href = fullhref;',
+                  crossOriginLoading
+                    ? Template.asString([
+                        `if (linkTag.href.indexOf(window.location.origin + '/') !== 0) {`,
+                        Template.indent(
+                          `linkTag.crossOrigin = ${JSON.stringify(
+                            crossOriginLoading
+                          )};`
+                        ),
+                        '}',
+                      ])
+                    : '',
                   'var head = document.getElementsByTagName("head")[0];',
                   'head.appendChild(linkTag);',
                 ]),
