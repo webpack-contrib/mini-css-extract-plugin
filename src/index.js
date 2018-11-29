@@ -14,6 +14,8 @@ const pluginName = 'mini-css-extract-plugin';
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
+const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
+const DEFAULT_FILENAME = '[name].css';
 
 class CssDependency extends webpack.Dependency {
   constructor(
@@ -112,21 +114,18 @@ class MiniCssExtractPlugin {
   constructor(options) {
     this.options = Object.assign(
       {
-        filename: '[name].css',
+        filename: DEFAULT_FILENAME,
       },
       options
     );
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
-      const hasName = filename.includes('[name]');
-      const hasId = filename.includes('[id]');
-      const hasChunkHash = filename.includes('[chunkhash]');
       // Anything changing depending on chunk is fine
-      if (hasChunkHash || hasName || hasId) {
+      if (typeof filename === 'string' && REGEXP_PLACEHOLDERS.test(filename)) {
         this.options.chunkFilename = filename;
       } else {
         // Elsewise prefix '[id].' in front of the basename to make it changing
-        this.options.chunkFilename = filename.replace(
+        this.options.chunkFilename = DEFAULT_FILENAME.replace(
           /(^|\/)([^/]*(?:\?|$))/,
           '$1[id].$2'
         );
@@ -170,6 +169,24 @@ class MiniCssExtractPlugin {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
             (module) => module.type === MODULE_TYPE
           );
+          const { filename } = this.options;
+          let filenameTemplate = filename;
+          if (typeof filename === 'function') {
+            const {
+              hash: chunkhash,
+              contentHash: contenthash,
+              name,
+              id,
+            } = chunk;
+
+            filenameTemplate = filename({
+              chunkhash,
+              contenthash,
+              name,
+              id,
+            });
+          }
+
           if (renderedModules.length > 0) {
             result.push({
               render: () =>
@@ -179,7 +196,7 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.options.filename,
+              filenameTemplate,
               pathOptions: {
                 chunk,
                 contentHashType: MODULE_TYPE,
