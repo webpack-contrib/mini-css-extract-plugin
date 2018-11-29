@@ -195,7 +195,8 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.options.filename,
+              filenameTemplate:
+                this.options.filenameTemplate || this.options.filename,
               pathOptions: {
                 chunk,
                 contentHashType: MODULE_TYPE,
