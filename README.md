@@ -96,6 +96,14 @@ module.exports = {
       // both options are optional
       filename: devMode ? '[name].css' : '[name].[hash].css',
       chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+      // optional callback allows post-processing of the modules produced by the plugin. `modules` is a Set in the
+      // final output order; you can mutate the set, or return a new set. `chunk.name` provides the name of the chunk
+      onEmit: function(chunk, modules) {
+        if (chunk.name === 'some-chunk') {
+          return processModules(modules);
+        }
+      },
+    }),
     })
   ],
   module: {
