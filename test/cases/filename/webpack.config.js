@@ -13,12 +13,12 @@ module.exports = {
     ],
   },
   output: {
-    filename: '[name].[chunkhash:8].js',
+    filename: '[name].js',
   },
   plugins: [
     new Self({
       filename: ({ name }) =>
-        `${name.replace('/js/', '/css/')}.[chunkhash:8].css`,
+        `${name.replace('/js/', '/css/')}.css`,
     }),
   ],
 };
