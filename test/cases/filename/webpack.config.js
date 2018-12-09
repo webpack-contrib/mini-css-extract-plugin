@@ -18,7 +18,7 @@ module.exports = {
   plugins: [
     new Self({
       filename: ({ name }) =>
-        `${name.replace('/js/', '/css/')}.css`,
+        `${name.replace('/js/', '/css/')}.[chunkhash:8].css`,
     }),
   ],
 };
