@@ -268,6 +268,17 @@ module.exports = {
 }
 ```
 
+#### Filename as function instead of string
+
+By using a function instead of a string, you can use chunk data to customize the filename. This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk. In the example below, the we'll change the filename to output the css to a different directory.
+
+```javascript
+const miniCssExtractPlugin = new MiniCssExtractPlugin({
+  filename: ({ name, chunkhash }) =>
+    `${name.replace('/js/', '/css/')}.[chunkhash:8].css`
+})
+```
+
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
