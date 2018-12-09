@@ -9,81 +9,71 @@ describe('TestCases', () => {
   for (const directory of fs.readdirSync(casesDirectory)) {
     if (!/^(\.|_)/.test(directory)) {
       // eslint-disable-next-line no-loop-func
-      it(
-        `${directory} should compile to the expected result`,
-        (done) => {
-          const directoryForCase = path.resolve(casesDirectory, directory);
-          const outputDirectoryForCase = path.resolve(
-            outputDirectory,
-            directory
+      it(`${directory} should compile to the expected result`, (done) => {
+        const directoryForCase = path.resolve(casesDirectory, directory);
+        const outputDirectoryForCase = path.resolve(outputDirectory, directory);
+        // eslint-disable-next-line import/no-dynamic-require, global-require
+        const webpackConfig = require(path.resolve(
+          directoryForCase,
+          'webpack.config.js'
+        ));
+        for (const config of [].concat(webpackConfig)) {
+          Object.assign(
+            config,
+            {
+              mode: 'none',
+              context: directoryForCase,
+              output: Object.assign(
+                {
+                  path: outputDirectoryForCase,
+                },
+                config.output
+              ),
+            },
+            config
           );
-          // eslint-disable-next-line import/no-dynamic-require, global-require
-          const webpackConfig = require(path.resolve(
-            directoryForCase,
-            'webpack.config.js'
-          ));
-          for (const config of [].concat(webpackConfig)) {
-            Object.assign(
-              config,
-              {
-                mode: 'none',
-                context: directoryForCase,
-                output: Object.assign(
-                  {
-                    path: outputDirectoryForCase,
-                  },
-                  config.output
-                ),
-              },
-              config
-            );
+        }
+        webpack(webpackConfig, (err, stats) => {
+          if (err) {
+            done(err);
+            return;
           }
-          webpack(webpackConfig, (err, stats) => {
-            if (err) {
-              done(err);
-              return;
-            }
-            done();
-            // eslint-disable-next-line no-console
-            console.log(
-              stats.toString({
-                context: path.resolve(__dirname, '..'),
-                chunks: true,
-                chunkModules: true,
-                modules: false,
-              })
+          done();
+          // eslint-disable-next-line no-console
+          console.log(
+            stats.toString({
+              context: path.resolve(__dirname, '..'),
+              chunks: true,
+              chunkModules: true,
+              modules: false,
+            })
+          );
+          if (stats.hasErrors()) {
+            done(
+              new Error(
+                stats.toString({
+                  context: path.resolve(__dirname, '..'),
+                  errorDetails: true,
+                })
+              )
             );
-            if (stats.hasErrors()) {
-              done(
-                new Error(
-                  stats.toString({
-                    context: path.resolve(__dirname, '..'),
-                    errorDetails: true,
-                  })
-                )
-              );
-              return;
-            }
-            const expectedDirectory = path.resolve(
-              directoryForCase,
-              'expected'
+            return;
+          }
+          const expectedDirectory = path.resolve(directoryForCase, 'expected');
+
+          for (const file of walkSync(expectedDirectory)) {
+            const actualFilePath = file.replace(
+              new RegExp(`/cases/${directory}/expected/`),
+              `/js/${directory}/`
             );
+            const expectedContent = fs.readFileSync(file, 'utf-8');
+            const actualContent = fs.readFileSync(actualFilePath, 'utf-8');
 
-            for (const file of walkSync(expectedDirectory)) {
-              const actualFilePath = file.replace(
-                new RegExp(`/cases/${directory}/expected/`),
-                `/js/${directory}/`
-              );
-              const expectedContent = fs.readFileSync(file, 'utf-8');
-              const actualContent = fs.readFileSync(actualFilePath, 'utf-8');
-
-              expect(actualContent).toEqual(expectedContent);
-            }
-            done();
-          });
-        },
-        10000
-      );
+            expect(actualContent).toEqual(expectedContent);
+          }
+          done();
+        });
+      }, 10000);
     }
   }
 });
@@ -91,7 +81,7 @@ describe('TestCases', () => {
 /**
  * Synchronously traverse directory of files
  * @param {String} dir
- * @returns {String} // path to file or directory
+ * @returns {String} path to file or directory
  */
 function* walkSync(dir) {
   for (const file of fs.readdirSync(dir)) {
