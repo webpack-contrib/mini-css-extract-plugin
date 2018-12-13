@@ -299,7 +299,7 @@ If you'd like to extract the media queries from the extracted CSS (so mobile use
 
 ## License
 
-#### [MIT](./LICENSE)
+[MIT](./LICENSE)
 
 [npm]: https://img.shields.io/npm/v/mini-css-extract-plugin.svg
 [npm-url]: https://npmjs.com/package/mini-css-extract-plugin
