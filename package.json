@@ -26,7 +26,7 @@
     "release": "standard-version",
     "release:ci": "conventional-github-releaser -p angular",
     "release:validate": "commitlint --from=$(git describe --tags --abbrev=0) --to=$(git rev-parse HEAD)",
-    "security": "nsp check",
+    "security": "npm audit",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --collectCoverageFrom='src/**/*.js' --coverage",
@@ -43,8 +43,9 @@
     "webpack": "^4.4.0"
   },
   "dependencies": {
-    "schema-utils": "^1.0.0",
     "loader-utils": "^1.1.0",
+    "normalize-url": "^4.1.0",
+    "schema-utils": "^1.0.0",
     "webpack-sources": "^1.1.0"
   },
   "devDependencies": {
@@ -62,6 +63,7 @@
     "del": "^3.0.0",
     "del-cli": "^1.1.0",
     "eslint": "^4.17.0",
+    "eslint-plugin-compat": "^2.6.3",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "^2.6.0",
     "file-loader": "^1.1.11",
@@ -69,7 +71,6 @@
     "jest": "^22.2.2",
     "lint-staged": "^6.1.0",
     "memory-fs": "^0.4.1",
-    "nsp": "^3.1.0",
     "pre-commit": "^1.2.2",
     "prettier": "^1.11.1",
     "standard-version": "^4.3.0",
