@@ -1,5 +1,9 @@
+import path from 'path';
+
 import webpack from 'webpack';
 import sources from 'webpack-sources';
+
+const hotLoader = path.resolve(__dirname, './hmr/hotLoader.js');
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const {
@@ -14,6 +18,24 @@ const pluginName = 'mini-css-extract-plugin';
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
+
+const isHMR = (compiler) => {
+  if (compiler && compiler.options) {
+    if (compiler.options.devServer && compiler.options.devServer.hot) {
+      return true;
+    }
+
+    if (compiler.options.entry) {
+      const entry =
+        typeof compiler.options.entry === 'function'
+          ? compiler.options.entry()
+          : compiler.options.entry;
+      const entryString = JSON.stringify(entry);
+      return entryString.includes('hot') || entryString.includes('hmr');
+    }
+  }
+  return false;
+};
 
 class CssDependency extends webpack.Dependency {
   constructor(
@@ -116,6 +138,8 @@ class MiniCssExtractPlugin {
       },
       options
     );
+    const { cssModules, reloadAll } = this.options;
+
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
       const hasName = filename.includes('[name]');
@@ -132,9 +156,36 @@ class MiniCssExtractPlugin {
         );
       }
     }
+
+    this.hotLoaderObject = Object.assign(
+      {
+        loader: hotLoader,
+        options: {
+          cssModules: false,
+          reloadAll: false,
+        },
+      },
+      {
+        options: {
+          cssModules,
+          reloadAll,
+        },
+      }
+    );
   }
 
   apply(compiler) {
+    try {
+      const isHOT = this.options.hot ? true : isHMR(compiler);
+
+      if (isHOT && compiler.options.module && compiler.options.module.rules) {
+        compiler.options.module.rules = this.updateWebpackConfig(
+          compiler.options.module.rules
+        );
+      }
+    } catch (e) {
+      throw new Error(`unknown config cannot inject HMR: ${e.stack || e}`);
+    }
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
@@ -394,6 +445,56 @@ class MiniCssExtractPlugin {
     });
   }
 
+  traverseDepthFirst(root, visit) {
+    let nodesToVisit = [root];
+
+    while (nodesToVisit.length > 0) {
+      const currentNode = nodesToVisit.shift();
+
+      if (currentNode !== null && typeof currentNode === 'object') {
+        const children = Object.values(currentNode);
+        nodesToVisit = [...children, ...nodesToVisit];
+      }
+
+      visit(currentNode);
+    }
+  }
+
+  updateWebpackConfig(initialRules) {
+    return initialRules.reduce((rules, rule) => {
+      this.traverseDepthFirst(rule, (node) => {
+        if (node && node.use && Array.isArray(node.use)) {
+          const isExtractCss = node.use.some((l) => {
+            const needle = l.loader || l;
+            if (typeof l === 'function') {
+              return false;
+            }
+            return needle.includes(pluginName);
+          });
+          if (isExtractCss) {
+            node.use.unshift(this.hotLoaderObject);
+          }
+        }
+        if (node && node.loader && Array.isArray(node.loader)) {
+          const isExtractCss = node.loader.some((l) => {
+            const needle = l.loader || l;
+            if (typeof l === 'function') {
+              return false;
+            }
+            return needle.includes(pluginName);
+          });
+          if (isExtractCss) {
+            node.loader.unshift(this.hotLoaderObject);
+          }
+        }
+      });
+
+      rules.push(rule);
+
+      return rules;
+    }, []);
+  }
+
   getCssChunkObject(mainChunk) {
     const obj = {};
     for (const chunk of mainChunk.getAllAsyncChunks()) {
@@ -547,5 +648,6 @@ class MiniCssExtractPlugin {
 }
 
 MiniCssExtractPlugin.loader = require.resolve('./loader');
+MiniCssExtractPlugin.hotLoader = require.resolve('./hmr/hotLoader');
 
 export default MiniCssExtractPlugin;
