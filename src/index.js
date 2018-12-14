@@ -353,7 +353,6 @@ class MiniCssExtractPlugin {
                   '}',
                   'var linkTag = document.createElement("link");',
                   'linkTag.rel = "stylesheet";',
-                  'linkTag.type = "text/css";',
                   'linkTag.onload = resolve;',
                   'linkTag.onerror = function(event) {',
                   Template.indent([
@@ -368,7 +367,7 @@ class MiniCssExtractPlugin {
                   'linkTag.href = fullhref;',
                   crossOriginLoading
                     ? Template.asString([
-                        `if (linkTag.href.indexOf(window.location.origin + '/') !== 0) {`,
+                        `if (linkTag.href.indexOf(location.origin + '/') !== 0) {`,
                         Template.indent(
                           `linkTag.crossOrigin = ${JSON.stringify(
                             crossOriginLoading
@@ -377,8 +376,7 @@ class MiniCssExtractPlugin {
                         '}',
                       ])
                     : '',
-                  'var head = document.getElementsByTagName("head")[0];',
-                  'head.appendChild(linkTag);',
+                  'document.head.appendChild(linkTag);',
                 ]),
                 '}).then(function() {',
                 Template.indent(['installedCssChunks[chunkId] = 0;']),
