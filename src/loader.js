@@ -125,7 +125,7 @@ export function pitch(request) {
         });
       }
       if(typeof this[MODULE_TYPE] !== 'function') {
-        return callback(new Error("It seems you are using the loader but forgot to register the plugin"));
+        return callback(new Error('It seems you are using the loader but forgot to register the plugin'));
       }
       this[MODULE_TYPE](text);
     } catch (e) {
