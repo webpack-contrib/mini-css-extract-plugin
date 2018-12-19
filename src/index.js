@@ -121,14 +121,18 @@ class MiniCssExtractPlugin {
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
       // Anything changing depending on chunk is fine
-      if (typeof filename === 'string' && REGEXP_PLACEHOLDERS.test(filename)) {
-        this.options.chunkFilename = filename;
+      if (typeof filename === 'string') {
+        if (REGEXP_PLACEHOLDERS.test(filename)) {
+          this.options.chunkFilename = filename;
+        } else {
+          // Elsewise prefix '[id].' in front of the basename to make it changing
+          this.options.chunkFilename = filename.replace(
+            /(^|\/)([^/]*(?:\?|$))/,
+            '$1[id].$2'
+          );
+        }
       } else {
-        // Elsewise prefix '[id].' in front of the basename to make it changing
-        this.options.chunkFilename = DEFAULT_FILENAME.replace(
-          /(^|\/)([^/]*(?:\?|$))/,
-          '$1[id].$2'
-        );
+        this.options.chunkFilename = `[id].${DEFAULT_FILENAME}`;
       }
     }
   }
