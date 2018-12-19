@@ -62,10 +62,7 @@ describe('TestCases', () => {
           const expectedDirectory = path.resolve(directoryForCase, 'expected');
 
           for (const file of walkSync(expectedDirectory)) {
-            const actualFilePath = file.replace(
-              new RegExp(`/cases/${directory}/expected/`),
-              `/js/${directory}/`
-            );
+            const actualFilePath = path.resolve(outputDirectory, file);
             const expectedContent = fs.readFileSync(file, 'utf-8');
             const actualContent = fs.readFileSync(actualFilePath, 'utf-8');
 

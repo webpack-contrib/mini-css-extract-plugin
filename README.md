@@ -274,8 +274,8 @@ By using a function instead of a string, you can use chunk data to customize the
 
 ```javascript
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  filename: ({ name, chunkhash }) =>
-    `${name.replace('/js/', '/css/')}.[chunkhash:8].css`
+  filename: (chunkData) =>
+    `${chunkData.name.replace('/js/', '/css/')}.[chunkhash:8].css`
 })
 ```
 
