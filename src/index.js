@@ -125,7 +125,7 @@ class MiniCssExtractPlugin {
         this.options.chunkFilename = filename;
       } else {
         // Elsewise prefix '[id].' in front of the basename to make it changing
-        this.options.chunkFilename = filename.replace(
+        this.options.chunkFilename = DEFAULT_FILENAME.replace(
           /(^|\/)([^/]*(?:\?|$))/,
           '$1[id].$2'
         );
