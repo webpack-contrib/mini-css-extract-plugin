@@ -378,7 +378,9 @@ class MiniCssExtractPlugin {
                       ])
                     : '',
                   'var head = document.getElementsByTagName("head")[0];',
-                  'head.appendChild(linkTag);',
+                  'var insertBefore = document.getElementById("mini-css-before")',
+                  'if(insertBefore) head.insertBefore(linkTag, insertBefore);',
+                  'else head.appendChild(linkTag);',
                 ]),
                 '}).then(function() {',
                 Template.indent(['installedCssChunks[chunkId] = 0;']),
