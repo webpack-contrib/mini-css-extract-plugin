@@ -130,7 +130,13 @@ export function pitch(request) {
     }
     let resultSource = `// extracted by ${pluginName}`;
     if (locals && typeof resultSource !== 'undefined') {
-      resultSource += `\nmodule.exports = ${JSON.stringify(locals)};`;
+      Object.keys(locals).forEach((exportName) => {
+        const className = locals[exportName];
+
+        resultSource += `\nexport const ${exportName} = '${className}';`;
+      });
+
+      resultSource += `\nexport default ${JSON.stringify(locals)};`;
     }
 
     return callback(null, resultSource);
