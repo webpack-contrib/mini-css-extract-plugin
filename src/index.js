@@ -1,9 +1,5 @@
-import path from 'path';
-
 import webpack from 'webpack';
 import sources from 'webpack-sources';
-
-const hotLoader = path.resolve(__dirname, './hmr/hotLoader.js');
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const {
@@ -120,7 +116,6 @@ class MiniCssExtractPlugin {
       },
       options
     );
-    const { cssModules, reloadAll } = this.options;
 
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
@@ -138,36 +133,9 @@ class MiniCssExtractPlugin {
         );
       }
     }
-
-    this.hotLoaderObject = Object.assign(
-      {
-        loader: hotLoader,
-        options: {
-          cssModules: false,
-          reloadAll: false,
-        },
-      },
-      {
-        options: {
-          cssModules,
-          reloadAll,
-        },
-      }
-    );
   }
 
   apply(compiler) {
-    try {
-      const isHOT = this.options.hot;
-
-      if (isHOT && compiler.options.module && compiler.options.module.rules) {
-        compiler.options.module.rules = this.updateWebpackConfig(
-          compiler.options.module.rules
-        );
-      }
-    } catch (e) {
-      throw new Error(`unknown config cannot inject HMR: ${e.stack || e}`);
-    }
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
@@ -442,41 +410,6 @@ class MiniCssExtractPlugin {
     }
   }
 
-  updateWebpackConfig(initialRules) {
-    return initialRules.reduce((rules, rule) => {
-      this.traverseDepthFirst(rule, (node) => {
-        if (node && node.use && Array.isArray(node.use)) {
-          const isExtractCss = node.use.some((l) => {
-            const needle = l.loader || l;
-            if (typeof l === 'function') {
-              return false;
-            }
-            return needle.includes(pluginName);
-          });
-          if (isExtractCss) {
-            node.use.unshift(this.hotLoaderObject);
-          }
-        }
-        if (node && node.loader && Array.isArray(node.loader)) {
-          const isExtractCss = node.loader.some((l) => {
-            const needle = l.loader || l;
-            if (typeof l === 'function') {
-              return false;
-            }
-            return needle.includes(pluginName);
-          });
-          if (isExtractCss) {
-            node.loader.unshift(this.hotLoaderObject);
-          }
-        }
-      });
-
-      rules.push(rule);
-
-      return rules;
-    }, []);
-  }
-
   getCssChunkObject(mainChunk) {
     const obj = {};
     for (const chunk of mainChunk.getAllAsyncChunks()) {
@@ -630,6 +563,5 @@ class MiniCssExtractPlugin {
 }
 
 MiniCssExtractPlugin.loader = require.resolve('./loader');
-MiniCssExtractPlugin.hotLoader = require.resolve('./hmr/hotLoader');
 
 export default MiniCssExtractPlugin;

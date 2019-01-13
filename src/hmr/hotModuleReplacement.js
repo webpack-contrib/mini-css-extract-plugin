@@ -128,7 +128,7 @@ module.exports = function(moduleId, options) {
   const getScriptSrc = getCurrentScriptUrl(moduleId);
 
   function update() {
-    const src = getScriptSrc(options.fileMap);
+    const src = getScriptSrc(options.filename);
     const reloaded = reloadStyle(src);
     if (reloaded && !options.reloadAll) {
       console.log('[HMR] css reload %s', src.join(' '));
