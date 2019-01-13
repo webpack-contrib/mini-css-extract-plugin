@@ -19,24 +19,6 @@ const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 
-const isHMR = (compiler) => {
-  if (compiler && compiler.options) {
-    if (compiler.options.devServer && compiler.options.devServer.hot) {
-      return true;
-    }
-
-    if (compiler.options.entry) {
-      const entry =
-        typeof compiler.options.entry === 'function'
-          ? compiler.options.entry()
-          : compiler.options.entry;
-      const entryString = JSON.stringify(entry);
-      return entryString.includes('hot') || entryString.includes('hmr');
-    }
-  }
-  return false;
-};
-
 class CssDependency extends webpack.Dependency {
   constructor(
     { identifier, content, media, sourceMap },
@@ -176,7 +158,7 @@ class MiniCssExtractPlugin {
 
   apply(compiler) {
     try {
-      const isHOT = this.options.hot ? true : isHMR(compiler);
+      const isHOT = this.options.hot;
 
       if (isHOT && compiler.options.module && compiler.options.module.rules) {
         compiler.options.module.rules = this.updateWebpackConfig(
