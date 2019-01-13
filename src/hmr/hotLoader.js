@@ -2,15 +2,12 @@ const path = require('path');
 
 const loaderUtils = require('loader-utils');
 
-const defaultOptions = {
-  fileMap: '{fileName}',
-};
-
 function hotLoader(content) {
-  this.cacheable();
   const options = Object.assign(
     {},
-    defaultOptions,
+    {
+      fileMap: '{fileName}',
+    },
     loaderUtils.getOptions(this)
   );
 
