@@ -1,5 +1,7 @@
 import NativeModule from 'module';
 
+import path from 'path';
+
 import loaderUtils from 'loader-utils';
 import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
 import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
@@ -9,6 +11,24 @@ import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
 
 const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
+
+function hotLoader(content, context) {
+  const accept = context.modules
+    ? ''
+    : 'module.hot.accept(undefined, cssReload);';
+  const result = `${content}
+    if(module.hot) {
+      // ${Date.now()}
+      var cssReload = require(${loaderUtils.stringifyRequest(
+        context.context,
+        path.join(__dirname, 'hmr/hotModuleReplacement.js')
+      )})(module.id, ${JSON.stringify(context.query)});
+      module.hot.dispose(cssReload);
+      ${accept}
+    }
+  `;
+  return result;
+}
 
 const exec = (loaderContext, code, filename) => {
   const module = new NativeModule(filename, loaderContext);
@@ -116,6 +136,7 @@ export function pitch(request) {
       } else {
         text = text.map((line) => {
           const module = findModuleById(compilation.modules, line[0]);
+
           return {
             identifier: module.identifier(),
             content: line[1],
@@ -130,10 +151,12 @@ export function pitch(request) {
     }
     let resultSource = `// extracted by ${pluginName}`;
     if (locals && typeof resultSource !== 'undefined') {
-      resultSource += `\nmodule.exports = ${JSON.stringify(locals)};`;
+      const result = `\nmodule.exports = ${JSON.stringify(locals)};`;
+      resultSource += hotLoader(result, { context: this.context, query });
     }
 
     return callback(null, resultSource);
   });
 }
+
 export default function() {}
