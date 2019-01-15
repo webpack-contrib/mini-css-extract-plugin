@@ -1,3 +1,5 @@
+import path from 'path';
+
 import webpack from 'webpack';
 import sources from 'webpack-sources';
 
@@ -110,6 +112,7 @@ class CssModuleFactory {
 
 class MiniCssExtractPlugin {
   constructor(options) {
+    this.disconnectedGroups = {};
     this.options = Object.assign(
       {
         filename: '[name].css',
@@ -188,8 +191,81 @@ class MiniCssExtractPlugin {
               hash: chunk.contentHash[MODULE_TYPE],
             });
           }
+
+          const splitChunks = compilation.chunks.filter(
+            (thisChunk) =>
+              thisChunk.chunkReason &&
+              thisChunk.chunkReason.includes('split chunk')
+          );
+
+          splitChunks.forEach((splitChunk) => {
+            const modulesWeCouldRemove = [];
+            const nonCssModules = Array.from(splitChunk.modulesIterable).filter(
+              (mod) => mod.type !== MODULE_TYPE
+            );
+
+            nonCssModules.forEach((nonCssMod) => {
+              if (
+                nonCssMod._source && // eslint-disable-line no-underscore-dangle
+                nonCssMod._source._value === `// extracted by ${pluginName}` // eslint-disable-line no-underscore-dangle
+              ) {
+                modulesWeCouldRemove.push(nonCssMod);
+              }
+            });
+
+            // If there's nothing but CSS modules left in this split chunk, remove the whole thing
+            // This will mean that the main template manifest (ie. webpack's boilerplate code) won't
+            // contain any references to these empty modules
+            if (modulesWeCouldRemove.length === nonCssModules.length) {
+              modulesWeCouldRemove.forEach((nonCssMod) => {
+                // Trace all the "reasons" for this module (ie. other modules that depend on it)
+                // then add this module into their respective chunks. This effectively reverses
+                // the work SplitChunksPlugin did to break out the logic into a separate chunk.
+                // Without this step there will be script errors owing to missing dependencies
+                // and adding them back to their origin chunks is harmless as they're empty.
+                nonCssMod.reasons.forEach((reason) => {
+                  reason.module.chunksIterable.forEach(
+                    (previouslyConnectedChunk) => {
+                      splitChunk.moveModule(
+                        nonCssMod,
+                        previouslyConnectedChunk
+                      );
+                    }
+                  );
+                });
+              });
+
+              splitChunk.groupsIterable.forEach((group) => {
+                group.removeChunk(splitChunk);
+
+                // Book-keeping
+                this.disconnectedGroups[splitChunk.id] =
+                  this.disconnectedGroups[splitChunk.id] || [];
+                this.disconnectedGroups[splitChunk.id].push(group);
+              });
+            }
+          });
         }
       );
+      compilation.hooks.chunkAsset.tap(pluginName, (chunk, file) => {
+        // If this was a split chunk we disconnected previously
+        if (this.disconnectedGroups[chunk.id]) {
+          if (path.extname(file) === '.css') {
+            this.disconnectedGroups[chunk.id].forEach((group) => {
+              // Add the stylesheet as a file on every chunk that requires it
+              // This ensures plugins like html-webpack-plugin will find and include
+              // split CSS chunks
+              group.chunks.forEach((parentChunk) => {
+                parentChunk.files.push(file);
+              });
+            });
+          } else if (path.extname(file) === '.js') {
+            // Discard empty JS file
+            chunk.files.pop();
+            delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+          }
+        }
+      });
       compilation.chunkTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
