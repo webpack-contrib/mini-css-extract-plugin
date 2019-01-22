@@ -340,7 +340,7 @@ class MiniCssExtractPlugin {
                   Template.indent([
                     'var tag = existingLinkTags[i];',
                     'var dataHref = tag.getAttribute("data-href") || tag.getAttribute("href");',
-                    'if(tag.rel === "stylesheet" && (dataHref === href || dataHref === fullhref)) return resolve();',
+                    'if((tag.rel === "stylesheet" || tag.rel === "preload") && (dataHref === href || dataHref === fullhref)) return resolve();',
                   ]),
                   '}',
                   'var existingStyleTags = document.getElementsByTagName("style");',
@@ -352,8 +352,11 @@ class MiniCssExtractPlugin {
                   ]),
                   '}',
                   'var linkTag = document.createElement("link");',
-                  'linkTag.rel = "stylesheet";',
-                  'linkTag.type = "text/css";',
+                  //JG: EDIT
+                  //'linkTag.type = "text/css";',
+                  //'linkTag.rel = "stylesheet";',
+                  'linkTag.rel = "preload";',
+                  'linkTag.as = "style";',
                   'linkTag.onload = resolve;',
                   'linkTag.onerror = function(event) {',
                   Template.indent([
