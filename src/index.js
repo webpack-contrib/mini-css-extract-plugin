@@ -352,9 +352,6 @@ class MiniCssExtractPlugin {
                   ]),
                   '}',
                   'var linkTag = document.createElement("link");',
-                  //JG: EDIT
-                  //'linkTag.type = "text/css";',
-                  //'linkTag.rel = "stylesheet";',
                   'linkTag.rel = "preload";',
                   'linkTag.as = "style";',
                   'linkTag.onload = resolve;',
@@ -386,10 +383,10 @@ class MiniCssExtractPlugin {
                 '}).then(function() {',
                 Template.indent([
                   'var execLinkTag = document.createElement("link");',
-                  'execLinkTag.rel = "stylesheet";',
                   `execLinkTag.href =  ${mainTemplate.requireFn}.p + ${linkHrefPath};`,
-                  'var body = document.getElementsByTagName("body")[0];',
-                  'body.appendChild(execLinkTag);',
+                  'execLinkTag.rel = "stylesheet";',
+                  'execLinkTag.type = "text/css";',
+                  'document.body.appendChild(execLinkTag);',
                   'installedCssChunks[chunkId] = 0;'
                 ]),
                 '}));',
