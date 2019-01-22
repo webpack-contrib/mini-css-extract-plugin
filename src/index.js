@@ -384,7 +384,14 @@ class MiniCssExtractPlugin {
                   'head.appendChild(linkTag);',
                 ]),
                 '}).then(function() {',
-                Template.indent(['installedCssChunks[chunkId] = 0;']),
+                Template.indent([
+                  'var execLinkTag = document.createElement("link");',
+                  'execLinkTag.rel = "stylesheet";',
+                  `execLinkTag.href =  ${mainTemplate.requireFn}.p + ${linkHrefPath};`,
+                  'var body = document.getElementsByTagName("body")[0];',
+                  'body.appendChild(execLinkTag);',
+                  'installedCssChunks[chunkId] = 0;'
+                ]),
                 '}));',
               ]),
               '}',
