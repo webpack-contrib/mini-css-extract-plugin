@@ -327,6 +327,7 @@ class MiniCssExtractPlugin {
               source,
               '',
               `// ${pluginName} CSS loading`,
+              'var supportsPreload = (function() { try { return document.createElement("link").relList.supports("preload"); } catch(e) { return false; }}());',
               `var cssChunks = ${JSON.stringify(chunkMap)};`,
               'if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);',
               'else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {',
@@ -352,8 +353,9 @@ class MiniCssExtractPlugin {
                   ]),
                   '}',
                   'var linkTag = document.createElement("link");',
-                  'linkTag.rel = "preload";',
-                  'linkTag.as = "style";',
+                  'linkTag.rel = "supportsPreload ? "preload": "stylesheet";',
+                  'console.log("supportsPreload: ", supportsPreload);',
+                  'supportsPreload ? linkTag.as = "style" : linkTag.type = "text/css";',
                   'linkTag.onload = resolve;',
                   'linkTag.onerror = function(event) {',
                   Template.indent([
@@ -382,12 +384,18 @@ class MiniCssExtractPlugin {
                 ]),
                 '}).then(function() {',
                 Template.indent([
-                  'var execLinkTag = document.createElement("link");',
-                  `execLinkTag.href =  ${mainTemplate.requireFn}.p + ${linkHrefPath};`,
-                  'execLinkTag.rel = "stylesheet";',
-                  'execLinkTag.type = "text/css";',
-                  'document.body.appendChild(execLinkTag);',
-                  'installedCssChunks[chunkId] = 0;'
+                  'installedCssChunks[chunkId] = 0;',
+                  'if(supportsPreload) {',
+                  Template.indent([
+                    'var execLinkTag = document.createElement("link");',
+                    `execLinkTag.href =  ${
+                      mainTemplate.requireFn
+                    }.p + ${linkHrefPath};`,
+                    'execLinkTag.rel = "stylesheet";',
+                    'execLinkTag.type = "text/css";',
+                    'document.body.appendChild(execLinkTag);',
+                  ]),
+                  '}',
                 ]),
                 '}));',
               ]),
