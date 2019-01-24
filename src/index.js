@@ -113,6 +113,7 @@ class MiniCssExtractPlugin {
     this.options = Object.assign(
       {
         filename: '[name].css',
+        useRelPreload: false,
       },
       options
     );
@@ -323,11 +324,15 @@ class MiniCssExtractPlugin {
                 contentHashType: MODULE_TYPE,
               }
             );
+
+            const supportsPreload = this.options.useRelPreload
+              ? '(function() { try { return document.createElement("link").relList.supports("preload"); } catch(e) { return false; }}());'
+              : 'false;';
             return Template.asString([
               source,
               '',
               `// ${pluginName} CSS loading`,
-              'var supportsPreload = (function() { try { return document.createElement("link").relList.supports("preload"); } catch(e) { return false; }}());',
+              `var supportsPreload = ${supportsPreload}`,
               `var cssChunks = ${JSON.stringify(chunkMap)};`,
               'if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);',
               'else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {',
