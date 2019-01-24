@@ -173,7 +173,9 @@ class MiniCssExtractPlugin {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
             (module) => module.type === MODULE_TYPE
           );
-          const { filename: filenameTemplate } = this.options;
+          const { filename } = this.options;
+          const filenameTemplate =
+            typeof filename === 'function' ? filename(chunk) : filename;
 
           if (renderedModules.length > 0) {
             result.push({
