@@ -38,9 +38,15 @@ function getCurrentScriptUrl(moduleId) {
   }
 
   return function(fileMap) {
-    const splitResult = /([^\\/]+)\.js$/.exec(src);
+    if (!src) {
+      return null;
+    }
+    const splitResult = src.split(/([^\\/]+)\.js$/);
     const filename = splitResult && splitResult[1];
     if (!filename) {
+      return [src.replace('.js', '.css')];
+    }
+    if (!fileMap) {
       return [src.replace('.js', '.css')];
     }
     return fileMap.split(',').map(mapRule => {
