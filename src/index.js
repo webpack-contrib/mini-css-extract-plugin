@@ -353,7 +353,7 @@ class MiniCssExtractPlugin {
                   ]),
                   '}',
                   'var linkTag = document.createElement("link");',
-                  'linkTag.rel = "supportsPreload ? "preload": "stylesheet";',
+                  'linkTag.rel = supportsPreload ? "preload": "stylesheet";',
                   'supportsPreload ? linkTag.as = "style" : linkTag.type = "text/css";',
                   'linkTag.onload = resolve;',
                   'linkTag.onerror = function(event) {',
