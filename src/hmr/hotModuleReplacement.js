@@ -1,34 +1,48 @@
-const normalizeUrl = require('normalize-url');
+/* global document, window */
+/* eslint func-names: 0 */
+/* eslint no-var: 0 */
+/* eslint vars-on-top: 0 */
+/* eslint prefer-arrow-func: 0 */
+/* eslint prefer-rest-params: 0 */
+/* eslint prefer-arrow-callback: 0 */
 
-const srcByModuleId = Object.create(null);
+var normalizeUrl = require('normalize-url');
 
-const noDocument = typeof document === 'undefined';
+var srcByModuleId = Object.create(null);
+
+var noDocument = typeof document === 'undefined';
+
+var forEach = Array.prototype.forEach;
 
 function debounce(fn, time) {
-  let timeout;
+  var timeout = 0;
 
   // eslint-disable-next-line func-names
   return function() {
-    const functionCall = () => fn.apply(this, arguments);
+    var self = this;
+    var args = arguments;
+
+    // eslint-disable-next-line prefer-rest-params
+    var functionCall = function functionCall() {
+      return fn.apply(self, args);
+    };
 
     clearTimeout(timeout);
     timeout = setTimeout(functionCall, time);
   };
 }
 
-const forEach = Array.prototype.forEach;
-
 function noop() {}
 
 function getCurrentScriptUrl(moduleId) {
-  let src = srcByModuleId[moduleId];
+  var src = srcByModuleId[moduleId];
 
   if (!src) {
     if (document.currentScript) {
       src = document.currentScript.src;
     } else {
-      const scripts = document.getElementsByTagName('script');
-      const lastScriptTag = scripts[scripts.length - 1];
+      var scripts = document.getElementsByTagName('script');
+      var lastScriptTag = scripts[scripts.length - 1];
 
       if (lastScriptTag) {
         src = lastScriptTag.src;
@@ -41,16 +55,16 @@ function getCurrentScriptUrl(moduleId) {
     if (!src) {
       return null;
     }
-    const splitResult = src.split(/([^\\/]+)\.js$/);
-    const filename = splitResult && splitResult[1];
+    var splitResult = src.split(/([^\\/]+)\.js$/);
+    var filename = splitResult && splitResult[1];
     if (!filename) {
       return [src.replace('.js', '.css')];
     }
     if (!fileMap) {
       return [src.replace('.js', '.css')];
     }
-    return fileMap.split(',').map(mapRule => {
-      const reg = new RegExp(`${filename}\\.js$`, 'g');
+    return fileMap.split(',').map(function(mapRule) {
+      var reg = new RegExp(`${filename}\\.js$`, 'g');
       return normalizeUrl(
         src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`),
         { stripWWW: false }
@@ -71,16 +85,16 @@ function updateCss(el, url) {
   if (!url || !(url.indexOf('.css') > -1)) return;
 
   el.visited = true;
-  const newEl = el.cloneNode();
+  var newEl = el.cloneNode(); // eslint-disable-line vars-on-top
 
   newEl.isLoaded = false;
 
-  newEl.addEventListener('load', () => {
+  newEl.addEventListener('load', function() {
     newEl.isLoaded = true;
     el.parentNode.removeChild(el);
   });
 
-  newEl.addEventListener('error', () => {
+  newEl.addEventListener('error', function() {
     newEl.isLoaded = true;
     el.parentNode.removeChild(el);
   });
@@ -90,10 +104,10 @@ function updateCss(el, url) {
 }
 
 function getReloadUrl(href, src) {
+  var ret;
   href = normalizeUrl(href, { stripWWW: false });
-  let ret;
   // eslint-disable-next-line array-callback-return
-  src.some(url => {
+  src.some(function(url) {
     if (href.indexOf(src) > -1) {
       ret = url;
     }
@@ -102,13 +116,14 @@ function getReloadUrl(href, src) {
 }
 
 function reloadStyle(src) {
-  const elements = document.querySelectorAll('link');
-  let loaded = false;
+  var elements = document.querySelectorAll('link');
+  var loaded = false;
 
-  forEach.call(elements, el => {
+  forEach.call(elements, function(el) {
+    var url = getReloadUrl(el.href, src);
+
     if (el.visited === true) return;
 
-    const url = getReloadUrl(el.href, src);
     if (url) {
       updateCss(el, url);
       loaded = true;
@@ -119,8 +134,8 @@ function reloadStyle(src) {
 }
 
 function reloadAll() {
-  const elements = document.querySelectorAll('link');
-  forEach.call(elements, el => {
+  var elements = document.querySelectorAll('link');
+  forEach.call(elements, function(el) {
     if (el.visited === true) return;
     updateCss(el);
   });
@@ -131,11 +146,12 @@ module.exports = function(moduleId, options) {
     return noop;
   }
 
-  const getScriptSrc = getCurrentScriptUrl(moduleId);
+  // eslint-disable-next-line vars-on-top
+  var getScriptSrc = getCurrentScriptUrl(moduleId);
 
   function update() {
-    const src = getScriptSrc(options.filename);
-    const reloaded = reloadStyle(src);
+    var src = getScriptSrc(options.filename);
+    var reloaded = reloadStyle(src);
     if (reloaded && !options.reloadAll) {
       console.log('[HMR] css reload %s', src.join(' '));
     } else {
