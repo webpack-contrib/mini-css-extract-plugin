@@ -49,6 +49,7 @@ const findModuleById = (modules, id) => {
 
 export function pitch(request) {
   const query = loaderUtils.getOptions(this) || {};
+
   const loaders = this.loaders.slice(this.loaderIndex + 1);
   this.addDependency(this.resourcePath);
   const childFilename = '*'; // eslint-disable-line no-path-concat
@@ -136,7 +137,6 @@ export function pitch(request) {
       } else {
         text = text.map((line) => {
           const module = findModuleById(compilation.modules, line[0]);
-
           return {
             identifier: module.identifier(),
             content: line[1],
@@ -152,7 +152,9 @@ export function pitch(request) {
     let resultSource = `// extracted by ${pluginName}`;
     if (locals && typeof resultSource !== 'undefined') {
       const result = `\nmodule.exports = ${JSON.stringify(locals)};`;
-      resultSource += hotLoader(result, { context: this.context, query });
+      resultSource += query.hot
+        ? hotLoader(result, { context: this.context, query })
+        : '';
     }
 
     return callback(null, resultSource);
