@@ -7,7 +7,12 @@ module.exports = [1, 2].map(n => ({
       {
         test: /\.css$/,
         use: [
-          Self.loader,
+          {
+            loader: Self.loader,
+            options:{
+              hot: false
+            }
+          },
           {
             loader: 'css-loader',
             options: {

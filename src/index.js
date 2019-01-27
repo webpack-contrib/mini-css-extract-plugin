@@ -110,7 +110,6 @@ class CssModuleFactory {
 
 class MiniCssExtractPlugin {
   constructor(options) {
-    console.log('options', options);
     this.options = Object.assign(
       {
         filename: '[name].css',
