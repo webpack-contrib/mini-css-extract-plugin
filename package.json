@@ -76,7 +76,7 @@
     "webpack": "^4.14.0",
     "webpack-cli": "^2.0.13",
     "webpack-defaults": "^2.3.0",
-    "webpack-dev-server": "^3.1.1"
+    "webpack-dev-server": "^3.1.14"
   },
   "keywords": [
     "webpack"
