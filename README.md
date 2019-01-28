@@ -272,6 +272,14 @@ module.exports = {
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
 
+#### rel="preload" support
+
+On browsers that support `<link rel="preload" as="style">`, then CSS links will be preloaded by default.
+This is both to improve page load performance, and addresess Chrome Lighthouse SEO performance audits requiring the use of rel="preload" with asynchronous chunks. 
+
+-[Lighthouse article](https://developers.google.com/web/tools/lighthouse/audits/preload)
+
+
 ### Media Query Plugin
 
 If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop or tablet specific CSS anymore) you should use one of the following plugins:
