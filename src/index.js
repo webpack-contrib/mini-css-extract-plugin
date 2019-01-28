@@ -113,7 +113,6 @@ class MiniCssExtractPlugin {
     this.options = Object.assign(
       {
         filename: '[name].css',
-        useRelPreload: false,
       },
       options
     );
@@ -325,9 +324,8 @@ class MiniCssExtractPlugin {
               }
             );
 
-            const supportsPreload = this.options.useRelPreload
-              ? '(function() { try { return document.createElement("link").relList.supports("preload"); } catch(e) { return false; }}());'
-              : 'false;';
+            const supportsPreload =
+              '(function() { try { return document.createElement("link").relList.supports("preload"); } catch(e) { return false; }}());';
             return Template.asString([
               source,
               '',
