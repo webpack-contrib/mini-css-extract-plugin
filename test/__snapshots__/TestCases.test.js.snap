@@ -1,4 +1,7 @@
-/* global document, window */
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HMR matches snapshot 1`] = `
+"/* global document, window */
 /* eslint func-names: 0 */
 /* eslint no-var: 0 */
 /* eslint vars-on-top: 0 */
@@ -56,7 +59,7 @@ function getCurrentScriptUrl(moduleId) {
     if (!src) {
       return null;
     }
-    var splitResult = src.split(/([^\\/]+)\.js$/);
+    var splitResult = src.split(/([^\\\\\\\\/]+)\\\\.js$/);
     var filename = splitResult && splitResult[1];
     if (!filename) {
       return [src.replace('.js', '.css')];
@@ -65,7 +68,7 @@ function getCurrentScriptUrl(moduleId) {
       return [src.replace('.js', '.css')];
     }
     return fileMap.split(',').map(function(mapRule) {
-      var reg = new RegExp(filename + '\\.js$', 'g');
+      var reg = new RegExp(filename + '\\\\\\\\.js$', 'g');
       return normalizeUrl(
         src.replace(reg, mapRule.replace(/{fileName}/g, filename) + '.css'),
         { stripWWW: false }
@@ -163,3 +166,5 @@ module.exports = function(moduleId, options) {
 
   return debounce(update, 10);
 };
+"
+`;

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { exec } from 'child_process';
 
 import webpack from 'webpack';
 
@@ -91,4 +92,25 @@ describe('TestCases', () => {
       }, 10000);
     }
   }
+});
+
+describe('HMR', () => {
+  it('matches snapshot', () => {
+    const hmr = fs
+      .readFileSync(path.join(__dirname, '../src/hmr/hotModuleReplacement.js'))
+      .toString();
+
+    expect(hmr).toMatchSnapshot();
+  });
+
+  it('is es5 only', () => {
+    exec(
+      './node_modules/.bin/es-check es5 src/hmr/hotModuleReplacement.js',
+      (error, stdout, stderr) => {
+        expect(
+          stderr.indexOf('there were no ES version matching errors!') > -1
+        ).toBe(true);
+      }
+    );
+  });
 });
