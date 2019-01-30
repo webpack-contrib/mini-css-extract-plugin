@@ -43,7 +43,6 @@
     "webpack": "^4.4.0"
   },
   "dependencies": {
-    "es-check": "^5.0.0",
     "loader-utils": "^1.1.0",
     "normalize-url": "^3.0.0",
     "schema-utils": "^1.0.0",
@@ -63,6 +62,7 @@
     "css-loader": "^0.28.10",
     "del": "^3.0.0",
     "del-cli": "^1.1.0",
+    "es-check": "^5.0.0",
     "eslint": "^4.17.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "^2.6.0",
@@ -74,7 +74,7 @@
     "pre-commit": "^1.2.2",
     "prettier": "^1.11.1",
     "standard-version": "^4.3.0",
-    "webpack": "^4.14.0",
+    "webpack": "^4.28.0",
     "webpack-cli": "^2.0.13",
     "webpack-defaults": "^2.3.0",
     "webpack-dev-server": "^3.1.14"
