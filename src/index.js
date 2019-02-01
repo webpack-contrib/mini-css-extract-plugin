@@ -357,7 +357,7 @@ class MiniCssExtractPlugin {
                   'linkTag.onload = resolve;',
                   'linkTag.onerror = function(event) {',
                   Template.indent([
-                    'var request = event && event.target && event.target.src || fullhref;',
+                    'var request = event && event.target && event.target.href || fullhref;',
                     'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
                     'err.request = request;',
                     'delete installedCssChunks[chunkId]',
