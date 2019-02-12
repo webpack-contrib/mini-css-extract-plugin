@@ -305,7 +305,6 @@ class MiniCssExtractPlugin {
         pluginName,
         (source, chunk, hash) => {
           if (this.options.disableAsync) return null;
-          
           const chunkMap = this.getCssChunkObject(chunk);
 
           if (Object.keys(chunkMap).length > 0) {
