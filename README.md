@@ -272,6 +272,19 @@ module.exports = {
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
 
+#### Disabling conflicting order warnings
+
+Option `disableWarnings: boolean`. Default: `false`
+
+To disable plugin warnings pass `disableWarnings: true` to the plugin options:
+```
+plugins: [
+  new MiniCssExtractPlugin({
+    disableWarnings: true
+  })
+],
+```
+
 ### Media Query Plugin
 
 If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop or tablet specific CSS anymore) you should use one of the following plugins:
