@@ -24,9 +24,6 @@ Compared to the extract-text-webpack-plugin:
 * Easier to use
 * Specific to CSS
 
-TODO:
-
-* HMR support
 
 <h2 align="center">Install</h2>
 
@@ -69,8 +66,9 @@ module.exports = {
             loader: MiniCssExtractPlugin.loader,
             options: {
               // you can specify a publicPath here
-              // by default it use publicPath in webpackOptions.output
-              publicPath: '../'
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hot: process.env.NODE_ENV === 'development'
             }
           },
           "css-loader"
@@ -149,7 +147,12 @@ module.exports = {
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+           {
+             loader: MiniCssExtractPlugin.loader,
+             options: {
+               hot: process.env.NODE_ENV === 'development'
+             }
+           },
           'css-loader',
           'postcss-loader',
           'sass-loader',
@@ -159,6 +162,52 @@ module.exports = {
   }
 }
 ```
+
+#### Hot Module Reloading (HMR)
+
+extract-mini-css-plugin supports hot reloading of actual css files in development. Some options are provided to enable HMR of both standard stylesheets and locally scoped css or CSS modules. Below is an example configuration of mini-css for HMR use with CSS modules
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].css",
+      chunkFilename: "[id].css"
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // only enable hot in development
+              hot: process.env.NODE_ENV === 'development',
+              // modules enables hmr of css modules which
+              // need to be handled differently compared to typical css files
+              modules: true,
+              // in the event that HMR is not working correctly for your setup.
+              // a fallback option has been implemented to force css files to be reloaded
+              // reloadAll will force all stylesheets to be reloaded when receiving an HMR update
+              // this option is helpful when dealing with css-modules as they are harder to HMR
+              reloadAll: true,
+            }
+          },
+          "css-loader"
+        ]
+      }
+    ]
+  }
+}
+```
+
 
 ### Minimizing For Production
 
