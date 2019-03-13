@@ -150,12 +150,13 @@ export function pitch(request) {
       return callback(e);
     }
     let resultSource = `// extracted by ${pluginName}`;
-    if (locals && typeof resultSource !== 'undefined') {
-      const result = `\nmodule.exports = ${JSON.stringify(locals)};`;
-      resultSource += query.hot
-        ? hotLoader(result, { context: this.context, query })
-        : '';
-    }
+    const result = locals
+      ? `\nmodule.exports = ${JSON.stringify(locals)};`
+      : '';
+
+    resultSource += query.hot
+      ? hotLoader(result, { context: this.context, query })
+      : '';
 
     return callback(null, resultSource);
   });
