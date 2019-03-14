@@ -124,7 +124,13 @@ export function pitch(request) {
           };
         });
       }
-      this[MODULE_TYPE](text);
+      try {
+        this[MODULE_TYPE](text);
+      } catch (error) {
+        const pluginIsNotFound = `Invalid webpack configuration: plugin ${pluginName} is not found.
+          It's highly likely that you forgot to add css extraction plugin into your webpack configuration(s)`;
+        throw new Error(pluginIsNotFound);
+      }
     } catch (e) {
       return callback(e);
     }
