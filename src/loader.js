@@ -156,7 +156,7 @@ export function pitch(request) {
 
     resultSource += query.hot
       ? hotLoader(result, { context: this.context, query })
-      : '';
+      : result;
 
     return callback(null, resultSource);
   });
