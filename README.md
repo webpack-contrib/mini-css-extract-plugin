@@ -190,11 +190,6 @@ module.exports = {
             options: {
               // only enable hot in development
               hmr: process.env.NODE_ENV === 'development',
-              // in the event that HMR is not working correctly for your setup.
-              // a fallback option has been implemented to force css files to be reloaded
-              // reloadAll will force all stylesheets to be reloaded when receiving an HMR update
-              // this option is helpful when dealing with css-modules as they are harder to HMR
-              reloadAll: true,
             }
           },
           "css-loader"
