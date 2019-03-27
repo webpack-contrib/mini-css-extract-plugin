@@ -66,6 +66,7 @@
     "eslint": "^4.17.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-prettier": "^2.6.0",
+    "execa": "^1.0.0",
     "file-loader": "^1.1.11",
     "husky": "^0.14.3",
     "jest": "^22.2.2",
