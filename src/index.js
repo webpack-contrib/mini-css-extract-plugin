@@ -394,21 +394,6 @@ class MiniCssExtractPlugin {
     });
   }
 
-  traverseDepthFirst(root, visit) {
-    let nodesToVisit = [root];
-
-    while (nodesToVisit.length > 0) {
-      const currentNode = nodesToVisit.shift();
-
-      if (currentNode !== null && typeof currentNode === 'object') {
-        const children = Object.values(currentNode);
-        nodesToVisit = [...children, ...nodesToVisit];
-      }
-
-      visit(currentNode);
-    }
-  }
-
   getCssChunkObject(mainChunk) {
     const obj = {};
     for (const chunk of mainChunk.getAllAsyncChunks()) {
