@@ -144,6 +144,7 @@ function reloadAll() {
 
 module.exports = function(moduleId, options) {
   if (noDocument) {
+    console.log('no window.document found, will not HMR CSS');
     return noop;
   }
 

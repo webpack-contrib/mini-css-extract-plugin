@@ -154,7 +154,7 @@ export function pitch(request) {
       ? `\nmodule.exports = ${JSON.stringify(locals)};`
       : '';
 
-    resultSource += query.hot
+    resultSource += query.hmr
       ? hotLoader(result, { context: this.context, query })
       : result;
 

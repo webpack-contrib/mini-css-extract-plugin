@@ -10,7 +10,7 @@ module.exports = [1, 2].map(n => ({
           {
             loader: Self.loader,
             options:{
-              hot: false
+              hmr: false
             }
           },
           {
