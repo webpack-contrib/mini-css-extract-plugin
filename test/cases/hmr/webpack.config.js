@@ -11,7 +11,6 @@ module.exports = {
             loader: Self.loader,
             options: {
               hmr: true,
-              modules: true,
               reloadAll: true
             },
           },

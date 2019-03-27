@@ -68,7 +68,7 @@ module.exports = {
               // you can specify a publicPath here
               // by default it uses publicPath in webpackOptions.output
               publicPath: '../',
-              hot: process.env.NODE_ENV === 'development'
+              hmr: process.env.NODE_ENV === 'development'
             }
           },
           "css-loader"
@@ -150,7 +150,7 @@ module.exports = {
            {
              loader: MiniCssExtractPlugin.loader,
              options: {
-               hot: process.env.NODE_ENV === 'development'
+               hmr: process.env.NODE_ENV === 'development'
              }
            },
           'css-loader',
@@ -189,10 +189,7 @@ module.exports = {
             loader: MiniCssExtractPlugin.loader,
             options: {
               // only enable hot in development
-              hot: process.env.NODE_ENV === 'development',
-              // modules enables hmr of css modules which
-              // need to be handled differently compared to typical css files
-              modules: true,
+              hmr: process.env.NODE_ENV === 'development',
               // in the event that HMR is not working correctly for your setup.
               // a fallback option has been implemented to force css files to be reloaded
               // reloadAll will force all stylesheets to be reloaded when receiving an HMR update
