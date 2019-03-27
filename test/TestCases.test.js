@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
 
 import webpack from 'webpack';
+import execa from 'execa';
 
 describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
@@ -89,13 +89,12 @@ describe('HMR', () => {
   });
 
   it('is es5 only', () => {
-    exec(
-      './node_modules/.bin/es-check es5 src/hmr/hotModuleReplacement.js',
-      (error, stdout, stderr) => {
-        expect(
-          stderr.indexOf('there were no ES version matching errors!') > -1
-        ).toBe(true);
-      }
+    const { stderr } = execa.shellSync(
+      'npx es-check es5 src/hmr/hotModuleReplacement.js'
     );
+
+    expect(
+      stderr.indexOf('there were no ES version matching errors') > -1
+    ).toBe(true);
   });
 });

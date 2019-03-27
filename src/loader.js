@@ -12,8 +12,10 @@ import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
 const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
 
-function hotLoader(content, context, locals) {
-  const accept = locals ? '' : 'module.hot.accept(undefined, cssReload);';
+function hotLoader(content, context) {
+  const accept = context.locals
+    ? ''
+    : 'module.hot.accept(undefined, cssReload);';
   const result = `${content}
     if(module.hot) {
       // ${Date.now()}
