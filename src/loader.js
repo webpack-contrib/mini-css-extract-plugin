@@ -6,6 +6,7 @@ import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
 import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
 import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
+import path from 'path';
 
 const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
@@ -40,6 +41,10 @@ export function pitch(request) {
     filename: childFilename,
     publicPath,
   };
+  if (query.publicPathRelativeToSource) {
+    const relative = path.relative(path.dirname(this.resourcePath), this.rootContext)
+    outputOptions.publicPath = relative + '/'
+  }
   const childCompiler = this._compilation.createChildCompiler(
     `${pluginName} ${request}`,
     outputOptions

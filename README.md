@@ -74,6 +74,46 @@ module.exports = {
 }
 ```
 
+#### URLs relative to the CSS file
+
+URLs in CSS files are resolved by the browser relative to the CSS file itself. The `publicPath` option (above) is used
+to specify where the root of the context is, relative to the CSS file for URLs in the CSS to work. However, having just
+one `publicPath` means that all of your CSS files need to be at the same depth (number of directories deep).
+
+Use the `publicPathRelativeToSource` option to dynamically change the `publicPath` used by the `mini-css-extract-plugin` to
+be relative to your source CSS file. NB: in order for the output to be correct, your output CSS file must be at the same 
+relative depth as your source CSS file.
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].css",
+      chunkFilename: "[id].css"
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPathRelativeToSource: true,
+            }
+          },
+          "css-loader"
+        ]
+      }
+    ]
+  }
+}
+```
+
 #### Advanced configuration example
 
 This plugin should be used only on `production` builds without `style-loader` in the loaders chain, especially if you want to have HMR in `development`.
