@@ -125,6 +125,7 @@ class MiniCssExtractPlugin {
       {
         filename: DEFAULT_FILENAME,
         moduleFilename: () => options.filename || DEFAULT_FILENAME,
+        insertInto: null,
       },
       options
     );
@@ -418,8 +419,10 @@ class MiniCssExtractPlugin {
                         '}',
                       ])
                     : '',
-                  'var head = document.getElementsByTagName("head")[0];',
-                  'head.appendChild(linkTag);',
+                  `var selector = "${this.options.insertInto}";`,
+                  'var parent = selector && document.querySelector && document.querySelector(selector);',
+                  'if (parent) { parent.appendChild(linkTag); }',
+                  'else { document.getElementsByTagName("head")[0].appendChild(linkTag); }',
                 ]),
                 '}).then(function() {',
                 Template.indent(['installedCssChunks[chunkId] = 0;']),
