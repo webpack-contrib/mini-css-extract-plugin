@@ -6,6 +6,9 @@ import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
 import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
 import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
+import validateOptions from 'schema-utils';
+
+import schema from './options.json';
 
 const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
@@ -29,12 +32,17 @@ const findModuleById = (modules, id) => {
 
 export function pitch(request) {
   const query = loaderUtils.getOptions(this) || {};
+
+  validateOptions(schema, query, 'Mini CSS Extract Plugin Loader');
+
   const loaders = this.loaders.slice(this.loaderIndex + 1);
   this.addDependency(this.resourcePath);
   const childFilename = '*'; // eslint-disable-line no-path-concat
   const publicPath =
     typeof query.publicPath === 'string'
       ? query.publicPath
+      : typeof query.publicPath === 'function'
+      ? query.publicPath(this.resourcePath, this.rootContext)
       : this._compilation.outputOptions.publicPath;
   const outputOptions = {
     filename: childFilename,
