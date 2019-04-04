@@ -154,7 +154,14 @@ module.exports = function(moduleId, options) {
   function update() {
     var src = getScriptSrc(options.filename);
     var reloaded = reloadStyle(src);
-    if (reloaded) {
+
+    if (options.locals) {
+      console.log('[HMR] Detected local css modules. Reload all css');
+      reloadAll();
+      return;
+    }
+
+    if (reloaded || !options.reloadAll) {
       console.log('[HMR] css reload %s', src.join(' '));
     } else {
       console.log('[HMR] Reload all css');
@@ -162,5 +169,5 @@ module.exports = function(moduleId, options) {
     }
   }
 
-  return debounce(update, 10);
+  return debounce(update, 50);
 };
