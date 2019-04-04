@@ -186,9 +186,7 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "[name].css",
-      chunkFilename: "[id].css",
-      // disables order warnings being logged in terminal after build
-      orderWarning: true, // Disable to remove warnings about conflicting order between imports
+      chunkFilename: "[id].css"
     })
   ],
   module: {
@@ -321,6 +319,10 @@ module.exports = {
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
+
+### Remove Order Warnings
+
+If the terminal is getting bloated with chunk order warnings. You can filter by configuring [warningsFilter](https://webpack.js.org/configuration/stats/) withing the webpack stats option
 
 ### Media Query Plugin
 
