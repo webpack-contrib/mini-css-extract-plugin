@@ -188,7 +188,7 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: "[id].css",
       // disables order warnings being logged in terminal after build
-      orderWarning: false
+      orderWarning: true, // Disable to remove warnings about conflicting order between imports
     })
   ],
   module: {
