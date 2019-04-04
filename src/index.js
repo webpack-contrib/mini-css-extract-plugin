@@ -113,6 +113,7 @@ class MiniCssExtractPlugin {
     this.options = Object.assign(
       {
         filename: '[name].css',
+        orderWarning: true,
       },
       options
     );

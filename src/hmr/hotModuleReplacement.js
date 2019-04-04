@@ -161,7 +161,7 @@ module.exports = function(moduleId, options) {
       return;
     }
 
-    if (reloaded || !options.reloadAll) {
+    if (reloaded && !options.reloadAll) {
       console.log('[HMR] css reload %s', src.join(' '));
     } else {
       console.log('[HMR] Reload all css');
