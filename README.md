@@ -119,7 +119,12 @@ module.exports = {
 
 #### Hot Module Reloading (HMR)
 
-extract-mini-css-plugin supports hot reloading of actual css files in development. Some options are provided to enable HMR of both standard stylesheets and locally scoped css or CSS modules. Below is an example configuration of mini-css for HMR use with CSS modules
+extract-mini-css-plugin supports hot reloading of actual css files in development. Some options are provided to enable HMR of both standard stylesheets and locally scoped CSS or CSS modules. Below is an example configuration of mini-css for HMR use with CSS modules.
+
+
+While we attempt to hmr css-modules. It is not easy to perform when code-splitting with custom chunk names. `reloadAll` is an option that should only be enabled if HMR isn't working correctly. The core challenge with css-modules is that when code-split, the chunk ids can and do end up different compared to the filename. 
+
+
 
 **webpack.config.js**
 
@@ -144,6 +149,8 @@ module.exports = {
             options: {
               // only enable hot in development
               hmr: process.env.NODE_ENV === 'development',
+              // if hmr does not work, this is a forceful method.
+              reloadAll: true
             }
           },
           "css-loader"

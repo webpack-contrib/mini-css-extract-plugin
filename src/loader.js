@@ -22,7 +22,10 @@ function hotLoader(content, context) {
       var cssReload = require(${loaderUtils.stringifyRequest(
         context.context,
         path.join(__dirname, 'hmr/hotModuleReplacement.js')
-      )})(module.id, ${JSON.stringify(context.query)});
+      )})(module.id, ${JSON.stringify({
+    ...context.query,
+    locals: !!context.locals,
+  })});
       module.hot.dispose(cssReload);
       ${accept}
     }
@@ -154,7 +157,7 @@ export function pitch(request) {
       ? `\nmodule.exports = ${JSON.stringify(locals)};`
       : '';
 
-    resultSource += query.hot
+    resultSource += query.hmr
       ? hotLoader(result, { context: this.context, query, locals })
       : result;
 
