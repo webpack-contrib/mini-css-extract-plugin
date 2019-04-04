@@ -480,16 +480,20 @@ class MiniCssExtractPlugin {
           // use list with fewest failed deps
           // and emit a warning
           const fallbackModule = bestMatch.pop();
-          compilation.warnings.push(
-            new Error(
-              `chunk ${chunk.name || chunk.id} [mini-css-extract-plugin]\n` +
-                'Conflicting order between:\n' +
-                ` * ${fallbackModule.readableIdentifier(requestShortener)}\n` +
-                `${bestMatchDeps
-                  .map((m) => ` * ${m.readableIdentifier(requestShortener)}`)
-                  .join('\n')}`
-            )
-          );
+          if (this.options.orderWarning) {
+            compilation.warnings.push(
+              new Error(
+                `chunk ${chunk.name || chunk.id} [${pluginName}]\n` +
+                  'Conflicting order between:\n' +
+                  ` * ${fallbackModule.readableIdentifier(
+                    requestShortener
+                  )}\n` +
+                  `${bestMatchDeps
+                    .map((m) => ` * ${m.readableIdentifier(requestShortener)}`)
+                    .join('\n')}`
+              )
+            );
+          }
           usedModules.add(fallbackModule);
         }
       }

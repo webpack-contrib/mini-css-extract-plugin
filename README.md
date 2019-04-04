@@ -186,7 +186,9 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "[name].css",
-      chunkFilename: "[id].css"
+      chunkFilename: "[id].css",
+      // disables order warnings being logged in terminal after build
+      orderWarning: false
     })
   ],
   module: {
