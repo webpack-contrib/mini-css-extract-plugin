@@ -40,7 +40,9 @@ export function pitch(request) {
   const childFilename = '*'; // eslint-disable-line no-path-concat
   const publicPath =
     typeof query.publicPath === 'string'
-      ? query.publicPath
+      ? query.publicPath.endsWith('/')
+        ? query.publicPath
+        : `${query.publicPath}/`
       : typeof query.publicPath === 'function'
       ? query.publicPath(this.resourcePath, this.rootContext)
       : this._compilation.outputOptions.publicPath;
