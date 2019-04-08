@@ -1,4 +1,4 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = {
   entry: './index.js',
@@ -11,6 +11,7 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
+              modules: true,
               localIdentName: '[local]'
             }
           }

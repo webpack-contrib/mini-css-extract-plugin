@@ -19,14 +19,14 @@ It builds on top of a new webpack v4 feature (module types) and requires webpack
 
 Compared to the extract-text-webpack-plugin:
 
-* Async loading
-* No duplicate compilation (performance)
-* Easier to use
-* Specific to CSS
+- Async loading
+- No duplicate compilation (performance)
+- Easier to use
+- Specific to CSS
 
 TODO:
 
-* HMR support
+- HMR support
 
 <h2 align="center">Install</h2>
 
@@ -50,15 +50,15 @@ Specifies a custom public path for the target file(s).
 **webpack.config.js**
 
 ```js
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: "[name].css",
-      chunkFilename: "[id].css"
-    })
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
   ],
   module: {
     rules: [
@@ -70,15 +70,15 @@ module.exports = {
             options: {
               // you can specify a publicPath here
               // by default it use publicPath in webpackOptions.output
-              publicPath: '../'
-            }
+              publicPath: '../',
+            },
           },
-          "css-loader"
-        ]
-      }
-    ]
-  }
-}
+          'css-loader',
+        ],
+      },
+    ],
+  },
+};
 ```
 
 #### `publicPath` function example
@@ -86,15 +86,15 @@ module.exports = {
 **webpack.config.js**
 
 ```js
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: "[name].css",
-      chunkFilename: "[id].css"
-    })
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
   ],
   module: {
     rules: [
@@ -108,16 +108,16 @@ module.exports = {
                 // publicPath is the relative path of the resource to the context
                 // e.g. for ./css/admin/main.css the publicPath will be ../../
                 // while for ./css/main.css the publicPath will be ../
-                return path.relative(path.dirname(resourcePath), context) + '/'
+                return path.relative(path.dirname(resourcePath), context) + '/';
               },
-            }
+            },
           },
-          "css-loader"
-        ]
-      }
-    ]
-  }
-}
+          'css-loader',
+        ],
+      },
+    ],
+  },
+};
 ```
 
 #### Advanced configuration example
@@ -128,12 +128,11 @@ Here is an example to have both HMR in `development` and your styles extracted i
 
 (Loaders options left out for clarity, adapt accordingly to your needs.)
 
-
 **webpack.config.js**
 
 ```js
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const devMode = process.env.NODE_ENV !== 'production'
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const devMode = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   plugins: [
@@ -142,7 +141,7 @@ module.exports = {
       // both options are optional
       filename: devMode ? '[name].css' : '[name].[hash].css',
       chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
-    })
+    }),
   ],
   module: {
     rules: [
@@ -154,50 +153,44 @@ module.exports = {
           'postcss-loader',
           'sass-loader',
         ],
-      }
-    ]
-  }
-}
+      },
+    ],
+  },
+};
 ```
 
 ### Minimizing For Production
 
-While webpack 5 is likely to come with a CSS minimizer built-in, with webpack 4 you need to bring your own. To minify the output, use a plugin like [optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin). Setting `optimization.minimizer` overrides the defaults provided by webpack, so make sure to also specify a JS minimizer:
+To minify the output, use a plugin like [optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin). Setting `optimization.minimizer` overrides the defaults provided by webpack, so make sure to also specify a JS minimizer:
 
 **webpack.config.js**
 
 ```js
-const TerserJSPlugin = require("terser-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const TerserJSPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 module.exports = {
   optimization: {
-    minimizer: [
-      new TerserJSPlugin({}),
-      new OptimizeCSSAssetsPlugin({})
-    ]
+    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css"
-    })
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
   ],
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader"
-        ]
-      }
-    ]
-  }
-}
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
 ```
 
-### Features
+### Examples
 
 #### Using preloaded or inlined CSS
 
@@ -215,7 +208,7 @@ can be extracted in one CSS file using `optimization.splitChunks.cacheGroups`.
 **webpack.config.js**
 
 ```js
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   optimization: {
     splitChunks: {
@@ -224,28 +217,25 @@ module.exports = {
           name: 'styles',
           test: /\.css$/,
           chunks: 'all',
-          enforce: true
-        }
-      }
-    }
+          enforce: true,
+        },
+      },
+    },
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].css",
-    })
+      filename: '[name].css',
+    }),
   ],
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader"
-        ]
-      }
-    ]
-  }
-}
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
 ```
 
 #### Extracting CSS based on entry
@@ -256,7 +246,7 @@ ExtractTextPlugin.
 
 ```javascript
 const path = require('path');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 function recursiveIssuer(m) {
   if (m.issuer) {
@@ -271,43 +261,42 @@ function recursiveIssuer(m) {
 module.exports = {
   entry: {
     foo: path.resolve(__dirname, 'src/foo'),
-    bar: path.resolve(__dirname, 'src/bar')
+    bar: path.resolve(__dirname, 'src/bar'),
   },
   optimization: {
     splitChunks: {
       cacheGroups: {
         fooStyles: {
           name: 'foo',
-          test: (m,c,entry = 'foo') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+          test: (m, c, entry = 'foo') =>
+            m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
           chunks: 'all',
-          enforce: true
+          enforce: true,
         },
         barStyles: {
           name: 'bar',
-          test: (m,c,entry = 'bar') => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+          test: (m, c, entry = 'bar') =>
+            m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
           chunks: 'all',
-          enforce: true
-        }
-      }
-    }
+          enforce: true,
+        },
+      },
+    },
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].css",
-    })
+      filename: '[name].css',
+    }),
   ],
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader"
-        ]
-      }
-    ]
-  }
-}
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
 ```
 
 #### Long Term Caching
@@ -321,42 +310,19 @@ If you'd like to extract the media queries from the extracted CSS (so mobile use
 - [Media Query Plugin](https://github.com/SassNinja/media-query-plugin)
 - [Media Query Splitting Plugin](https://github.com/mike-diamond/media-query-splitting-plugin)
 
-
-<h2 align="center">Maintainers</h2>
-
-<table>
-  <tbody>
-    <tr>
-      <td align="center">
-        <a href="https://github.com/sokra">
-          <img width="150" height="150" src="https://github.com/sokra.png?size=150">
-          </br>
-          Tobias Koppers
-        </a>
-      </td>
-    </tr>
-  <tbody>
-</table>
-
-
 ## License
 
 [MIT](./LICENSE)
 
 [npm]: https://img.shields.io/npm/v/mini-css-extract-plugin.svg
 [npm-url]: https://npmjs.com/package/mini-css-extract-plugin
-
 [node]: https://img.shields.io/node/v/mini-css-extract-plugin.svg
 [node-url]: https://nodejs.org
-
 [deps]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin.svg
 [deps-url]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin
-
-[tests]: 	https://img.shields.io/circleci/project/github/webpack-contrib/mini-css-extract-plugin.svg
+[tests]: https://img.shields.io/circleci/project/github/webpack-contrib/mini-css-extract-plugin.svg
 [tests-url]: https://circleci.com/gh/webpack-contrib/mini-css-extract-plugin
-
 [cover]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin/branch/master/graph/badge.svg
 [cover-url]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin
-
 [chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
 [chat-url]: https://gitter.im/webpack/webpack

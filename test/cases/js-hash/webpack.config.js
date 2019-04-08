@@ -1,4 +1,4 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = [1, 2].map(n => ({
   entry: './index.js',

@@ -1,5 +1,6 @@
-const Self = require('../../../');
-const path = require('path')
+import path from 'path';
+
+import Self from '../../../src';
 
 module.exports = {
   entry: {

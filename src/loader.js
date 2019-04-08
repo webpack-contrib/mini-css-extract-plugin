@@ -15,9 +15,11 @@ const pluginName = 'mini-css-extract-plugin';
 
 const exec = (loaderContext, code, filename) => {
   const module = new NativeModule(filename, loaderContext);
+
   module.paths = NativeModule._nodeModulePaths(loaderContext.context); // eslint-disable-line no-underscore-dangle
   module.filename = filename;
   module._compile(code, filename); // eslint-disable-line no-underscore-dangle
+
   return module.exports;
 };
 
@@ -27,24 +29,27 @@ const findModuleById = (modules, id) => {
       return module;
     }
   }
+
   return null;
 };
 
 export function pitch(request) {
-  const query = loaderUtils.getOptions(this) || {};
+  const options = loaderUtils.getOptions(this) || {};
 
-  validateOptions(schema, query, 'Mini CSS Extract Plugin Loader');
+  validateOptions(schema, options, 'Mini CSS Extract Plugin Loader');
 
   const loaders = this.loaders.slice(this.loaderIndex + 1);
+
   this.addDependency(this.resourcePath);
+
   const childFilename = '*'; // eslint-disable-line no-path-concat
   const publicPath =
-    typeof query.publicPath === 'string'
-      ? query.publicPath.endsWith('/')
-        ? query.publicPath
-        : `${query.publicPath}/`
-      : typeof query.publicPath === 'function'
-      ? query.publicPath(this.resourcePath, this.rootContext)
+    typeof options.publicPath === 'string'
+      ? options.publicPath.endsWith('/')
+        ? options.publicPath
+        : `${options.publicPath}/`
+      : typeof options.publicPath === 'function'
+      ? options.publicPath(this.resourcePath, this.rootContext)
       : this._compilation.outputOptions.publicPath;
   const outputOptions = {
     filename: childFilename,
@@ -54,6 +59,7 @@ export function pitch(request) {
     `${pluginName} ${request}`,
     outputOptions
   );
+
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
   new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
@@ -61,6 +67,7 @@ export function pitch(request) {
     childCompiler
   );
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
+
   // We set loaderContext[MODULE_TYPE] = false to indicate we already in
   // a child compiler so we don't spawn another child compilers from there.
   childCompiler.hooks.thisCompilation.tap(
@@ -69,6 +76,7 @@ export function pitch(request) {
       compilation.hooks.normalModuleLoader.tap(
         `${pluginName} loader`,
         (loaderContext, module) => {
+          // eslint-disable-next-line no-param-reassign
           loaderContext.emitFile = this.emitFile;
           loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
           if (module.request === request) {
@@ -87,6 +95,7 @@ export function pitch(request) {
   );
 
   let source;
+
   childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
     source =
       compilation.assets[childFilename] &&
@@ -102,30 +111,38 @@ export function pitch(request) {
 
   const callback = this.async();
   childCompiler.runAsChild((err, entries, compilation) => {
-    if (err) return callback(err);
+    if (err) {
+      return callback(err);
+    }
 
     if (compilation.errors.length > 0) {
       return callback(compilation.errors[0]);
     }
+
     compilation.fileDependencies.forEach((dep) => {
       this.addDependency(dep);
     }, this);
     compilation.contextDependencies.forEach((dep) => {
       this.addContextDependency(dep);
     }, this);
+
     if (!source) {
       return callback(new Error("Didn't get a result from child compiler"));
     }
+
     let text;
     let locals;
+
     try {
       text = exec(this, source, request);
       locals = text && text.locals;
+
       if (!Array.isArray(text)) {
         text = [[null, text]];
       } else {
         text = text.map((line) => {
           const module = findModuleById(compilation.modules, line[0]);
+
           return {
             identifier: module.identifier(),
             content: line[1],
@@ -138,7 +155,9 @@ export function pitch(request) {
     } catch (e) {
       return callback(e);
     }
+
     let resultSource = `// extracted by ${pluginName}`;
+
     if (locals && typeof resultSource !== 'undefined') {
       resultSource += `\nmodule.exports = ${JSON.stringify(locals)};`;
     }

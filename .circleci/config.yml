@@ -29,7 +29,7 @@ canary_tests: &canary_tests
         command: npm i --no-save webpack@next
     - run:
         name: Run Test.
-        command: if [[ $(compver --name webpack --gte next --lt latest) < 1 ]] ; then printf "Next is older than Latest - Skipping Canary Suite"; else npm run ci:test; fi
+        command: if [[ $(compver --name webpack --gte next --lt latest) < 1 ]] ; then printf "Next is older than Latest - Skipping Canary Suite"; else npm run ci:test || true; fi
 
 version: 2
 jobs:
@@ -100,9 +100,9 @@ jobs:
           name: Submit coverage data to codecov.
           command: bash <(curl -s https://codecov.io/bash)
           when: on_success
-  node6-canary:
+  node8-canary:
     docker:
-      - image: webpackcontrib/circleci-node10:latest
+      - image: webpackcontrib/circleci-node8:latest
     <<: *canary_tests
 
 workflows:
@@ -136,7 +136,7 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - node6-canary:
+      - node8-canary:
           requires:
             - analysis
             - node6-latest
