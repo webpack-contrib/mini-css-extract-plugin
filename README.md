@@ -35,6 +35,13 @@ npm install --save-dev mini-css-extract-plugin
 
 ### Configuration
 
+#### `publicPath`
+
+Type: `String|Function`
+Default: the `publicPath` in `webpackOptions.output`
+
+Specifies a custom public path for the target file(s).
+
 #### Minimal example
 
 **webpack.config.js**
@@ -62,6 +69,45 @@ module.exports = {
               // by default it uses publicPath in webpackOptions.output
               publicPath: '../',
               hmr: process.env.NODE_ENV === 'development'
+            }
+          },
+          "css-loader"
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### `publicPath` function example
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].css",
+      chunkFilename: "[id].css"
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: (resourcePath, context) => {
+                // publicPath is the relative path of the resource to the context
+                // e.g. for ./css/admin/main.css the publicPath will be ../../
+                // while for ./css/main.css the publicPath will be ../
+                return path.relative(path.dirname(resourcePath), context) + '/'
+              },
             }
           },
           "css-loader"
@@ -169,17 +215,13 @@ While webpack 5 is likely to come with a CSS minimizer built-in, with webpack 4 
 **webpack.config.js**
 
 ```js
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserJSPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 module.exports = {
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true // set to true if you want JS source maps
-      }),
+      new TerserJSPlugin({}),
       new OptimizeCSSAssetsPlugin({})
     ]
   },

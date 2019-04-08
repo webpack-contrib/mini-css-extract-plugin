@@ -60,18 +60,33 @@ describe('TestCases', () => {
             );
             return;
           }
-          const expectedDirectory = path.resolve(directoryForCase, 'expected');
-          for (const file of fs.readdirSync(expectedDirectory)) {
-            const content = fs.readFileSync(
-              path.resolve(expectedDirectory, file),
-              'utf-8'
-            );
-            const actualContent = fs.readFileSync(
-              path.resolve(outputDirectoryForCase, file),
-              'utf-8'
-            );
-            expect(actualContent).toEqual(content);
+
+          function compareDirectory(actual, expected) {
+            for (const file of fs.readdirSync(expected, {
+              withFileTypes: true,
+            })) {
+              if (file.isFile()) {
+                const content = fs.readFileSync(
+                  path.resolve(expected, file.name),
+                  'utf-8'
+                );
+                const actualContent = fs.readFileSync(
+                  path.resolve(actual, file.name),
+                  'utf-8'
+                );
+                expect(actualContent).toEqual(content);
+              } else if (file.isDirectory()) {
+                compareDirectory(
+                  path.resolve(actual, file.name),
+                  path.resolve(expected, file.name)
+                );
+              }
+            }
           }
+
+          const expectedDirectory = path.resolve(directoryForCase, 'expected');
+          compareDirectory(outputDirectoryForCase, expectedDirectory);
+
           done();
         });
       }, 10000);
