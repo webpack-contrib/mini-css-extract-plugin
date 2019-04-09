@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import webpack from 'webpack';
+import execa from 'execa';
 
 describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
@@ -91,4 +92,24 @@ describe('TestCases', () => {
       }, 10000);
     }
   }
+});
+
+describe('HMR', () => {
+  it('matches snapshot', () => {
+    const hmr = fs
+      .readFileSync(path.join(__dirname, '../src/hmr/hotModuleReplacement.js'))
+      .toString();
+
+    expect(hmr).toMatchSnapshot();
+  });
+
+  it('is es5 only', () => {
+    const { stderr } = execa.shellSync(
+      'npx es-check es5 src/hmr/hotModuleReplacement.js'
+    );
+
+    expect(
+      stderr.indexOf('there were no ES version matching errors') > -1
+    ).toBe(true);
+  });
 });

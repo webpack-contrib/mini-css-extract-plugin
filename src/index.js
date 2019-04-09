@@ -116,6 +116,7 @@ class MiniCssExtractPlugin {
       },
       options
     );
+
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
       const hasName = filename.includes('[name]');
@@ -482,7 +483,7 @@ class MiniCssExtractPlugin {
           const fallbackModule = bestMatch.pop();
           compilation.warnings.push(
             new Error(
-              `chunk ${chunk.name || chunk.id} [mini-css-extract-plugin]\n` +
+              `chunk ${chunk.name || chunk.id} [${pluginName}]\n` +
                 'Conflicting order between:\n' +
                 ` * ${fallbackModule.readableIdentifier(requestShortener)}\n` +
                 `${bestMatchDeps

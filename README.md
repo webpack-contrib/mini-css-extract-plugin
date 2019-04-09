@@ -24,9 +24,6 @@ Compared to the extract-text-webpack-plugin:
 * Easier to use
 * Specific to CSS
 
-TODO:
-
-* HMR support
 
 <h2 align="center">Install</h2>
 
@@ -69,8 +66,9 @@ module.exports = {
             loader: MiniCssExtractPlugin.loader,
             options: {
               // you can specify a publicPath here
-              // by default it use publicPath in webpackOptions.output
-              publicPath: '../'
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development'
             }
           },
           "css-loader"
@@ -149,7 +147,12 @@ module.exports = {
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+           {
+             loader: MiniCssExtractPlugin.loader,
+             options: {
+               hmr: process.env.NODE_ENV === 'development'
+             }
+           },
           'css-loader',
           'postcss-loader',
           'sass-loader',
@@ -159,6 +162,51 @@ module.exports = {
   }
 }
 ```
+
+#### Hot Module Reloading (HMR)
+
+extract-mini-css-plugin supports hot reloading of actual css files in development. Some options are provided to enable HMR of both standard stylesheets and locally scoped CSS or CSS modules. Below is an example configuration of mini-css for HMR use with CSS modules.
+
+
+While we attempt to hmr css-modules. It is not easy to perform when code-splitting with custom chunk names. `reloadAll` is an option that should only be enabled if HMR isn't working correctly. The core challenge with css-modules is that when code-split, the chunk ids can and do end up different compared to the filename. 
+
+
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].css",
+      chunkFilename: "[id].css"
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // only enable hot in development
+              hmr: process.env.NODE_ENV === 'development',
+              // if hmr does not work, this is a forceful method.
+              reloadAll: true
+            }
+          },
+          "css-loader"
+        ]
+      }
+    ]
+  }
+}
+```
+
 
 ### Minimizing For Production
 
@@ -313,6 +361,10 @@ module.exports = {
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
+
+### Remove Order Warnings
+
+If the terminal is getting bloated with chunk order warnings. You can filter by configuring [warningsFilter](https://webpack.js.org/configuration/stats/) withing the webpack stats option
 
 ### Media Query Plugin
 

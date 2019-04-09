@@ -7,7 +7,12 @@ module.exports = [1, 2].map(n => ({
       {
         test: /\.css$/,
         use: [
-          Self.loader,
+          {
+            loader: Self.loader,
+            options:{
+              hmr: false
+            }
+          },
           {
             loader: 'css-loader',
             options: {
@@ -30,7 +35,7 @@ module.exports = [1, 2].map(n => ({
   },
   plugins: [
     new Self({
-      filename: `[name].[contenthash].[chunkhash].css`,
+      filename: `[name].[chunkhash].css`,
     }),
   ],
 }));
