@@ -502,6 +502,14 @@ class MiniCssExtractPlugin {
       modules.sort((a, b) => a.index2 - b.index2);
       usedModules = modules;
     }
+
+    if (this.options.onEmit) {
+      const replaced = this.options.onEmit(chunk, usedModules);
+      if (replaced) {
+        usedModules = replaced;
+      }
+    }
+
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
     for (const m of usedModules) {
