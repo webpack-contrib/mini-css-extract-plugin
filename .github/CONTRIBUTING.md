@@ -1,21 +1,21 @@
-## Contributing in @webpack-contrib
+# Contributing in @webpack-contrib
 
-We'd always love contributions to further improve the webpack / webpack-contrib ecosystem! 
+We'd always love contributions to further improve the webpack / webpack-contrib ecosystem!
 Here are the guidelines we'd like you to follow:
 
-* [Questions and Problems](#question)
-* [Issues and Bugs](#issue)
-* [Feature Requests](#feature)
-* [Pull Request Submission Guidelines](#submit-pr)
-* [Commit Message Conventions](#commit)
+- [Questions and Problems](#question)
+- [Issues and Bugs](#issue)
+- [Feature Requests](#feature)
+- [Pull Request Submission Guidelines](#submit-pr)
+- [Commit Message Conventions](#commit)
 
-### <a name="question"></a> Got a Question or Problem?
+## <a name="question"></a> Got a Question or Problem?
 
-Please submit support requests and questions to StackOverflow using the tag [[webpack]](http://stackoverflow.com/tags/webpack). 
-StackOverflow is better suited for this kind of support though you may also inquire in [Webpack Gitter](https://gitter.im/webpack/webpack). 
+Please submit support requests and questions to StackOverflow using the tag [[webpack]](http://stackoverflow.com/tags/webpack).
+StackOverflow is better suited for this kind of support though you may also inquire in [Webpack Gitter](https://gitter.im/webpack/webpack).
 The issue tracker is for bug reports and feature discussions.
 
-### <a name="issue"></a> Found an Issue or Bug?
+## <a name="issue"></a> Found an Issue or Bug?
 
 Before you submit an issue, please search the issue tracker, maybe an issue for your problem already exists and the discussion might inform you of workarounds readily available.
 
@@ -31,13 +31,13 @@ We will be insisting on a minimal reproduce scenario in order to save maintainer
 
 Unfortunately, we are not able to investigate / fix bugs without a minimal reproduction, so if we don't hear back from you we are going to close an issue that doesn't have enough info to be reproduced.
 
-### <a name="feature"></a> Feature Requests?
+## <a name="feature"></a> Feature Requests?
 
-You can *request* a new feature by creating an issue on Github. 
+You can _request_ a new feature by creating an issue on Github.
 
-If you would like to *implement* a new feature, please submit an issue with a proposal for your work `first`, to be sure that particular makes sense for the project.
+If you would like to _implement_ a new feature, please submit an issue with a proposal for your work `first`, to be sure that particular makes sense for the project.
 
-### <a name="submit-pr"></a> Pull Request Submission Guidelines
+## <a name="submit-pr"></a> Pull Request Submission Guidelines
 
 Before you submit your Pull Request (PR) consider the following guidelines:
 
@@ -46,9 +46,9 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 - Fill out our `Pull Request Template`. Your pull request will not be considered if it is ignored.
 - Please sign the `Contributor License Agreement (CLA)` when a pull request is opened. We cannot accept your pull request without this. Make sure you sign with the primary email address associated with your local / github account.
 
-### <a name="commit"></a> Webpack Contrib Commit Conventions
+## <a name="commit"></a> Webpack Contrib Commit Conventions
 
-Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
+Each commit message consists of a **header**, a **body** and a **footer**. The header has a special
 format that includes a **type**, a **scope** and a **subject**:
 
 ```
@@ -66,48 +66,56 @@ to read on GitHub as well as in various git tools.
 
 The footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any.
 
-Examples: 
+Examples:
+
 ```
 docs(readme): update install instructions
 ```
+
 ```
 fix: refer to the `entrypoint` instead of the first `module`
 ```
 
-#### Revert
-If the commit reverts a previous commit, it should begin with `revert: `, followed by the header of the reverted commit. 
+### Revert
+
+If the commit reverts a previous commit, it should begin with `revert:`, followed by the header of the reverted commit.
 In the body it should say: `This reverts commit <hash>.`, where the hash is the SHA of the commit being reverted.
 
-#### Type
+### Type
+
 Must be one of the following:
 
-* **build**: Changes that affect the build system or external dependencies (example scopes: babel, npm)
-* **chore**: Changes that fall outside of build / docs that do not effect source code (example scopes: package, defaults)
-* **ci**: Changes to our CI configuration files and scripts (example scopes: circleci, travis)
-* **docs**: Documentation only changes (example scopes: readme, changelog)
-* **feat**: A new feature
-* **fix**: A bug fix
-* **perf**: A code change that improves performance
-* **refactor**: A code change that neither fixes a bug nor adds a feature
-* **revert**: Used when reverting a committed change
-* **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons)
-* **test**: Addition of or updates to Jest tests
+- **build**: Changes that affect the build system or external dependencies (example scopes: babel, npm)
+- **chore**: Changes that fall outside of build / docs that do not effect source code (example scopes: package, defaults)
+- **ci**: Changes to our CI configuration files and scripts (example scopes: circleci, travis)
+- **docs**: Documentation only changes (example scopes: readme, changelog)
+- **feat**: A new feature
+- **fix**: A bug fix
+- **perf**: A code change that improves performance
+- **refactor**: A code change that neither fixes a bug nor adds a feature
+- **revert**: Used when reverting a committed change
+- **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons)
+- **test**: Addition of or updates to Jest tests
 
-#### Scope
+### Scope
+
 The scope is subjective & depends on the `type` see above. A good example would be a change to a particular class / module.
 
-#### Subject
+### Subject
+
 The subject contains a succinct description of the change:
 
-* use the imperative, present tense: "change" not "changed" nor "changes"
-* don't capitalize the first letter
-* no dot (.) at the end
+- use the imperative, present tense: "change" not "changed" nor "changes"
+- don't capitalize the first letter
+- no dot (.) at the end
 
-#### Body
+### Body
+
 Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes".
 The body should include the motivation for the change and contrast this with previous behavior.
 
-#### Footer
+### Footer
+
 The footer should contain any information about **Breaking Changes** and is also the place to
 reference GitHub issues that this commit **Closes**.
 
@@ -116,9 +124,29 @@ reference GitHub issues that this commit **Closes**.
 Example
 
 ```
-BREAKING CHANGE: Updates to `Chunk.mapModules`. 
+BREAKING CHANGE: Updates to `Chunk.mapModules`.
 
 This release is not backwards compatible with `Webpack 2.x` due to breaking changes in webpack/webpack#4764
 Migration: see webpack/webpack#5225
 
 ```
+
+## Testing Your Pull Request
+
+You may have the need to test your changes in a real-world project or dependent
+module. Thankfully, Github provides a means to do this. Add a dependency to the
+`package.json` for such a project as follows:
+
+```json
+{
+  "devDependencies": {
+    "${package}": "webpack-contrib/${package}#{id}/head"
+  }
+}
+```
+
+Where `{id}` is the # ID of your Pull Request.
+
+## Thanks
+
+For your interest, time, understanding, and for following this simple guide.

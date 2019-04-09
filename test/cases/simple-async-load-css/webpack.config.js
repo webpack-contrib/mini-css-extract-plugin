@@ -1,17 +1,14 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = {
   entry: {
-    'main': './index.js',
+    main: './index.js',
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [
-          Self.loader,
-          'css-loader',
-        ],
+        use: [Self.loader, 'css-loader'],
       },
     ],
   },

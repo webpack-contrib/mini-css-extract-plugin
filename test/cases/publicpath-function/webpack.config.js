@@ -1,5 +1,6 @@
-const Self = require('../../../');
-const path = require('path')
+import path from 'path';
+
+import Self from '../../../src';
 
 module.exports = {
   entry: {
@@ -17,20 +18,26 @@ module.exports = {
             loader: Self.loader,
             options: {
               // Compute publicPath relative to the CSS output
-              publicPath: (resourcePath, context) => path.relative(path.dirname(resourcePath), context) + '/',
-            }
+              publicPath: (resourcePath, context) =>
+                `${path
+                  .relative(path.dirname(resourcePath), context)
+                  .replace(/\\/g, '/')}/`,
+            },
           },
           'css-loader',
         ],
-      }, {
+      },
+      {
         test: /\.(svg|png)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            filename: '[name].[ext]'
-          }
-        }]
-      }
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              filename: '[name].[ext]',
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [
