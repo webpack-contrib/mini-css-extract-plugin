@@ -390,6 +390,36 @@ class MiniCssExtractPlugin {
           return source;
         }
       );
+
+      compilation.hooks.optimizeChunks.tap(pluginName, (chunks) => {
+        for (const chunk of chunks) {
+          chunk.modulesIterable.forEach((module) => {
+            // eslint-disable-next-line no-param-reassign
+            module.dependencies = module.dependencies.filter((dep) => {
+              const hasCssDep =
+                dep.module &&
+                dep.module.dependencies.find(
+                  (d) => d.module && d.module.type === MODULE_TYPE
+                );
+
+              if (hasCssDep) {
+                dep.disconnect();
+                return false;
+              }
+
+              return true;
+            });
+
+            if (
+              module.type === MODULE_TYPE &&
+              module.issuer &&
+              module.issuer.buildMeta.extracted
+            ) {
+              chunk.removeModule(module.issuer);
+            }
+          });
+        }
+      });
     });
   }
 

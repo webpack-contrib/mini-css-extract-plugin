@@ -217,6 +217,11 @@ export function pitch(request) {
       ? hotLoader(result, { context: this.context, options, locals })
       : result;
 
+    this._module.buildMeta = {
+      ...this._module.buildMeta,
+      extracted: !locals && !options.hmr,
+    };
+
     return callback(null, resultSource);
   });
 }
