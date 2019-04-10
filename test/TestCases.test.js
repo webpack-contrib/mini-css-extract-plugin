@@ -2,11 +2,33 @@ import fs from 'fs';
 import path from 'path';
 
 import webpack from 'webpack';
-import execa from 'execa';
+
+function compareDirectory(actual, expected) {
+  const files = fs.readdirSync(expected);
+
+  for (const file of files) {
+    const absoluteFilePath = path.resolve(expected, file);
+
+    const stats = fs.lstatSync(absoluteFilePath);
+
+    if (stats.isDirectory()) {
+      compareDirectory(
+        path.resolve(actual, file),
+        path.resolve(expected, file)
+      );
+    } else if (stats.isFile()) {
+      const content = fs.readFileSync(path.resolve(expected, file), 'utf8');
+      const actualContent = fs.readFileSync(path.resolve(actual, file), 'utf8');
+
+      expect(actualContent).toEqual(content);
+    }
+  }
+}
 
 describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
   const outputDirectory = path.resolve(__dirname, 'js');
+
   for (const directory of fs.readdirSync(casesDirectory)) {
     if (!/^(\.|_)/.test(directory)) {
       // eslint-disable-next-line no-loop-func
@@ -18,6 +40,7 @@ describe('TestCases', () => {
           directoryForCase,
           'webpack.config.js'
         ));
+
         for (const config of [].concat(webpackConfig)) {
           Object.assign(
             config,
@@ -34,12 +57,15 @@ describe('TestCases', () => {
             config
           );
         }
+
         webpack(webpackConfig, (err, stats) => {
           if (err) {
             done(err);
             return;
           }
+
           done();
+
           // eslint-disable-next-line no-console
           console.log(
             stats.toString({
@@ -49,6 +75,7 @@ describe('TestCases', () => {
               modules: false,
             })
           );
+
           if (stats.hasErrors()) {
             done(
               new Error(
@@ -58,33 +85,12 @@ describe('TestCases', () => {
                 })
               )
             );
+
             return;
           }
 
-          function compareDirectory(actual, expected) {
-            for (const file of fs.readdirSync(expected, {
-              withFileTypes: true,
-            })) {
-              if (file.isFile()) {
-                const content = fs.readFileSync(
-                  path.resolve(expected, file.name),
-                  'utf-8'
-                );
-                const actualContent = fs.readFileSync(
-                  path.resolve(actual, file.name),
-                  'utf-8'
-                );
-                expect(actualContent).toEqual(content);
-              } else if (file.isDirectory()) {
-                compareDirectory(
-                  path.resolve(actual, file.name),
-                  path.resolve(expected, file.name)
-                );
-              }
-            }
-          }
-
           const expectedDirectory = path.resolve(directoryForCase, 'expected');
+
           compareDirectory(outputDirectoryForCase, expectedDirectory);
 
           done();
@@ -92,24 +98,4 @@ describe('TestCases', () => {
       }, 10000);
     }
   }
-});
-
-describe('HMR', () => {
-  it('matches snapshot', () => {
-    const hmr = fs
-      .readFileSync(path.join(__dirname, '../src/hmr/hotModuleReplacement.js'))
-      .toString();
-
-    expect(hmr).toMatchSnapshot();
-  });
-
-  it('is es5 only', () => {
-    const { stderr } = execa.shellSync(
-      'npx es-check es5 src/hmr/hotModuleReplacement.js'
-    );
-
-    expect(
-      stderr.indexOf('there were no ES version matching errors') > -1
-    ).toBe(true);
-  });
 });

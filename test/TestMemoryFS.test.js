@@ -9,6 +9,7 @@ describe('TestMemoryFS', () => {
   it('should preserve asset even if not emitted', (done) => {
     const casesDirectory = path.resolve(__dirname, 'cases');
     const directoryForCase = path.resolve(casesDirectory, 'simple-publicpath');
+    // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfig = require(path.resolve(
       directoryForCase,
       'webpack.config.js'

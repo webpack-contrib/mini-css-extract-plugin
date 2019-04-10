@@ -1,13 +1,9 @@
 module.exports = {
   root: true,
+  parser: 'babel-eslint',
   plugins: ['prettier'],
   extends: ['@webpack-contrib/eslint-config-webpack'],
   rules: {
-    'prettier/prettier': [
-      'error',
-      { singleQuote: true, trailingComma: 'es5', arrowParens: 'always' },
-    ],
-    'class-methods-use-this': 'off',
-    'no-undefined': 'off',
+    'prettier/prettier': ['error'],
   },
 };

@@ -1,4 +1,4 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = {
   entry: {
@@ -9,10 +9,7 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: [
-          Self.loader,
-          'css-loader',
-        ],
+        use: [Self.loader, 'css-loader'],
       },
     ],
   },

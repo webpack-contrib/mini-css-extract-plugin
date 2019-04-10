@@ -1,1 +1,1 @@
-import(/* webpackChunkName: "style" */'./style.css');
+import(/* webpackChunkName: "style" */ './style.css');

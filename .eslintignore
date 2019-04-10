@@ -1,5 +1,5 @@
 /node_modules
 /dist
-/test/cases
+/test/cases/*/expected
 /test/js
 /test/manual
