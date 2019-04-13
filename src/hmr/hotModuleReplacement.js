@@ -90,7 +90,7 @@ function updateCss(el, url) {
     url = el.href.split('?')[0];
   }
 
-  if (isDataURL(url)) {
+  if (!isUrlRequest(url)) {
     return;
   }
 
@@ -147,7 +147,7 @@ function reloadStyle(src) {
   forEach.call(elements, function(el) {
     var url = getReloadUrl(el.href, src);
 
-    if (isDataURL(url)) {
+    if (!isUrlRequest(url)) {
       return;
     }
 
@@ -176,11 +176,25 @@ function reloadAll() {
   });
 }
 
-function isDataURL(s) {
-  return !!s.match(
-    // eslint-disable-next-line no-useless-escape
-    /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*)\s*$/i
-  );
+function isUrlRequest(url) {
+  // An URL is not an request if
+
+  // 1. It's an absolute url
+  if (/^[a-z][a-z0-9+.-]*:/i.test(url)) {
+    return false;
+  }
+
+  // 2. It's a protocol-relative
+  if (/^\/\//.test(url)) {
+    return false;
+  }
+
+  // 3. Its a `#` link
+  if (/^#/.test(url)) {
+    return false;
+  }
+
+  return true;
 }
 
 module.exports = function(moduleId, options) {
