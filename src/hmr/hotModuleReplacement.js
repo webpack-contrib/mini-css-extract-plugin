@@ -90,6 +90,10 @@ function updateCss(el, url) {
     url = el.href.split('?')[0];
   }
 
+  if (isDataURL(url)) {
+    return;
+  }
+
   if (el.isLoaded === false) {
     // We seem to be about to replace a css link that hasn't loaded yet.
     // We're probably changing the same file more than once.
@@ -143,6 +147,10 @@ function reloadStyle(src) {
   forEach.call(elements, function(el) {
     var url = getReloadUrl(el.href, src);
 
+    if (isDataURL(url)) {
+      return;
+    }
+
     if (el.visited === true) {
       return;
     }
@@ -168,6 +176,13 @@ function reloadAll() {
   });
 }
 
+function isDataURL(s) {
+  return !!s.match(
+    // eslint-disable-next-line no-useless-escape
+    /^\s*data:([a-z]+\/[a-z0-9-+.]+(;[a-z-]+=[a-z0-9-]+)?)?(;base64)?,([a-z0-9!$&',()*+;=\-._~:@\/?%\s]*)\s*$/i
+  );
+}
+
 module.exports = function(moduleId, options) {
   if (noDocument) {
     console.log('no window.document found, will not HMR CSS');
@@ -179,6 +194,7 @@ module.exports = function(moduleId, options) {
 
   function update() {
     var src = getScriptSrc(options.filename);
+
     var reloaded = reloadStyle(src);
 
     if (options.locals) {
