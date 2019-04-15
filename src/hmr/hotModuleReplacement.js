@@ -90,6 +90,10 @@ function updateCss(el, url) {
     url = el.href.split('?')[0];
   }
 
+  if (!isUrlRequest(url)) {
+    return;
+  }
+
   if (el.isLoaded === false) {
     // We seem to be about to replace a css link that hasn't loaded yet.
     // We're probably changing the same file more than once.
@@ -143,6 +147,10 @@ function reloadStyle(src) {
   forEach.call(elements, function(el) {
     var url = getReloadUrl(el.href, src);
 
+    if (!isUrlRequest(url)) {
+      return;
+    }
+
     if (el.visited === true) {
       return;
     }
@@ -168,6 +176,27 @@ function reloadAll() {
   });
 }
 
+function isUrlRequest(url) {
+  // An URL is not an request if
+
+  // 1. It's an absolute url
+  if (/^[a-z][a-z0-9+.-]*:/i.test(url)) {
+    return false;
+  }
+
+  // 2. It's a protocol-relative
+  if (/^\/\//.test(url)) {
+    return false;
+  }
+
+  // 3. Its a `#` link
+  if (/^#/.test(url)) {
+    return false;
+  }
+
+  return true;
+}
+
 module.exports = function(moduleId, options) {
   if (noDocument) {
     console.log('no window.document found, will not HMR CSS');
@@ -179,6 +208,7 @@ module.exports = function(moduleId, options) {
 
   function update() {
     var src = getScriptSrc(options.filename);
+
     var reloaded = reloadStyle(src);
 
     if (options.locals) {
