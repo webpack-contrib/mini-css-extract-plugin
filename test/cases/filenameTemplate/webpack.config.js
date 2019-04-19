@@ -17,8 +17,7 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filenameTemplate: ({ chunk }) =>
-        `${chunk.name.replace('/js/', '/css/')}.css`,
+      filenameTemplate: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
     }),
   ],
 };
