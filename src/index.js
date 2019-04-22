@@ -131,7 +131,7 @@ class MiniCssExtractPlugin {
       const { filename } = this.options;
 
       // Anything changing depending on chunk is fine
-      if (REGEXP_PLACEHOLDERS.test(filename)) {
+      if (filename.match(REGEXP_PLACEHOLDERS)) {
         this.options.chunkFilename = filename;
       } else {
         // Elsewise prefix '[id].' in front of the basename to make it changing
