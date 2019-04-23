@@ -348,8 +348,7 @@ With the `filenameTemplate` option you can use chunk data to customize the filen
 
 ```javascript
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  filenameTemplate: ({chunk}) =>
-    `${chunk.name.replace('/js/', '/css/')}.[chunkhash:8].css`
+  filenameTemplate: ({ name }) => `${name.replace('/js/', '/css/')}.css`
 })
 ```
 
