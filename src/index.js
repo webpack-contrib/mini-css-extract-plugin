@@ -16,6 +16,7 @@ const pluginName = 'mini-css-extract-plugin';
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
+const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 
 class CssDependency extends webpack.Dependency {
   constructor(
@@ -128,12 +129,9 @@ class MiniCssExtractPlugin {
 
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
-      const hasName = filename.includes('[name]');
-      const hasId = filename.includes('[id]');
-      const hasChunkHash = filename.includes('[chunkhash]');
 
       // Anything changing depending on chunk is fine
-      if (hasChunkHash || hasName || hasId) {
+      if (filename.match(REGEXP_PLACEHOLDERS)) {
         this.options.chunkFilename = filename;
       } else {
         // Elsewise prefix '[id].' in front of the basename to make it changing
