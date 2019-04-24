@@ -124,7 +124,7 @@ class MiniCssExtractPlugin {
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
-        filenameTemplate: () => options.filename || DEFAULT_FILENAME,
+        moduleFilename: () => options.filename || DEFAULT_FILENAME,
       },
       options
     );
@@ -198,7 +198,7 @@ class MiniCssExtractPlugin {
                   compilation.runtimeTemplate.requestShortener
                 ),
               filenameTemplate: ({ chunk: chunkData }) =>
-                this.options.filenameTemplate(chunkData),
+                this.options.moduleFilename(chunkData),
               pathOptions: {
                 chunk,
                 contentHashType: MODULE_TYPE,
