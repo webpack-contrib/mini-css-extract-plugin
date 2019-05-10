@@ -120,7 +120,7 @@ class CssModuleFactory {
 }
 
 class MiniCssExtractPlugin {
-  constructor(options) {
+  constructor(options = {}) {
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
