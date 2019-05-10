@@ -342,6 +342,16 @@ module.exports = {
 };
 ```
 
+#### Module Filename Option
+
+With the `moduleFilename` option you can use chunk data to customize the filename. This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk. In the example below, we'll use `moduleFilename` to output the generated css into a different directory.
+
+```javascript
+const miniCssExtractPlugin = new MiniCssExtractPlugin({
+  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`
+})
+```
+
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.

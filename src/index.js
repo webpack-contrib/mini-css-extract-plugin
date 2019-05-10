@@ -17,6 +17,7 @@ const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
+const DEFAULT_FILENAME = '[name].css';
 
 class CssDependency extends webpack.Dependency {
   constructor(
@@ -122,7 +123,8 @@ class MiniCssExtractPlugin {
   constructor(options) {
     this.options = Object.assign(
       {
-        filename: '[name].css',
+        filename: DEFAULT_FILENAME,
+        moduleFilename: () => options.filename || DEFAULT_FILENAME,
       },
       options
     );
@@ -195,7 +197,8 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.options.filename,
+              filenameTemplate: ({ chunk: chunkData }) =>
+                this.options.moduleFilename(chunkData),
               pathOptions: {
                 chunk,
                 contentHashType: MODULE_TYPE,
