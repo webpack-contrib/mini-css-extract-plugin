@@ -15,5 +15,20 @@ module.exports = (api) => {
         },
       ],
     ],
+    overrides: [
+      {
+        test: '**/hmr/**/*.js',
+        presets: [
+          [
+            '@babel/preset-env',
+            {
+              targets: {
+                node: '0.12',
+              },
+            },
+          ],
+        ],
+      },
+    ],
   };
 };

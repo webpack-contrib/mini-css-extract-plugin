@@ -1,36 +1,27 @@
-/* global document, window */
+/* eslint-env browser */
 /*
   eslint-disable
-  func-names,
-  no-var,
-  vars-on-top,
-  prefer-arrow-func,
-  prefer-rest-params,
-  prefer-arrow-callback,
-  prefer-template,
-  prefer-destructuring,
-  no-param-reassign,
-  no-console
+  no-console,
+  func-names
 */
 
-var normalizeUrl = require('normalize-url');
+const normalizeUrl = require('normalize-url');
 
-var srcByModuleId = Object.create(null);
+const srcByModuleId = Object.create(null);
 
-var noDocument = typeof document === 'undefined';
+const noDocument = typeof document === 'undefined';
 
-var forEach = Array.prototype.forEach;
+const { forEach } = Array.prototype;
 
 function debounce(fn, time) {
-  var timeout = 0;
+  let timeout = 0;
 
-  // eslint-disable-next-line func-names
   return function() {
-    var self = this;
-    var args = arguments;
-
+    const self = this;
     // eslint-disable-next-line prefer-rest-params
-    var functionCall = function functionCall() {
+    const args = arguments;
+
+    const functionCall = function functionCall() {
       return fn.apply(self, args);
     };
 
@@ -42,19 +33,20 @@ function debounce(fn, time) {
 function noop() {}
 
 function getCurrentScriptUrl(moduleId) {
-  var src = srcByModuleId[moduleId];
+  let src = srcByModuleId[moduleId];
 
   if (!src) {
     if (document.currentScript) {
-      src = document.currentScript.src;
+      ({ src } = document.currentScript);
     } else {
-      var scripts = document.getElementsByTagName('script');
-      var lastScriptTag = scripts[scripts.length - 1];
+      const scripts = document.getElementsByTagName('script');
+      const lastScriptTag = scripts[scripts.length - 1];
 
       if (lastScriptTag) {
-        src = lastScriptTag.src;
+        ({ src } = lastScriptTag);
       }
     }
+
     srcByModuleId[moduleId] = src;
   }
 
@@ -63,8 +55,8 @@ function getCurrentScriptUrl(moduleId) {
       return null;
     }
 
-    var splitResult = src.split(/([^\\/]+)\.js$/);
-    var filename = splitResult && splitResult[1];
+    const splitResult = src.split(/([^\\/]+)\.js$/);
+    const filename = splitResult && splitResult[1];
 
     if (!filename) {
       return [src.replace('.js', '.css')];
@@ -74,11 +66,11 @@ function getCurrentScriptUrl(moduleId) {
       return [src.replace('.js', '.css')];
     }
 
-    return fileMap.split(',').map(function(mapRule) {
-      var reg = new RegExp(filename + '\\.js$', 'g');
+    return fileMap.split(',').map((mapRule) => {
+      const reg = new RegExp(`${filename}\\.js$`, 'g');
 
       return normalizeUrl(
-        src.replace(reg, mapRule.replace(/{fileName}/g, filename) + '.css'),
+        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`),
         { stripWWW: false }
       );
     });
@@ -87,6 +79,7 @@ function getCurrentScriptUrl(moduleId) {
 
 function updateCss(el, url) {
   if (!url) {
+    // eslint-disable-next-line
     url = el.href.split('?')[0];
   }
 
@@ -104,34 +97,36 @@ function updateCss(el, url) {
     return;
   }
 
+  // eslint-disable-next-line no-param-reassign
   el.visited = true;
 
-  var newEl = el.cloneNode(); // eslint-disable-line vars-on-top
+  const newEl = el.cloneNode();
 
   newEl.isLoaded = false;
 
-  newEl.addEventListener('load', function() {
+  newEl.addEventListener('load', () => {
     newEl.isLoaded = true;
     el.parentNode.removeChild(el);
   });
 
-  newEl.addEventListener('error', function() {
+  newEl.addEventListener('error', () => {
     newEl.isLoaded = true;
     el.parentNode.removeChild(el);
   });
 
-  newEl.href = url + '?' + Date.now();
+  newEl.href = `${url}?${Date.now()}`;
 
   el.parentNode.appendChild(newEl);
 }
 
 function getReloadUrl(href, src) {
-  var ret;
+  let ret;
 
+  // eslint-disable-next-line no-param-reassign
   href = normalizeUrl(href, { stripWWW: false });
 
   // eslint-disable-next-line array-callback-return
-  src.some(function(url) {
+  src.some((url) => {
     if (href.indexOf(src) > -1) {
       ret = url;
     }
@@ -141,11 +136,11 @@ function getReloadUrl(href, src) {
 }
 
 function reloadStyle(src) {
-  var elements = document.querySelectorAll('link');
-  var loaded = false;
+  const elements = document.querySelectorAll('link');
+  let loaded = false;
 
-  forEach.call(elements, function(el) {
-    var url = getReloadUrl(el.href, src);
+  forEach.call(elements, (el) => {
+    const url = getReloadUrl(el.href, src);
 
     if (!isUrlRequest(url)) {
       return;
@@ -165,9 +160,9 @@ function reloadStyle(src) {
 }
 
 function reloadAll() {
-  var elements = document.querySelectorAll('link');
+  const elements = document.querySelectorAll('link');
 
-  forEach.call(elements, function(el) {
+  forEach.call(elements, (el) => {
     if (el.visited === true) {
       return;
     }
@@ -200,20 +195,21 @@ function isUrlRequest(url) {
 module.exports = function(moduleId, options) {
   if (noDocument) {
     console.log('no window.document found, will not HMR CSS');
+
     return noop;
   }
 
-  // eslint-disable-next-line vars-on-top
-  var getScriptSrc = getCurrentScriptUrl(moduleId);
+  const getScriptSrc = getCurrentScriptUrl(moduleId);
 
   function update() {
-    var src = getScriptSrc(options.filename);
-
-    var reloaded = reloadStyle(src);
+    const src = getScriptSrc(options.filename);
+    const reloaded = reloadStyle(src);
 
     if (options.locals) {
       console.log('[HMR] Detected local css modules. Reload all css');
+
       reloadAll();
+
       return;
     }
 
@@ -221,6 +217,7 @@ module.exports = function(moduleId, options) {
       console.log('[HMR] css reload %s', src.join(' '));
     } else {
       console.log('[HMR] Reload all css');
+
       reloadAll();
     }
   }
