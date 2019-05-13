@@ -342,6 +342,16 @@ module.exports = {
 };
 ```
 
+#### Module Filename Option
+
+With the `moduleFilename` option you can use chunk data to customize the filename. This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk. In the example below, we'll use `moduleFilename` to output the generated css into a different directory.
+
+```javascript
+const miniCssExtractPlugin = new MiniCssExtractPlugin({
+  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`
+})
+```
+
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
@@ -367,9 +377,11 @@ If you'd like to extract the media queries from the extracted CSS (so mobile use
 [node-url]: https://nodejs.org
 [deps]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin.svg
 [deps-url]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin
-[tests]: https://img.shields.io/circleci/project/github/webpack-contrib/mini-css-extract-plugin.svg
-[tests-url]: https://circleci.com/gh/webpack-contrib/mini-css-extract-plugin
+[tests]: https://dev.azure.com/webpack-contrib/mini-css-extract-plugin/_apis/build/status/webpack-contrib.mini-css-extract-plugin?branchName=master
+[tests-url]: https://dev.azure.com/webpack-contrib/mini-css-extract-plugin/_build/latest?definitionId=6&branchName=master
 [cover]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin/branch/master/graph/badge.svg
 [cover-url]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin
 [chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
 [chat-url]: https://gitter.im/webpack/webpack
+[size]: https://packagephobia.now.sh/badge?p=mini-css-extract-plugin
+[size-url]: https://packagephobia.now.sh/result?p=mini-css-extract-plugin
