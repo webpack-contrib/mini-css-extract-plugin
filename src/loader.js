@@ -68,7 +68,7 @@ export function pitch(request) {
   const childFilename = '*'; // eslint-disable-line no-path-concat
   const publicPath =
     typeof options.publicPath === 'string'
-      ? options.publicPath.endsWith('/')
+      ? options.publicPath === '' || options.publicPath.endsWith('/')
         ? options.publicPath
         : `${options.publicPath}/`
       : typeof options.publicPath === 'function'
