@@ -79,6 +79,10 @@ function getCurrentScriptUrl(moduleId) {
 
 function updateCss(el, url) {
   if (!url) {
+    if (!el.href) {
+      return;
+    }
+
     // eslint-disable-next-line
     url = el.href.split('?')[0];
   }
@@ -140,6 +144,10 @@ function reloadStyle(src) {
   let loaded = false;
 
   forEach.call(elements, (el) => {
+    if (!el.href) {
+      return;
+    }
+
     const url = getReloadUrl(el.href, src);
 
     if (!isUrlRequest(url)) {
