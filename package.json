@@ -25,6 +25,7 @@
     "test:only": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --collectCoverageFrom='src/**/*.js' --coverage",
+    "test:manual": "webpack-dev-server test/manual/src/index.js --open --config test/manual/webpack.config.js",
     "pretest": "npm run lint",
     "test": "npm run test:coverage",
     "defaults": "webpack-defaults"
