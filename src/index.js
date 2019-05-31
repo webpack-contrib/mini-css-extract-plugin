@@ -393,7 +393,7 @@ class MiniCssExtractPlugin {
 
       compilation.hooks.optimizeChunks.tap(pluginName, (chunks) => {
         for (const chunk of chunks) {
-          chunk.modulesIterable.forEach((module) => {
+          for (const module of chunk.modulesIterable) {
             // eslint-disable-next-line no-param-reassign
             module.dependencies = module.dependencies.filter((dep) => {
               const hasCssDep =
@@ -417,7 +417,7 @@ class MiniCssExtractPlugin {
             ) {
               chunk.removeModule(module.issuer);
             }
-          });
+          }
         }
       });
     });
