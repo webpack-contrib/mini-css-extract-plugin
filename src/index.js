@@ -410,12 +410,12 @@ class MiniCssExtractPlugin {
               return true;
             });
 
-            if (
-              module.type === MODULE_TYPE &&
-              module.issuer &&
-              module.issuer.buildMeta.extracted
-            ) {
-              chunk.removeModule(module.issuer);
+            if (module.type === MODULE_TYPE && module.reasons) {
+              for (const reason of module.reasons) {
+                if (reason.module && reason.module.buildMeta.extracted) {
+                  chunk.removeModule(reason.module);
+                }
+              }
             }
           }
         }
