@@ -28,6 +28,7 @@
     "test:watch": "cross-env NODE_ENV=test jest --watch",
     "test:coverage": "cross-env NODE_ENV=test jest --collectCoverageFrom=\"src/**/*.js\" --coverage",
     "test:manual": "npm run build && webpack-dev-server test/manual/src/index.js --open --config test/manual/webpack.config.js",
+    "test:stress": "node --max-old-space-size=8192 test/stress/build.js",
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test npm run test:coverage",
     "defaults": "webpack-defaults"

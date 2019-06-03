@@ -4,3 +4,5 @@
 /test/fixtures
 /test/cases/*/expected
 /test/js
+/test/stress/dist
+/test/stress/src/tmp
