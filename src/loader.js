@@ -181,7 +181,7 @@ export function pitch(request) {
       return callback(e);
     }
 
-    let resultSource = `// extracted by ${pluginName}`;
+    let resultSource = `/* extracted by ${pluginName}*/`;
     const result = locals
       ? `\nmodule.exports = ${JSON.stringify(locals)};`
       : '';
