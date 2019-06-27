@@ -356,6 +356,23 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
 
+#### Determining Insertion Point for Async CSS Chunks
+
+If you are extracting CSS into separate files and using Webpack Dynamic Imports, it is possible you will need to be able to configure the insertion point of your async CSS chunks in the document to preserve ordering for the CSS cascade.  This is possible using the `insertInto` option, which takes a function that will be called to determine the parent node into which to insert the `<link>`` tag for the chunk CSs file
+
+```javascript
+module.exports = {
+  ...
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+      insertInto: href => document.querySeletor('.async-styles-container'),
+    })
+  ],
+  ...
+}
+```
+
 ### Remove Order Warnings
 
 If the terminal is getting bloated with chunk order warnings. You can filter by configuring [warningsFilter](https://webpack.js.org/configuration/stats/) withing the webpack stats option
