@@ -129,7 +129,9 @@ class MiniCssExtractPlugin {
       },
       options
     );
-
+    if (typeof this.options.insertInto !== 'function') {
+      throw new Error('insertInto option must be a function');
+    }
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
 
@@ -363,7 +365,9 @@ class MiniCssExtractPlugin {
                 contentHashType: MODULE_TYPE,
               }
             );
-
+            const insertInto = this.options.insertInto
+              ? this.options.insertInto.toString()
+              : 'null';
             return Template.asString([
               source,
               '',
@@ -419,8 +423,8 @@ class MiniCssExtractPlugin {
                         '}',
                       ])
                     : '',
-                  `var selector = "${this.options.insertInto}";`,
-                  'var parent = selector && document.querySelector && document.querySelector(selector);',
+                  `var insertInto = ${insertInto};`,
+                  'var parent = insertInto ? insertInto(href) : null;',
                   'if (parent) { parent.appendChild(linkTag); }',
                   'else { document.getElementsByTagName("head")[0].appendChild(linkTag); }',
                 ]),
