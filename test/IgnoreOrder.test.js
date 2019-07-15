@@ -2,7 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 
 describe('IgnoreOrder', () => {
-  it('should emit errors', (done) => {
+  it('should emit warnings', (done) => {
     const casesDirectory = path.resolve(__dirname, 'cases');
     const directoryForCase = path.resolve(casesDirectory, 'ignoreOrderFalse');
     // eslint-disable-next-line import/no-dynamic-require, global-require
@@ -22,7 +22,7 @@ describe('IgnoreOrder', () => {
     });
   });
 
-  it('should not emit errors', (done) => {
+  it('should not emit warnings', (done) => {
     const casesDirectory = path.resolve(__dirname, 'cases');
     const directoryForCase = path.resolve(casesDirectory, 'ignoreOrder');
     // eslint-disable-next-line import/no-dynamic-require, global-require
