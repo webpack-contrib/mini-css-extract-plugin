@@ -1,4 +1,5 @@
 import path from 'path';
+
 import webpack from 'webpack';
 
 describe('IgnoreOrder', () => {
@@ -17,7 +18,7 @@ describe('IgnoreOrder', () => {
       cache: false,
     });
     compiler.run((err1, stats) => {
-      expect(stats.hasWarnings()).toBeTruthy();
+      expect(stats.hasWarnings()).toBe(true);
       done();
     });
   });
@@ -37,7 +38,7 @@ describe('IgnoreOrder', () => {
       cache: false,
     });
     compiler.run((err1, stats) => {
-      expect(stats.hasWarnings()).toBeFalsy();
+      expect(stats.hasWarnings()).toBe(false);
       done();
     });
   });
