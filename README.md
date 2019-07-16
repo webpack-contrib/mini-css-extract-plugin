@@ -349,8 +349,8 @@ With the `moduleFilename` option you can use chunk data to customize the filenam
 
 ```javascript
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`
-})
+  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
+});
 ```
 
 #### Long Term Caching

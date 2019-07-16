@@ -1,5 +1,9 @@
-.b { background: red; }
+.b {
+  background: red;
+}
 
-@import url("https://some/external/css");
+@import url('https://some/external/css');
 
-.b { color: yellow; }
+.b {
+  color: yellow;
+}

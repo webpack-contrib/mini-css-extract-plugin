@@ -1,1 +1,4 @@
-body { background: green; background-image: url(../../react.svg); }
+body {
+  background: green;
+  background-image: url(../../react.svg);
+}

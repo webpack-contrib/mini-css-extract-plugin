@@ -1,7 +1,6 @@
 ---
 name: ✨ Feature Request
 about: Suggest an idea for this project
-
 ---
 
 <!--
@@ -15,14 +14,12 @@ about: Suggest an idea for this project
   Head to StackOverflow or https://gitter.im/webpack/webpack.
 -->
 
-* Operating System:
-* Node Version:
-* NPM Version:
-* webpack Version:
-* mini-css-extract-plugin Version:
+- Operating System:
+- Node Version:
+- NPM Version:
+- webpack Version:
+- mini-css-extract-plugin Version:
 
 ### Feature Proposal
-
-
 
 ### Feature Use Case

@@ -1,7 +1,6 @@
 ---
 name: 🔧 Modification Request
 about: Would you like something work differently? Have an alternative approach? This is the template for you.
-
 ---
 
 <!--
@@ -15,19 +14,14 @@ about: Would you like something work differently? Have an alternative approach? 
   Head to StackOverflow or https://gitter.im/webpack/webpack.
 -->
 
-* Operating System:
-* Node Version:
-* NPM Version:
-* webpack Version:
-* mini-css-extract-plugin Version:
-
+- Operating System:
+- Node Version:
+- NPM Version:
+- webpack Version:
+- mini-css-extract-plugin Version:
 
 ### Expected Behavior / Situation
 
-
-
 ### Actual Behavior / Situation
-
-
 
 ### Modification Proposal

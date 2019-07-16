@@ -1,2 +1,7 @@
-.a { background: red; }
-.a { background: green; }
+.a {
+  background: red;
+}
+/* break */
+.a {
+  background: green;
+}
