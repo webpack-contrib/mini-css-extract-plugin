@@ -1,18 +1,15 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = {
   entry: {
     entry1: './entry1.js',
-    entry2: './entry2.js'
+    entry2: './entry2.js',
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [
-          Self.loader,
-          'css-loader',
-        ],
+        use: [Self.loader, 'css-loader'],
       },
     ],
   },
@@ -20,13 +17,13 @@ module.exports = {
     splitChunks: {
       cacheGroups: {
         styles: {
-          name: "styles",
+          name: 'styles',
           chunks: 'all',
           test: /\.css$/,
-          enforce: true
-        }
-      }
-    }
+          enforce: true,
+        },
+      },
+    },
   },
   plugins: [
     new Self({

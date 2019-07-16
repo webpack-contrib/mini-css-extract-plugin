@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+
 import webpack from 'webpack';
 import sources from 'webpack-sources';
 
@@ -14,6 +16,8 @@ const pluginName = 'mini-css-extract-plugin';
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
+const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
+const DEFAULT_FILENAME = '[name].css';
 
 class CssDependency extends webpack.Dependency {
   constructor(
@@ -22,6 +26,7 @@ class CssDependency extends webpack.Dependency {
     identifierIndex
   ) {
     super();
+
     this.identifier = identifier;
     this.identifierIndex = identifierIndex;
     this.content = content;
@@ -42,6 +47,7 @@ class CssDependencyTemplate {
 class CssModule extends webpack.Module {
   constructor(dependency) {
     super(MODULE_TYPE, dependency.context);
+
     this.id = '';
     this._identifier = dependency.identifier;
     this._identifierIndex = dependency.identifierIndex;
@@ -69,7 +75,11 @@ class CssModule extends webpack.Module {
   nameForCondition() {
     const resource = this._identifier.split('!').pop();
     const idx = resource.indexOf('?');
-    if (idx >= 0) return resource.substring(0, idx);
+
+    if (idx >= 0) {
+      return resource.substring(0, idx);
+    }
+
     return resource;
   }
 
@@ -91,6 +101,7 @@ class CssModule extends webpack.Module {
 
   updateHash(hash) {
     super.updateHash(hash);
+
     hash.update(this.content);
     hash.update(this.media || '');
     hash.update(this.sourceMap ? JSON.stringify(this.sourceMap) : '');
@@ -109,20 +120,21 @@ class CssModuleFactory {
 }
 
 class MiniCssExtractPlugin {
-  constructor(options) {
+  constructor(options = {}) {
     this.options = Object.assign(
       {
-        filename: '[name].css',
+        filename: DEFAULT_FILENAME,
+        moduleFilename: () => options.filename || DEFAULT_FILENAME,
+        ignoreOrder: false,
       },
       options
     );
+
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
-      const hasName = filename.includes('[name]');
-      const hasId = filename.includes('[id]');
-      const hasChunkHash = filename.includes('[chunkhash]');
+
       // Anything changing depending on chunk is fine
-      if (hasChunkHash || hasName || hasId) {
+      if (filename.match(REGEXP_PLACEHOLDERS)) {
         this.options.chunkFilename = filename;
       } else {
         // Elsewise prefix '[id].' in front of the basename to make it changing
@@ -139,6 +151,7 @@ class MiniCssExtractPlugin {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
+
         loaderContext[MODULE_TYPE] = (content) => {
           if (!Array.isArray(content) && content != null) {
             throw new Error(
@@ -149,27 +162,33 @@ class MiniCssExtractPlugin {
           }
 
           const identifierCountMap = new Map();
+
           for (const line of content) {
             const count = identifierCountMap.get(line.identifier) || 0;
+
             module.addDependency(new CssDependency(line, m.context, count));
             identifierCountMap.set(line.identifier, count + 1);
           }
         };
       });
+
       compilation.dependencyFactories.set(
         CssDependency,
         new CssModuleFactory()
       );
+
       compilation.dependencyTemplates.set(
         CssDependency,
         new CssDependencyTemplate()
       );
+
       compilation.mainTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
             (module) => module.type === MODULE_TYPE
           );
+
           if (renderedModules.length > 0) {
             result.push({
               render: () =>
@@ -179,7 +198,8 @@ class MiniCssExtractPlugin {
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener
                 ),
-              filenameTemplate: this.options.filename,
+              filenameTemplate: ({ chunk: chunkData }) =>
+                this.options.moduleFilename(chunkData),
               pathOptions: {
                 chunk,
                 contentHashType: MODULE_TYPE,
@@ -190,12 +210,14 @@ class MiniCssExtractPlugin {
           }
         }
       );
+
       compilation.chunkTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
             (module) => module.type === MODULE_TYPE
           );
+
           if (renderedModules.length > 0) {
             result.push({
               render: () =>
@@ -216,13 +238,16 @@ class MiniCssExtractPlugin {
           }
         }
       );
+
       compilation.mainTemplate.hooks.hashForChunk.tap(
         pluginName,
         (hash, chunk) => {
           const { chunkFilename } = this.options;
+
           if (REGEXP_CHUNKHASH.test(chunkFilename)) {
             hash.update(JSON.stringify(chunk.getChunkMaps(true).hash));
           }
+
           if (REGEXP_CONTENTHASH.test(chunkFilename)) {
             hash.update(
               JSON.stringify(
@@ -230,28 +255,36 @@ class MiniCssExtractPlugin {
               )
             );
           }
+
           if (REGEXP_NAME.test(chunkFilename)) {
             hash.update(JSON.stringify(chunk.getChunkMaps(true).name));
           }
         }
       );
+
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions } = compilation;
         const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
         const hash = createHash(hashFunction);
+
         for (const m of chunk.modulesIterable) {
           if (m.type === MODULE_TYPE) {
             m.updateHash(hash);
           }
         }
+
         const { contentHash } = chunk;
+
         contentHash[MODULE_TYPE] = hash
           .digest(hashDigest)
           .substring(0, hashDigestLength);
       });
+
       const { mainTemplate } = compilation;
+
       mainTemplate.hooks.localVars.tap(pluginName, (source, chunk) => {
         const chunkMap = this.getCssChunkObject(chunk);
+
         if (Object.keys(chunkMap).length > 0) {
           return Template.asString([
             source,
@@ -264,12 +297,15 @@ class MiniCssExtractPlugin {
             '}',
           ]);
         }
+
         return source;
       });
+
       mainTemplate.hooks.requireEnsure.tap(
         pluginName,
         (source, chunk, hash) => {
           const chunkMap = this.getCssChunkObject(chunk);
+
           if (Object.keys(chunkMap).length > 0) {
             const chunkMaps = chunk.getChunkMaps();
             const { crossOriginLoading } = mainTemplate.outputOptions;
@@ -284,6 +320,7 @@ class MiniCssExtractPlugin {
                   hash: `" + ${JSON.stringify(chunkMaps.hash)}[chunkId] + "`,
                   hashWithLength(length) {
                     const shortChunkHashMap = Object.create(null);
+
                     for (const chunkId of Object.keys(chunkMaps.hash)) {
                       if (typeof chunkMaps.hash[chunkId] === 'string') {
                         shortChunkHashMap[chunkId] = chunkMaps.hash[
@@ -291,6 +328,7 @@ class MiniCssExtractPlugin {
                         ].substring(0, length);
                       }
                     }
+
                     return `" + ${JSON.stringify(
                       shortChunkHashMap
                     )}[chunkId] + "`;
@@ -304,6 +342,7 @@ class MiniCssExtractPlugin {
                     [MODULE_TYPE]: (length) => {
                       const shortContentHashMap = {};
                       const contentHash = chunkMaps.contentHash[MODULE_TYPE];
+
                       for (const chunkId of Object.keys(contentHash)) {
                         if (typeof contentHash[chunkId] === 'string') {
                           shortContentHashMap[chunkId] = contentHash[
@@ -311,6 +350,7 @@ class MiniCssExtractPlugin {
                           ].substring(0, length);
                         }
                       }
+
                       return `" + ${JSON.stringify(
                         shortContentHashMap
                       )}[chunkId] + "`;
@@ -323,6 +363,7 @@ class MiniCssExtractPlugin {
                 contentHashType: MODULE_TYPE,
               }
             );
+
             return Template.asString([
               source,
               '',
@@ -388,6 +429,7 @@ class MiniCssExtractPlugin {
               '}',
             ]);
           }
+
           return source;
         }
       );
@@ -396,6 +438,7 @@ class MiniCssExtractPlugin {
 
   getCssChunkObject(mainChunk) {
     const obj = {};
+
     for (const chunk of mainChunk.getAllAsyncChunks()) {
       for (const module of chunk.modulesIterable) {
         if (module.type === MODULE_TYPE) {
@@ -404,6 +447,7 @@ class MiniCssExtractPlugin {
         }
       }
     }
+
     return obj;
   }
 
@@ -411,6 +455,7 @@ class MiniCssExtractPlugin {
     let usedModules;
 
     const [chunkGroup] = chunk.groupsIterable;
+
     if (typeof chunkGroup.getModuleIndex2 === 'function') {
       // Store dependencies for modules
       const moduleDependencies = new Map(modules.map((m) => [m, new Set()]));
@@ -426,11 +471,14 @@ class MiniCssExtractPlugin {
               index: cg.getModuleIndex2(m),
             };
           })
+          // eslint-disable-next-line no-undefined
           .filter((item) => item.index !== undefined)
           .sort((a, b) => b.index - a.index)
           .map((item) => item.module);
+
         for (let i = 0; i < sortedModules.length; i++) {
           const set = moduleDependencies.get(sortedModules[i]);
+
           for (let j = i + 1; j < sortedModules.length; j++) {
             set.add(sortedModules[j]);
           }
@@ -448,11 +496,13 @@ class MiniCssExtractPlugin {
         let success = false;
         let bestMatch;
         let bestMatchDeps;
+
         // get first module where dependencies are fulfilled
         for (const list of modulesByChunkGroup) {
           // skip and remove already added modules
-          while (list.length > 0 && usedModules.has(list[list.length - 1]))
+          while (list.length > 0 && usedModules.has(list[list.length - 1])) {
             list.pop();
+          }
 
           // skip empty lists
           if (list.length !== 0) {
@@ -466,6 +516,7 @@ class MiniCssExtractPlugin {
               bestMatch = list;
               bestMatchDeps = failedDeps;
             }
+
             if (failedDeps.length === 0) {
               // use this module and remove it from list
               usedModules.add(list.pop());
@@ -480,16 +531,21 @@ class MiniCssExtractPlugin {
           // use list with fewest failed deps
           // and emit a warning
           const fallbackModule = bestMatch.pop();
-          compilation.warnings.push(
-            new Error(
-              `chunk ${chunk.name || chunk.id} [mini-css-extract-plugin]\n` +
-                'Conflicting order between:\n' +
-                ` * ${fallbackModule.readableIdentifier(requestShortener)}\n` +
-                `${bestMatchDeps
-                  .map((m) => ` * ${m.readableIdentifier(requestShortener)}`)
-                  .join('\n')}`
-            )
-          );
+          if (!this.options.ignoreOrder) {
+            compilation.warnings.push(
+              new Error(
+                `chunk ${chunk.name || chunk.id} [${pluginName}]\n` +
+                  'Conflicting order between:\n' +
+                  ` * ${fallbackModule.readableIdentifier(
+                    requestShortener
+                  )}\n` +
+                  `${bestMatchDeps
+                    .map((m) => ` * ${m.readableIdentifier(requestShortener)}`)
+                    .join('\n')}`
+              )
+            );
+          }
+
           usedModules.add(fallbackModule);
         }
       }
@@ -501,25 +557,30 @@ class MiniCssExtractPlugin {
       modules.sort((a, b) => a.index2 - b.index2);
       usedModules = modules;
     }
+
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
+
     for (const m of usedModules) {
       if (/^@import url/.test(m.content)) {
         // HACK for IE
         // http://stackoverflow.com/a/14676665/1458162
         let { content } = m;
+
         if (m.media) {
           // insert media into the @import
           // this is rar
           // TODO improve this and parse the CSS to support multiple medias
           content = content.replace(/;|\s*$/, m.media);
         }
+
         externalsSource.add(content);
         externalsSource.add('\n');
       } else {
         if (m.media) {
           source.add(`@media ${m.media} {\n`);
         }
+
         if (m.sourceMap) {
           source.add(
             new SourceMapSource(
@@ -537,11 +598,13 @@ class MiniCssExtractPlugin {
           );
         }
         source.add('\n');
+
         if (m.media) {
           source.add('}\n');
         }
       }
     }
+
     return new ConcatSource(externalsSource, source);
   }
 }
