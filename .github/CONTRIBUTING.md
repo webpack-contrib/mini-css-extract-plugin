@@ -140,12 +140,20 @@ module. Thankfully, Github provides a means to do this. Add a dependency to the
 ```json
 {
   "devDependencies": {
-    "${package}": "webpack-contrib/${package}#{id}/head"
+    "mini-css-extract-plugin": "webpack-contrib/mini-css-extract-plugin#{id}/head"
   }
 }
 ```
 
 Where `{id}` is the # ID of your Pull Request.
+
+## Contributor License Agreement
+
+When submitting your contribution, a CLA (Contributor License Agreement) bot will come by to verify that you signed the [CLA](https://cla.js.foundation/webpack-contrib/mini-css-extract-plugin).
+If it is your first time, it will link you to the right place to sign it.
+However, if you have committed your contributions using an email that is not the same as your email used on GitHub, the CLA bot can't accept your contribution.
+
+Run `git config user.email` to see your Git email, and verify it with [your GitHub email](https://github.com/settings/emails).
 
 ## Thanks
 

@@ -1,6 +1,4 @@
 module.exports = {
-  ignore: ['package-lock.json'],
-  linters: {
-    '*.js': ['eslint --fix', 'git add'],
-  },
+  '*.js': ['prettier --write', 'eslint --fix', 'git add'],
+  '*.{json,md,yml,css}': ['prettier --write', 'git add'],
 };

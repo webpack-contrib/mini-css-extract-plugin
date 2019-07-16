@@ -1,7 +1,6 @@
 ---
 name: 📚 Documentation
 about: Are the docs lacking or missing something? Do they need some new 🔥 hotness? Tell us here.
-
 ---
 
 <!--
@@ -25,6 +24,5 @@ Documentation Is:
 - [ ] Not Sure?
 
 ### Please Explain in Detail...
-
 
 ### Your Proposal for Changes
