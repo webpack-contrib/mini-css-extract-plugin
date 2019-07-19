@@ -124,7 +124,7 @@ class MiniCssExtractPlugin {
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
-        moduleFilename: () => options.filename || DEFAULT_FILENAME,
+        moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
         ignoreOrder: false,
       },
       options
