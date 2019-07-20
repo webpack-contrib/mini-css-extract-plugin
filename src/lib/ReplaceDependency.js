@@ -2,6 +2,7 @@ const NullDependency = require('webpack/lib/dependencies/NullDependency');
 
 class ReplaceDependency extends NullDependency {
   constructor(replacement, range) {
+    /* eslint-disable class-methods-use-this */
     super();
     this.replacement = replacement;
     this.range = range;

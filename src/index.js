@@ -152,6 +152,7 @@ class MiniCssExtractPlugin {
   apply(compiler) {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       const asyncModuleToBeRebuild = new Set();
+      // eslint-disable-next-line no-param-reassign
       compilation[MODULE_TYPE] = {
         asyncModuleToBeRebuild,
       };
@@ -450,42 +451,40 @@ class MiniCssExtractPlugin {
       );
 
       const len = `// extracted by ${pluginName}`.length;
-      mainTemplate.hooks.beforeStartup.tap(
-        pluginName,
-        (source, chunk, hash) => {
-          for (const _m of asyncModuleToBeRebuild) {
-            const issuerDeps = _m.issuer.dependencies;
-            let firstIndex = -1;
-            const content = [];
+      mainTemplate.hooks.beforeStartup.tap(pluginName, (source) => {
+        for (const moduleToBeRebuild of asyncModuleToBeRebuild) {
+          const issuerDeps = moduleToBeRebuild.issuer.dependencies;
+          let firstIndex = -1;
+          const content = [];
 
-            for (let i = issuerDeps.length - 1; i >= 0; i--) {
-              const {module} = issuerDeps[i];
-              if (asyncModuleToBeRebuild.has(module)) {
-                firstIndex = i;
-                content.push(module.content.replace(/(?:[\r\n]+)/g, '\\n'));
-                issuerDeps.splice(i, 1);
-              }
-            }
-
-            if (firstIndex > -1) {
-              issuerDeps.splice(
-                firstIndex,
-                0,
-                new ReplaceDependency(
-                  `module.exports = "${content.join('')}";`,
-                  [0, len]
-                )
-              );
+          for (let i = issuerDeps.length - 1; i >= 0; i--) {
+            const { module } = issuerDeps[i];
+            if (asyncModuleToBeRebuild.has(module)) {
+              firstIndex = i;
+              content.push(module.content.replace(/(?:[\r\n]+)/g, '\\n'));
+              issuerDeps.splice(i, 1);
             }
           }
-          return source;
+
+          if (firstIndex > -1) {
+            issuerDeps.splice(
+              firstIndex,
+              0,
+              new ReplaceDependency(`module.exports = "${content.join('')}";`, [
+                0,
+                len,
+              ])
+            );
+          }
         }
-      );
+
+        return source;
+      });
     });
   }
 
   shouldDisableAsync({ module }) {
-    const {disableAsync} = this.options;
+    const { disableAsync } = this.options;
     let shouldDisable = false;
     if (disableAsync === true) {
       shouldDisable = true;

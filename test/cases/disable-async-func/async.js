@@ -6,4 +6,4 @@ import './both-async.css';
 import './both-page-async-disabled.css';
 import './both-page-async.css';
 
-console.log('async.js');
+// console.log('async.js');
