@@ -461,7 +461,7 @@ class MiniCssExtractPlugin {
             const { module } = issuerDeps[i];
             if (asyncModuleToBeRebuild.has(module)) {
               firstIndex = i;
-              content.push(module.content.replace(/(?:[\r\n]+)/g, '\\n'));
+              content.unshift(module.content.replace(/(?:[\r\n]+)/g, '\\n'));
               issuerDeps.splice(i, 1);
             }
           }
