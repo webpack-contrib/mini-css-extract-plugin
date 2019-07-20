@@ -1,0 +1,11 @@
+.shared {
+    background: pink;
+}
+body {
+  background: red;
+}
+
+.both-async {
+  color: red;
+}
+

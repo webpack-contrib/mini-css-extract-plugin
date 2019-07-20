@@ -2,6 +2,9 @@
 
 import webpack from 'webpack';
 import sources from 'webpack-sources';
+import NullFactory from 'webpack/lib/NullFactory';
+
+import ReplaceDependency from './lib/ReplaceDependency';
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const {
@@ -148,6 +151,17 @@ class MiniCssExtractPlugin {
 
   apply(compiler) {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+      const asyncModuleToBeRebuild = new Set();
+      compilation[MODULE_TYPE] = {
+        asyncModuleToBeRebuild,
+      };
+
+      compilation.dependencyFactories.set(ReplaceDependency, new NullFactory());
+      compilation.dependencyTemplates.set(
+        ReplaceDependency,
+        new ReplaceDependency.Template()
+      );
+
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
@@ -215,7 +229,8 @@ class MiniCssExtractPlugin {
         pluginName,
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
+            (module) =>
+              module.type === MODULE_TYPE && !asyncModuleToBeRebuild.has(module)
           );
 
           if (renderedModules.length > 0) {
@@ -283,7 +298,7 @@ class MiniCssExtractPlugin {
       const { mainTemplate } = compilation;
 
       mainTemplate.hooks.localVars.tap(pluginName, (source, chunk) => {
-        const chunkMap = this.getCssChunkObject(chunk);
+        const chunkMap = this.getCssChunkObject(chunk, compilation);
 
         if (Object.keys(chunkMap).length > 0) {
           return Template.asString([
@@ -304,7 +319,7 @@ class MiniCssExtractPlugin {
       mainTemplate.hooks.requireEnsure.tap(
         pluginName,
         (source, chunk, hash) => {
-          const chunkMap = this.getCssChunkObject(chunk);
+          const chunkMap = this.getCssChunkObject(chunk, compilation);
 
           if (Object.keys(chunkMap).length > 0) {
             const chunkMaps = chunk.getChunkMaps();
@@ -433,17 +448,65 @@ class MiniCssExtractPlugin {
           return source;
         }
       );
+
+      const len = `// extracted by ${pluginName}`.length;
+      mainTemplate.hooks.beforeStartup.tap(
+        pluginName,
+        (source, chunk, hash) => {
+          for (const _m of asyncModuleToBeRebuild) {
+            const issuerDeps = _m.issuer.dependencies;
+            let firstIndex = -1;
+            const content = [];
+
+            for (let i = issuerDeps.length - 1; i >= 0; i--) {
+              const {module} = issuerDeps[i];
+              if (asyncModuleToBeRebuild.has(module)) {
+                firstIndex = i;
+                content.push(module.content.replace(/(?:[\r\n]+)/g, '\\n'));
+                issuerDeps.splice(i, 1);
+              }
+            }
+
+            if (firstIndex > -1) {
+              issuerDeps.splice(
+                firstIndex,
+                0,
+                new ReplaceDependency(
+                  `module.exports = "${content.join('')}";`,
+                  [0, len]
+                )
+              );
+            }
+          }
+          return source;
+        }
+      );
     });
   }
 
-  getCssChunkObject(mainChunk) {
+  shouldDisableAsync({ module }) {
+    const {disableAsync} = this.options;
+    let shouldDisable = false;
+    if (disableAsync === true) {
+      shouldDisable = true;
+    } else if (typeof disableAsync === 'function') {
+      shouldDisable = disableAsync({ module });
+    }
+
+    return shouldDisable;
+  }
+
+  getCssChunkObject(mainChunk, compilation) {
     const obj = {};
 
     for (const chunk of mainChunk.getAllAsyncChunks()) {
       for (const module of chunk.modulesIterable) {
         if (module.type === MODULE_TYPE) {
+          if (this.shouldDisableAsync({ module })) {
+            compilation[MODULE_TYPE].asyncModuleToBeRebuild.add(module);
+          }
+
           obj[chunk.id] = 1;
-          break;
         }
       }
     }
