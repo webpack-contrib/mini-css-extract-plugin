@@ -181,10 +181,10 @@ export function pitch(request) {
       return callback(e);
     }
 
+    const esModules = typeof options.esModules === 'boolean' && options.esModules === true;
+
     let resultSource = `// extracted by ${pluginName}`;
-    const result = locals
-      ? `\nmodule.exports = ${JSON.stringify(locals)};`
-      : '';
+    const result = locals ? `\n${esModules ? 'export default ' : 'module.exports = '}${JSON.stringify(locals)};` : '';
 
     resultSource += options.hmr
       ? hotLoader(result, { context: this.context, options, locals })

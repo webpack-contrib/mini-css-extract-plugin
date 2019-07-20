@@ -51,10 +51,9 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
-      // all options are optional
+      // both options are optional
       filename: '[name].css',
       chunkFilename: '[id].css',
-      ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
   ],
   module: {
@@ -193,6 +192,46 @@ module.exports = {
               hmr: process.env.NODE_ENV === 'development',
               // if hmr does not work, this is a forceful method.
               reloadAll: true,
+            },
+          },
+          'css-loader',
+        ],
+      },
+    ],
+  },
+};
+```
+
+#### `esModules`
+
+Type: `boolean`
+Default: `false`
+
+By default, extract-mini-css-plugin generates JS modules that use the CommonJS syntax. However, there are some
+cases in which using ES2015 modules is more beneficial, like in the case of [module concatenation](https://webpack.js.org/plugins/module-concatenation-plugin/) and [tree shaking](https://webpack.js.org/guides/tree-shaking/).
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModules: true,
             },
           },
           'css-loader',
@@ -349,8 +388,8 @@ With the `moduleFilename` option you can use chunk data to customize the filenam
 
 ```javascript
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
-});
+  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`
+})
 ```
 
 #### Long Term Caching
@@ -359,13 +398,7 @@ For long term caching use `filename: "[contenthash].css"`. Optionally add `[name
 
 ### Remove Order Warnings
 
-For projects where css ordering has been mitigated through consistent use of scoping or naming conventions, the css order warnings can be disabled by setting the ignoreOrder flag to true for the plugin.
-
-```javascript
-new MiniCssExtractPlugin({
-  ignoreOrder: true,
-}),
-```
+If the terminal is getting bloated with chunk order warnings. You can filter by configuring [warningsFilter](https://webpack.js.org/configuration/stats/) withing the webpack stats option
 
 ### Media Query Plugin
 
