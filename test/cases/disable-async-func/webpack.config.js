@@ -15,7 +15,7 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: '[name]-[contenthash].css',
+      filename: '[name].css',
       disableAsync({ module }) {
         let ret = false;
         if (

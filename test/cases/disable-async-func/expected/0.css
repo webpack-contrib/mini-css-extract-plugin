@@ -1,11 +1,12 @@
 .async-import {
-    background: black;
+  background: black;
 }
+
 .in-async-2 {
   background: green;
 }
 
 .both-page-async {
-    color: cyan;
+  color: cyan;
 }
 
