@@ -503,9 +503,9 @@ class MiniCssExtractPlugin {
         if (module.type === MODULE_TYPE) {
           if (this.shouldDisableAsync({ module })) {
             compilation[MODULE_TYPE].asyncModuleToBeRebuild.add(module);
+          } else {
+            obj[chunk.id] = 1;
           }
-
-          obj[chunk.id] = 1;
         }
       }
     }
