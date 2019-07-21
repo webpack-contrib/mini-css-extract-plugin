@@ -11,7 +11,7 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: [Self.loader, 'css-loader'],
+        use: ['style-loader', Self.loader, 'css-loader'],
       },
     ],
   },
@@ -19,6 +19,13 @@ module.exports = {
     new Self({
       filename: '[name].css',
       chunkFilename: '[contenthash].css',
+      disableAsync({ module }) {
+        let ret = false;
+        if (module.content.indexOf('async-disabled') > -1) {
+          ret = true;
+        }
+        return ret;
+      },
     }),
   ],
   devServer: {
