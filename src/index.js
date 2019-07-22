@@ -151,10 +151,10 @@ class MiniCssExtractPlugin {
 
   apply(compiler) {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-      const asyncModuleToBeRebuild = new Set();
+      const moduleToBeRebuild = new Set();
       // eslint-disable-next-line no-param-reassign
       compilation[MODULE_TYPE] = {
-        asyncModuleToBeRebuild,
+        moduleToBeRebuild,
       };
 
       compilation.dependencyFactories.set(ReplaceDependency, new NullFactory());
@@ -201,7 +201,9 @@ class MiniCssExtractPlugin {
         pluginName,
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
+            (module) =>
+              module.type === MODULE_TYPE &&
+              !this.shouldDisableExtract({ module, isAsync: false })
           );
 
           if (renderedModules.length > 0) {
@@ -231,7 +233,7 @@ class MiniCssExtractPlugin {
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
             (module) =>
-              module.type === MODULE_TYPE && !asyncModuleToBeRebuild.has(module)
+              module.type === MODULE_TYPE && !moduleToBeRebuild.has(module)
           );
 
           if (renderedModules.length > 0) {
@@ -452,14 +454,14 @@ class MiniCssExtractPlugin {
 
       const len = `// extracted by ${pluginName}`.length;
       mainTemplate.hooks.beforeStartup.tap(pluginName, (source) => {
-        for (const moduleToBeRebuild of asyncModuleToBeRebuild) {
-          const issuerDeps = moduleToBeRebuild.issuer.dependencies;
+        for (const currentModuleToBeRebuild of moduleToBeRebuild) {
+          const issuerDeps = currentModuleToBeRebuild.issuer.dependencies;
           let firstIndex = -1;
           const content = [];
 
           for (let i = issuerDeps.length - 1; i >= 0; i--) {
             const { module } = issuerDeps[i];
-            if (asyncModuleToBeRebuild.has(module)) {
+            if (moduleToBeRebuild.has(module)) {
               firstIndex = i;
               content.unshift(module.content.replace(/(?:[\r\n]+)/g, '\\n'));
               issuerDeps.splice(i, 1);
@@ -483,13 +485,13 @@ class MiniCssExtractPlugin {
     });
   }
 
-  shouldDisableAsync({ module }) {
-    const { disableAsync } = this.options;
+  shouldDisableExtract({ module }) {
+    const { disableExtract } = this.options;
     let shouldDisable = false;
-    if (disableAsync === true) {
+    if (disableExtract === true) {
       shouldDisable = true;
-    } else if (typeof disableAsync === 'function') {
-      shouldDisable = disableAsync({ module });
+    } else if (typeof disableExtract === 'function') {
+      shouldDisable = disableExtract({ module });
     }
 
     return shouldDisable;
@@ -501,11 +503,19 @@ class MiniCssExtractPlugin {
     for (const chunk of mainChunk.getAllAsyncChunks()) {
       for (const module of chunk.modulesIterable) {
         if (module.type === MODULE_TYPE) {
-          if (this.shouldDisableAsync({ module })) {
-            compilation[MODULE_TYPE].asyncModuleToBeRebuild.add(module);
+          if (this.shouldDisableExtract({ module, isAsync: true })) {
+            compilation[MODULE_TYPE].moduleToBeRebuild.add(module);
           } else {
             obj[chunk.id] = 1;
           }
+        }
+      }
+    }
+
+    for (const module of mainChunk.modulesIterable) {
+      if (module.type === MODULE_TYPE) {
+        if (this.shouldDisableExtract({ module, isAsync: false })) {
+          compilation[MODULE_TYPE].moduleToBeRebuild.add(module);
         }
       }
     }
