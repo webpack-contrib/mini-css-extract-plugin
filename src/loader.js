@@ -31,9 +31,16 @@ function hotLoader(content, context) {
     locals: !!context.locals,
   })});
       module.hot.dispose(cssReload);
+      module.hot.accept(function(){});
       ${accept}
     }
   `;
+}
+
+function interceptError(callback, interceptor) {
+  return (err, source) => {
+    return callback(null, err ? interceptor(err) : source);
+  };
 }
 
 const exec = (loaderContext, code, filename) => {
@@ -133,15 +140,22 @@ export function pitch(request) {
     });
   });
 
-  const callback = this.async();
+  const callback = !options.hmr
+    ? this.async()
+    : interceptError(this.async(), (err) => {
+        let resultSource = `// extracted by ${pluginName}`;
+        resultSource += hotLoader('', {
+          context: this.context,
+          locals: null,
+          options,
+        });
+        resultSource += `\nthrow new Error(${JSON.stringify(String(err))});`;
+        return resultSource;
+      });
 
   childCompiler.runAsChild((err, entries, compilation) => {
     if (err) {
       return callback(err);
-    }
-
-    if (compilation.errors.length > 0) {
-      return callback(compilation.errors[0]);
     }
 
     compilation.fileDependencies.forEach((dep) => {
@@ -151,6 +165,10 @@ export function pitch(request) {
     compilation.contextDependencies.forEach((dep) => {
       this.addContextDependency(dep);
     }, this);
+
+    if (compilation.errors.length > 0) {
+      return callback(compilation.errors[0]);
+    }
 
     if (!source) {
       return callback(new Error("Didn't get a result from child compiler"));
