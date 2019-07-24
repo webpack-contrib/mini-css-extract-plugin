@@ -29,8 +29,22 @@ describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
   const outputDirectory = path.resolve(__dirname, 'js');
 
+  // HMR tests use and render Date.now
+  let dateNowMock = null;
+  beforeEach(() => {
+    dateNowMock = jest
+      .spyOn(Date, 'now')
+      .mockImplementation(() => 1479427200000);
+  });
+
+  afterEach(() => {
+    dateNowMock.mockClear();
+  });
+
   for (const directory of fs.readdirSync(casesDirectory)) {
     if (!/^(\.|_)/.test(directory)) {
+      const expectsError = /^~/.test(directory);
+
       // eslint-disable-next-line no-loop-func
       it(`${directory} should compile to the expected result`, (done) => {
         const directoryForCase = path.resolve(casesDirectory, directory);
@@ -59,7 +73,7 @@ describe('TestCases', () => {
         }
 
         webpack(webpackConfig, (err, stats) => {
-          if (err) {
+          if (err && !expectsError) {
             done(err);
             return;
           }
@@ -76,7 +90,7 @@ describe('TestCases', () => {
             })
           );
 
-          if (stats.hasErrors()) {
+          if (stats.hasErrors() && !expectsError) {
             done(
               new Error(
                 stats.toString({
