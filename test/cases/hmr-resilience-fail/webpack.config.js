@@ -6,9 +6,11 @@ module.exports = {
   entry: './index.css',
   mode: 'development',
   devtool: false,
-  output: {
-    filename: '[name].js',
-  },
+  // NOTE:
+  // Using optimization settings to shunt everything
+  // except the generated module code itself into
+  // discarded chunks that won't be compared for
+  // expected output.
   optimization: {
     runtimeChunk: 'single',
     namedModules: true,

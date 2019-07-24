@@ -16,22 +16,33 @@ const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
 
 function hotLoader(content, context) {
-  const accept = context.locals
-    ? ''
-    : 'module.hot.accept(undefined, cssReload);';
+  const cssReload = loaderUtils.stringifyRequest(
+    context.context,
+    path.join(__dirname, 'hmr/hotModuleReplacement.js')
+  );
+
+  const cssReloadArgs = JSON.stringify({
+    ...context.options,
+    locals: !!context.locals,
+  });
+
+  // The module should *always* self-accept and have an error handler
+  // present to ensure a faulting module does not bubble further out.
+  // The error handler itself does not actually need to do anything.
+  //
+  // When there are no locals, then the module should also accept
+  // changes on an empty set of dependencies and execute the css
+  // reloader.
+  let accept = 'module.hot.accept(function(){});';
+  if (!context.locals) {
+    accept += '\n      module.hot.accept(undefined, cssReload);';
+  }
 
   return `${content}
     if(module.hot) {
       // ${Date.now()}
-      var cssReload = require(${loaderUtils.stringifyRequest(
-        context.context,
-        path.join(__dirname, 'hmr/hotModuleReplacement.js')
-      )})(module.id, ${JSON.stringify({
-    ...context.options,
-    locals: !!context.locals,
-  })});
+      var cssReload = require(${cssReload})(module.id, ${cssReloadArgs});
       module.hot.dispose(cssReload);
-      module.hot.accept(function(){});
       ${accept}
     }
   `;

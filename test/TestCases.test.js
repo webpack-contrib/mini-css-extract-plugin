@@ -67,7 +67,7 @@ describe('TestCases', () => {
 
   for (const directory of fs.readdirSync(casesDirectory)) {
     if (!/^(\.|_)/.test(directory)) {
-      const expectsError = /^~/.test(directory);
+      const expectsError = /-fail$/.test(directory);
 
       // eslint-disable-next-line no-loop-func
       it(`${directory} should compile to the expected result`, (done) => {
