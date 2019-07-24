@@ -345,15 +345,7 @@ module.exports = {
 
 #### Disable Extracting Specified CSS from Chunks
 
-You may disable extracting css from all chunks with `disableExtract` option.
-
-```javascript
-const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  disableExtract: true,
-});
-```
-
-You may also disable extracting css modules programmatically by passing a function.
+You may disable extracting css modules programmatically by passing a function.
 
 ```javascript
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
