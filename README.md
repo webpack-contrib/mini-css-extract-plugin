@@ -343,23 +343,25 @@ module.exports = {
 };
 ```
 
-#### Disable extracting css from async chunks
+#### Disable Extracting Specified CSS from Chunks
 
-You may disable extracting css from async chunks with `disableAsync` option.
+You may disable extracting css from all chunks with `disableExtract` option.
 
 ```javascript
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  disableAsync: true,
+  disableExtract: true,
 });
 ```
 
-You may also disable extracting async css modules programmatically by passing a function.
+You may also disable extracting css modules programmatically by passing a function.
 
 ```javascript
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  disableAsync({ module }) {
+  disableExtract({ module, isAsync }) {
     // Do whatever you want. Disable by content size for example:
-    return module.content.length < 10 * 1024;
+    // return module.content.length < 10 * 1024;
+    // Or disable extracting from all async chunks
+    return isAsync;
   },
 });
 ```
