@@ -12,7 +12,7 @@
       module.hot.accept(undefined, cssReload);
     }
   
-throw new Error("ModuleBuildError: Module build failed (from ./error-loader.js):\nError: I am error\n    at Object.loader (D:\\github_git\\mini-css-extract-plugin\\test\\cases\\~hmr-resilience\\error-loader.js:3:12)");
+throw new Error("ModuleBuildError: Module build failed (from ./error-loader.js):\nError: I am error\n    at Object.loader (error-loader.js:1:1)");
 
 /***/ })
 

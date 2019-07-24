@@ -29,16 +29,40 @@ describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
   const outputDirectory = path.resolve(__dirname, 'js');
 
-  // HMR tests use and render Date.now
+  // The ~hmr-resilience testcase has a few variable components in its
+  // output. To resolve these and make the output predictible and comparable:
+  // - it needs Date.now to be mocked to a constant value.
+  // - it needs JSON.stringify to be mocked to strip source location path
+  //   out of a stringified error.
   let dateNowMock = null;
+  let jsonStringifyMock = null;
   beforeEach(() => {
     dateNowMock = jest
       .spyOn(Date, 'now')
       .mockImplementation(() => 1479427200000);
+
+    const stringify = JSON.stringify.bind(JSON);
+    jsonStringifyMock = jest
+      .spyOn(JSON, 'stringify')
+      .mockImplementation((value) => {
+        // ~hmr-resilience testcase. Need to erase stack trace location,
+        // which varies by system and cannot be compared.
+        if (typeof value === 'string' && value.includes('error-loader.js')) {
+          return stringify(
+            value.replace(
+              /\([^(]+error-loader\.js:\d+:\d+\)$/,
+              '(error-loader.js:1:1)'
+            )
+          );
+        }
+
+        return stringify(value);
+      });
   });
 
   afterEach(() => {
-    dateNowMock.mockClear();
+    dateNowMock.mockRestore();
+    jsonStringifyMock.mockRestore();
   });
 
   for (const directory of fs.readdirSync(casesDirectory)) {
