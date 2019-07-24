@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[2],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[3],{
 
 /***/ 11:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -20,14 +20,20 @@ __webpack_require__.r(__webpack_exports__);
 /***/ 8:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = ".both-page-async-disabled {\n  color: yellow;\n}\n";
+exports = module.exports = __webpack_require__(12)(false);
+// Module
+exports.push([module.i, ".both-page-async-disabled {\n  color: yellow;\n}\n", ""]);
+
 
 /***/ }),
 
 /***/ 9:
 /***/ (function(module, exports, __webpack_require__) {
 
-// extracted by mini-css-extract-plugin
+exports = module.exports = __webpack_require__(12)(false);
+// Module
+exports.push([module.i, ".both-page-async {\n  color: cyan;\n}\n", ""]);
+
 
 /***/ })
 

@@ -34,13 +34,23 @@ __webpack_require__.r(__webpack_exports__);
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = ".async-import {\n  background: black;\n}\n.in-async {\n  background: green;\n}\n";
+exports = module.exports = __webpack_require__(8)(false);
+// Imports
+exports.i(__webpack_require__(10), "");
+// Module
+exports.push([module.i, ".in-async {\n  background: green;\n}\n", ""]);
+
 
 /***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = ".async-import {\n  background: black;\n}\n.in-async-2 {\n  background: green;\n}\n";
+exports = module.exports = __webpack_require__(8)(false);
+// Imports
+exports.i(__webpack_require__(10), "");
+// Module
+exports.push([module.i, ".in-async-2 {\n  background: green;\n}\n", ""]);
+
 
 /***/ })
 ]]);

@@ -13,7 +13,7 @@ module.exports = {
   plugins: [
     new Self({
       filename: '[name].css',
-      disableAsync: true,
+      disableExtract: true,
     }),
   ],
 };

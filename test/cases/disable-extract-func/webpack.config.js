@@ -16,7 +16,7 @@ module.exports = {
   plugins: [
     new Self({
       filename: '[name].css',
-      disableAsync({ module }) {
+      disableExtract({ module }) {
         let ret = false;
         if (
           module.content.indexOf('in-async ') > -1 ||

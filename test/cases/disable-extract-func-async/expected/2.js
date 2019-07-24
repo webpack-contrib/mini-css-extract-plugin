@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[0],[
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[2],[
 /* 0 */,
 /* 1 */,
 /* 2 */,
@@ -42,25 +42,41 @@ __webpack_require__.r(__webpack_exports__);
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// extracted by mini-css-extract-plugin
+exports = module.exports = __webpack_require__(12)(false);
+// Imports
+exports.i(__webpack_require__(13), "");
+// Module
+exports.push([module.i, ".in-async-2 {\n  background: green;\n}\n", ""]);
+
 
 /***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = ".in-async {\n  background: green;\n}\n";
+exports = module.exports = __webpack_require__(12)(false);
+// Imports
+exports.i(__webpack_require__(13), "");
+// Module
+exports.push([module.i, ".in-async {\n  background: green;\n}\n", ""]);
+
 
 /***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = ".both-page-async-disabled {\n  color: yellow;\n}\n";
+exports = module.exports = __webpack_require__(12)(false);
+// Module
+exports.push([module.i, ".both-page-async-disabled {\n  color: yellow;\n}\n", ""]);
+
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// extracted by mini-css-extract-plugin
+exports = module.exports = __webpack_require__(12)(false);
+// Module
+exports.push([module.i, ".both-page-async {\n  color: cyan;\n}\n", ""]);
+
 
 /***/ })
 ]]);

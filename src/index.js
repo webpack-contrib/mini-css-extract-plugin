@@ -2,9 +2,6 @@
 
 import webpack from 'webpack';
 import sources from 'webpack-sources';
-import NullFactory from 'webpack/lib/NullFactory';
-
-import ReplaceDependency from './lib/ReplaceDependency';
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const {
@@ -21,6 +18,16 @@ const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
+
+function isInitialOrHasNoParents(chunk) {
+  let parentCount = 0;
+
+  for (const chunkGroup of chunk.groupsIterable) {
+    parentCount += chunkGroup.getNumberOfParents();
+  }
+
+  return chunk.isOnlyInitial() || parentCount === 0;
+}
 
 class CssDependency extends webpack.Dependency {
   constructor(
@@ -157,12 +164,6 @@ class MiniCssExtractPlugin {
         moduleToBeRebuild,
       };
 
-      compilation.dependencyFactories.set(ReplaceDependency, new NullFactory());
-      compilation.dependencyTemplates.set(
-        ReplaceDependency,
-        new ReplaceDependency.Template()
-      );
-
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
@@ -185,6 +186,10 @@ class MiniCssExtractPlugin {
             identifierCountMap.set(line.identifier, count + 1);
           }
         };
+
+        loaderContext[`${MODULE_TYPE}/disableExtract`] = () => {
+          return !!module[`${MODULE_TYPE}/disableExtract`];
+        };
       });
 
       compilation.dependencyFactories.set(
@@ -202,8 +207,7 @@ class MiniCssExtractPlugin {
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
             (module) =>
-              module.type === MODULE_TYPE &&
-              !this.shouldDisableExtract({ module, isAsync: false })
+              module.type === MODULE_TYPE && !moduleToBeRebuild.has(module)
           );
 
           if (renderedModules.length > 0) {
@@ -452,46 +456,53 @@ class MiniCssExtractPlugin {
         }
       );
 
-      const len = `// extracted by ${pluginName}`.length;
-      mainTemplate.hooks.beforeStartup.tap(pluginName, (source) => {
-        for (const currentModuleToBeRebuild of moduleToBeRebuild) {
-          const issuerDeps = currentModuleToBeRebuild.issuer.dependencies;
-          let firstIndex = -1;
-          const content = [];
+      compilation.hooks.optimizeTree.tapAsync(
+        pluginName,
+        (chunks, modules, callback) => {
+          const promises = [];
 
-          for (let i = issuerDeps.length - 1; i >= 0; i--) {
-            const { module } = issuerDeps[i];
-            if (moduleToBeRebuild.has(module)) {
-              firstIndex = i;
-              content.unshift(module.content.replace(/(?:[\r\n]+)/g, '\\n'));
-              issuerDeps.splice(i, 1);
+          for (const chunk of chunks) {
+            const isAsync = !isInitialOrHasNoParents(chunk);
+            // eslint-disable-next-line no-underscore-dangle
+            for (const module of chunk._modules) {
+              if (module.type === MODULE_TYPE) {
+                if (this.shouldDisableExtract({ module, isAsync })) {
+                  moduleToBeRebuild.add(module);
+                }
+              }
             }
           }
 
-          if (firstIndex > -1) {
-            issuerDeps.splice(
-              firstIndex,
-              0,
-              new ReplaceDependency(`module.exports = "${content.join('')}";`, [
-                0,
-                len,
-              ])
-            );
+          for (const currentModuleToBeRebuild of moduleToBeRebuild) {
+            const { issuer } = currentModuleToBeRebuild;
+            if (!issuer[`${MODULE_TYPE}/disableExtract`]) {
+              issuer[`${MODULE_TYPE}/disableExtract`] = true;
+              promises.push(
+                new Promise((resolve) => {
+                  compilation.rebuildModule(issuer, (err) => {
+                    if (err) {
+                      compilation.errors.push(err);
+                    }
+                    resolve();
+                  });
+                })
+              );
+            }
           }
-        }
 
-        return source;
-      });
+          Promise.all(promises).then(() => callback());
+        }
+      );
     });
   }
 
-  shouldDisableExtract({ module }) {
+  shouldDisableExtract({ module, isAsync }) {
     const { disableExtract } = this.options;
     let shouldDisable = false;
     if (disableExtract === true) {
       shouldDisable = true;
     } else if (typeof disableExtract === 'function') {
-      shouldDisable = disableExtract({ module });
+      shouldDisable = disableExtract({ module, isAsync });
     }
 
     return shouldDisable;
@@ -503,19 +514,10 @@ class MiniCssExtractPlugin {
     for (const chunk of mainChunk.getAllAsyncChunks()) {
       for (const module of chunk.modulesIterable) {
         if (module.type === MODULE_TYPE) {
-          if (this.shouldDisableExtract({ module, isAsync: true })) {
-            compilation[MODULE_TYPE].moduleToBeRebuild.add(module);
-          } else {
+          if (!compilation[MODULE_TYPE].moduleToBeRebuild.has(module)) {
             obj[chunk.id] = 1;
+            break;
           }
-        }
-      }
-    }
-
-    for (const module of mainChunk.modulesIterable) {
-      if (module.type === MODULE_TYPE) {
-        if (this.shouldDisableExtract({ module, isAsync: false })) {
-          compilation[MODULE_TYPE].moduleToBeRebuild.add(module);
         }
       }
     }
