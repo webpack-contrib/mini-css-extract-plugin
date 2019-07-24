@@ -177,6 +177,10 @@ class MiniCssExtractPlugin {
             );
           }
 
+          if (module[`${MODULE_TYPE}/disableExtract`]) {
+            return;
+          }
+
           const identifierCountMap = new Map();
 
           for (const line of content) {
@@ -206,8 +210,7 @@ class MiniCssExtractPlugin {
         pluginName,
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) =>
-              module.type === MODULE_TYPE && !moduleToBeRebuild.has(module)
+            (module) => module.type === MODULE_TYPE
           );
 
           if (renderedModules.length > 0) {
@@ -236,8 +239,7 @@ class MiniCssExtractPlugin {
         pluginName,
         (result, { chunk }) => {
           const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) =>
-              module.type === MODULE_TYPE && !moduleToBeRebuild.has(module)
+            (module) => module.type === MODULE_TYPE
           );
 
           if (renderedModules.length > 0) {
@@ -305,7 +307,7 @@ class MiniCssExtractPlugin {
       const { mainTemplate } = compilation;
 
       mainTemplate.hooks.localVars.tap(pluginName, (source, chunk) => {
-        const chunkMap = this.getCssChunkObject(chunk, compilation);
+        const chunkMap = this.getCssChunkObject(chunk);
 
         if (Object.keys(chunkMap).length > 0) {
           return Template.asString([
@@ -326,7 +328,7 @@ class MiniCssExtractPlugin {
       mainTemplate.hooks.requireEnsure.tap(
         pluginName,
         (source, chunk, hash) => {
-          const chunkMap = this.getCssChunkObject(chunk, compilation);
+          const chunkMap = this.getCssChunkObject(chunk);
 
           if (Object.keys(chunkMap).length > 0) {
             const chunkMaps = chunk.getChunkMaps();
@@ -499,25 +501,21 @@ class MiniCssExtractPlugin {
   shouldDisableExtract({ module, isAsync }) {
     const { disableExtract } = this.options;
     let shouldDisable = false;
-    if (disableExtract === true) {
-      shouldDisable = true;
-    } else if (typeof disableExtract === 'function') {
+    if (typeof disableExtract === 'function') {
       shouldDisable = disableExtract({ module, isAsync });
     }
 
     return shouldDisable;
   }
 
-  getCssChunkObject(mainChunk, compilation) {
+  getCssChunkObject(mainChunk) {
     const obj = {};
 
     for (const chunk of mainChunk.getAllAsyncChunks()) {
       for (const module of chunk.modulesIterable) {
         if (module.type === MODULE_TYPE) {
-          if (!compilation[MODULE_TYPE].moduleToBeRebuild.has(module)) {
-            obj[chunk.id] = 1;
-            break;
-          }
+          obj[chunk.id] = 1;
+          break;
         }
       }
     }
