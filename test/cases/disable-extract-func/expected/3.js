@@ -48,7 +48,7 @@ __webpack_require__.r(__webpack_exports__);
 
 exports = module.exports = __webpack_require__(14)(false);
 // Module
-exports.push([module.i, ".is-async-1 {\r\n    background: magenta;\r\n}", ""]);
+exports.push([module.i, ".is-async-1 {\n  background: magenta;\n}\n", ""]);
 
 
 /***/ })

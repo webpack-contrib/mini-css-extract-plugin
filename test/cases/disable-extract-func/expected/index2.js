@@ -256,8 +256,9 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _is_async2_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 /* harmony import */ var _is_async2_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_is_async2_css__WEBPACK_IMPORTED_MODULE_0__);
-__webpack_require__.e(/* import() */ 3).then(__webpack_require__.bind(null, 12));
 
+
+__webpack_require__.e(/* import() */ 3).then(__webpack_require__.bind(null, 12));
 
 // console.log('index2');
 
