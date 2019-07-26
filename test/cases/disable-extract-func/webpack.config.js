@@ -16,11 +16,12 @@ module.exports = {
   plugins: [
     new Self({
       filename: '[name].css',
-      disableExtract({ module }) {
+      disableExtract({ module, isAsync }) {
         let ret = false;
         if (
           module.content.indexOf('in-async ') > -1 ||
-          module.content.indexOf('both-page-async-disabled') > -1
+          module.content.indexOf('both-page-async-disabled') > -1 ||
+          (module.content.indexOf('is-async') > -1 && isAsync)
         ) {
           ret = true;
         }

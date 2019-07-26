@@ -61,14 +61,11 @@ export function pitch(request) {
 
   validateOptions(schema, options, 'Mini CSS Extract Plugin Loader');
 
-  this.addDependency(this.resourcePath);
-
   const loaders = this.loaders.slice(this.loaderIndex + 1);
 
-  const callback = this.async();
+  this.addDependency(this.resourcePath);
 
   if (this[`${MODULE_TYPE}/disableExtract`]()) {
-    callback();
     return;
   }
 
@@ -139,6 +136,8 @@ export function pitch(request) {
       });
     });
   });
+
+  const callback = this.async();
 
   childCompiler.runAsChild((err, entries, compilation) => {
     if (err) {
