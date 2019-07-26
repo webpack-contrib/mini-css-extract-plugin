@@ -34,14 +34,14 @@
 /******/
 /******/ 	// object to store loaded CSS chunks
 /******/ 	var installedCssChunks = {
-/******/ 		4: 0
+/******/ 		2: 0
 /******/ 	}
 /******/
 /******/ 	// object to store loaded and loading chunks
 /******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 	// Promise = chunk loading, 0 = chunk loaded
 /******/ 	var installedChunks = {
-/******/ 		4: 0
+/******/ 		2: 0
 /******/ 	};
 /******/
 /******/
@@ -82,7 +82,7 @@
 /******/
 /******/
 /******/ 		// mini-css-extract-plugin CSS loading
-/******/ 		var cssChunks = {"2":1};
+/******/ 		var cssChunks = {"3":1};
 /******/ 		if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);
 /******/ 		else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {
 /******/ 			promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {
@@ -245,16 +245,28 @@
 /******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
-/******/ ({
+/******/ ([
+/* 0 */,
+/* 1 */,
+/* 2 */,
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-/***/ 3:
-/***/ (function(module, exports, __webpack_require__) {
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _is_async2_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var _is_async2_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_is_async2_css__WEBPACK_IMPORTED_MODULE_0__);
+__webpack_require__.e(/* import() */ 3).then(__webpack_require__.bind(null, 12));
 
-__webpack_require__.e(/* import() */ 2).then(__webpack_require__.bind(null, 11));
 
 // console.log('index2');
 
 
-/***/ })
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/******/ });
+// extracted by mini-css-extract-plugin
+
+/***/ })
+/******/ ]);
