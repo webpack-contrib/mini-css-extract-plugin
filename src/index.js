@@ -465,8 +465,7 @@ class MiniCssExtractPlugin {
 
           for (const chunk of chunks) {
             const isAsync = !isInitialOrHasNoParents(chunk);
-            // eslint-disable-next-line no-underscore-dangle
-            for (const module of chunk._modules) {
+            for (const module of chunk.modulesIterable) {
               if (module.type === MODULE_TYPE) {
                 if (this.shouldDisableExtract({ module, isAsync })) {
                   moduleToBeRebuild.add(module);
