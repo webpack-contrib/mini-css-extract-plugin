@@ -1,0 +1,6 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EsModules should generate ES6 modules 1`] = `
+"// extracted by mini-css-extract-plugin
+export default {\\"test\\":\\"MHBvAShXnAxWEC-jxsBd\\"};"
+`;
