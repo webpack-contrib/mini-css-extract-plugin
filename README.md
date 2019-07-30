@@ -367,6 +367,16 @@ new MiniCssExtractPlugin({
 }),
 ```
 
+### Disable Asynchronous Downloading of CSS
+
+For projects in which you do not want CSS asynchronously fetched on the client side, and only want the CSS that is delivered on the server side (via link tags) to be fetched and parsed, enabling this option will give you that functionality.
+
+```javascript
+new MiniCssExtractPlugin({
+  disableAsync: true,
+}),
+```
+
 ### Media Query Plugin
 
 If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop or tablet specific CSS anymore) you should use one of the following plugins:
