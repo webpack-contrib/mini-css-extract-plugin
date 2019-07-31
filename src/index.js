@@ -24,6 +24,15 @@ const REGEXP_NAME = /\[name\]/i;
 const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
 
+class SetMap extends Map {
+  set(key, value) {
+    return super.set(
+      key,
+      this.has(key) ? this.get(key).add(value) : new Set([value])
+    );
+  }
+}
+
 class CssDependencyTemplate {
   apply() {}
 }
@@ -392,32 +401,43 @@ class MiniCssExtractPlugin {
       );
 
       compilation.hooks.optimizeChunks.tap(pluginName, (chunks) => {
+        const toRemoveMap = new SetMap();
+
         for (const chunk of chunks) {
           for (const module of chunk.modulesIterable) {
-            // eslint-disable-next-line no-param-reassign
-            module.dependencies = module.dependencies.filter((dep) => {
-              const hasCssDep =
-                dep.module &&
-                dep.module.dependencies.find(
-                  (d) => d.module && d.module.type === MODULE_TYPE
-                );
+            if (module.type === MODULE_TYPE) {
+              for (const cssModuleReason of module.reasons) {
+                let isCjs = false;
 
-              if (hasCssDep) {
-                dep.disconnect();
-                return false;
-              }
+                for (const reason of cssModuleReason.module.reasons) {
+                  isCjs = /^cjs/.test(reason.dependency.type);
+                  if (!isCjs)
+                    toRemoveMap.set(
+                      reason.module || cssModuleReason.module,
+                      reason.dependency
+                    );
+                }
 
-              return true;
-            });
-
-            if (module.type === MODULE_TYPE && module.reasons) {
-              for (const reason of module.reasons) {
-                if (reason.module && reason.module.buildMeta.extracted) {
-                  chunk.removeModule(reason.module);
+                if (
+                  !isCjs &&
+                  cssModuleReason.module &&
+                  cssModuleReason.module.buildMeta.extracted
+                ) {
+                  chunk.removeModule(cssModuleReason.module);
                 }
               }
             }
           }
+        }
+
+        for (const [module, set] of toRemoveMap) {
+          module.dependencies = module.dependencies.filter((d) => {
+            if (set.has(d)) {
+              d.disconnect();
+              return false;
+            }
+            return true;
+          });
         }
       });
     });
