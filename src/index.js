@@ -177,10 +177,6 @@ class MiniCssExtractPlugin {
             );
           }
 
-          if (module[`${MODULE_TYPE}/disableExtract`]) {
-            return;
-          }
-
           const identifierCountMap = new Map();
 
           for (const line of content) {
