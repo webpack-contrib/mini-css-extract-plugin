@@ -16,24 +16,42 @@ const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
 
 function hotLoader(content, context) {
-  const accept = context.locals
-    ? ''
-    : 'module.hot.accept(undefined, cssReload);';
+  const cssReload = loaderUtils.stringifyRequest(
+    context.context,
+    path.join(__dirname, 'hmr/hotModuleReplacement.js')
+  );
+
+  const cssReloadArgs = JSON.stringify({
+    ...context.options,
+    locals: !!context.locals,
+  });
+
+  // The module should *always* self-accept and have an error handler
+  // present to ensure a faulting module does not bubble further out.
+  // The error handler itself does not actually need to do anything.
+  //
+  // When there are no locals, then the module should also accept
+  // changes on an empty set of dependencies and execute the css
+  // reloader.
+  let accept = 'module.hot.accept(function(){});';
+  if (!context.locals) {
+    accept += '\n      module.hot.accept(undefined, cssReload);';
+  }
 
   return `${content}
     if(module.hot) {
       // ${Date.now()}
-      var cssReload = require(${loaderUtils.stringifyRequest(
-        context.context,
-        path.join(__dirname, 'hmr/hotModuleReplacement.js')
-      )})(module.id, ${JSON.stringify({
-    ...context.options,
-    locals: !!context.locals,
-  })});
+      var cssReload = require(${cssReload})(module.id, ${cssReloadArgs});
       module.hot.dispose(cssReload);
       ${accept}
     }
   `;
+}
+
+function interceptError(callback, interceptor) {
+  return (err, source) => {
+    return callback(null, err ? interceptor(err) : source);
+  };
 }
 
 const exec = (loaderContext, code, filename) => {
@@ -133,15 +151,22 @@ export function pitch(request) {
     });
   });
 
-  const callback = this.async();
+  const callback = !options.hmr
+    ? this.async()
+    : interceptError(this.async(), (err) => {
+        let resultSource = `// extracted by ${pluginName}`;
+        resultSource += hotLoader('', {
+          context: this.context,
+          locals: null,
+          options,
+        });
+        resultSource += `\nthrow new Error(${JSON.stringify(String(err))});`;
+        return resultSource;
+      });
 
   childCompiler.runAsChild((err, entries, compilation) => {
     if (err) {
       return callback(err);
-    }
-
-    if (compilation.errors.length > 0) {
-      return callback(compilation.errors[0]);
     }
 
     compilation.fileDependencies.forEach((dep) => {
@@ -151,6 +176,10 @@ export function pitch(request) {
     compilation.contextDependencies.forEach((dep) => {
       this.addContextDependency(dep);
     }, this);
+
+    if (compilation.errors.length > 0) {
+      return callback(compilation.errors[0]);
+    }
 
     if (!source) {
       return callback(new Error("Didn't get a result from child compiler"));
