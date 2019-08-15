@@ -552,7 +552,7 @@ class MiniCssExtractPlugin {
     } else {
       // fallback for older webpack versions
       // (to avoid a breaking change)
-      // TODO remove this in next mayor version
+      // TODO remove this in next major version
       // and increase minimum webpack version to 4.12.0
       modules.sort((a, b) => a.index2 - b.index2);
       usedModules = modules;
