@@ -1,1 +1,1 @@
-{"version":3,"sources":["webpack:///./main.css"],"names":[],"mappings":"AAAA,MAAM,iBAAiB","file":"main.css","sourcesContent":["body { background: red; }\n"],"sourceRoot":""}
+{"version":3,"sources":["webpack:///./main.css"],"names":[],"mappings":"AAAA;AACA;AACA","file":"main.css","sourcesContent":["body {\n  background: red;\n}\n"],"sourceRoot":""}

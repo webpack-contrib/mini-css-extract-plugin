@@ -51,9 +51,10 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
-      // both options are optional
+      // all options are optional
       filename: '[name].css',
       chunkFilename: '[id].css',
+      ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
   ],
   module: {
@@ -348,8 +349,8 @@ With the `moduleFilename` option you can use chunk data to customize the filenam
 
 ```javascript
 const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`
-})
+  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
+});
 ```
 
 #### Long Term Caching
@@ -358,7 +359,13 @@ For long term caching use `filename: "[contenthash].css"`. Optionally add `[name
 
 ### Remove Order Warnings
 
-If the terminal is getting bloated with chunk order warnings. You can filter by configuring [warningsFilter](https://webpack.js.org/configuration/stats/) withing the webpack stats option
+For projects where css ordering has been mitigated through consistent use of scoping or naming conventions, the css order warnings can be disabled by setting the ignoreOrder flag to true for the plugin.
+
+```javascript
+new MiniCssExtractPlugin({
+  ignoreOrder: true,
+}),
+```
 
 ### Media Query Plugin
 

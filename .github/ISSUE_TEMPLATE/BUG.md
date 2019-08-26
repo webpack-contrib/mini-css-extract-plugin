@@ -1,7 +1,6 @@
 ---
 name: 🐛 Bug Report
 about: Something went awry and you'd like to tell us about it.
-
 ---
 
 <!--
@@ -15,11 +14,11 @@ about: Something went awry and you'd like to tell us about it.
   Head to StackOverflow or https://gitter.im/webpack/webpack.
 -->
 
-* Operating System:
-* Node Version:
-* NPM Version:
-* webpack Version:
-* mini-css-extract-plugin Version:
+- Operating System:
+- Node Version:
+- NPM Version:
+- webpack Version:
+- mini-css-extract-plugin Version:
 
 ### Expected Behavior
 
@@ -32,13 +31,13 @@ about: Something went awry and you'd like to tell us about it.
 ### Code
 
 ```js
-  // webpack.config.js
-  // If your code blocks are over 20 lines, please paste a link to a gist
-  // (https://gist.github.com).
+// webpack.config.js
+// If your code blocks are over 20 lines, please paste a link to a gist
+// (https://gist.github.com).
 ```
 
 ```js
-  // additional code, HEY YO remove this block if you don't need it
+// additional code, HEY YO remove this block if you don't need it
 ```
 
 ### How Do We Reproduce?

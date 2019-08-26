@@ -124,7 +124,8 @@ class MiniCssExtractPlugin {
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
-        moduleFilename: () => options.filename || DEFAULT_FILENAME,
+        moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
+        ignoreOrder: false,
       },
       options
     );
@@ -530,17 +531,20 @@ class MiniCssExtractPlugin {
           // use list with fewest failed deps
           // and emit a warning
           const fallbackModule = bestMatch.pop();
-
-          compilation.warnings.push(
-            new Error(
-              `chunk ${chunk.name || chunk.id} [${pluginName}]\n` +
-                'Conflicting order between:\n' +
-                ` * ${fallbackModule.readableIdentifier(requestShortener)}\n` +
-                `${bestMatchDeps
-                  .map((m) => ` * ${m.readableIdentifier(requestShortener)}`)
-                  .join('\n')}`
-            )
-          );
+          if (!this.options.ignoreOrder) {
+            compilation.warnings.push(
+              new Error(
+                `chunk ${chunk.name || chunk.id} [${pluginName}]\n` +
+                  'Conflicting order between:\n' +
+                  ` * ${fallbackModule.readableIdentifier(
+                    requestShortener
+                  )}\n` +
+                  `${bestMatchDeps
+                    .map((m) => ` * ${m.readableIdentifier(requestShortener)}`)
+                    .join('\n')}`
+              )
+            );
+          }
 
           usedModules.add(fallbackModule);
         }
@@ -548,7 +552,7 @@ class MiniCssExtractPlugin {
     } else {
       // fallback for older webpack versions
       // (to avoid a breaking change)
-      // TODO remove this in next mayor version
+      // TODO remove this in next major version
       // and increase minimum webpack version to 4.12.0
       modules.sort((a, b) => a.index2 - b.index2);
       usedModules = modules;

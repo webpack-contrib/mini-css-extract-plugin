@@ -1,6 +1,12 @@
-body { background: red; }
+body {
+  background: red;
+}
 
-.component { background: blue; }
+.component {
+  background: blue;
+}
 
-body { background: green; }
+body {
+  background: green;
+}
 
