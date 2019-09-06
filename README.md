@@ -353,6 +353,20 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
 });
 ```
 
+#### Add custom attributes
+
+If you want to add some custom attributes to dynamically loaded css chunks, you can use `attrs` option
+
+```javascript
+const miniCssExtractPlugin = new MiniCssExtractPlugin({
+  attrs: {
+    'data-id': 'unique-id',
+  },
+});
+```
+
+Note: It's only applied to dynamically loaded css chunks, if you want to modify link attributes inside html file, please using [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin)
+
 #### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.

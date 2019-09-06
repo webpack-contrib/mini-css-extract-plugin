@@ -364,6 +364,8 @@ class MiniCssExtractPlugin {
               }
             );
 
+            const { attrs = {} } = this.options;
+
             return Template.asString([
               source,
               '',
@@ -395,6 +397,11 @@ class MiniCssExtractPlugin {
                   'var linkTag = document.createElement("link");',
                   'linkTag.rel = "stylesheet";',
                   'linkTag.type = "text/css";',
+                  ...Object.keys(attrs).map((k) => {
+                    const key = JSON.stringify(k);
+                    const value = JSON.stringify(attrs[k] || '');
+                    return `linkTag.setAttribute(${key}, ${value});`;
+                  }),
                   'linkTag.onload = resolve;',
                   'linkTag.onerror = function(event) {',
                   Template.indent([
