@@ -148,29 +148,32 @@ class MiniCssExtractPlugin {
 
   apply(compiler) {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-      compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
-        const loaderContext = lc;
-        const module = m;
+      compilation.hooks.normalModuleLoader.tap(
+        pluginName,
+        (loaderContext, module) => {
+          // eslint-disable-next-line no-param-reassign
+          loaderContext[MODULE_TYPE] = (content) => {
+            if (!Array.isArray(content) && content != null) {
+              throw new Error(
+                `Exported value was not extracted as an array: ${JSON.stringify(
+                  content
+                )}`
+              );
+            }
 
-        loaderContext[MODULE_TYPE] = (content) => {
-          if (!Array.isArray(content) && content != null) {
-            throw new Error(
-              `Exported value was not extracted as an array: ${JSON.stringify(
-                content
-              )}`
-            );
-          }
+            const identifierCountMap = new Map();
 
-          const identifierCountMap = new Map();
+            for (const line of content) {
+              const count = identifierCountMap.get(line.identifier) || 0;
 
-          for (const line of content) {
-            const count = identifierCountMap.get(line.identifier) || 0;
-
-            module.addDependency(new CssDependency(line, m.context, count));
-            identifierCountMap.set(line.identifier, count + 1);
-          }
-        };
-      });
+              module.addDependency(
+                new CssDependency(line, module.context, count)
+              );
+              identifierCountMap.set(line.identifier, count + 1);
+            }
+          };
+        }
+      );
 
       compilation.dependencyFactories.set(
         CssDependency,
