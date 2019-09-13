@@ -91,8 +91,6 @@ export function pitch(request) {
   );
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
 
-  // We set loaderContext[MODULE_TYPE] = false to indicate we already in
-  // a child compiler so we don't spawn another child compilers from there.
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
     (compilation) => {
@@ -101,7 +99,6 @@ export function pitch(request) {
         (loaderContext, module) => {
           // eslint-disable-next-line no-param-reassign
           loaderContext.emitFile = this.emitFile;
-          loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
 
           if (module.request === request) {
             // eslint-disable-next-line no-param-reassign
