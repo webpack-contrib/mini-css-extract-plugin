@@ -37,7 +37,7 @@ function hotLoader(content, context) {
   `;
 }
 
-const exec = (loaderContext, code, filename) => {
+function exec(loaderContext, code, filename) {
   const module = new NativeModule(filename, loaderContext);
 
   module.paths = NativeModule._nodeModulePaths(loaderContext.context); // eslint-disable-line no-underscore-dangle
@@ -45,9 +45,9 @@ const exec = (loaderContext, code, filename) => {
   module._compile(code, filename); // eslint-disable-line no-underscore-dangle
 
   return module.exports;
-};
+}
 
-const findModuleById = (modules, id) => {
+function findModuleById(modules, id) {
   for (const module of modules) {
     if (module.id === id) {
       return module;
@@ -55,7 +55,7 @@ const findModuleById = (modules, id) => {
   }
 
   return null;
-};
+}
 
 export function pitch(request) {
   const options = loaderUtils.getOptions(this) || {};
