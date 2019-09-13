@@ -66,7 +66,7 @@ export function pitch(request) {
 
   this.addDependency(this.resourcePath);
 
-  const childFilename = '*'; // eslint-disable-line no-path-concat
+  const childFilename = '*';
   const publicPath =
     typeof options.publicPath === 'string'
       ? options.publicPath === '' || options.publicPath.endsWith('/')
