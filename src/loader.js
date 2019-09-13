@@ -37,7 +37,7 @@ function hotLoader(content, context) {
   `;
 }
 
-function exec(loaderContext, code, filename) {
+function evalModuleCode(loaderContext, code, filename) {
   const module = new NativeModule(filename, loaderContext);
 
   module.paths = NativeModule._nodeModulePaths(loaderContext.context); // eslint-disable-line no-underscore-dangle
@@ -175,27 +175,27 @@ export function pitch(request) {
       return callback(new Error("Didn't get a result from child compiler"));
     }
 
-    let text;
     let locals;
 
     try {
-      text = exec(this, source, request);
-      locals = text && text.locals;
-      if (!Array.isArray(text)) {
-        text = [[null, text]];
+      let dependencies;
+      const exports = evalModuleCode(this, source, request);
+      locals = exports && exports.locals;
+      if (!Array.isArray(exports)) {
+        dependencies = [[null, exports]];
       } else {
-        text = text.map((line) => {
-          const module = findModuleById(compilation.modules, line[0]);
+        dependencies = exports.map(([id, content, media, sourceMap]) => {
+          const module = findModuleById(compilation.modules, id);
 
           return {
             identifier: module.identifier(),
-            content: line[1],
-            media: line[2],
-            sourceMap: line[3],
+            content,
+            media,
+            sourceMap,
           };
         });
       }
-      addDependencies(text);
+      addDependencies(dependencies);
     } catch (e) {
       return callback(e);
     }
