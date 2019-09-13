@@ -10,9 +10,10 @@ import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
 import validateOptions from 'schema-utils';
 
+import CssDependency from './CssDependency';
+
 import schema from './options.json';
 
-const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
 
 function hotLoader(content, context) {
@@ -133,6 +134,27 @@ export function pitch(request) {
   const callback = this.async();
 
   childCompiler.runAsChild((err, entries, compilation) => {
+    const addDependencies = (content) => {
+      if (!Array.isArray(content) && content != null) {
+        throw new Error(
+          `Exported value was not extracted as an array: ${JSON.stringify(
+            content
+          )}`
+        );
+      }
+
+      const identifierCountMap = new Map();
+
+      for (const line of content) {
+        const count = identifierCountMap.get(line.identifier) || 0;
+
+        this._module.addDependency(
+          new CssDependency(line, module.context, count)
+        );
+        identifierCountMap.set(line.identifier, count + 1);
+      }
+    };
+
     if (err) {
       return callback(err);
     }
@@ -173,7 +195,7 @@ export function pitch(request) {
           };
         });
       }
-      this[MODULE_TYPE](text);
+      addDependencies(text);
     } catch (e) {
       return callback(e);
     }
