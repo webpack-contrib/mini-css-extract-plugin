@@ -134,24 +134,24 @@ export function pitch(request) {
   const callback = this.async();
 
   childCompiler.runAsChild((err, entries, compilation) => {
-    const addDependencies = (content) => {
-      if (!Array.isArray(content) && content != null) {
+    const addDependencies = (dependencies) => {
+      if (!Array.isArray(dependencies) && dependencies != null) {
         throw new Error(
           `Exported value was not extracted as an array: ${JSON.stringify(
-            content
+            dependencies
           )}`
         );
       }
 
       const identifierCountMap = new Map();
 
-      for (const line of content) {
-        const count = identifierCountMap.get(line.identifier) || 0;
+      for (const dependency of dependencies) {
+        const count = identifierCountMap.get(dependency.identifier) || 0;
 
         this._module.addDependency(
-          new CssDependency(line, module.context, count)
+          new CssDependency(dependency, module.context, count)
         );
-        identifierCountMap.set(line.identifier, count + 1);
+        identifierCountMap.set(dependency.identifier, count + 1);
       }
     };
 
