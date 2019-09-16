@@ -3,6 +3,8 @@
 import webpack from 'webpack';
 import sources from 'webpack-sources';
 
+import CssDependency from './CssDependency';
+
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const {
   Template,
@@ -18,27 +20,6 @@ const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
-
-class CssDependency extends webpack.Dependency {
-  constructor(
-    { identifier, content, media, sourceMap },
-    context,
-    identifierIndex
-  ) {
-    super();
-
-    this.identifier = identifier;
-    this.identifierIndex = identifierIndex;
-    this.content = content;
-    this.media = media;
-    this.sourceMap = sourceMap;
-    this.context = context;
-  }
-
-  getResourceIdentifier() {
-    return `css-module-${this.identifier}-${this.identifierIndex}`;
-  }
-}
 
 class CssDependencyTemplate {
   apply() {}
@@ -148,30 +129,6 @@ class MiniCssExtractPlugin {
 
   apply(compiler) {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-      compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
-        const loaderContext = lc;
-        const module = m;
-
-        loaderContext[MODULE_TYPE] = (content) => {
-          if (!Array.isArray(content) && content != null) {
-            throw new Error(
-              `Exported value was not extracted as an array: ${JSON.stringify(
-                content
-              )}`
-            );
-          }
-
-          const identifierCountMap = new Map();
-
-          for (const line of content) {
-            const count = identifierCountMap.get(line.identifier) || 0;
-
-            module.addDependency(new CssDependency(line, m.context, count));
-            identifierCountMap.set(line.identifier, count + 1);
-          }
-        };
-      });
-
       compilation.dependencyFactories.set(
         CssDependency,
         new CssModuleFactory()

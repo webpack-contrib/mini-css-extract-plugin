@@ -10,9 +10,10 @@ import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
 import validateOptions from 'schema-utils';
 
+import CssDependency from './CssDependency';
+
 import schema from './options.json';
 
-const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
 
 function hotLoader(content, context) {
@@ -36,7 +37,7 @@ function hotLoader(content, context) {
   `;
 }
 
-const exec = (loaderContext, code, filename) => {
+function evalModuleCode(loaderContext, code, filename) {
   const module = new NativeModule(filename, loaderContext);
 
   module.paths = NativeModule._nodeModulePaths(loaderContext.context); // eslint-disable-line no-underscore-dangle
@@ -44,9 +45,9 @@ const exec = (loaderContext, code, filename) => {
   module._compile(code, filename); // eslint-disable-line no-underscore-dangle
 
   return module.exports;
-};
+}
 
-const findModuleById = (modules, id) => {
+function findModuleById(modules, id) {
   for (const module of modules) {
     if (module.id === id) {
       return module;
@@ -54,7 +55,7 @@ const findModuleById = (modules, id) => {
   }
 
   return null;
-};
+}
 
 export function pitch(request) {
   const options = loaderUtils.getOptions(this) || {};
@@ -65,7 +66,7 @@ export function pitch(request) {
 
   this.addDependency(this.resourcePath);
 
-  const childFilename = '*'; // eslint-disable-line no-path-concat
+  const childFilename = '*';
   const publicPath =
     typeof options.publicPath === 'string'
       ? options.publicPath === '' || options.publicPath.endsWith('/')
@@ -91,8 +92,6 @@ export function pitch(request) {
   );
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
 
-  // We set loaderContext[MODULE_TYPE] = false to indicate we already in
-  // a child compiler so we don't spawn another child compilers from there.
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
     (compilation) => {
@@ -101,7 +100,6 @@ export function pitch(request) {
         (loaderContext, module) => {
           // eslint-disable-next-line no-param-reassign
           loaderContext.emitFile = this.emitFile;
-          loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
 
           if (module.request === request) {
             // eslint-disable-next-line no-param-reassign
@@ -136,6 +134,27 @@ export function pitch(request) {
   const callback = this.async();
 
   childCompiler.runAsChild((err, entries, compilation) => {
+    const addDependencies = (dependencies) => {
+      if (!Array.isArray(dependencies) && dependencies != null) {
+        throw new Error(
+          `Exported value was not extracted as an array: ${JSON.stringify(
+            dependencies
+          )}`
+        );
+      }
+
+      const identifierCountMap = new Map();
+
+      for (const dependency of dependencies) {
+        const count = identifierCountMap.get(dependency.identifier) || 0;
+
+        this._module.addDependency(
+          new CssDependency(dependency, module.context, count)
+        );
+        identifierCountMap.set(dependency.identifier, count + 1);
+      }
+    };
+
     if (err) {
       return callback(err);
     }
@@ -156,27 +175,27 @@ export function pitch(request) {
       return callback(new Error("Didn't get a result from child compiler"));
     }
 
-    let text;
     let locals;
 
     try {
-      text = exec(this, source, request);
-      locals = text && text.locals;
-      if (!Array.isArray(text)) {
-        text = [[null, text]];
+      let dependencies;
+      const exports = evalModuleCode(this, source, request);
+      locals = exports && exports.locals;
+      if (!Array.isArray(exports)) {
+        dependencies = [[null, exports]];
       } else {
-        text = text.map((line) => {
-          const module = findModuleById(compilation.modules, line[0]);
+        dependencies = exports.map(([id, content, media, sourceMap]) => {
+          const module = findModuleById(compilation.modules, id);
 
           return {
             identifier: module.identifier(),
-            content: line[1],
-            media: line[2],
-            sourceMap: line[3],
+            content,
+            media,
+            sourceMap,
           };
         });
       }
-      this[MODULE_TYPE](text);
+      addDependencies(dependencies);
     } catch (e) {
       return callback(e);
     }
