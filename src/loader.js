@@ -1,6 +1,7 @@
 import NativeModule from 'module';
 
 import path from 'path';
+import fs from 'fs';
 
 import loaderUtils from 'loader-utils';
 import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
@@ -78,120 +79,138 @@ export function pitch(request) {
     filename: childFilename,
     publicPath,
   };
-  const childCompiler = this._compilation.createChildCompiler(
-    `${pluginName} ${request}`,
-    outputOptions
-  );
-
-  new NodeTemplatePlugin(outputOptions).apply(childCompiler);
-  new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
-  new NodeTargetPlugin().apply(childCompiler);
-  new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
-    childCompiler
-  );
-  new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
-
-  // We set loaderContext[MODULE_TYPE] = false to indicate we already in
-  // a child compiler so we don't spawn another child compilers from there.
-  childCompiler.hooks.thisCompilation.tap(
-    `${pluginName} loader`,
-    (compilation) => {
-      compilation.hooks.normalModuleLoader.tap(
+  function createSource(theme) {
+    return new Promise((res, rej) => {
+      const childCompiler = this._compilation.createChildCompiler(
+        `${pluginName} ${theme} ${request} `,
+        outputOptions
+      );
+    
+      new NodeTemplatePlugin(outputOptions).apply(childCompiler);
+      new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
+      new NodeTargetPlugin().apply(childCompiler);
+      new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
+        childCompiler
+      );
+      new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
+    
+      // We set loaderContext[MODULE_TYPE] = false to indicate we already in
+      // a child compiler so we don't spawn another child compilers from there.
+      childCompiler.hooks.thisCompilation.tap(
         `${pluginName} loader`,
-        (loaderContext, module) => {
-          // eslint-disable-next-line no-param-reassign
-          loaderContext.emitFile = this.emitFile;
-          loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
-
-          if (module.request === request) {
-            // eslint-disable-next-line no-param-reassign
-            module.loaders = loaders.map((loader) => {
+        (compilation) => {
+          compilation.hooks.normalModuleLoader.tap(
+            `${pluginName} loader`,
+            (loaderContext, module) => {
+              loaderContext.theme = theme === 'default' ? undefined :  theme;
+              // eslint-disable-next-line no-param-reassign
+              loaderContext.emitFile = this.emitFile;
+              loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
+    
+              if (module.request === request) {
+                // eslint-disable-next-line no-param-reassign
+                module.loaders = loaders.map((loader) => {
+                  return {
+                    loader: loader.path,
+                    options: loader.options,
+                    ident: loader.ident,
+                  };
+                });
+              }
+            }
+          );
+        }
+      );
+    
+      let source;
+    
+      childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+        source =
+          compilation.assets[childFilename] &&
+          compilation.assets[childFilename].source();
+    
+        // Remove all chunk assets
+        compilation.chunks.forEach((chunk) => {
+          chunk.files.forEach((file) => {
+            delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+          });
+        });
+      });
+    
+      const callback = this.async();
+    
+      childCompiler.runAsChild((err, entries, compilation) => {
+        if (err) {
+          return callback(err);
+        }
+    
+        if (compilation.errors.length > 0) {
+          return callback(compilation.errors[0]);
+        }
+    
+        compilation.fileDependencies.forEach((dep) => {
+          this.addDependency(dep);
+        }, this);
+    
+        compilation.contextDependencies.forEach((dep) => {
+          this.addContextDependency(dep);
+        }, this);
+    
+        if (!source) {
+          return callback(new Error("Didn't get a result from child compiler"));
+        }
+    
+        let text;
+        let locals;
+    
+        try {
+          text = exec(this, source, request);
+          locals = text && text.locals;
+          if (!Array.isArray(text)) {
+            text = [[null, text]];
+          } else {
+            text = text.map((line) => {
+              const module = findModuleById(compilation.modules, line[0]);
+    
               return {
-                loader: loader.path,
-                options: loader.options,
-                ident: loader.ident,
+                identifier: module.identifier(),
+                content: line[1],
+                media: line[2],
+                sourceMap: line[3],
               };
             });
           }
+          this[MODULE_TYPE](text, theme);
+        } catch (e) {
+          rej(e)
         }
-      );
-    }
-  );
-
-  let source;
-
-  childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-    source =
-      compilation.assets[childFilename] &&
-      compilation.assets[childFilename].source();
-
-    // Remove all chunk assets
-    compilation.chunks.forEach((chunk) => {
-      chunk.files.forEach((file) => {
-        delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+    
+        let resultSource = `// extracted by ${pluginName}`;
+        const result = locals
+          ? `\nmodule.exports = ${JSON.stringify(locals)};`
+          : '';
+    
+        resultSource += options.hmr
+          ? hotLoader(result, { context: this.context, options, locals })
+          : result;
+        res({resultSource, text});
       });
-    });
-  });
-
+    })
+  }
+  // 先制造default的资源
+  const promises = [];
+  for (const theme of this.themes) {
+    // 判断是否是default，如果是存在有theme的css文件，处理source出这个css的module
+    promises.push(createSource.call(this, theme));
+  }
   const callback = this.async();
-
-  childCompiler.runAsChild((err, entries, compilation) => {
-    if (err) {
-      return callback(err);
-    }
-
-    if (compilation.errors.length > 0) {
-      return callback(compilation.errors[0]);
-    }
-
-    compilation.fileDependencies.forEach((dep) => {
-      this.addDependency(dep);
-    }, this);
-
-    compilation.contextDependencies.forEach((dep) => {
-      this.addContextDependency(dep);
-    }, this);
-
-    if (!source) {
-      return callback(new Error("Didn't get a result from child compiler"));
-    }
-
-    let text;
-    let locals;
-
-    try {
-      text = exec(this, source, request);
-      locals = text && text.locals;
-      if (!Array.isArray(text)) {
-        text = [[null, text]];
-      } else {
-        text = text.map((line) => {
-          const module = findModuleById(compilation.modules, line[0]);
-
-          return {
-            identifier: module.identifier(),
-            content: line[1],
-            media: line[2],
-            sourceMap: line[3],
-          };
-        });
-      }
-      this[MODULE_TYPE](text);
-    } catch (e) {
-      return callback(e);
-    }
-
-    let resultSource = `// extracted by ${pluginName}`;
-    const result = locals
-      ? `\nmodule.exports = ${JSON.stringify(locals)};`
-      : '';
-
-    resultSource += options.hmr
-      ? hotLoader(result, { context: this.context, options, locals })
-      : result;
-
+  Promise.all(promises).then((result) => {
+    const { resultSource } = result[0];
     return callback(null, resultSource);
+  }).catch(error => {
+    return callback(error);
   });
+  
 }
 
 export default function() {}

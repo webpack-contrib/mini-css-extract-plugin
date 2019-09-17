@@ -23,7 +23,8 @@ class CssDependency extends webpack.Dependency {
   constructor(
     { identifier, content, media, sourceMap },
     context,
-    identifierIndex
+    identifierIndex,
+    theme
   ) {
     super();
 
@@ -33,10 +34,11 @@ class CssDependency extends webpack.Dependency {
     this.media = media;
     this.sourceMap = sourceMap;
     this.context = context;
+    this.theme = theme;
   }
 
   getResourceIdentifier() {
-    return `css-module-${this.identifier}-${this.identifierIndex}`;
+    return `css-module-${this.theme}-${this.identifier}-${this.identifierIndex}`;
   }
 }
 
@@ -54,6 +56,7 @@ class CssModule extends webpack.Module {
     this.content = dependency.content;
     this.media = dependency.media;
     this.sourceMap = dependency.sourceMap;
+    this.theme = dependency.theme;
   }
 
   // no source() so webpack doesn't do add stuff to the bundle
@@ -63,13 +66,11 @@ class CssModule extends webpack.Module {
   }
 
   identifier() {
-    return `css ${this._identifier} ${this._identifierIndex}`;
+    return `css ${this.theme} ${this._identifier} ${this._identifierIndex}`;
   }
 
   readableIdentifier(requestShortener) {
-    return `css ${requestShortener.shorten(this._identifier)}${
-      this._identifierIndex ? ` (${this._identifierIndex})` : ''
-    }`;
+    return `css ${this.theme} ${requestShortener.shorten(this._identifier)}${this._identifierIndex ? ` (${this._identifierIndex})` : ''}`;
   }
 
   nameForCondition() {
@@ -144,6 +145,7 @@ class MiniCssExtractPlugin {
         );
       }
     }
+    this.themes = [ 'default'].concat(this.options.themes);
   }
 
   apply(compiler) {
@@ -151,8 +153,8 @@ class MiniCssExtractPlugin {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
-
-        loaderContext[MODULE_TYPE] = (content) => {
+        loaderContext.themes =  this.themes;
+        loaderContext[MODULE_TYPE] = (content, theme) => {
           if (!Array.isArray(content) && content != null) {
             throw new Error(
               `Exported value was not extracted as an array: ${JSON.stringify(
@@ -160,13 +162,12 @@ class MiniCssExtractPlugin {
               )}`
             );
           }
-
           const identifierCountMap = new Map();
 
           for (const line of content) {
             const count = identifierCountMap.get(line.identifier) || 0;
 
-            module.addDependency(new CssDependency(line, m.context, count));
+            module.addDependency(new CssDependency(line, m.context, count, theme));
             identifierCountMap.set(line.identifier, count + 1);
           }
         };
@@ -185,28 +186,31 @@ class MiniCssExtractPlugin {
       compilation.mainTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
-          );
-
-          if (renderedModules.length > 0) {
-            result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
+          for(const theme of this.themes) {
+            const renderedModules = Array.from(chunk.modulesIterable).filter(
+              (module) => module.type === MODULE_TYPE && module.theme === theme
+            );
+  
+            if (renderedModules.length > 0) {
+              result.push({
+                render: () =>
+                  this.renderContentAsset(
+                    compilation,
+                    chunk,
+                    renderedModules,
+                    compilation.runtimeTemplate.requestShortener
+                  ),
+                filenameTemplate: ({ chunk: chunkData }) => {
+                  return theme==='default' ? `${this.options.moduleFilename(chunkData)}` : `${theme}-${this.options.moduleFilename(chunkData)}`
+                },
+                pathOptions: {
                   chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: ({ chunk: chunkData }) =>
-                this.options.moduleFilename(chunkData),
-              pathOptions: {
-                chunk,
-                contentHashType: MODULE_TYPE,
-              },
-              identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
-            });
+                  contentHashType: MODULE_TYPE,
+                },
+                identifier: theme!=='default' ? `${pluginName}.theme.${chunk.id}`:`${pluginName}.${chunk.id}`,
+                hash: chunk.contentHash[MODULE_TYPE],
+              });
+            }
           }
         }
       );
@@ -214,27 +218,28 @@ class MiniCssExtractPlugin {
       compilation.chunkTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
-          );
-
-          if (renderedModules.length > 0) {
-            result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
+          for(const theme of this.themes) {
+            const renderedModules = Array.from(chunk.modulesIterable).filter(
+              (module) => module.type === MODULE_TYPE && module.theme === theme
+            );
+            if (renderedModules.length > 0) {
+              result.push({
+                render: () =>
+                  this.renderContentAsset(
+                    compilation,
+                    chunk,
+                    renderedModules,
+                    compilation.runtimeTemplate.requestShortener
+                  ),
+                filenameTemplate: theme==='default' ? this.options.chunkFilename: theme + this.options.chunkFilename,
+                pathOptions: {
                   chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: this.options.chunkFilename,
-              pathOptions: {
-                chunk,
-                contentHashType: MODULE_TYPE,
-              },
-              identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
-            });
+                  contentHashType: MODULE_TYPE,
+                },
+                identifier: theme!=='default' ? `${pluginName}.${theme}.${chunk.id}`: `${pluginName}.${chunk.id}`,
+                hash: chunk.contentHash[MODULE_TYPE],
+              });
+            }
           }
         }
       );

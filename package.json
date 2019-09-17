@@ -1,12 +1,14 @@
 {
-  "name": "mini-css-extract-plugin",
-  "version": "0.8.0",
+  "name": "@vusion/mini-css-extract-plugin",
+  "version": "0.1.0",
   "description": "extracts CSS into separate files",
   "license": "MIT",
-  "repository": "webpack-contrib/mini-css-extract-plugin",
-  "author": "Tobias Koppers @sokra",
-  "homepage": "https://github.com/webpack-contrib/mini-css-extract-plugin",
-  "bugs": "https://github.com/webpack-contrib/mini-css-extract-plugin/issues",
+  "author": "moujintao <moujintaotest@163.com>",
+  "contributors": [
+    "Rainfore <rainforest92@126.com>"
+  ],
+  "homepage": "https://github.com/vusion/mini-css-extract-plugin",
+  "bugs": "https://github.com/vusion/mini-css-extract-plugin/issues",
   "main": "dist/cjs.js",
   "engines": {
     "node": ">= 6.9.0"
@@ -55,7 +57,7 @@
     "babel-eslint": "^10.0.2",
     "babel-jest": "^24.8.0",
     "commitlint-azure-pipelines-cli": "^1.0.2",
-    "cross-env": "^5.2.0",
+    "cross-env": "^5.2.1",
     "css-loader": "^3.0.0",
     "del": "^4.1.1",
     "del-cli": "^1.1.0",
@@ -80,6 +82,7 @@
     "webpack",
     "css",
     "extract",
-    "hmr"
+    "hmr",
+    "vusion"
   ]
 }
