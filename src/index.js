@@ -24,7 +24,7 @@ class CssDependency extends webpack.Dependency {
     { identifier, content, media, sourceMap },
     context,
     identifierIndex,
-    theme
+    theme,
   ) {
     super();
 
@@ -70,7 +70,9 @@ class CssModule extends webpack.Module {
   }
 
   readableIdentifier(requestShortener) {
-    return `css ${this.theme} ${requestShortener.shorten(this._identifier)}${this._identifierIndex ? ` (${this._identifierIndex})` : ''}`;
+    return `css ${this.theme} ${requestShortener.shorten(this._identifier)}${
+      this._identifierIndex ? ` (${this._identifierIndex})` : ''
+    }`;
   }
 
   nameForCondition() {
@@ -126,7 +128,7 @@ class MiniCssExtractPlugin {
       {
         filename: DEFAULT_FILENAME,
         moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
-        themeModuleFilename: (theme) =>{
+        themeModuleFilename: (theme) => {
           return this.options.themeFilename.replace(/\[theme\]/g, theme);
         },
         ignoreOrder: false,
@@ -148,7 +150,7 @@ class MiniCssExtractPlugin {
         );
       }
     }
-    this.themes = [ 'default'].concat(this.options.themes);
+    this.themes = ['default'].concat(this.options.themes);
   }
 
   apply(compiler) {
@@ -156,6 +158,7 @@ class MiniCssExtractPlugin {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
+
         loaderContext.themes =  this.themes;
         loaderContext[MODULE_TYPE] = (content, theme) => {
           if (!Array.isArray(content) && content != null) {
@@ -165,6 +168,7 @@ class MiniCssExtractPlugin {
               )}`
             );
           }
+
           const identifierCountMap = new Map();
 
           for (const line of content) {
@@ -189,62 +193,62 @@ class MiniCssExtractPlugin {
       compilation.mainTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
-          for(const theme of this.themes) {
-            const renderedModules = Array.from(chunk.modulesIterable).filter(
-              (module) => module.type === MODULE_TYPE && module.theme === theme
-            );
-  
-            if (renderedModules.length > 0) {
-              result.push({
-                render: () =>
-                  this.renderContentAsset(
-                    compilation,
-                    chunk,
-                    renderedModules,
-                    compilation.runtimeTemplate.requestShortener
-                  ),
-                filenameTemplate: ({ chunk: chunkData }) => {
-                  return theme==='default' ? this.options.moduleFilename(chunkData) : this.options.themeModuleFilename(theme)
-                },
-                pathOptions: {
+        for (const theme of this.themes) {
+          const renderedModules = Array.from(chunk.modulesIterable).filter(
+            (module) => module.type === MODULE_TYPE && module.theme === theme
+          );
+
+          if (renderedModules.length > 0) {
+            result.push({
+              render: () =>
+                this.renderContentAsset(
+                  compilation,
                   chunk,
-                  contentHashType: MODULE_TYPE,
-                },
-                identifier: theme!=='default' ? `${pluginName}.theme.${chunk.id}`:`${pluginName}.${chunk.id}`,
-                hash: chunk.contentHash[MODULE_TYPE],
-              });
-            }
+                  renderedModules,
+                  compilation.runtimeTemplate.requestShortener
+                ),
+              filenameTemplate: ({ chunk: chunkData }) => {
+                return theme === 'default' ? this.options.moduleFilename(chunkData) : this.options.themeModuleFilename(theme)
+              },
+              pathOptions: {
+                chunk,
+                contentHashType: MODULE_TYPE,
+              },
+              identifier: theme !== 'default' ? `${pluginName}.theme.${chunk.id}`:`${pluginName}.${chunk.id}`,
+              hash: chunk.contentHash[MODULE_TYPE],
+            });
           }
         }
+      }
       );
 
       compilation.chunkTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
-          for(const theme of this.themes) {
-            const renderedModules = Array.from(chunk.modulesIterable).filter(
-              (module) => module.type === MODULE_TYPE && module.theme === theme
-            );
-            if (renderedModules.length > 0) {
-              result.push({
-                render: () =>
-                  this.renderContentAsset(
-                    compilation,
-                    chunk,
-                    renderedModules,
-                    compilation.runtimeTemplate.requestShortener
-                  ),
-                filenameTemplate: theme==='default' ? this.options.chunkFilename: `theme-${theme}-${this.options.chunkFilename}`,
-                pathOptions: {
+        for(const theme of this.themes) {
+          const renderedModules = Array.from(chunk.modulesIterable).filter(
+            (module) => module.type === MODULE_TYPE && module.theme === theme
+          );
+          if (renderedModules.length > 0) {
+            result.push({
+              render: () =>
+                this.renderContentAsset(
+                  compilation,
                   chunk,
-                  contentHashType: MODULE_TYPE,
-                },
-                identifier: theme!=='default' ? `${pluginName}.${theme}.${chunk.id}`: `${pluginName}.${chunk.id}`,
-                hash: chunk.contentHash[MODULE_TYPE],
-              });
-            }
+                  renderedModules,
+                  compilation.runtimeTemplate.requestShortener
+                ),
+              filenameTemplate: theme === 'default' ? this.options.chunkFilename: `theme-${theme}-${this.options.chunkFilename}`,
+              pathOptions: {
+                chunk,
+                contentHashType: MODULE_TYPE,
+              },
+              identifier: theme !== 'default' ? `${pluginName}.${theme}.${chunk.id}`: `${pluginName}.${chunk.id}`,
+              hash: chunk.contentHash[MODULE_TYPE],
+            });
           }
         }
+      }
       );
 
       compilation.mainTemplate.hooks.hashForChunk.tap(
