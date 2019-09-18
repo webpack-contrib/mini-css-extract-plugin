@@ -201,7 +201,7 @@ class MiniCssExtractPlugin {
                     compilation.runtimeTemplate.requestShortener
                   ),
                 filenameTemplate: ({ chunk: chunkData }) => {
-                  return theme==='default' ? `${this.options.moduleFilename(chunkData)}` : `${theme}-${this.options.moduleFilename(chunkData)}`
+                  return theme==='default' ? `${this.options.moduleFilename(chunkData)}` : `theme-${theme}.css`
                 },
                 pathOptions: {
                   chunk,
@@ -231,7 +231,7 @@ class MiniCssExtractPlugin {
                     renderedModules,
                     compilation.runtimeTemplate.requestShortener
                   ),
-                filenameTemplate: theme==='default' ? this.options.chunkFilename: theme + this.options.chunkFilename,
+                filenameTemplate: theme==='default' ? this.options.chunkFilename: `theme-${theme}-${this.options.chunkFilename}.css`,
                 pathOptions: {
                   chunk,
                   contentHashType: MODULE_TYPE,
