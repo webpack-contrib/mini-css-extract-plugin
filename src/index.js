@@ -126,6 +126,9 @@ class MiniCssExtractPlugin {
       {
         filename: DEFAULT_FILENAME,
         moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
+        themeModuleFilename: (theme) =>{
+          return this.options.themeFilename.replace(/\[theme\]/g, theme);
+        },
         ignoreOrder: false,
       },
       options
@@ -201,7 +204,7 @@ class MiniCssExtractPlugin {
                     compilation.runtimeTemplate.requestShortener
                   ),
                 filenameTemplate: ({ chunk: chunkData }) => {
-                  return theme==='default' ? `${this.options.moduleFilename(chunkData)}` : `theme-${theme}.css`
+                  return theme==='default' ? this.options.moduleFilename(chunkData) : this.options.themeModuleFilename(theme)
                 },
                 pathOptions: {
                   chunk,
@@ -231,7 +234,7 @@ class MiniCssExtractPlugin {
                     renderedModules,
                     compilation.runtimeTemplate.requestShortener
                   ),
-                filenameTemplate: theme==='default' ? this.options.chunkFilename: `theme-${theme}-${this.options.chunkFilename}.css`,
+                filenameTemplate: theme==='default' ? this.options.chunkFilename: `theme-${theme}-${this.options.chunkFilename}`,
                 pathOptions: {
                   chunk,
                   contentHashType: MODULE_TYPE,
