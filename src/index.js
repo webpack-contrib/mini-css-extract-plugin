@@ -24,7 +24,7 @@ class CssDependency extends webpack.Dependency {
     { identifier, content, media, sourceMap },
     context,
     identifierIndex,
-    theme,
+    theme
   ) {
     super();
 
@@ -150,7 +150,7 @@ class MiniCssExtractPlugin {
         );
       }
     }
-    this.themes = ['default'].concat(this.options.themes);
+    this.themes = ['default'].concat(this.options.themes || []);
   }
 
   apply(compiler) {
@@ -159,7 +159,7 @@ class MiniCssExtractPlugin {
         const loaderContext = lc;
         const module = m;
 
-        loaderContext.themes =  this.themes;
+        loaderContext.themes = this.themes;
         loaderContext[MODULE_TYPE] = (content, theme) => {
           if (!Array.isArray(content) && content != null) {
             throw new Error(
@@ -174,7 +174,9 @@ class MiniCssExtractPlugin {
           for (const line of content) {
             const count = identifierCountMap.get(line.identifier) || 0;
 
-            module.addDependency(new CssDependency(line, m.context, count, theme));
+            module.addDependency(
+              new CssDependency(line, m.context, count, theme)
+            );
             identifierCountMap.set(line.identifier, count + 1);
           }
         };
@@ -193,62 +195,73 @@ class MiniCssExtractPlugin {
       compilation.mainTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
-        for (const theme of this.themes) {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE && module.theme === theme
-          );
+          for (const theme of this.themes) {
+            const renderedModules = Array.from(chunk.modulesIterable).filter(
+              (module) => module.type === MODULE_TYPE && module.theme === theme
+            );
 
-          if (renderedModules.length > 0) {
-            result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
+            if (renderedModules.length > 0) {
+              result.push({
+                render: () =>
+                  this.renderContentAsset(
+                    compilation,
+                    chunk,
+                    renderedModules,
+                    compilation.runtimeTemplate.requestShortener
+                  ),
+                filenameTemplate: ({ chunk: chunkData }) => {
+                  return theme === 'default'
+                    ? this.options.moduleFilename(chunkData)
+                    : this.options.themeModuleFilename(theme);
+                },
+                pathOptions: {
                   chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: ({ chunk: chunkData }) => {
-                return theme === 'default' ? this.options.moduleFilename(chunkData) : this.options.themeModuleFilename(theme)
-              },
-              pathOptions: {
-                chunk,
-                contentHashType: MODULE_TYPE,
-              },
-              identifier: theme !== 'default' ? `${pluginName}.theme.${chunk.id}`:`${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
-            });
+                  contentHashType: MODULE_TYPE,
+                },
+                identifier:
+                  theme !== 'default'
+                    ? `${pluginName}.theme.${chunk.id}`
+                    : `${pluginName}.${chunk.id}`,
+                hash: chunk.contentHash[MODULE_TYPE],
+              });
+            }
           }
         }
-      }
       );
 
       compilation.chunkTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
-        for(const theme of this.themes) {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE && module.theme === theme
-          );
-          if (renderedModules.length > 0) {
-            result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
+          for (const theme of this.themes) {
+            const renderedModules = Array.from(chunk.modulesIterable).filter(
+              (module) => module.type === MODULE_TYPE && module.theme === theme
+            );
+            if (renderedModules.length > 0) {
+              result.push({
+                render: () =>
+                  this.renderContentAsset(
+                    compilation,
+                    chunk,
+                    renderedModules,
+                    compilation.runtimeTemplate.requestShortener
+                  ),
+                filenameTemplate:
+                  theme === 'default'
+                    ? this.options.chunkFilename
+                    : `theme-${theme}-${this.options.chunkFilename}`,
+                pathOptions: {
                   chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: theme === 'default' ? this.options.chunkFilename: `theme-${theme}-${this.options.chunkFilename}`,
-              pathOptions: {
-                chunk,
-                contentHashType: MODULE_TYPE,
-              },
-              identifier: theme !== 'default' ? `${pluginName}.${theme}.${chunk.id}`: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
-            });
+                  contentHashType: MODULE_TYPE,
+                },
+                identifier:
+                  theme !== 'default'
+                    ? `${pluginName}.${theme}.${chunk.id}`
+                    : `${pluginName}.${chunk.id}`,
+                hash: chunk.contentHash[MODULE_TYPE],
+              });
+            }
           }
         }
-      }
       );
 
       compilation.mainTemplate.hooks.hashForChunk.tap(
