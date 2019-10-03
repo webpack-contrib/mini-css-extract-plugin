@@ -25,11 +25,14 @@ const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
 
 class SetMap extends Map {
-  set(key, value) {
-    return super.set(
-      key,
-      this.has(key) ? this.get(key).add(value) : new Set([value])
-    );
+  add(key, value) {
+    const set = this.get(key);
+    // eslint-disable-next-line no-undefined
+    if (set === undefined) {
+      super.set(key, new Set([value]));
+    } else {
+      set.add(value);
+    }
   }
 }
 
@@ -412,7 +415,7 @@ class MiniCssExtractPlugin {
                 for (const reason of cssModuleReason.module.reasons) {
                   isCjs = /^cjs/.test(reason.dependency.type);
                   if (!isCjs)
-                    toRemoveMap.set(
+                    toRemoveMap.add(
                       reason.module || cssModuleReason.module,
                       reason.dependency
                     );
