@@ -24,6 +24,12 @@ const REGEXP_NAME = /\[name\]/i;
 const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
 
+const EMPTY_MODULES_CLEANUP_DEP_TYPES = new Set([
+  'harmony side effect evaluation',
+  'import()',
+  'single entry',
+]);
+
 class SetMap extends Map {
   add(key, value) {
     const set = this.get(key);
@@ -410,21 +416,23 @@ class MiniCssExtractPlugin {
           for (const module of chunk.modulesIterable) {
             if (module.type === MODULE_TYPE) {
               for (const cssModuleReason of module.reasons) {
-                let isCjs = false;
+                let hasUnsupportedDependency = false;
 
                 for (const reason of cssModuleReason.module.reasons) {
-                  if (/^cjs/.test(reason.dependency.type)) {
-                    isCjs = true;
-                  } else {
+                  if (
+                    EMPTY_MODULES_CLEANUP_DEP_TYPES.has(reason.dependency.type)
+                  ) {
                     toRemoveMap.add(
                       reason.module || cssModuleReason.module,
                       reason.dependency
                     );
+                  } else {
+                    hasUnsupportedDependency = true;
                   }
                 }
 
                 if (
-                  !isCjs &&
+                  !hasUnsupportedDependency &&
                   cssModuleReason.module &&
                   cssModuleReason.module.buildMeta.extracted
                 ) {
