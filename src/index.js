@@ -413,12 +413,14 @@ class MiniCssExtractPlugin {
                 let isCjs = false;
 
                 for (const reason of cssModuleReason.module.reasons) {
-                  isCjs = /^cjs/.test(reason.dependency.type);
-                  if (!isCjs)
+                  if (/^cjs/.test(reason.dependency.type)) {
+                    isCjs = true;
+                  } else {
                     toRemoveMap.add(
                       reason.module || cssModuleReason.module,
                       reason.dependency
                     );
+                  }
                 }
 
                 if (
