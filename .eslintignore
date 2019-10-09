@@ -4,3 +4,4 @@
 /test/fixtures
 /test/cases/*/expected
 /test/js
+/src
