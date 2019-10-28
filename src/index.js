@@ -150,7 +150,8 @@ class MiniCssExtractPlugin {
         );
       }
     }
-    this.themes = ['default'].concat(this.options.themes || []);
+    const optionsThemes = Array.isArray(this.options.themes) && this.options.themes.length > 0 ? this.options.themes : ['default'];
+    this.themes = [].concat(optionsThemes);
   }
 
   apply(compiler) {
