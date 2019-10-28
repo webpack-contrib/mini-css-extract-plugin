@@ -1,6 +1,6 @@
 {
   "name": "@vusion/mini-css-extract-plugin",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "extracts CSS into separate files",
   "license": "MIT",
   "author": "moujintao <moujintaotest@163.com>",
