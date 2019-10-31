@@ -139,85 +139,76 @@ class MiniCssExtractPlugin {
         new CssDependencyTemplate()
       );
 
-      compilation.mainTemplate.hooks.renderManifest.tap(
-        pluginName,
-        (result, { chunk }) => {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
-          );
+      compilation.hooks.renderManifest.tap(pluginName, (result, { chunk }) => {
+        const renderedModules = Array.from(chunk.modulesIterable).filter(
+          (module) => module.type === MODULE_TYPE
+        );
 
-          if (renderedModules.length > 0) {
-            result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
-                  chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: ({ chunk: chunkData }) =>
-                this.options.moduleFilename(chunkData),
-              pathOptions: {
+        if (renderedModules.length > 0) {
+          result.push({
+            render: () =>
+              this.renderContentAsset(
+                compilation,
                 chunk,
-                contentHashType: MODULE_TYPE,
-              },
-              identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
-            });
-          }
+                renderedModules,
+                compilation.runtimeTemplate.requestShortener
+              ),
+            filenameTemplate: ({ chunk: chunkData }) =>
+              this.options.moduleFilename(chunkData),
+            pathOptions: {
+              chunk,
+              contentHashType: MODULE_TYPE,
+            },
+            identifier: `${pluginName}.${chunk.id}`,
+            hash: chunk.contentHash[MODULE_TYPE],
+          });
         }
-      );
+      });
 
-      compilation.chunkTemplate.hooks.renderManifest.tap(
-        pluginName,
-        (result, { chunk }) => {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
-          );
+      compilation.hooks.renderManifest.tap(pluginName, (result, { chunk }) => {
+        const renderedModules = Array.from(chunk.modulesIterable).filter(
+          (module) => module.type === MODULE_TYPE
+        );
 
-          if (renderedModules.length > 0) {
-            result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
-                  chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: this.options.chunkFilename,
-              pathOptions: {
+        if (renderedModules.length > 0) {
+          result.push({
+            render: () =>
+              this.renderContentAsset(
+                compilation,
                 chunk,
-                contentHashType: MODULE_TYPE,
-              },
-              identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
-            });
-          }
+                renderedModules,
+                compilation.runtimeTemplate.requestShortener
+              ),
+            filenameTemplate: this.options.chunkFilename,
+            pathOptions: {
+              chunk,
+              contentHashType: MODULE_TYPE,
+            },
+            identifier: `${pluginName}.${chunk.id}`,
+            hash: chunk.contentHash[MODULE_TYPE],
+          });
         }
-      );
+      });
 
-      compilation.mainTemplate.hooks.hashForChunk.tap(
-        pluginName,
-        (hash, chunk) => {
-          const { chunkFilename } = this.options;
+      compilation.hooks.chunkHash.tap(pluginName, (hash, chunk) => {
+        const { chunkFilename } = this.options;
 
-          if (REGEXP_CHUNKHASH.test(chunkFilename)) {
-            hash.update(JSON.stringify(chunk.getChunkMaps(true).hash));
-          }
-
-          if (REGEXP_CONTENTHASH.test(chunkFilename)) {
-            hash.update(
-              JSON.stringify(
-                chunk.getChunkMaps(true).contentHash[MODULE_TYPE] || {}
-              )
-            );
-          }
-
-          if (REGEXP_NAME.test(chunkFilename)) {
-            hash.update(JSON.stringify(chunk.getChunkMaps(true).name));
-          }
+        if (REGEXP_CHUNKHASH.test(chunkFilename)) {
+          hash.update(JSON.stringify(chunk.getChunkMaps(true).hash));
         }
-      );
+
+        if (REGEXP_CONTENTHASH.test(chunkFilename)) {
+          hash.update(
+            JSON.stringify(
+              chunk.getChunkMaps(true).contentHash[MODULE_TYPE] || {}
+            )
+          );
+        }
+
+        if (REGEXP_NAME.test(chunkFilename)) {
+          hash.update(JSON.stringify(chunk.getChunkMaps(true).name));
+        }
+      });
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions } = compilation;
