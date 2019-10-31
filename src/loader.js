@@ -75,6 +75,7 @@ export function pitch(request) {
       : typeof options.publicPath === 'function'
       ? options.publicPath(this.resourcePath, this.rootContext)
       : this._compilation.outputOptions.publicPath;
+
   const outputOptions = {
     filename: childFilename,
     publicPath,

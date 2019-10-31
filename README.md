@@ -343,29 +343,76 @@ module.exports = {
 };
 ```
 
-#### Module Filename Option
+### Plugin Options
+
+#### moduleFilename
 
 With the `moduleFilename` option you can use chunk data to customize the filename. This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk. In the example below, we'll use `moduleFilename` to output the generated css into a different directory.
 
 ```javascript
-const miniCssExtractPlugin = new MiniCssExtractPlugin({
+new MiniCssExtractPlugin({
   moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
 });
 ```
 
-#### Long Term Caching
+#### filename
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
 
-### Remove Order Warnings
+#### ignoreOrder
+
+Removes order warnings.
 
 For projects where css ordering has been mitigated through consistent use of scoping or naming conventions, the css order warnings can be disabled by setting the ignoreOrder flag to true for the plugin.
 
 ```javascript
 new MiniCssExtractPlugin({
   ignoreOrder: true,
-}),
+});
 ```
+
+### insert
+
+Type: `String|Function`
+Default: `head`
+
+By default, the `mini-css-extract-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
+
+However in some circumstances it might be necessary to have finer control over the append target or even delay `link` elements instertion. For example this is the case when you asynchronously load styles for an application that runs inside of an iframe. In such cases `insert` can be configured to be a function or a custom selector.
+
+If you target an [iframe](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement) make sure that the parent document can has sufficient access rights to reach into the frame document and append elements to it.
+
+#### `String`
+
+Allows to configure a [CSS selector](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector) that will be used to find the element where to append the styles (`link` elements).
+
+```js
+new MiniCssExtractPlugin({
+  insert: '#my-container',
+});
+```
+
+A new `<link>` element will be appended to the `#my-container` element.
+
+#### `Function`
+
+Allows to override default behavior and insert styles at any position.
+
+> ⚠ Do not forget that this code will run in the browser alongside your application. Since not all browsers support latest ECMA features like `let`, `const`, `arrow function expression` and etc we recommend you to use only ECMA 5 features and syntax.
+> ⚠ The `insert` function is serialized to string and passed to the plugin. This means that it won't have access to the scope of the webpack configuration module.
+
+```js
+new MiniCssExtractPlugin({
+  insert: function insert(linkTag) {
+    const reference = document.querySelector('#some-element');
+    if (reference) {
+      reference.parentNode.insertBefore(linkTag, reference);
+    }
+  },
+});
+```
+
+A new `<link>` element will be inserted before the element with id `some-element`.
 
 ### Media Query Plugin
 

@@ -97,13 +97,23 @@ class CssModuleFactory {
 
 class MiniCssExtractPlugin {
   constructor(options = {}) {
+    const insert =
+      typeof options.insert === 'undefined'
+        ? '"head"'
+        : typeof options.insert === 'string'
+        ? JSON.stringify(options.insert)
+        : options.insert.toString();
+
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
         moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
         ignoreOrder: false,
       },
-      options
+      options,
+      {
+        insert,
+      }
     );
 
     if (!this.options.chunkFilename) {
@@ -316,6 +326,8 @@ class MiniCssExtractPlugin {
               }
             );
 
+            const { insert } = this.options;
+
             return Template.asString([
               source,
               '',
@@ -371,8 +383,9 @@ class MiniCssExtractPlugin {
                         '}',
                       ])
                     : '',
-                  'var head = document.getElementsByTagName("head")[0];',
-                  'head.appendChild(linkTag);',
+                  `var insert = ${insert};`,
+                  `if (typeof insert === 'function') { insert(linkTag); }`,
+                  `else { var target = document.querySelector(${insert}); target && target.appendChild(linkTag); } `,
                 ]),
                 '}).then(function() {',
                 Template.indent(['installedCssChunks[chunkId] = 0;']),

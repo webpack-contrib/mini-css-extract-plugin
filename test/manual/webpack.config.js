@@ -1,3 +1,4 @@
+/* globals document */
 const Self = require('../../');
 
 module.exports = {
@@ -19,6 +20,9 @@ module.exports = {
     new Self({
       filename: '[name].css',
       chunkFilename: '[contenthash].css',
+      insert: function insert(linkTag) {
+        document.head.appendChild(linkTag);
+      },
     }),
   ],
   devServer: {
