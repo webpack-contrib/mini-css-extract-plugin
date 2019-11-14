@@ -408,7 +408,24 @@ class MiniCssExtractPlugin {
     return obj;
   }
 
+  // This very awful workaround prevents a weird `<undefined>.pop()` in the plugin
+  // that's caused by who-knows-what (NOT related to dynamic imports).
+  // See this github issue for details:
+  // https://github.com/webpack-contrib/mini-css-extract-plugin/issues/257
   renderContentAsset(compilation, chunk, modules, requestShortener) {
+    const [chunkGroup] = chunk.groupsIterable;
+    let rv;
+    const getModuleIndex2 = chunkGroup.getModuleIndex2;
+    try {
+      chunkGroup.getModuleIndex2 = null;
+      rv = this.originalRenderContentAsset(compilation, chunk, modules, requestShortener);
+    } finally {
+      chunkGroup.getModuleIndex2 = getModuleIndex2;
+    }
+    return rv;
+  }
+
+  originalRenderContentAsset(compilation, chunk, modules, requestShortener) {
     let usedModules;
 
     const [chunkGroup] = chunk.groupsIterable;
