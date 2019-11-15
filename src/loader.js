@@ -202,7 +202,9 @@ export function pitch(request) {
 
     let resultSource = `// extracted by ${pluginName}`;
     const result = locals
-      ? `\nmodule.exports = ${JSON.stringify(locals)};`
+      ? (options.useExport ?
+         `\nexport default ${JSON.stringify(locals)};` :
+         `\nmodule.exports = ${JSON.stringify(locals)};`)
       : '';
 
     resultSource += options.hmr
