@@ -90,12 +90,7 @@ class CssModule extends webpack.Module {
 }
 
 class CssModuleFactory {
-  create(
-    {
-      dependencies: [dependency],
-    },
-    callback
-  ) {
+  create({ dependencies: [dependency] }, callback) {
     callback(null, new CssModule(dependency));
   }
 }
@@ -416,6 +411,9 @@ class MiniCssExtractPlugin {
     if (typeof chunkGroup.getModuleIndex2 === 'function') {
       // Store dependencies for modules
       const moduleDependencies = new Map(modules.map((m) => [m, new Set()]));
+      const moduleDependenciesReasons = new Map(
+        modules.map((m) => [m, new Map()])
+      );
 
       // Get ordered list of modules per chunk group
       // This loop also gathers dependencies from the ordered lists
@@ -435,9 +433,14 @@ class MiniCssExtractPlugin {
 
         for (let i = 0; i < sortedModules.length; i++) {
           const set = moduleDependencies.get(sortedModules[i]);
+          const reasons = moduleDependenciesReasons.get(sortedModules[i]);
 
           for (let j = i + 1; j < sortedModules.length; j++) {
-            set.add(sortedModules[j]);
+            const module = sortedModules[j];
+            set.add(module);
+            const reason = reasons.get(module) || new Set();
+            reason.add(cg);
+            reasons.set(module, reason);
           }
         }
 
@@ -453,6 +456,7 @@ class MiniCssExtractPlugin {
         let success = false;
         let bestMatch;
         let bestMatchDeps;
+        let bestMatchDepsReasons;
 
         // get first module where dependencies are fulfilled
         for (const list of modulesByChunkGroup) {
@@ -472,6 +476,7 @@ class MiniCssExtractPlugin {
             if (!bestMatchDeps || bestMatchDeps.length > failedDeps.length) {
               bestMatch = list;
               bestMatchDeps = failedDeps;
+              bestMatchDepsReasons = moduleDependenciesReasons.get(module);
             }
 
             if (failedDeps.length === 0) {
@@ -491,14 +496,21 @@ class MiniCssExtractPlugin {
           if (!this.options.ignoreOrder) {
             compilation.warnings.push(
               new Error(
-                `chunk ${chunk.name || chunk.id} [${pluginName}]\n` +
-                  'Conflicting order between:\n' +
-                  ` * ${fallbackModule.readableIdentifier(
-                    requestShortener
-                  )}\n` +
-                  `${bestMatchDeps
-                    .map((m) => ` * ${m.readableIdentifier(requestShortener)}`)
-                    .join('\n')}`
+                [
+                  `chunk ${chunk.name || chunk.id} [${pluginName}]`,
+                  'Following module has been added:',
+                  ` * ${fallbackModule.readableIdentifier(requestShortener)}`,
+                  "while this module as dependencies that haven't been added before:",
+                  ...bestMatchDeps.map((m) =>
+                    [
+                      ` * ${m.readableIdentifier(requestShortener)}`,
+                      `(used previous to added module in chunk ${Array.from(
+                        bestMatchDepsReasons.get(m),
+                        (cg) => cg.name
+                      ).join(',')})`,
+                    ].join(' ')
+                  ),
+                ].join('\n')
               )
             );
           }

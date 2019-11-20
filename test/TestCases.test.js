@@ -25,6 +25,13 @@ function compareDirectory(actual, expected) {
   }
 }
 
+function compareWarning(actual, expectedFile) {
+  if (!fs.existsSync(expectedFile)) return;
+
+  const expected = require(expectedFile); // eslint-disable-line global-require,import/no-dynamic-require
+  expect(actual).toBe(expected);
+}
+
 describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
   const outputDirectory = path.resolve(__dirname, 'js');
@@ -92,6 +99,13 @@ describe('TestCases', () => {
           const expectedDirectory = path.resolve(directoryForCase, 'expected');
 
           compareDirectory(outputDirectoryForCase, expectedDirectory);
+
+          const expectedWarning = path.resolve(directoryForCase, 'warnings.js');
+          const actualWarning = stats.toString({
+            all: false,
+            warnings: true,
+          });
+          compareWarning(actualWarning, expectedWarning);
 
           done();
         });
