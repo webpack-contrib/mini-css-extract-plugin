@@ -456,7 +456,6 @@ class MiniCssExtractPlugin {
         let success = false;
         let bestMatch;
         let bestMatchDeps;
-        let bestMatchDepsReasons;
 
         // get first module where dependencies are fulfilled
         for (const list of modulesByChunkGroup) {
@@ -476,7 +475,6 @@ class MiniCssExtractPlugin {
             if (!bestMatchDeps || bestMatchDeps.length > failedDeps.length) {
               bestMatch = list;
               bestMatchDeps = failedDeps;
-              bestMatchDepsReasons = moduleDependenciesReasons.get(module);
             }
 
             if (failedDeps.length === 0) {
@@ -494,22 +492,31 @@ class MiniCssExtractPlugin {
           // and emit a warning
           const fallbackModule = bestMatch.pop();
           if (!this.options.ignoreOrder) {
+            const reasons = moduleDependenciesReasons.get(fallbackModule);
             compilation.warnings.push(
               new Error(
                 [
                   `chunk ${chunk.name || chunk.id} [${pluginName}]`,
-                  'Following module has been added:',
+                  'Conflicting order. Following module has been added:',
                   ` * ${fallbackModule.readableIdentifier(requestShortener)}`,
-                  "while this module as dependencies that haven't been added before:",
-                  ...bestMatchDeps.map((m) =>
-                    [
+                  'despite it was not able to fulfill desired ordering with these modules:',
+                  ...bestMatchDeps.map((m) => {
+                    const goodReasonsMap = moduleDependenciesReasons.get(m);
+                    const goodReasons =
+                      goodReasonsMap && goodReasonsMap.get(fallbackModule);
+                    const failedChunkGroups = Array.from(
+                      reasons.get(m),
+                      (cg) => cg.name
+                    ).join(', ');
+                    const goodChunkGroups =
+                      goodReasons &&
+                      Array.from(goodReasons, (cg) => cg.name).join(', ');
+                    return [
                       ` * ${m.readableIdentifier(requestShortener)}`,
-                      `(used previous to added module in chunk ${Array.from(
-                        bestMatchDepsReasons.get(m),
-                        (cg) => cg.name
-                      ).join(',')})`,
-                    ].join(' ')
-                  ),
+                      `   - couldn't fulfill desired order of chunk group(s) ${failedChunkGroups}`,
+                      `   - while fulfilling desired order of chunk group(s) ${goodChunkGroups}`,
+                    ].join('\n');
+                  }),
                 ].join('\n')
               )
             );
