@@ -514,8 +514,11 @@ class MiniCssExtractPlugin {
                     return [
                       ` * ${m.readableIdentifier(requestShortener)}`,
                       `   - couldn't fulfill desired order of chunk group(s) ${failedChunkGroups}`,
-                      `   - while fulfilling desired order of chunk group(s) ${goodChunkGroups}`,
-                    ].join('\n');
+                      goodChunkGroups &&
+                        `   - while fulfilling desired order of chunk group(s) ${goodChunkGroups}`,
+                    ]
+                      .filter(Boolean)
+                      .join('\n');
                   }),
                 ].join('\n')
               )
