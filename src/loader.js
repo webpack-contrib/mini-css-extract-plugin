@@ -149,7 +149,7 @@ export function pitch(request) {
         const count = identifierCountMap.get(dependency.identifier) || 0;
 
         this._module.addDependency(
-          new CssDependency(dependency, module.context, count)
+          new CssDependency(dependency, dependency.context, count)
         );
         identifierCountMap.set(dependency.identifier, count + 1);
       }
@@ -191,6 +191,7 @@ export function pitch(request) {
 
           return {
             identifier: module.identifier(),
+            context: module.context,
             content,
             media,
             sourceMap,
