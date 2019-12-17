@@ -179,7 +179,9 @@ export function pitch(request) {
 
     try {
       let dependencies;
-      const exports = evalModuleCode(this, source, request);
+      let exports = evalModuleCode(this, source, request);
+      // eslint-disable-next-line no-underscore-dangle
+      exports = exports.__esModule ? exports.default : exports;
       locals = exports && exports.locals;
       if (!Array.isArray(exports)) {
         dependencies = [[null, exports]];

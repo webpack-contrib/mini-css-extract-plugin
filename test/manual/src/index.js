@@ -3,6 +3,25 @@
 /* eslint-disable no-console, camelcase, no-global-assign */
 
 import './initial.css';
+import './simple.css';
+import classes from './simple.module.css';
+
+console.log('___CLASSES__');
+console.log(classes);
+
+function replaceClass(originalClass, newClass) {
+  const nodes = document.querySelectorAll(`.${originalClass}`);
+
+  nodes.forEach((node) => {
+    const { classList } = node;
+    classList.remove(originalClass);
+    classList.add(newClass);
+  });
+}
+
+Object.keys(classes).forEach((localClass) => {
+  replaceClass(localClass, classes[localClass]);
+});
 
 const handleError = (err) => {
   document.querySelector('.errors').textContent += `\n${err.toString()}`;
