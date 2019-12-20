@@ -10,6 +10,9 @@
           "instanceof": "Function"
         }
       ]
+    },
+    "esModule": {
+      "type": "boolean"
     }
   },
   "errorMessages": {
