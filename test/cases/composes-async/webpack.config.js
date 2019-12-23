@@ -25,6 +25,7 @@ module.exports = {
       cacheGroups: {
         cssDedupe: {
           test: /\.css$/,
+          name: 'dedupe',
           chunks: 'all',
           minChunks: 2,
           enforce: true,
