@@ -36,7 +36,7 @@ module.exports = [1, 2].map((n) => {
     },
     plugins: [
       new Self({
-        filename: `[name].[chunkhash].css`,
+        filename: `[name].[contenthash].css`,
       }),
     ],
   };
