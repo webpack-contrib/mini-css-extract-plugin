@@ -221,8 +221,20 @@ class MiniCssExtractPlugin {
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions } = compilation;
-        const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
+        const {
+          hashSalt,
+          hashDigest,
+          hashDigestLength,
+          hashFunction,
+        } = outputOptions;
         const hash = createHash(hashFunction);
+
+        if (hashSalt) {
+          hash.update(hashSalt);
+        }
+
+        hash.update(`${chunk.id} `);
+        hash.update(chunk.ids ? chunk.ids.join(',') : '');
 
         for (const m of chunk.modulesIterable) {
           if (m.type === MODULE_TYPE) {
