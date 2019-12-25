@@ -22,3 +22,10 @@ options.publicPath should pass \\"instanceof\\" keyword validation
 options.publicPath should match some schema in anyOf
 "
 `;
+
+exports[`validate options should throw an error on the "reloadAll" option with "1" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.reloadAll should be boolean
+"
+`;
