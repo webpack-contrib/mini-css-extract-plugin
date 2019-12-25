@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`validate options should throw an error on the "chunkFilename" option with "true" value 1`] = `
+"Mini CSS Extract Plugin Invalid Options
+
+options.chunkFilename should be string
+"
+`;
+
+exports[`validate options should throw an error on the "filename" option with "true" value 1`] = `
+"Mini CSS Extract Plugin Invalid Options
+
+options.filename should be string
+"
+`;
+
+exports[`validate options should throw an error on the "ignoreOrder" option with "1" value 1`] = `
+"Mini CSS Extract Plugin Invalid Options
+
+options.ignoreOrder should be boolean
+"
+`;
+
+exports[`validate options should throw an error on the "moduleFilename" option with "true" value 1`] = `
+"Mini CSS Extract Plugin Invalid Options
+
+options.moduleFilename should pass \\"instanceof\\" keyword validation
+"
+`;

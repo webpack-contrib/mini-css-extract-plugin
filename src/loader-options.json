@@ -1,4 +1,5 @@
 {
+  "type": "object",
   "additionalProperties": true,
   "properties": {
     "publicPath": {
@@ -13,10 +14,9 @@
     },
     "esModule": {
       "type": "boolean"
+    },
+    "hmr": {
+      "type": "boolean"
     }
-  },
-  "errorMessages": {
-    "publicPath": "should be {String} or {Function} (https://github.com/webpack-contrib/mini-css-extract-plugin#publicpath)"
-  },
-  "type": "object"
+  }
 }

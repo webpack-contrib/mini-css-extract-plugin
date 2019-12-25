@@ -3,7 +3,10 @@
 import webpack from 'webpack';
 import sources from 'webpack-sources';
 
+import validateOptions from 'schema-utils';
+
 import CssDependency from './CssDependency';
+import schema from './plugin-options.json';
 
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const {
@@ -97,6 +100,8 @@ class CssModuleFactory {
 
 class MiniCssExtractPlugin {
   constructor(options = {}) {
+    validateOptions(schema, options, 'Mini CSS Extract Plugin');
+
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
@@ -491,6 +496,7 @@ class MiniCssExtractPlugin {
           // use list with fewest failed deps
           // and emit a warning
           const fallbackModule = bestMatch.pop();
+
           if (!this.options.ignoreOrder) {
             const reasons = moduleDependenciesReasons.get(fallbackModule);
             compilation.warnings.push(

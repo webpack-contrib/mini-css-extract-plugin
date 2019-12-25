@@ -12,7 +12,7 @@ import validateOptions from 'schema-utils';
 
 import CssDependency from './CssDependency';
 
-import schema from './options.json';
+import schema from './loader-options.json';
 
 const pluginName = 'mini-css-extract-plugin';
 
