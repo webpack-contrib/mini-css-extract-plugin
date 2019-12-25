@@ -14,6 +14,10 @@ describe('validate options', () => {
       success: [true, false],
       failure: [1],
     },
+    reloadAll: {
+      success: [true, false],
+      failure: [1],
+    },
     unknown: {
       success: [],
       // TODO failed in next release

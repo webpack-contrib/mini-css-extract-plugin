@@ -17,6 +17,9 @@
     },
     "hmr": {
       "type": "boolean"
+    },
+    "reloadAll": {
+      "type": "boolean"
     }
   }
 }
