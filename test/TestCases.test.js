@@ -26,10 +26,14 @@ function compareDirectory(actual, expected) {
 }
 
 function compareWarning(actual, expectedFile) {
-  if (!fs.existsSync(expectedFile)) return;
+  if (!fs.existsSync(expectedFile)) {
+    return;
+  }
 
-  const expected = require(expectedFile); // eslint-disable-line global-require,import/no-dynamic-require
-  expect(actual).toBe(expected);
+  // eslint-disable-next-line global-require, import/no-dynamic-require
+  const expected = require(expectedFile);
+
+  expect(actual.trim()).toBe(expected.trim());
 }
 
 describe('TestCases', () => {
@@ -97,8 +101,19 @@ describe('TestCases', () => {
           }
 
           const expectedDirectory = path.resolve(directoryForCase, 'expected');
+          const expectedDirectoryByVersion = path.join(
+            expectedDirectory,
+            `webpack-${webpack.version[0]}`
+          );
 
-          compareDirectory(outputDirectoryForCase, expectedDirectory);
+          if (fs.existsSync(expectedDirectoryByVersion)) {
+            compareDirectory(
+              outputDirectoryForCase,
+              expectedDirectoryByVersion
+            );
+          } else {
+            compareDirectory(outputDirectoryForCase, expectedDirectory);
+          }
 
           const expectedWarning = path.resolve(directoryForCase, 'warnings.js');
           const actualWarning = stats.toString({

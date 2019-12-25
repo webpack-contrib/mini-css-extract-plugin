@@ -32,11 +32,11 @@ module.exports = [1, 2].map((n) => {
       ],
     },
     output: {
-      filename: `[name].[contenthash].js`,
+      filename: `[name].[contenthash].${n}.js`,
     },
     plugins: [
       new Self({
-        filename: `[name].[chunkhash].css`,
+        filename: `[name].[contenthash].${n}.css`,
       }),
     ],
   };

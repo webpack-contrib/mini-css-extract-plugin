@@ -15,6 +15,7 @@ module.exports = {
       chunks: 'all',
       cacheGroups: {
         vendors: {
+          name: 'vendors',
           test: /node_modules/,
           enforce: true,
         },
