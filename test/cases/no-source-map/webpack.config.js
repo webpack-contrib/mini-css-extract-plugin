@@ -2,7 +2,8 @@ import Self from '../../../src';
 
 module.exports = {
   entry: './index.js',
-  devtool: 'source-map',
+  // Required to disable source maps in webpack@4
+  devtool: false,
   module: {
     rules: [
       {
@@ -14,7 +15,7 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
+              sourceMap: false,
             },
           },
         ],
