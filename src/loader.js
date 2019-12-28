@@ -204,7 +204,7 @@ export function pitch(request) {
     }
 
     const esModule =
-      typeof options.esModule !== 'undefined' ? options.esModule : false;
+      typeof options.esModule !== 'undefined' ? options.esModule : true;
     const result = locals
       ? `\n${esModule ? 'export default' : 'module.exports ='} ${JSON.stringify(
           locals

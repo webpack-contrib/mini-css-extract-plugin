@@ -155,12 +155,12 @@ module.exports = {
 ### `esModule`
 
 Type: `Boolean`
-Default: `false`
+Default: `true`
 
-By default, `mini-css-extract-plugin` generates JS modules that use the CommonJS modules syntax.
+By default, `mini-css-extract-plugin` generates JS modules that use the ES module syntax.
 There are some cases in which using ES modules is beneficial, like in the case of [module concatenation](https://webpack.js.org/plugins/module-concatenation-plugin/) and [tree shaking](https://webpack.js.org/guides/tree-shaking/).
 
-You can enable a ES module syntax using:
+If you instead require the output to use CommonJS module syntax, disable `esModule` mode like so:
 
 **webpack.config.js**
 
@@ -177,7 +177,7 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              esModule: true,
+              esModule: false,
             },
           },
           'css-loader',
