@@ -45,6 +45,23 @@ const makeButton = (className, fn, shouldDisable = true) => {
 makeButton('.lazy-button', () => import('./lazy.js'));
 makeButton('.lazy-button2', () => import('./lazy2.css'));
 
+makeButton('.lazy-link-preload-button', () => {
+  const promise = import('./lazy-link-preload.css');
+  const linkElement = Array.from(document.head.children)
+    .slice(-2)
+    .find((el) => {
+      return el.tagName === 'LINK';
+    });
+
+  alert(
+    `Is css preloaded by <link rel="preload"/>? - ${
+      linkElement.getAttribute('rel') === 'preload' ? 'yes' : 'no'
+    }`
+  );
+
+  return promise;
+});
+
 makeButton('.preloaded-button1', () =>
   import(/* webpackChunkName: "preloaded1" */ './preloaded1')
 );

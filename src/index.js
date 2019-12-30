@@ -107,6 +107,7 @@ class MiniCssExtractPlugin {
         filename: DEFAULT_FILENAME,
         moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
         ignoreOrder: false,
+        cssPreload: true,
       },
       options
     );
@@ -338,7 +339,7 @@ class MiniCssExtractPlugin {
                   Template.indent([
                     'var tag = existingLinkTags[i];',
                     'var dataHref = tag.getAttribute("data-href") || tag.getAttribute("href");',
-                    'if(tag.rel === "stylesheet" && (dataHref === href || dataHref === fullhref)) return resolve();',
+                    'if((tag.rel === "stylesheet" || tag.rel === "preload") && (dataHref === href || dataHref === fullhref)) return resolve();',
                   ]),
                   '}',
                   'var existingStyleTags = document.getElementsByTagName("style");',
@@ -350,9 +351,46 @@ class MiniCssExtractPlugin {
                   ]),
                   '}',
                   'var linkTag = document.createElement("link");',
+                  this.options.cssPreload
+                    ? Template.asString([
+                        'var isPreloadSupported = (function() {',
+                        Template.indent([
+                          'try { return linkTag.relList.supports("preload"); }',
+                          'catch(e) { return false; }',
+                        ]),
+                        '}());',
+                        'if (isPreloadSupported) {',
+                        Template.indent([
+                          'linkTag.rel = "preload";',
+                          'linkTag.as = "style";',
+                          'linkTag.onload = function() {',
+                          Template.indent([
+                            'linkTag.rel = "stylesheet";',
+                            'linkTag.onload = null;',
+                            'resolve();',
+                          ]),
+                          '};',
+                        ]),
+                        '} else {',
+                        Template.indent([
+                          'linkTag.rel = "stylesheet";',
+                          'linkTag.type = "text/css";',
+                          'linkTag.media = "print";',
+                          'linkTag.onload = function() {',
+                          Template.indent([
+                            'linkTag.media = "all";',
+                            'linkTag.onload = null;',
+                            'resolve();',
+                          ]),
+                          '};',
+                        ]),
+                        '}',
+                      ])
+                    : Template.asString([
                   'linkTag.rel = "stylesheet";',
                   'linkTag.type = "text/css";',
                   'linkTag.onload = resolve;',
+                      ]),
                   'linkTag.onerror = function(event) {',
                   Template.indent([
                     'var request = event && event.target && event.target.src || fullhref;',
