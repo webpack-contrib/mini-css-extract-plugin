@@ -101,6 +101,9 @@ class CssModuleFactory {
 class MiniCssExtractPlugin {
   constructor(options = {}) {
     validateOptions(schema, options, 'Mini CSS Extract Plugin');
+    const insert = options.insert
+      ? Template.asString([options.insert, 'insert(linkTag);'])
+      : 'var head = document.getElementsByTagName("head")[0]; head.appendChild(linkTag)';
 
     this.options = Object.assign(
       {
@@ -108,7 +111,8 @@ class MiniCssExtractPlugin {
         moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
         ignoreOrder: false,
       },
-      options
+      options,
+      { insert }
     );
 
     if (!this.options.chunkFilename) {
@@ -320,7 +324,6 @@ class MiniCssExtractPlugin {
                 contentHashType: MODULE_TYPE,
               }
             );
-
             return Template.asString([
               source,
               '',
@@ -376,8 +379,7 @@ class MiniCssExtractPlugin {
                         '}',
                       ])
                     : '',
-                  'var head = document.getElementsByTagName("head")[0];',
-                  'head.appendChild(linkTag);',
+                  this.options.insert,
                 ]),
                 '}).then(function() {',
                 Template.indent(['installedCssChunks[chunkId] = 0;']),
