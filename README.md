@@ -1,5 +1,4 @@
 <div align="center">
-  <!-- replace with accurate logo e.g from https://worldvectorlogo.com/ -->
   <img width="200" height="200" src="https://cdn.worldvectorlogo.com/logos/javascript.svg">
   <a href="https://webpack.js.org/">
     <img width="200" height="200" vspace="" hspace="25" src="https://cdn.rawgit.com/webpack/media/e7485eb2/logo/icon-square-big.svg">
@@ -8,10 +7,14 @@
 </div>
 
 [![npm][npm]][npm-url]
+[![node][node]][node-url]
 [![deps][deps]][deps-url]
 [![tests][tests]][tests-url]
 [![coverage][cover]][cover-url]
 [![chat][chat]][chat-url]
+[![size][size]][size-url]
+
+# mini-css-extract-plugin
 
 This plugin extracts CSS into separate files. It creates a CSS file per JS file which contains CSS. It supports On-Demand-Loading of CSS and SourceMaps.
 
@@ -24,29 +27,176 @@ Compared to the extract-text-webpack-plugin:
 - Easier to use
 - Specific to CSS
 
-<h2 align="center">Install</h2>
+## Getting Started
+
+To begin, you'll need to install `mini-css-extract-plugin`:
 
 ```bash
 npm install --save-dev mini-css-extract-plugin
 ```
 
-<h2 align="center">Usage</h2>
+It's recommended to combine `mini-css-extract-plugin` with the [`css-loader`](https://github.com/webpack-contrib/css-loader)
 
-### Configuration
+Then add the loader and the plugin to your `webpack` config. For example:
 
-#### `publicPath`
+**style.css**
+
+```css
+body {
+  background: green;
+}
+```
+
+**component.js**
+
+```js
+import './style.css';
+```
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [new MiniCssExtractPlugin()],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
+
+## Options
+
+### `publicPath`
 
 Type: `String|Function`
 Default: the `publicPath` in `webpackOptions.output`
 
 Specifies a custom public path for the target file(s).
 
-#### Minimal example
+#### `String`
 
 **webpack.config.js**
 
 ```js
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: '/public/path/to/',
+            },
+          },
+          'css-loader',
+        ],
+      },
+    ],
+  },
+};
+```
+
+#### `Function`
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: (resourcePath, context) => {
+                return path.relative(path.dirname(resourcePath), context) + '/';
+              },
+            },
+          },
+          'css-loader',
+        ],
+      },
+    ],
+  },
+};
+```
+
+### `esModule`
+
+Type: `Boolean`
+Default: `false`
+
+By default, `mini-css-extract-plugin` generates JS modules that use the CommonJS modules syntax.
+There are some cases in which using ES modules is beneficial, like in the case of [module concatenation](https://webpack.js.org/plugins/module-concatenation-plugin/) and [tree shaking](https://webpack.js.org/guides/tree-shaking/).
+
+You can enable a ES module syntax using:
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [new MiniCssExtractPlugin()],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              esModule: true,
+            },
+          },
+          'css-loader',
+        ],
+      },
+    ],
+  },
+};
+```
+
+## Examples
+
+### Minimal example
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
@@ -79,12 +229,13 @@ module.exports = {
 };
 ```
 
-#### `publicPath` function example
+### The `publicPath` option as function
 
 **webpack.config.js**
 
 ```js
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
@@ -118,7 +269,7 @@ module.exports = {
 };
 ```
 
-#### Advanced configuration example
+### Advanced configuration example
 
 This plugin should be used only on `production` builds without `style-loader` in the loaders chain, especially if you want to have HMR in `development`.
 
@@ -162,16 +313,21 @@ module.exports = {
 };
 ```
 
-#### Hot Module Reloading (HMR)
+### Hot Module Reloading (HMR)
 
-extract-mini-css-plugin supports hot reloading of actual css files in development. Some options are provided to enable HMR of both standard stylesheets and locally scoped CSS or CSS modules. Below is an example configuration of mini-css for HMR use with CSS modules.
+The `mini-css-extract-plugin` supports hot reloading of actual css files in development.
+Some options are provided to enable HMR of both standard stylesheets and locally scoped CSS or CSS modules.
+Below is an example configuration of mini-css for HMR use with CSS modules.
 
-While we attempt to hmr css-modules. It is not easy to perform when code-splitting with custom chunk names. `reloadAll` is an option that should only be enabled if HMR isn't working correctly. The core challenge with css-modules is that when code-split, the chunk ids can and do end up different compared to the filename.
+While we attempt to hmr css-modules. It is not easy to perform when code-splitting with custom chunk names.
+`reloadAll` is an option that should only be enabled if HMR isn't working correctly.
+The core challenge with css-modules is that when code-split, the chunk ids can and do end up different compared to the filename.
 
 **webpack.config.js**
 
 ```js
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
@@ -205,7 +361,8 @@ module.exports = {
 
 ### Minimizing For Production
 
-To minify the output, use a plugin like [optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin). Setting `optimization.minimizer` overrides the defaults provided by webpack, so make sure to also specify a JS minimizer:
+To minify the output, use a plugin like [optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin).
+Setting `optimization.minimizer` overrides the defaults provided by webpack, so make sure to also specify a JS minimizer:
 
 **webpack.config.js**
 
@@ -213,6 +370,7 @@ To minify the output, use a plugin like [optimize-css-assets-webpack-plugin](htt
 const TerserJSPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
 module.exports = {
   optimization: {
     minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
@@ -234,9 +392,7 @@ module.exports = {
 };
 ```
 
-### Features
-
-#### Using preloaded or inlined CSS
+### Using preloaded or inlined CSS
 
 The runtime code detects already added CSS via `<link>` or `<style>` tag.
 This can be useful when injecting CSS on server-side for Server-Side-Rendering.
@@ -244,15 +400,15 @@ The `href` of the `<link>` tag has to match the URL that will be used for loadin
 The `data-href` attribute can be used for `<link>` and `<style>` too.
 When inlining CSS `data-href` must be used.
 
-#### Extracting all CSS in a single file
+### Extracting all CSS in a single file
 
-Similar to what [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin) does, the CSS
-can be extracted in one CSS file using `optimization.splitChunks.cacheGroups`.
+Similar to what [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin) does, the CSS can be extracted in one CSS file using `optimization.splitChunks.cacheGroups`.
 
 **webpack.config.js**
 
 ```js
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = {
   optimization: {
     splitChunks: {
@@ -282,13 +438,13 @@ module.exports = {
 };
 ```
 
-#### Extracting CSS based on entry
+### Extracting CSS based on entry
 
-You may also extract the CSS based on the webpack entry name. This is especially useful if you import routes dynamically
-but want to keep your CSS bundled according to entry. This also prevents the CSS duplication issue one had with the
-ExtractTextPlugin.
+You may also extract the CSS based on the webpack entry name.
+This is especially useful if you import routes dynamically but want to keep your CSS bundled according to entry.
+This also prevents the CSS duplication issue one had with the ExtractTextPlugin.
 
-```javascript
+```js
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -343,7 +499,7 @@ module.exports = {
 };
 ```
 
-#### Disable Extracting Specified CSS from Chunks
+### Disable Extracting Specified CSS from Chunks
 
 You may disable extracting css modules programmatically by passing a function.
 
@@ -358,28 +514,83 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
 });
 ```
 
-#### Module Filename Option
+### Module Filename Option
 
 With the `moduleFilename` option you can use chunk data to customize the filename. This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk. In the example below, we'll use `moduleFilename` to output the generated css into a different directory.
 
-```javascript
-const miniCssExtractPlugin = new MiniCssExtractPlugin({
-  moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
-});
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
 ```
 
-#### Long Term Caching
+### Long Term Caching
 
 For long term caching use `filename: "[contenthash].css"`. Optionally add `[name]`.
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[id].[contenthash].css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
 
 ### Remove Order Warnings
 
 For projects where css ordering has been mitigated through consistent use of scoping or naming conventions, the css order warnings can be disabled by setting the ignoreOrder flag to true for the plugin.
 
-```javascript
-new MiniCssExtractPlugin({
-  ignoreOrder: true,
-}),
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      ignoreOrder: true,
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
 ```
 
 ### Media Query Plugin
@@ -388,6 +599,12 @@ If you'd like to extract the media queries from the extracted CSS (so mobile use
 
 - [Media Query Plugin](https://github.com/SassNinja/media-query-plugin)
 - [Media Query Splitting Plugin](https://github.com/mike-diamond/media-query-splitting-plugin)
+
+## Contributing
+
+Please take a moment to read our contributing guidelines if you haven't yet done so.
+
+[CONTRIBUTING](./.github/CONTRIBUTING.md)
 
 ## License
 

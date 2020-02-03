@@ -4,6 +4,7 @@ module.exports = {
   entry: {
     entry1: './index.js',
     entry2: './index2.js',
+    entry3: './index3.js',
   },
   module: {
     rules: [

@@ -3,6 +3,11 @@
 import webpack from 'webpack';
 import sources from 'webpack-sources';
 
+import validateOptions from 'schema-utils';
+
+import CssDependency from './CssDependency';
+import schema from './plugin-options.json';
+
 const { ConcatSource, SourceMapSource, OriginalSource } = sources;
 const {
   Template,
@@ -27,27 +32,6 @@ function isInitialOrHasNoParents(chunk) {
   }
 
   return chunk.isOnlyInitial() || parentCount === 0;
-}
-
-class CssDependency extends webpack.Dependency {
-  constructor(
-    { identifier, content, media, sourceMap },
-    context,
-    identifierIndex
-  ) {
-    super();
-
-    this.identifier = identifier;
-    this.identifierIndex = identifierIndex;
-    this.content = content;
-    this.media = media;
-    this.sourceMap = sourceMap;
-    this.context = context;
-  }
-
-  getResourceIdentifier() {
-    return `css-module-${this.identifier}-${this.identifierIndex}`;
-  }
 }
 
 class CssDependencyTemplate {
@@ -131,6 +115,8 @@ class CssModuleFactory {
 
 class MiniCssExtractPlugin {
   constructor(options = {}) {
+    validateOptions(schema, options, 'Mini CSS Extract Plugin');
+
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
@@ -167,26 +153,6 @@ class MiniCssExtractPlugin {
       compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
         const loaderContext = lc;
         const module = m;
-
-        loaderContext[MODULE_TYPE] = (content) => {
-          if (!Array.isArray(content) && content != null) {
-            throw new Error(
-              `Exported value was not extracted as an array: ${JSON.stringify(
-                content
-              )}`
-            );
-          }
-
-          const identifierCountMap = new Map();
-
-          for (const line of content) {
-            const count = identifierCountMap.get(line.identifier) || 0;
-
-            module.addDependency(new CssDependency(line, m.context, count));
-            identifierCountMap.set(line.identifier, count + 1);
-          }
-        };
-
         loaderContext[`${MODULE_TYPE}/disableExtract`] = () => {
           return !!module[`${MODULE_TYPE}/disableExtract`];
         };
@@ -526,6 +492,9 @@ class MiniCssExtractPlugin {
     if (typeof chunkGroup.getModuleIndex2 === 'function') {
       // Store dependencies for modules
       const moduleDependencies = new Map(modules.map((m) => [m, new Set()]));
+      const moduleDependenciesReasons = new Map(
+        modules.map((m) => [m, new Map()])
+      );
 
       // Get ordered list of modules per chunk group
       // This loop also gathers dependencies from the ordered lists
@@ -545,9 +514,14 @@ class MiniCssExtractPlugin {
 
         for (let i = 0; i < sortedModules.length; i++) {
           const set = moduleDependencies.get(sortedModules[i]);
+          const reasons = moduleDependenciesReasons.get(sortedModules[i]);
 
           for (let j = i + 1; j < sortedModules.length; j++) {
-            set.add(sortedModules[j]);
+            const module = sortedModules[j];
+            set.add(module);
+            const reason = reasons.get(module) || new Set();
+            reason.add(cg);
+            reasons.set(module, reason);
           }
         }
 
@@ -598,17 +572,37 @@ class MiniCssExtractPlugin {
           // use list with fewest failed deps
           // and emit a warning
           const fallbackModule = bestMatch.pop();
+
           if (!this.options.ignoreOrder) {
+            const reasons = moduleDependenciesReasons.get(fallbackModule);
             compilation.warnings.push(
               new Error(
-                `chunk ${chunk.name || chunk.id} [${pluginName}]\n` +
-                  'Conflicting order between:\n' +
-                  ` * ${fallbackModule.readableIdentifier(
-                    requestShortener
-                  )}\n` +
-                  `${bestMatchDeps
-                    .map((m) => ` * ${m.readableIdentifier(requestShortener)}`)
-                    .join('\n')}`
+                [
+                  `chunk ${chunk.name || chunk.id} [${pluginName}]`,
+                  'Conflicting order. Following module has been added:',
+                  ` * ${fallbackModule.readableIdentifier(requestShortener)}`,
+                  'despite it was not able to fulfill desired ordering with these modules:',
+                  ...bestMatchDeps.map((m) => {
+                    const goodReasonsMap = moduleDependenciesReasons.get(m);
+                    const goodReasons =
+                      goodReasonsMap && goodReasonsMap.get(fallbackModule);
+                    const failedChunkGroups = Array.from(
+                      reasons.get(m),
+                      (cg) => cg.name
+                    ).join(', ');
+                    const goodChunkGroups =
+                      goodReasons &&
+                      Array.from(goodReasons, (cg) => cg.name).join(', ');
+                    return [
+                      ` * ${m.readableIdentifier(requestShortener)}`,
+                      `   - couldn't fulfill desired order of chunk group(s) ${failedChunkGroups}`,
+                      goodChunkGroups &&
+                        `   - while fulfilling desired order of chunk group(s) ${goodChunkGroups}`,
+                    ]
+                      .filter(Boolean)
+                      .join('\n');
+                  }),
+                ].join('\n')
               )
             );
           }
@@ -619,7 +613,7 @@ class MiniCssExtractPlugin {
     } else {
       // fallback for older webpack versions
       // (to avoid a breaking change)
-      // TODO remove this in next mayor version
+      // TODO remove this in next major version
       // and increase minimum webpack version to 4.12.0
       modules.sort((a, b) => a.index2 - b.index2);
       usedModules = modules;

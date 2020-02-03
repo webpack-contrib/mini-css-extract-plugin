@@ -10,9 +10,6 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
-            options: {
-              sourceMap: true,
-            },
           },
           {
             loader: 'css-loader',

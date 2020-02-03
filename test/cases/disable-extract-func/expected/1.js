@@ -49,20 +49,28 @@ __webpack_require__.r(__webpack_exports__);
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(14)(false);
 // Imports
-exports.i(__webpack_require__(15), "");
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(14);
+var ___CSS_LOADER_AT_RULE_IMPORT_0___ = __webpack_require__(15);
+exports = ___CSS_LOADER_API_IMPORT___(false);
+exports.i(___CSS_LOADER_AT_RULE_IMPORT_0___);
 // Module
 exports.push([module.i, ".in-async {\n  background: green;\n}\n", ""]);
+// Exports
+module.exports = exports;
 
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(14)(false);
+// Imports
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(14);
+exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
 exports.push([module.i, ".both-page-async-disabled {\n  color: yellow;\n}\n", ""]);
+// Exports
+module.exports = exports;
 
 
 /***/ }),

@@ -1,6 +1,6 @@
 {
   "name": "mini-css-extract-plugin",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "extracts CSS into separate files",
   "license": "MIT",
   "repository": "webpack-contrib/mini-css-extract-plugin",
@@ -27,7 +27,7 @@
     "test:only": "cross-env NODE_ENV=test jest",
     "test:watch": "cross-env NODE_ENV=test jest --watch",
     "test:coverage": "cross-env NODE_ENV=test jest --collectCoverageFrom=\"src/**/*.js\" --coverage",
-    "test:manual": "webpack-dev-server test/manual/src/index.js --open --config test/manual/webpack.config.js",
+    "test:manual": "npm run build && webpack-dev-server test/manual/src/index.js --open --config test/manual/webpack.config.js",
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test npm run test:coverage",
     "defaults": "webpack-defaults"
@@ -36,7 +36,7 @@
     "dist"
   ],
   "peerDependencies": {
-    "webpack": "^4.4.0"
+    "webpack": "^4.4.0 || ^5.0.0"
   },
   "dependencies": {
     "loader-utils": "^1.1.0",
@@ -45,9 +45,9 @@
     "webpack-sources": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
-    "@babel/core": "^7.5.4",
-    "@babel/preset-env": "^7.5.4",
+    "@babel/cli": "^7.7.5",
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.6",
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
     "@webpack-contrib/defaults": "^5.0.2",
@@ -56,24 +56,24 @@
     "babel-jest": "^24.8.0",
     "commitlint-azure-pipelines-cli": "^1.0.2",
     "cross-env": "^5.2.0",
-    "css-loader": "^3.0.0",
+    "css-loader": "^3.3.2",
     "del": "^4.1.1",
     "del-cli": "^1.1.0",
     "es-check": "^5.0.0",
-    "eslint": "^6.0.1",
+    "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.0.0",
-    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-import": "^2.19.1",
     "file-loader": "^4.0.0",
     "husky": "^3.0.0",
     "jest": "^24.8.0",
-    "jest-junit": "^6.4.0",
-    "lint-staged": "^9.2.0",
-    "memory-fs": "^0.4.1",
+    "jest-junit": "^10.0.0",
+    "lint-staged": "^9.5.0",
+    "memfs": "^3.0.2",
     "npm-run-all": "^4.1.5",
-    "prettier": "^1.18.2",
-    "standard-version": "^6.0.1",
+    "prettier": "^1.19.1",
+    "standard-version": "^7.0.1",
     "style-loader": "^0.23.1",
-    "webpack": "^4.35.3",
+    "webpack": "^4.41.4",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.7.2"
   },

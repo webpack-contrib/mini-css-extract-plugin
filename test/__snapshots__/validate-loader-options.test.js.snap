@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`validate options should throw an error on the "esModule" option with "1" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.esModule should be boolean
+"
+`;
+
+exports[`validate options should throw an error on the "hmr" option with "1" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.hmr should be boolean
+"
+`;
+
+exports[`validate options should throw an error on the "publicPath" option with "true" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.publicPath should be string
+options.publicPath should pass \\"instanceof\\" keyword validation
+options.publicPath should match some schema in anyOf
+"
+`;
+
+exports[`validate options should throw an error on the "reloadAll" option with "1" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.reloadAll should be boolean
+"
+`;

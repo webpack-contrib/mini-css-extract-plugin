@@ -11,9 +11,13 @@
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(14)(false);
+// Imports
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(14);
+exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
 exports.push([module.i, ".both-page-async-disabled {\n  color: yellow;\n}\n", ""]);
+// Exports
+module.exports = exports;
 
 
 /***/ }),
@@ -46,9 +50,13 @@ __webpack_require__.r(__webpack_exports__);
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(14)(false);
+// Imports
+var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(14);
+exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
 exports.push([module.i, ".is-async-1 {\n  background: magenta;\n}\n", ""]);
+// Exports
+module.exports = exports;
 
 
 /***/ })

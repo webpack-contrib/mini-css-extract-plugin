@@ -38,6 +38,9 @@ jobs:
     strategy:
       maxParallel: 5
       matrix:
+        node-13:
+          node_version: ^13.0.0
+          webpack_version: latest
         node-12:
           node_version: ^12.0.0
           webpack_version: latest
@@ -47,13 +50,12 @@ jobs:
         node-8:
           node_version: ^8.9.0
           webpack_version: latest
-        node-6:
-          node_version: ^6.9.0
-          webpack_version: latest
-        node-8-canary:
-          node_version: ^8.9.0
+        # node-6:
+        #   node_version: ^6.9.0
+        #  webpack_version: latest
+        node-10-canary:
+          node_version: ^10.13.0
           webpack_version: next
-          continue_on_error: true
     steps:
       - task: NodeTool@0
         inputs:
@@ -75,7 +77,7 @@ jobs:
         displayName: 'Install dependencies'
       - script: npm i webpack@$(webpack_version)
         displayName: 'Install "webpack@$(webpack_version)"'
-      - script: npm run test:coverage -- --ci --reporters="default" --reporters="jest-junit" || $(continue_on_error)
+      - script: npm run test:coverage -- --ci --reporters="default" --reporters="jest-junit"
         displayName: 'Run tests with coverage'
       - task: PublishTestResults@2
         inputs:
@@ -93,6 +95,9 @@ jobs:
     strategy:
       maxParallel: 5
       matrix:
+        node-13:
+          node_version: ^13.0.0
+          webpack_version: latest
         node-12:
           node_version: ^12.0.0
           webpack_version: latest
@@ -102,13 +107,12 @@ jobs:
         node-8:
           node_version: ^8.9.0
           webpack_version: latest
-        node-6:
-          node_version: ^6.9.0
-          webpack_version: latest
-        node-8-canary:
-          node_version: ^8.9.0
+        # node-6:
+        #   node_version: ^6.9.0
+        #  webpack_version: latest
+        node-10-canary:
+          node_version: ^10.13.0
           webpack_version: next
-          continue_on_error: true
     steps:
       - task: NodeTool@0
         inputs:
@@ -130,7 +134,7 @@ jobs:
         displayName: 'Install dependencies'
       - script: npm i webpack@$(webpack_version)
         displayName: 'Install "webpack@$(webpack_version)"'
-      - script: npm run test:coverage -- --ci --reporters="default" --reporters="jest-junit" || $(continue_on_error)
+      - script: npm run test:coverage -- --ci --reporters="default" --reporters="jest-junit"
         displayName: 'Run tests with coverage'
       - task: PublishTestResults@2
         inputs:
@@ -148,6 +152,9 @@ jobs:
     strategy:
       maxParallel: 5
       matrix:
+        node-13:
+          node_version: ^13.0.0
+          webpack_version: latest
         node-12:
           node_version: ^12.0.0
           webpack_version: latest
@@ -157,13 +164,12 @@ jobs:
         node-8:
           node_version: ^8.9.0
           webpack_version: latest
-        node-6:
-          node_version: ^6.9.0
-          webpack_version: latest
-        node-8-canary:
-          node_version: ^8.9.0
+        # node-6:
+        #   node_version: ^6.9.0
+        #  webpack_version: latest
+        node-10-canary:
+          node_version: ^10.13.0
           webpack_version: next
-          continue_on_error: true
     steps:
       - script: 'git config --global core.autocrlf input'
         displayName: 'Config git core.autocrlf'
@@ -188,7 +194,7 @@ jobs:
         displayName: 'Install dependencies'
       - script: npm i webpack@$(webpack_version)
         displayName: 'Install "webpack@$(webpack_version)"'
-      - script: npm run test:coverage -- --ci --reporters="default" --reporters="jest-junit" || $(continue_on_error)
+      - script: npm run test:coverage -- --ci --reporters="default" --reporters="jest-junit"
         displayName: 'Run tests with coverage'
       - task: PublishTestResults@2
         inputs:
