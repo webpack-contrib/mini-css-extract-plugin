@@ -144,7 +144,7 @@ class MiniCssExtractPlugin {
 
   apply(compiler) {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-      const moduleToBeRebuild = new Set();
+      let moduleToBeRebuild = new Set();
       // eslint-disable-next-line no-param-reassign
       compilation[MODULE_TYPE] = {
         moduleToBeRebuild,
@@ -456,6 +456,15 @@ class MiniCssExtractPlugin {
           Promise.all(promises).then(() => callback());
         }
       );
+
+      // Trigger seal again if there are modules to be rebuilt
+      compilation.hooks.needAdditionalSeal.tap(pluginName, () => {
+        if (moduleToBeRebuild.size > 0) {
+          moduleToBeRebuild = new Set();
+          return true;
+        }
+        return false;
+      });
     });
   }
 
