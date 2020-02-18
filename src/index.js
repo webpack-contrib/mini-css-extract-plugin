@@ -148,13 +148,7 @@ class MiniCssExtractPlugin {
 
           if (renderedModules.length > 0) {
             result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
-                  chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
+              render: () => compiled,
               filenameTemplate: ({ chunk: chunkData }) =>
                 this.options.moduleFilename(chunkData),
               pathOptions: {
@@ -171,28 +165,85 @@ class MiniCssExtractPlugin {
       compilation.chunkTemplate.hooks.renderManifest.tap(
         pluginName,
         (result, { chunk }) => {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
-          );
+          const renderedModules = Array.from(chunk.modulesIterable).filter(module => module.type === MODULE_TYPE);
 
           if (renderedModules.length > 0) {
             result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
-                  chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: this.options.chunkFilename,
+              render: () => compiled,
+              filenameTemplate: ({
+                chunk: chunkData
+              }) => this.options.moduleFilename(chunkData),
               pathOptions: {
                 chunk,
-                contentHashType: MODULE_TYPE,
+                contentHashType: MODULE_TYPE
               },
               identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
+              hash: chunk.contentHash[MODULE_TYPE]
             });
           }
+        });
+      compilation.chunkTemplate.hooks.renderManifest.tap(pluginName, (result, {
+          chunk
+        }) => {
+        const renderedModules = Array.from(chunk.modulesIterable).filter(module => module.type === MODULE_TYPE);
+
+        if (renderedModules.length <= 0) {
+          return;
+        }
+
+        const compiled = this.renderContentAsset(compilation, chunk, renderedModules, compilation.runtimeTemplate.requestShortener);
+
+        const themes = {};
+
+        compiled.children.forEach(function(child) {
+          if (child._name) {
+            let match = child._name.match(/theme-(.*?)!/)
+
+            if (match) {
+              let themeName = match[1];
+
+              if (!themes[themeName]) themes[themeName] = [];
+            }
+          }
+        });
+
+        compiled.children.forEach(function(child) {
+          if (child._name) {
+            let match = child._name.match(/theme-(.*?)!/)
+
+            if (match) {
+              let themeName = match[1];
+
+              if (!themes[themeName]) themes[themeName] = [];
+
+              themes[themeName].push(child);
+
+              return;
+            }
+          }
+
+          // if it hasnt returned, push to all themes
+          for (var key in themes) {
+            themes[key].push(child);
+          }
+        });
+
+        for (var key in themes) {
+          let compiledTheme = this.renderContentAsset(compilation, chunk, renderedModules, compilation.runtimeTemplate.requestShortener);
+
+          compiledTheme.children = themes[key];
+
+          result.push({
+            render: () => compiledTheme,
+            filenameTemplate: this.options.chunkFilename.replace('chunk', `chunk.${key}`),
+            pathOptions: {
+              chunk,
+              contentHashType: MODULE_TYPE
+            },
+            identifier: `${pluginName}.${chunk.id}`,
+            hash: chunk.contentHash[MODULE_TYPE]
+          });
+        }
         }
       );
 
