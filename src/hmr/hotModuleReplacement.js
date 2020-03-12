@@ -52,7 +52,7 @@ function getCurrentScriptUrl(moduleId) {
 
   return function(fileMap) {
     if (!src) {
-      return null;
+      return [];
     }
 
     const splitResult = src.split(/([^\\/]+)\.js$/);
