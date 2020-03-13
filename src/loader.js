@@ -205,11 +205,38 @@ export function pitch(request) {
 
     const esModule =
       typeof options.esModule !== 'undefined' ? options.esModule : false;
-    const result = locals
-      ? `\n${esModule ? 'export default' : 'module.exports ='} ${JSON.stringify(
-          locals
-        )};`
-      : '';
+
+    let result;
+    if (esModule === 'named') {
+      const skipped = [];
+      const isInvalidKey = /(^[0-9]|-)/;
+      result = '';
+      if (locals) {
+        for (const key in locals) {
+          if (Object.hasOwnProperty.call(locals, key)) {
+            if (isInvalidKey.test(key)) {
+              skipped.push(key);
+            } else {
+              result += `export const ${key} = "${locals[key]}";`;
+            }
+          }
+        }
+      }
+      if (skipped.length) {
+        this.emitWarning(
+          new Error(
+            `Skipped invalid CSS className exports: ${skipped}.\n` +
+              `Please set css-loader's "localsConvention" option to "camelCaseOnly".`
+          )
+        );
+      }
+    } else {
+      result = locals
+        ? `\n${
+            esModule ? 'export default' : 'module.exports ='
+          } ${JSON.stringify(locals)};`
+        : '';
+    }
 
     let resultSource = `// extracted by ${pluginName}`;
 
