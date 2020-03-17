@@ -6,7 +6,7 @@
       "type": "string"
     },
     "chunkFilename": {
-      "type": "string"
+      "anyOf": [{ "type": "string" }, { "instanceOf": "Function" }]
     },
     "moduleFilename": {
       "instanceof": "Function"

@@ -7,7 +7,7 @@ describe('validate options', () => {
       failure: [true],
     },
     chunkFilename: {
-      success: ['[id].css'],
+      success: ['[id].css', () => '[id].css'],
       failure: [true],
     },
     moduleFilename: {
