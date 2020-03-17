@@ -213,7 +213,7 @@ export function pitch(request) {
       result = '';
       if (locals) {
         for (const key in locals) {
-          if (Object.hasOwnProperty.call(locals, key)) {
+          if (Object.prototype.hasOwnProperty.call(locals, key)) {
             if (isInvalidKey.test(key)) {
               skipped.push(key);
             } else {
