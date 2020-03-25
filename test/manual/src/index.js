@@ -5,6 +5,7 @@
 import './initial.css';
 import './simple.css';
 import classes from './simple.module.css';
+import hmrBootstrap from './hmr-module';
 
 console.log('___CLASSES__');
 console.log(classes);
@@ -69,3 +70,5 @@ makeButton('.crossorigin', () => {
   __webpack_public_path__ = originalPublicPath;
   return promise;
 });
+
+hmrBootstrap();

@@ -63,6 +63,10 @@
     <p>CrossOriginLoading Option: Must be red.</p>
     <p><button>Pressing this button</button> loads chunks with crossorigin attribute and should turn green.</p>
   </div>
+  <div class="test hmr">
+    <div class="hmr-a">With CSS Module, if locals didn't change, we can hmr update style</div>
+    <div class="hmr-b">If locals changed, it will trigger a full reload of the page.</div>
+  </div>
   <div class="errors"></div>
   <script async defer src="/dist/main.js"></script>
 </body>

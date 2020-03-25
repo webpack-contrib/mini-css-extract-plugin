@@ -1,0 +1,16 @@
+:local(.a) {
+  /* change inner style can update with hmr */
+  background-color: pink;
+  height: 20px;
+}
+
+:global(.hmr-b) {
+  /* global className works fine in a css-module */
+  background-color: skyblue;
+  height: 20px;
+}
+
+/* remove or add new local module would cause full reload */
+/* :local(.c) {
+  background-color: khaki;
+} */

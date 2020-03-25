@@ -17,22 +17,32 @@ import schema from './loader-options.json';
 const pluginName = 'mini-css-extract-plugin';
 
 function hotLoader(content, context) {
-  const accept = context.locals
-    ? ''
-    : 'module.hot.accept(undefined, cssReload);';
-
   return `${content}
     if(module.hot) {
-      // ${Date.now()}
-      var cssReload = require(${loaderUtils.stringifyRequest(
+      var varifyLocal = function(a, b) {
+        var key, idx = 0;
+        for(key in a) {
+          if(!b || a[key] !== b[key]) return false;
+          idx++;
+        }
+        for(key in b) idx--;
+        return idx === 0;
+      };
+      var update = require(${loaderUtils.stringifyRequest(
         context.context,
         path.join(__dirname, 'hmr/hotModuleReplacement.js')
       )})(module.id, ${JSON.stringify({
     ...context.options,
     locals: !!context.locals,
   })});
-      module.hot.dispose(cssReload);
-      ${accept}
+      var cssReload = function () {
+        var newContent = require(${context.localsPath});
+        var localMatch = varifyLocal(content.locals, newContent.locals);
+        if (!localMatch) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+        update();
+      };
+      module.hot.accept(${context.localsPath}, function () { cssReload(); });
+      module.hot.dispose(function () { update(); });
     }
   `;
 }
@@ -203,18 +213,24 @@ export function pitch(request) {
       return callback(e);
     }
 
+    const localsPath = loaderUtils.stringifyRequest(this, `!!${request}`);
     const esModule =
       typeof options.esModule !== 'undefined' ? options.esModule : false;
     const result = locals
-      ? `\n${esModule ? 'export default' : 'module.exports ='} ${JSON.stringify(
-          locals
-        )};`
+      ? `\nvar content = require(${localsPath});\n${
+          esModule ? 'export default' : 'module.exports ='
+        } content.locals || {};`
       : '';
 
     let resultSource = `// extracted by ${pluginName}`;
 
     resultSource += options.hmr
-      ? hotLoader(result, { context: this.context, options, locals })
+      ? hotLoader(result, {
+          context: this.context,
+          options,
+          locals,
+          localsPath,
+        })
       : result;
 
     return callback(null, resultSource);
