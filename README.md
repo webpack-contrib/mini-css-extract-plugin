@@ -532,7 +532,7 @@ For long term caching use `filename: "[contenthash].css"`. Optionally add `[name
 #### rel="preload" support
 
 On browsers that support `<link rel="preload" as="style">`, then CSS links will be preloaded by default.
-This is both to improve page load performance, and addresess Chrome Lighthouse SEO performance audits requiring the use of rel="preload" with asynchronous chunks. 
+This is both to improve page load performance, and addresess Chrome Lighthouse SEO performance audits requiring the use of rel="preload" with asynchronous chunks.
 
 -[Lighthouse article](https://developers.google.com/web/tools/lighthouse/audits/preload)
 

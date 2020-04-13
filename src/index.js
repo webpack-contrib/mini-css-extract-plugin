@@ -388,9 +388,7 @@ class MiniCssExtractPlugin {
                   'if(supportsPreload) {',
                   Template.indent([
                     'var execLinkTag = document.createElement("link");',
-                    `execLinkTag.href =  ${
-                      mainTemplate.requireFn
-                    }.p + ${linkHrefPath};`,
+                    `execLinkTag.href =  ${mainTemplate.requireFn}.p + ${linkHrefPath};`,
                     'execLinkTag.rel = "stylesheet";',
                     'execLinkTag.type = "text/css";',
                     'document.body.appendChild(execLinkTag);',
