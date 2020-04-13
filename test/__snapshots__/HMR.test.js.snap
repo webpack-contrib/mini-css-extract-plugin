@@ -2,7 +2,7 @@
 
 exports[`HMR should handle error event 1`] = `"[HMR] css reload %s"`;
 
-exports[`HMR should handle error event 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
+exports[`HMR should handle error event 2`] = `"<link rel=\\"preload\\" as=\\"style\\" href=\\"/dist/main.css\\"><link rel=\\"preload\\" as=\\"style\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
 
 exports[`HMR should reloads with # link href 1`] = `"[HMR] css reload %s"`;
 
@@ -18,7 +18,7 @@ exports[`HMR should reloads with link without href 2`] = `"<link rel=\\"styleshe
 
 exports[`HMR should reloads with locals 1`] = `"[HMR] Detected local css modules. Reload all css"`;
 
-exports[`HMR should reloads with locals 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
+exports[`HMR should reloads with locals 2`] = `"<link rel=\\"preload\\" as=\\"style\\" href=\\"/dist/main.css\\"><link rel=\\"preload\\" as=\\"style\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
 
 exports[`HMR should reloads with non http/https link href 1`] = `"[HMR] css reload %s"`;
 
@@ -26,14 +26,14 @@ exports[`HMR should reloads with non http/https link href 2`] = `"<link rel=\\"s
 
 exports[`HMR should reloads with reloadAll option 1`] = `"[HMR] Reload all css"`;
 
-exports[`HMR should reloads with reloadAll option 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
+exports[`HMR should reloads with reloadAll option 2`] = `"<link rel=\\"preload\\" as=\\"style\\" href=\\"/dist/main.css\\"><link rel=\\"preload\\" as=\\"style\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
 
 exports[`HMR should works 1`] = `"[HMR] css reload %s"`;
 
-exports[`HMR should works 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
+exports[`HMR should works 2`] = `"<link rel=\\"preload\\" as=\\"style\\" href=\\"/dist/main.css\\"><link rel=\\"preload\\" as=\\"style\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
 
 exports[`HMR should works with multiple updates 1`] = `"[HMR] css reload %s"`;
 
-exports[`HMR should works with multiple updates 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
+exports[`HMR should works with multiple updates 2`] = `"<link rel=\\"preload\\" as=\\"style\\" href=\\"/dist/main.css\\"><link rel=\\"preload\\" as=\\"style\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
 
-exports[`HMR should works with multiple updates 3`] = `"<link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200001\\">"`;
+exports[`HMR should works with multiple updates 3`] = `"<link rel=\\"preload\\" as=\\"style\\" href=\\"http://localhost/dist/main.css?1479427200000\\"><link rel=\\"preload\\" as=\\"style\\" href=\\"http://localhost/dist/main.css?1479427200001\\">"`;
