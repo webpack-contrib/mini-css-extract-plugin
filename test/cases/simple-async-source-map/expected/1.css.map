@@ -1,1 +1,1 @@
-{"version":3,"sources":["webpack:///./in-async.css"],"names":[],"mappings":"AAAA,WAAW,mBAAmB","file":"1.css","sourcesContent":[".in-async { background: green; }\n"],"sourceRoot":""}
+{"version":3,"sources":["webpack:///./in-async.css"],"names":[],"mappings":"AAAA;AACA;AACA","file":"1.css","sourcesContent":[".in-async {\n  background: green;\n}\n"],"sourceRoot":""}

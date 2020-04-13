@@ -1,4 +1,4 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = {
   entry: './index.js',
@@ -10,20 +10,23 @@ module.exports = {
           {
             loader: Self.loader,
             options: {
-              publicPath: '/static/img/'
-            }
+              publicPath: '/static/img/',
+            },
           },
           'css-loader',
         ],
-      }, {
+      },
+      {
         test: /\.(svg|png)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            filename: '[name].[ext]'
-          }
-        }]
-      }
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              filename: '[name].[ext]',
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [

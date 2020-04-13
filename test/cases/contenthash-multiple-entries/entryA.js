@@ -1,2 +1,2 @@
-import "./styleA.css";
-import "./styleB.css";
+import './styleA.css';
+import './styleB.css';

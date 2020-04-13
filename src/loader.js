@@ -1,40 +1,79 @@
 import NativeModule from 'module';
 
+import path from 'path';
+
 import loaderUtils from 'loader-utils';
 import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
 import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
 import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
 import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
+import validateOptions from 'schema-utils';
 
-const MODULE_TYPE = 'css/mini-extract';
+import CssDependency from './CssDependency';
+
+import schema from './loader-options.json';
+
 const pluginName = 'mini-css-extract-plugin';
 
-const exec = (loaderContext, code, filename) => {
+function hotLoader(content, context) {
+  const accept = context.locals
+    ? ''
+    : 'module.hot.accept(undefined, cssReload);';
+
+  return `${content}
+    if(module.hot) {
+      // ${Date.now()}
+      var cssReload = require(${loaderUtils.stringifyRequest(
+        context.context,
+        path.join(__dirname, 'hmr/hotModuleReplacement.js')
+      )})(module.id, ${JSON.stringify({
+    ...context.options,
+    locals: !!context.locals,
+  })});
+      module.hot.dispose(cssReload);
+      ${accept}
+    }
+  `;
+}
+
+function evalModuleCode(loaderContext, code, filename) {
   const module = new NativeModule(filename, loaderContext);
+
   module.paths = NativeModule._nodeModulePaths(loaderContext.context); // eslint-disable-line no-underscore-dangle
   module.filename = filename;
   module._compile(code, filename); // eslint-disable-line no-underscore-dangle
-  return module.exports;
-};
 
-const findModuleById = (modules, id) => {
+  return module.exports;
+}
+
+function findModuleById(modules, id) {
   for (const module of modules) {
     if (module.id === id) {
       return module;
     }
   }
+
   return null;
-};
+}
 
 export function pitch(request) {
-  const query = loaderUtils.getOptions(this) || {};
+  const options = loaderUtils.getOptions(this) || {};
+
+  validateOptions(schema, options, 'Mini CSS Extract Plugin Loader');
+
   const loaders = this.loaders.slice(this.loaderIndex + 1);
+
   this.addDependency(this.resourcePath);
-  const childFilename = '*'; // eslint-disable-line no-path-concat
+
+  const childFilename = '*';
   const publicPath =
-    typeof query.publicPath === 'string'
-      ? query.publicPath
+    typeof options.publicPath === 'string'
+      ? options.publicPath === '' || options.publicPath.endsWith('/')
+        ? options.publicPath
+        : `${options.publicPath}/`
+      : typeof options.publicPath === 'function'
+      ? options.publicPath(this.resourcePath, this.rootContext)
       : this._compilation.outputOptions.publicPath;
   const outputOptions = {
     filename: childFilename,
@@ -44,6 +83,7 @@ export function pitch(request) {
     `${pluginName} ${request}`,
     outputOptions
   );
+
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
   new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
@@ -51,16 +91,16 @@ export function pitch(request) {
     childCompiler
   );
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
-  // We set loaderContext[MODULE_TYPE] = false to indicate we already in
-  // a child compiler so we don't spawn another child compilers from there.
+
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
     (compilation) => {
       compilation.hooks.normalModuleLoader.tap(
         `${pluginName} loader`,
         (loaderContext, module) => {
+          // eslint-disable-next-line no-param-reassign
           loaderContext.emitFile = this.emitFile;
-          loaderContext[MODULE_TYPE] = false; // eslint-disable-line no-param-reassign
+
           if (module.request === request) {
             // eslint-disable-next-line no-param-reassign
             module.loaders = loaders.map((loader) => {
@@ -77,6 +117,7 @@ export function pitch(request) {
   );
 
   let source;
+
   childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
     source =
       compilation.assets[childFilename] &&
@@ -91,49 +132,93 @@ export function pitch(request) {
   });
 
   const callback = this.async();
+
   childCompiler.runAsChild((err, entries, compilation) => {
-    if (err) return callback(err);
+    const addDependencies = (dependencies) => {
+      if (!Array.isArray(dependencies) && dependencies != null) {
+        throw new Error(
+          `Exported value was not extracted as an array: ${JSON.stringify(
+            dependencies
+          )}`
+        );
+      }
+
+      const identifierCountMap = new Map();
+
+      for (const dependency of dependencies) {
+        const count = identifierCountMap.get(dependency.identifier) || 0;
+
+        this._module.addDependency(
+          new CssDependency(dependency, dependency.context, count)
+        );
+        identifierCountMap.set(dependency.identifier, count + 1);
+      }
+    };
+
+    if (err) {
+      return callback(err);
+    }
 
     if (compilation.errors.length > 0) {
       return callback(compilation.errors[0]);
     }
+
     compilation.fileDependencies.forEach((dep) => {
       this.addDependency(dep);
     }, this);
+
     compilation.contextDependencies.forEach((dep) => {
       this.addContextDependency(dep);
     }, this);
+
     if (!source) {
       return callback(new Error("Didn't get a result from child compiler"));
     }
-    let text;
+
     let locals;
+
     try {
-      text = exec(this, source, request);
-      locals = text && text.locals;
-      if (!Array.isArray(text)) {
-        text = [[null, text]];
+      let dependencies;
+      let exports = evalModuleCode(this, source, request);
+      // eslint-disable-next-line no-underscore-dangle
+      exports = exports.__esModule ? exports.default : exports;
+      locals = exports && exports.locals;
+      if (!Array.isArray(exports)) {
+        dependencies = [[null, exports]];
       } else {
-        text = text.map((line) => {
-          const module = findModuleById(compilation.modules, line[0]);
+        dependencies = exports.map(([id, content, media, sourceMap]) => {
+          const module = findModuleById(compilation.modules, id);
+
           return {
             identifier: module.identifier(),
-            content: line[1],
-            media: line[2],
-            sourceMap: line[3],
+            context: module.context,
+            content,
+            media,
+            sourceMap,
           };
         });
       }
-      this[MODULE_TYPE](text);
+      addDependencies(dependencies);
     } catch (e) {
       return callback(e);
     }
+
+    const esModule =
+      typeof options.esModule !== 'undefined' ? options.esModule : false;
+    const result = locals
+      ? `\n${esModule ? 'export default' : 'module.exports ='} ${JSON.stringify(
+          locals
+        )};`
+      : '';
+
     let resultSource = `// extracted by ${pluginName}`;
-    if (locals && typeof resultSource !== 'undefined') {
-      resultSource += `\nmodule.exports = ${JSON.stringify(locals)};`;
-    }
+
+    resultSource += options.hmr
+      ? hotLoader(result, { context: this.context, options, locals })
+      : result;
 
     return callback(null, resultSource);
   });
 }
+
 export default function() {}
