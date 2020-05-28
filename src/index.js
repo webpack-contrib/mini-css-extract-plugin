@@ -112,7 +112,10 @@ class CssModule extends webpack.Module {
 
     hash.update(this.content);
     hash.update(this.media || '');
-    hash.update(this.sourceMap ? JSON.stringify(this.sourceMap) : '');
+
+    if (this.useSourceMap && this.sourceMap) {
+      hash.update(JSON.stringify(this.sourceMap));
+    }
   }
 }
 
