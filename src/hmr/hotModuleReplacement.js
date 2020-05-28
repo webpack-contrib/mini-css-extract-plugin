@@ -7,7 +7,7 @@
 
 const normalizeUrl = require('normalize-url');
 
-const srcByModuleId = Object.create(null);
+let srcByModuleId = Object.create(null);
 
 const noDocument = typeof document === 'undefined';
 
@@ -230,4 +230,9 @@ module.exports = function(moduleId, options) {
   }
 
   return debounce(update, 50);
+};
+
+// Used from tests
+module.exports.clearCache = function() {
+  srcByModuleId = Object.create(null);
 };
