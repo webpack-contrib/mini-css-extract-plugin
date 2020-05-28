@@ -2,6 +2,7 @@
 
 import webpack from 'webpack';
 import sources from 'webpack-sources';
+import { contextify } from 'webpack/lib/util/identifier';
 
 import validateOptions from 'schema-utils';
 
@@ -24,6 +25,29 @@ const REGEXP_NAME = /\[name\]/i;
 const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
 
+const contextifySourceMap = (context, sourceMap) => {
+  if (!sourceMap || !Array.isArray(sourceMap.sources)) return sourceMap;
+  const { sourceRoot, ...rest } = sourceMap;
+  const mapper = (source) => {
+    if (!sourceRoot) return source;
+    if (sourceRoot.endsWith('/')) {
+      return source.startsWith('/')
+        ? `${sourceRoot.slice(0, -1)}${source}`
+        : `${sourceRoot}${source}`;
+    }
+    return source.startsWith('/')
+      ? `${sourceRoot}${source}`
+      : `${sourceRoot}/${source}`;
+  };
+  const newSources = sourceMap.sources.map((source) =>
+    contextify(context, mapper(source))
+  );
+  return {
+    ...rest,
+    sources: newSources,
+  };
+};
+
 class CssDependencyTemplate {
   apply() {}
 }
@@ -37,7 +61,7 @@ class CssModule extends webpack.Module {
     this._identifierIndex = dependency.identifierIndex;
     this.content = dependency.content;
     this.media = dependency.media;
-    this.sourceMap = dependency.sourceMap;
+    this.sourceMap = contextifySourceMap(this.context, dependency.sourceMap);
   }
 
   // no source() so webpack doesn't do add stuff to the bundle
@@ -70,7 +94,7 @@ class CssModule extends webpack.Module {
   updateCacheModule(module) {
     this.content = module.content;
     this.media = module.media;
-    this.sourceMap = module.sourceMap;
+    this.sourceMap = contextifySourceMap(this.context, module.sourceMap);
   }
 
   needRebuild() {
