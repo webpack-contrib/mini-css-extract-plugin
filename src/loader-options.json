@@ -20,6 +20,16 @@
     },
     "reloadAll": {
       "type": "boolean"
+    },
+    "stats": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        }
+      ]
     }
   }
 }

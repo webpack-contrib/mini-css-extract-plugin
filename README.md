@@ -188,6 +188,13 @@ module.exports = {
 };
 ```
 
+### `stats`
+
+Type: `String|Boolean`
+Default: `'normal'`
+
+The [logging preset](https://webpack.js.org/configuration/stats/#stats-presets) to use. Object syntax is unsupported at this time.
+
 ## Examples
 
 ### Minimal example

@@ -196,8 +196,19 @@ function isUrlRequest(url) {
 }
 
 module.exports = function(moduleId, options) {
+  // By default, log everything. For certain presets, do not log informational
+  // messages. See https://webpack.js.org/configuration/stats/#stats-presets.
+  const stats = options.stats === undefined ? 'normal' : options.stats; // eslint-disable-line no-undefined
+  const log =
+    stats === 'errors-only' ||
+    stats === 'errors-warnings' ||
+    stats === 'none' ||
+    stats === false
+      ? () => {}
+      : console.log;
+
   if (noDocument) {
-    console.log('no window.document found, will not HMR CSS');
+    log('no window.document found, will not HMR CSS');
 
     return noop;
   }
@@ -209,7 +220,7 @@ module.exports = function(moduleId, options) {
     const reloaded = reloadStyle(src);
 
     if (options.locals) {
-      console.log('[HMR] Detected local css modules. Reload all css');
+      log('[HMR] Detected local css modules. Reload all css');
 
       reloadAll();
 
@@ -217,9 +228,9 @@ module.exports = function(moduleId, options) {
     }
 
     if (reloaded && !options.reloadAll) {
-      console.log('[HMR] css reload %s', src.join(' '));
+      log('[HMR] css reload %s', src.join(' '));
     } else {
-      console.log('[HMR] Reload all css');
+      log('[HMR] Reload all css');
 
       reloadAll();
     }
