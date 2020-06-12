@@ -7,6 +7,10 @@
   "author": "Tobias Koppers @sokra",
   "homepage": "https://github.com/webpack-contrib/mini-css-extract-plugin",
   "bugs": "https://github.com/webpack-contrib/mini-css-extract-plugin/issues",
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/webpack"
+  },
   "main": "dist/cjs.js",
   "engines": {
     "node": ">= 6.9.0"
@@ -54,7 +58,6 @@
     "@webpack-contrib/eslint-config-webpack": "^3.0.0",
     "babel-eslint": "^10.0.2",
     "babel-jest": "^24.8.0",
-    "commitlint-azure-pipelines-cli": "^1.0.2",
     "cross-env": "^5.2.0",
     "css-loader": "^3.3.2",
     "del": "^4.1.1",
@@ -66,7 +69,6 @@
     "file-loader": "^4.0.0",
     "husky": "^3.0.0",
     "jest": "^24.8.0",
-    "jest-junit": "^10.0.0",
     "lint-staged": "^9.5.0",
     "memfs": "^3.0.2",
     "npm-run-all": "^4.1.5",
