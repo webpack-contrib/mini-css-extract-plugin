@@ -18,6 +18,19 @@ describe('validate options', () => {
       success: [true, false],
       failure: [1],
     },
+    clientLogLevel: {
+      success: [
+        'info',
+        'warn',
+        'error',
+        'debug',
+        'trace',
+        'silent',
+        'none',
+        'warning',
+      ],
+      failure: [true, false, 'foo', 0, 1, {}],
+    },
     unknown: {
       success: [],
       // TODO failed in next release

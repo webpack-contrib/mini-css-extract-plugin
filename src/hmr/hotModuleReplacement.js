@@ -6,6 +6,9 @@
 */
 
 const normalizeUrl = require('normalize-url');
+const logger = require('loglevel').getLogger('mini-css-extract-plugin');
+
+logger.setDefaultLevel('info');
 
 const srcByModuleId = Object.create(null);
 
@@ -196,19 +199,12 @@ function isUrlRequest(url) {
 }
 
 module.exports = function(moduleId, options) {
-  // By default, log everything. For certain presets, do not log informational
-  // messages. See https://webpack.js.org/configuration/stats/#stats-presets.
-  const stats = options.stats === undefined ? 'normal' : options.stats; // eslint-disable-line no-undefined
-  const log =
-    stats === 'errors-only' ||
-    stats === 'errors-warnings' ||
-    stats === 'none' ||
-    stats === false
-      ? () => {}
-      : console.log;
+  if (options.clientLogLevel) {
+    logger.setLevel(options.clientLogLevel);
+  }
 
   if (noDocument) {
-    log('no window.document found, will not HMR CSS');
+    logger.info('no window.document found, will not HMR CSS');
 
     return noop;
   }
@@ -220,7 +216,7 @@ module.exports = function(moduleId, options) {
     const reloaded = reloadStyle(src);
 
     if (options.locals) {
-      log('[HMR] Detected local css modules. Reload all css');
+      logger.info('[HMR] Detected local css modules. Reload all css');
 
       reloadAll();
 
@@ -228,9 +224,9 @@ module.exports = function(moduleId, options) {
     }
 
     if (reloaded && !options.reloadAll) {
-      log('[HMR] css reload %s', src.join(' '));
+      logger.info('[HMR] css reload %s', src.join(' '));
     } else {
-      log('[HMR] Reload all css');
+      logger.info('[HMR] Reload all css');
 
       reloadAll();
     }
