@@ -20,6 +20,18 @@
     },
     "reloadAll": {
       "type": "boolean"
+    },
+    "clientLogLevel": {
+      "enum": [
+        "info",
+        "warn",
+        "error",
+        "debug",
+        "trace",
+        "silent",
+        "none",
+        "warning"
+      ]
     }
   }
 }

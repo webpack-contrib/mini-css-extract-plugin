@@ -1,5 +1,47 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`validate options should throw an error on the "clientLogLevel" option with "{}" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.clientLogLevel should be equal to one of the allowed values
+"
+`;
+
+exports[`validate options should throw an error on the "clientLogLevel" option with "0" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.clientLogLevel should be equal to one of the allowed values
+"
+`;
+
+exports[`validate options should throw an error on the "clientLogLevel" option with "1" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.clientLogLevel should be equal to one of the allowed values
+"
+`;
+
+exports[`validate options should throw an error on the "clientLogLevel" option with "false" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.clientLogLevel should be equal to one of the allowed values
+"
+`;
+
+exports[`validate options should throw an error on the "clientLogLevel" option with "foo" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.clientLogLevel should be equal to one of the allowed values
+"
+`;
+
+exports[`validate options should throw an error on the "clientLogLevel" option with "true" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.clientLogLevel should be equal to one of the allowed values
+"
+`;
+
 exports[`validate options should throw an error on the "esModule" option with "1" value 1`] = `
 "Mini CSS Extract Plugin Loader Invalid Options
 

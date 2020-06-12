@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "loader-utils": "^1.1.0",
+    "loglevel": "^1.6.8",
     "normalize-url": "1.9.1",
     "schema-utils": "^1.0.0",
     "webpack-sources": "^1.1.0"

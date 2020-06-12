@@ -188,6 +188,14 @@ module.exports = {
 };
 ```
 
+### `clientLogLevel`
+
+Type: `String`
+Default: `'info'`
+
+The browser console logging level as described by
+[webpack-dev-server](https://webpack.js.org/configuration/dev-server/#devserverclientloglevel).
+
 ## Examples
 
 ### Minimal example
@@ -301,6 +309,7 @@ module.exports = {
             loader: MiniCssExtractPlugin.loader,
             options: {
               hmr: process.env.NODE_ENV === 'development',
+              clientLogLevel: 'warn',
             },
           },
           'css-loader',

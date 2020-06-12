@@ -6,6 +6,9 @@
 */
 
 const normalizeUrl = require('normalize-url');
+const logger = require('loglevel').getLogger('mini-css-extract-plugin');
+
+logger.setDefaultLevel('info');
 
 const srcByModuleId = Object.create(null);
 
@@ -196,8 +199,12 @@ function isUrlRequest(url) {
 }
 
 module.exports = function(moduleId, options) {
+  if (options.clientLogLevel) {
+    logger.setLevel(options.clientLogLevel);
+  }
+
   if (noDocument) {
-    console.log('no window.document found, will not HMR CSS');
+    logger.info('no window.document found, will not HMR CSS');
 
     return noop;
   }
@@ -209,7 +216,7 @@ module.exports = function(moduleId, options) {
     const reloaded = reloadStyle(src);
 
     if (options.locals) {
-      console.log('[HMR] Detected local css modules. Reload all css');
+      logger.info('[HMR] Detected local css modules. Reload all css');
 
       reloadAll();
 
@@ -217,9 +224,9 @@ module.exports = function(moduleId, options) {
     }
 
     if (reloaded && !options.reloadAll) {
-      console.log('[HMR] css reload %s', src.join(' '));
+      logger.info('[HMR] css reload %s', src.join(' '));
     } else {
-      console.log('[HMR] Reload all css');
+      logger.info('[HMR] Reload all css');
 
       reloadAll();
     }
