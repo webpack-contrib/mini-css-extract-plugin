@@ -402,7 +402,7 @@ When inlining CSS `data-href` must be used.
 
 ### Extracting all CSS in a single file
 
-Similar to what [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin) does, the CSS can be extracted in one CSS file using `optimization.splitChunks.cacheGroups`.
+The CSS can be extracted in one CSS file using `optimization.splitChunks.cacheGroups`.
 
 **webpack.config.js**
 
