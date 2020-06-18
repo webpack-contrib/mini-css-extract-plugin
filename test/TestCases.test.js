@@ -25,17 +25,6 @@ function compareDirectory(actual, expected) {
   }
 }
 
-function compareWarning(actual, expectedFile) {
-  if (!fs.existsSync(expectedFile)) {
-    return;
-  }
-
-  // eslint-disable-next-line global-require, import/no-dynamic-require
-  const expected = require(expectedFile);
-
-  expect(actual.trim()).toBe(expected.trim());
-}
-
 describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
   const outputDirectory = path.resolve(__dirname, 'js');
@@ -115,12 +104,26 @@ describe('TestCases', () => {
             compareDirectory(outputDirectoryForCase, expectedDirectory);
           }
 
-          const expectedWarning = path.resolve(directoryForCase, 'warnings.js');
-          const actualWarning = stats.toString({
-            all: false,
-            warnings: true,
-          });
-          compareWarning(actualWarning, expectedWarning);
+          const warningsFile = path.resolve(directoryForCase, 'warnings.js');
+
+          if (fs.existsSync(warningsFile)) {
+            const actualWarnings = stats.toString({
+              all: false,
+              warnings: true,
+            });
+            // eslint-disable-next-line global-require, import/no-dynamic-require
+            const expectedWarnings = require(warningsFile);
+
+            expect(
+              actualWarnings
+                .trim()
+                .replace(/\*\scss\s(.*)?!/g, '* css /path/to/loader.js!')
+            ).toBe(
+              expectedWarnings
+                .trim()
+                .replace(/\*\scss\s(.*)?!/g, '* css /path/to/loader.js!')
+            );
+          }
 
           done();
         });
