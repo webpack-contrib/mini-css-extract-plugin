@@ -33,6 +33,7 @@ class CssModule extends webpack.Module {
       assetsInfo,
     };
     this.buildMeta = {};
+    this.resource = this.nameForCondition();
   }
 
   // no source() so webpack 4 doesn't do add stuff to the bundle
