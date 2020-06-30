@@ -209,6 +209,8 @@ export function pitch(request) {
       ? `\n${esModule ? 'export default' : 'module.exports ='} ${JSON.stringify(
           locals
         )};`
+      : esModule
+      ? `\nexport {};`
       : '';
 
     let resultSource = `// extracted by ${pluginName}`;
