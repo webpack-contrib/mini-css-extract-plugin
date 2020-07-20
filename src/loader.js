@@ -60,7 +60,10 @@ function findModuleById(modules, id) {
 export function pitch(request) {
   const options = loaderUtils.getOptions(this) || {};
 
-  validateOptions(schema, options, 'Mini CSS Extract Plugin Loader');
+  validateOptions(schema, options, {
+    name: 'Mini CSS Extract Plugin Loader',
+    baseDataPath: 'options',
+  });
 
   const loaders = this.loaders.slice(this.loaderIndex + 1);
 
@@ -223,4 +226,5 @@ export function pitch(request) {
   });
 }
 
-export default function() {}
+// eslint-disable-next-line func-names
+export default function () {}
