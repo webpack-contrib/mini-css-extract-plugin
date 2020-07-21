@@ -58,7 +58,7 @@ function findModuleById(modules, id) {
 }
 
 export function pitch(request) {
-  const options = loaderUtils.getOptions(this) || {};
+  const options = loaderUtils.getOptions(this);
 
   validateOptions(schema, options, 'Mini CSS Extract Plugin Loader');
 
