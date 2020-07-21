@@ -13,7 +13,7 @@
   },
   "main": "dist/cjs.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 8.9.0"
   },
   "scripts": {
     "start": "npm run build -- -w",
@@ -45,7 +45,7 @@
   "dependencies": {
     "loader-utils": "^1.1.0",
     "normalize-url": "1.9.1",
-    "schema-utils": "^1.0.0",
+    "schema-utils": "^2.7.0",
     "webpack-sources": "^1.1.0"
   },
   "devDependencies": {
