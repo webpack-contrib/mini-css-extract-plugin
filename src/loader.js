@@ -218,7 +218,7 @@ export function pitch(request) {
 
     let resultSource = `// extracted by ${pluginName}`;
 
-    resultSource += options.hmr
+    resultSource += this.hot
       ? hotLoader(result, { context: this.context, options, locals })
       : result;
 

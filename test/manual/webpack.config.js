@@ -25,9 +25,7 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
-            options: {
-              hmr: ENABLE_HMR,
-            },
+            options: {},
           },
           {
             loader: 'css-loader',
@@ -42,9 +40,7 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
-            options: {
-              hmr: ENABLE_HMR,
-            },
+            options: {},
           },
           {
             loader: 'css-loader',
@@ -68,5 +64,6 @@ module.exports = {
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
+    hot: ENABLE_HMR,
   },
 };

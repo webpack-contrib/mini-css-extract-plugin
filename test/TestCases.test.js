@@ -95,6 +95,40 @@ describe('TestCases', () => {
             `webpack-${webpack.version[0]}`
           );
 
+          if (/^hmr/.test(directory)) {
+            let res = fs
+              .readFileSync(path.resolve(outputDirectoryForCase, 'main.js'))
+              .toString();
+
+            if (webpack.version[0] === '4') {
+              const matchAll = res.match(/var hotCurrentHash = "([\d\w].*)"/i);
+              const replacer = new Array(matchAll[1].length);
+
+              res = res.replace(
+                /var hotCurrentHash = "([\d\w].*)"/i,
+                `var hotCurrentHash = "${replacer.fill('x').join('')}"`
+              );
+            } else {
+              const matchAll = res.match(
+                /__webpack_require__\.h = \(\) => "([\d\w].*)"/i
+              );
+
+              const replacer = new Array(matchAll[1].length);
+
+              res = res.replace(
+                /__webpack_require__\.h = \(\) => "([\d\w].*)"/i,
+                `__webpack_require__.h = () => "${replacer.fill('x').join('')}"`
+              );
+            }
+
+            res = res.replace(/\/\/ \d*\n/gim, '// replased\n');
+
+            fs.writeFileSync(
+              path.resolve(outputDirectoryForCase, 'main.js'),
+              res
+            );
+          }
+
           if (fs.existsSync(expectedDirectoryByVersion)) {
             compareDirectory(
               outputDirectoryForCase,

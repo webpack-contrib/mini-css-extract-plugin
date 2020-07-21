@@ -1,3 +1,5 @@
+import webpack from 'webpack';
+
 import Self from '../../../src';
 
 module.exports = {
@@ -9,9 +11,7 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
-            options: {
-              hmr: true,
-            },
+            options: {},
           },
           'css-loader',
         ],
@@ -19,6 +19,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new Self({
       filename: '[name].css',
     }),
