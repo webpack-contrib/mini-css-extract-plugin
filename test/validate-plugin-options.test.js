@@ -3,15 +3,14 @@ import MiniCssExtractPlugin from '../src';
 describe('validate options', () => {
   const tests = {
     filename: {
-      success: ['[name].css'],
+      success: [
+        '[name].css',
+        ({ pathData }) => `${pathData.chunk.name.replace('/js/', '/css/')}.css`,
+      ],
       failure: [true],
     },
     chunkFilename: {
       success: ['[id].css'],
-      failure: [true],
-    },
-    moduleFilename: {
-      success: [({ name }) => `${name.replace('/js/', '/css/')}.css`],
       failure: [true],
     },
     ignoreOrder: {
