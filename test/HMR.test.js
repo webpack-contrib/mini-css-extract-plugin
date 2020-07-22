@@ -126,31 +126,6 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should reloads with reloadAll option', (done) => {
-    const update = hotModuleReplacement('./src/style.css', {
-      reloadAll: true,
-    });
-
-    update();
-
-    setTimeout(() => {
-      expect(console.log.mock.calls[0][0]).toMatchSnapshot();
-
-      const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
-      );
-
-      expect(links[0].visited).toBe(true);
-      expect(document.head.innerHTML).toMatchSnapshot();
-
-      links[1].dispatchEvent(getLoadEvent());
-
-      expect(links[1].isLoaded).toBe(true);
-
-      done();
-    }, 100);
-  });
-
   it('should reloads with non http/https link href', (done) => {
     document.head.innerHTML =
       '<link rel="stylesheet" href="/dist/main.css" /><link rel="shortcut icon" href="data:;base64,=" />';

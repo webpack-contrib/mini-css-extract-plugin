@@ -13,8 +13,3 @@ exports[`validate options should throw an error on the "publicPath" option with 
     * options.publicPath should be a string.
     * options.publicPath should be an instance of function."
 `;
-
-exports[`validate options should throw an error on the "reloadAll" option with "1" value 1`] = `
-"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
- - options.reloadAll should be a boolean."
-`;

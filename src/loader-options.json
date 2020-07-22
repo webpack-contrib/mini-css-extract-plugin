@@ -14,9 +14,6 @@
     },
     "esModule": {
       "type": "boolean"
-    },
-    "reloadAll": {
-      "type": "boolean"
     }
   }
 }
