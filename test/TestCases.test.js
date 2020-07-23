@@ -3,6 +3,23 @@ import path from 'path';
 
 import webpack from 'webpack';
 
+function clearDirectory(dirPath) {
+  let files;
+
+  try {
+    files = fs.readdirSync(dirPath);
+  } catch (e) {
+    return;
+  }
+  if (files.length > 0)
+    for (let i = 0; i < files.length; i++) {
+      const filePath = `${dirPath}/${files[i]}`;
+      if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
+      else clearDirectory(filePath);
+    }
+  fs.rmdirSync(dirPath);
+}
+
 function compareDirectory(actual, expected) {
   const files = fs.readdirSync(expected);
 
@@ -28,6 +45,8 @@ function compareDirectory(actual, expected) {
 describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
   const outputDirectory = path.resolve(__dirname, 'js');
+
+  clearDirectory(outputDirectory);
 
   for (const directory of fs.readdirSync(casesDirectory)) {
     if (!/^(\.|_)/.test(directory)) {
