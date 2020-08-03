@@ -491,7 +491,7 @@ class MiniCssExtractPlugin {
     });
   }
 
-  getChunks(chunk, chunkGraph) {
+  getChunkModules(chunk, chunkGraph) {
     return typeof chunkGraph !== 'undefined'
       ? chunkGraph.getOrderedChunkModulesIterable(
           chunk,
