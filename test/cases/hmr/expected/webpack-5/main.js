@@ -3598,7 +3598,6 @@ module.exports = function (x) {
 /******/ 					}
 /******/ 		
 /******/ 					// call accept handlers
-/******/ 					var error = null;
 /******/ 					for (var outdatedModuleId in outdatedDependencies) {
 /******/ 						if (__webpack_require__.o(outdatedDependencies, outdatedModuleId)) {
 /******/ 							var module = __webpack_require__.c[outdatedModuleId];
@@ -3630,7 +3629,7 @@ module.exports = function (x) {
 /******/ 											});
 /******/ 										}
 /******/ 										if (!options.ignoreErrored) {
-/******/ 											if (!error) error = err;
+/******/ 											reportError(err);
 /******/ 										}
 /******/ 									}
 /******/ 								}

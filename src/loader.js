@@ -3,6 +3,7 @@ import NativeModule from 'module';
 import path from 'path';
 
 import loaderUtils from 'loader-utils';
+import webpack from 'webpack';
 import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
 import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
 import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
@@ -131,15 +132,39 @@ export function pitch(request) {
 
   let source;
 
+  if (typeof webpack.RuntimeModule !== 'undefined') {
+    childCompiler.hooks.finishMake.tap(pluginName, (compilation) => {
+      compilation.hooks.processAssets.tap(pluginName, () => {
+        source =
+          compilation.assets[childFilename] &&
+          compilation.assets[childFilename].source();
+
+        // Remove all chunk assets
+        compilation.chunks.forEach((chunk) => {
+          chunk.files.forEach((file) => {
+            delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+          });
+        });
+      });
+    });
+  } else {
+    childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+      source =
+        compilation.assets[childFilename] &&
+        compilation.assets[childFilename].source();
+
+      // Remove all chunk assets
+      compilation.chunks.forEach((chunk) => {
+        chunk.files.forEach((file) => {
+          delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+        });
+      });
+    });
+  }
+
   const callback = this.async();
 
   childCompiler.runAsChild((err, entries, compilation) => {
-    source =
-      compilation.assets[childFilename] &&
-      compilation.assets[childFilename].source();
-
-    delete this._compilation.assets[childFilename];
-
     const addDependencies = (dependencies) => {
       if (!Array.isArray(dependencies) && dependencies != null) {
         throw new Error(

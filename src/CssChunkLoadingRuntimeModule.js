@@ -16,10 +16,6 @@ class CssChunkLoadingRuntimeModule extends RuntimeModule {
     const fn = RuntimeGlobals.ensureChunkHandlers;
     const { compilation, chunk } = this;
     const { runtimeTemplate } = compilation;
-    const withCompat = this.runtimeRequirements.has(
-      RuntimeGlobals.compatGetDefaultExport
-    );
-
     const chunkMaps = chunk.getChunkMaps();
     const { crossOriginLoading } = compilation.outputOptions;
     const linkHrefPath = compilation.getAssetPath(
@@ -81,76 +77,73 @@ class CssChunkLoadingRuntimeModule extends RuntimeModule {
       ),
       '}',
       '',
-      withCompat
-        ? Template.asString([
-            `${fn}.n = ${runtimeTemplate.basicFunction(
-              'chunkId, promises',
+      Template.asString([
+        `${fn}.n = ${runtimeTemplate.basicFunction(
+          'chunkId, promises',
+          Template.indent([
+            `// ${this.pluginName} CSS loading`,
+            `var cssChunks = ${JSON.stringify(this.chunkMap)};`,
+            'if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);',
+            'else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {',
+            Template.indent([
+              'promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {',
               Template.indent([
-                // source,
-                `// ${this.pluginName} CSS loading`,
-                `var cssChunks = ${JSON.stringify(this.chunkMap)};`,
-                'if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);',
-                'else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {',
+                `var href = ${linkHrefPath};`,
+                `var fullhref = __webpack_require__.p + href;`,
+                'var existingLinkTags = document.getElementsByTagName("link");',
+                'for(var i = 0; i < existingLinkTags.length; i++) {',
                 Template.indent([
-                  'promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {',
-                  Template.indent([
-                    `var href = ${linkHrefPath};`,
-                    `var fullhref = __webpack_require__.p + href;`,
-                    'var existingLinkTags = document.getElementsByTagName("link");',
-                    'for(var i = 0; i < existingLinkTags.length; i++) {',
-                    Template.indent([
-                      'var tag = existingLinkTags[i];',
-                      'var dataHref = tag.getAttribute("data-href") || tag.getAttribute("href");',
-                      'if(tag.rel === "stylesheet" && (dataHref === href || dataHref === fullhref)) return resolve();',
-                    ]),
-                    '}',
-                    'var existingStyleTags = document.getElementsByTagName("style");',
-                    'for(var i = 0; i < existingStyleTags.length; i++) {',
-                    Template.indent([
-                      'var tag = existingStyleTags[i];',
-                      'var dataHref = tag.getAttribute("data-href");',
-                      'if(dataHref === href || dataHref === fullhref) return resolve();',
-                    ]),
-                    '}',
-                    'var linkTag = document.createElement("link");',
-                    'linkTag.rel = "stylesheet";',
-                    'linkTag.type = "text/css";',
-                    'linkTag.onload = resolve;',
-                    'linkTag.onerror = function(event) {',
-                    Template.indent([
-                      'var request = event && event.target && event.target.src || fullhref;',
-                      'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
-                      'err.code = "CSS_CHUNK_LOAD_FAILED";',
-                      'err.request = request;',
-                      'delete installedCssChunks[chunkId]',
-                      'linkTag.parentNode.removeChild(linkTag)',
-                      'reject(err);',
-                    ]),
-                    '};',
-                    'linkTag.href = fullhref;',
-                    crossOriginLoading
-                      ? Template.asString([
-                          `if (linkTag.href.indexOf(window.location.origin + '/') !== 0) {`,
-                          Template.indent(
-                            `linkTag.crossOrigin = ${JSON.stringify(
-                              crossOriginLoading
-                            )};`
-                          ),
-                          '}',
-                        ])
-                      : '',
-                    'var head = document.getElementsByTagName("head")[0];',
-                    'head.appendChild(linkTag);',
-                  ]),
-                  '}).then(function() {',
-                  Template.indent(['installedCssChunks[chunkId] = 0;']),
-                  '}));',
+                  'var tag = existingLinkTags[i];',
+                  'var dataHref = tag.getAttribute("data-href") || tag.getAttribute("href");',
+                  'if(tag.rel === "stylesheet" && (dataHref === href || dataHref === fullhref)) return resolve();',
                 ]),
                 '}',
-              ])
-            )};`,
+                'var existingStyleTags = document.getElementsByTagName("style");',
+                'for(var i = 0; i < existingStyleTags.length; i++) {',
+                Template.indent([
+                  'var tag = existingStyleTags[i];',
+                  'var dataHref = tag.getAttribute("data-href");',
+                  'if(dataHref === href || dataHref === fullhref) return resolve();',
+                ]),
+                '}',
+                'var linkTag = document.createElement("link");',
+                'linkTag.rel = "stylesheet";',
+                'linkTag.type = "text/css";',
+                'linkTag.onload = resolve;',
+                'linkTag.onerror = function(event) {',
+                Template.indent([
+                  'var request = event && event.target && event.target.src || fullhref;',
+                  'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
+                  'err.code = "CSS_CHUNK_LOAD_FAILED";',
+                  'err.request = request;',
+                  'delete installedCssChunks[chunkId]',
+                  'linkTag.parentNode.removeChild(linkTag)',
+                  'reject(err);',
+                ]),
+                '};',
+                'linkTag.href = fullhref;',
+                crossOriginLoading
+                  ? Template.asString([
+                      `if (linkTag.href.indexOf(window.location.origin + '/') !== 0) {`,
+                      Template.indent(
+                        `linkTag.crossOrigin = ${JSON.stringify(
+                          crossOriginLoading
+                        )};`
+                      ),
+                      '}',
+                    ])
+                  : '',
+                'var head = document.getElementsByTagName("head")[0];',
+                'head.appendChild(linkTag);',
+              ]),
+              '}).then(function() {',
+              Template.indent(['installedCssChunks[chunkId] = 0;']),
+              '}));',
+            ]),
+            '}',
           ])
-        : '',
+        )};`,
+      ]),
     ]);
   }
 }

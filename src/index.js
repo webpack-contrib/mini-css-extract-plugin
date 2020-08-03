@@ -170,7 +170,7 @@ class MiniCssExtractPlugin {
             const { chunkGraph } = compilation;
 
             const renderedModules = Array.from(
-              this.getChunks(chunk, chunkGraph)
+              this.getChunkModules(chunk, chunkGraph)
             ).filter((module) => module.type === MODULE_TYPE);
 
             const filenameTemplate =
@@ -203,7 +203,7 @@ class MiniCssExtractPlugin {
             const { chunkGraph } = compilation;
 
             const renderedModules = Array.from(
-              this.getChunks(chunk, chunkGraph)
+              this.getChunkModules(chunk, chunkGraph)
             ).filter((module) => module.type === MODULE_TYPE);
 
             const filenameTemplate =
@@ -236,7 +236,7 @@ class MiniCssExtractPlugin {
             const { chunkGraph } = compilation;
 
             const renderedModules = Array.from(
-              this.getChunks(chunk, chunkGraph)
+              this.getChunkModules(chunk, chunkGraph)
             ).filter((module) => module.type === MODULE_TYPE);
 
             const filenameTemplate =
@@ -297,9 +297,9 @@ class MiniCssExtractPlugin {
         const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
         const hash = createHash(hashFunction);
 
-        for (const m of this.getChunks(chunk, chunkGraph)) {
+        for (const m of this.getChunkModules(chunk, chunkGraph)) {
           if (m.type === MODULE_TYPE) {
-            m.updateHash(hash, chunkGraph);
+            m.updateHash(hash, { chunkGraph });
           }
         }
 
@@ -505,7 +505,7 @@ class MiniCssExtractPlugin {
     const { chunkGraph } = compilation;
 
     for (const chunk of mainChunk.getAllAsyncChunks()) {
-      for (const module of this.getChunks(chunk, chunkGraph)) {
+      for (const module of this.getChunkModules(chunk, chunkGraph)) {
         if (module.type === MODULE_TYPE) {
           obj[chunk.id] = 1;
           break;
