@@ -6,9 +6,11 @@ import { createFsFromVolume, Volume } from 'memfs';
 import MiniCssExtractPlugin from '../../src';
 
 export default (fixture, loaderOptions = {}, config = {}) => {
+  const { outputFileSystem, ...cnfg } = config;
+
   const fullConfig = {
     mode: 'development',
-    devtool: config.devtool || false,
+    devtool: cnfg.devtool || false,
     context: path.resolve(__dirname, '../fixtures'),
     entry: path.resolve(__dirname, '../fixtures', fixture),
     output: {
@@ -40,16 +42,18 @@ export default (fixture, loaderOptions = {}, config = {}) => {
         chunkFilename: '[id].css',
       }),
     ],
-    ...config,
+    ...cnfg,
   };
 
   const compiler = webpack(fullConfig);
 
-  if (!config.outputFileSystem) {
-    const outputFileSystem = createFsFromVolume(new Volume());
+  if (!outputFileSystem) {
+    const outputFS = createFsFromVolume(new Volume());
     // Todo remove when we drop webpack@4 support
-    outputFileSystem.join = path.join.bind(path);
+    outputFS.join = path.join.bind(path);
 
+    compiler.outputFileSystem = outputFS;
+  } else {
     compiler.outputFileSystem = outputFileSystem;
   }
 
