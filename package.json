@@ -46,6 +46,7 @@
     "loader-utils": "^1.1.0",
     "normalize-url": "1.9.1",
     "schema-utils": "^1.0.0",
+    "tapable": "^1.1.3",
     "webpack-sources": "^1.1.0"
   },
   "devDependencies": {
