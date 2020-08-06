@@ -12,6 +12,7 @@ const ENABLE_ES_MODULE =
 
 module.exports = {
   mode: 'development',
+  devtool: 'cheap-source-map',
   output: {
     chunkFilename: '[contenthash].js',
     publicPath: '/dist/',
@@ -23,6 +24,9 @@ module.exports = {
         test: /\.css$/,
         exclude: [/\.module\.css$/i],
         use: [
+          {
+            loader : 'style-loader',
+          },
           {
             loader: Self.loader,
             options: {
@@ -61,6 +65,13 @@ module.exports = {
     new Self({
       filename: '[name].css',
       chunkFilename: '[contenthash].css',
+      disableExtract({ module }) {
+        let ret = false;
+        if (module.content.indexOf('async-disabled') > -1) {
+          ret = true;
+        }
+        return ret;
+      },
     }),
   ],
   devServer: {

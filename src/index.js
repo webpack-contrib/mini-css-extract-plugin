@@ -24,6 +24,16 @@ const REGEXP_NAME = /\[name\]/i;
 const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
 
+function isInitialOrHasNoParents(chunk) {
+  let parentCount = 0;
+
+  for (const chunkGroup of chunk.groupsIterable) {
+    parentCount += chunkGroup.getNumberOfParents();
+  }
+
+  return chunk.isOnlyInitial() || parentCount === 0;
+}
+
 class CssDependencyTemplate {
   apply() {}
 }
@@ -129,6 +139,20 @@ class MiniCssExtractPlugin {
 
   apply(compiler) {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+      let moduleToBeRebuild = new Set();
+      // eslint-disable-next-line no-param-reassign
+      compilation[MODULE_TYPE] = {
+        moduleToBeRebuild,
+      };
+
+      compilation.hooks.normalModuleLoader.tap(pluginName, (lc, m) => {
+        const loaderContext = lc;
+        const module = m;
+        loaderContext[`${MODULE_TYPE}/disableExtract`] = () => {
+          return !!module[`${MODULE_TYPE}/disableExtract`];
+        };
+      });
+
       compilation.dependencyFactories.set(
         CssDependency,
         new CssModuleFactory()
@@ -390,7 +414,63 @@ class MiniCssExtractPlugin {
           return source;
         }
       );
+
+      compilation.hooks.optimizeTree.tapAsync(
+        pluginName,
+        (chunks, modules, callback) => {
+          const promises = [];
+
+          for (const chunk of chunks) {
+            const isAsync = !isInitialOrHasNoParents(chunk);
+            for (const module of chunk.modulesIterable) {
+              if (module.type === MODULE_TYPE) {
+                if (this.shouldDisableExtract({ module, isAsync })) {
+                  moduleToBeRebuild.add(module);
+                }
+              }
+            }
+          }
+
+          for (const currentModuleToBeRebuild of moduleToBeRebuild) {
+            const { issuer } = currentModuleToBeRebuild;
+            if (!issuer[`${MODULE_TYPE}/disableExtract`]) {
+              issuer[`${MODULE_TYPE}/disableExtract`] = true;
+              promises.push(
+                new Promise((resolve) => {
+                  compilation.rebuildModule(issuer, (err) => {
+                    if (err) {
+                      compilation.errors.push(err);
+                    }
+                    resolve();
+                  });
+                })
+              );
+            }
+          }
+
+          Promise.all(promises).then(() => callback());
+        }
+      );
+
+      // Trigger seal again if there are modules to be rebuilt
+      compilation.hooks.needAdditionalSeal.tap(pluginName, () => {
+        if (moduleToBeRebuild.size > 0) {
+          moduleToBeRebuild = new Set();
+          return true;
+        }
+        return false;
+      });
     });
+  }
+
+  shouldDisableExtract({ module, isAsync }) {
+    const { disableExtract } = this.options;
+    let shouldDisable = false;
+    if (typeof disableExtract === 'function') {
+      shouldDisable = disableExtract({ module, isAsync });
+    }
+
+    return shouldDisable;
   }
 
   getCssChunkObject(mainChunk) {

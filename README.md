@@ -499,7 +499,22 @@ module.exports = {
 };
 ```
 
-### Module Filename Option
+### Disable Extracting Specified CSS from Chunks
+
+You may disable extracting css modules programmatically by passing a function.
+
+```javascript
+const miniCssExtractPlugin = new MiniCssExtractPlugin({
+  disableExtract({ module, isAsync }) {
+    // Do whatever you want. Disable by content size for example:
+    // return module.content.length < 10 * 1024;
+    // Or disable extracting from all async chunks
+    return isAsync;
+  },
+});
+```
+
+#### Module Filename Option
 
 With the `moduleFilename` option you can use chunk data to customize the filename. This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk. In the example below, we'll use `moduleFilename` to output the generated css into a different directory.
 

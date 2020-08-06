@@ -1,0 +1,5 @@
+@import './async-import.css';
+
+.in-async-2 {
+  background: green;
+}

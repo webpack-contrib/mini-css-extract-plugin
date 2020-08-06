@@ -14,6 +14,7 @@ import CssDependency from './CssDependency';
 
 import schema from './loader-options.json';
 
+const MODULE_TYPE = 'css/mini-extract';
 const pluginName = 'mini-css-extract-plugin';
 
 function hotLoader(content, context) {
@@ -65,6 +66,10 @@ export function pitch(request) {
   const loaders = this.loaders.slice(this.loaderIndex + 1);
 
   this.addDependency(this.resourcePath);
+
+  if (this[`${MODULE_TYPE}/disableExtract`]()) {
+    return;
+  }
 
   const childFilename = '*';
   const publicPath =
@@ -223,4 +228,6 @@ export function pitch(request) {
   });
 }
 
-export default function() {}
+export default function(source) {
+  return source;
+}
