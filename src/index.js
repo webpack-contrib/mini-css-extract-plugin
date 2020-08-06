@@ -103,12 +103,7 @@ class CssModule extends webpack.Module {
 }
 
 class CssModuleFactory {
-  create(
-    {
-      dependencies: [dependency],
-    },
-    callback
-  ) {
+  create({ dependencies: [dependency] }, callback) {
     callback(null, new CssModule(dependency));
   }
 }

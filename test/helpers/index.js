@@ -1,4 +1,5 @@
 import compile from './compile';
 import getCompiler from './getCompiler';
+import source from './source';
 
-export { compile, getCompiler };
+export { source, compile, getCompiler };

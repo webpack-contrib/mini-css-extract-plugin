@@ -402,7 +402,7 @@ When inlining CSS `data-href` must be used.
 
 ### Extracting all CSS in a single file
 
-Similar to what [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin) does, the CSS can be extracted in one CSS file using `optimization.splitChunks.cacheGroups`.
+The CSS can be extracted in one CSS file using `optimization.splitChunks.cacheGroups`.
 
 **webpack.config.js**
 
@@ -514,7 +514,7 @@ const miniCssExtractPlugin = new MiniCssExtractPlugin({
 });
 ```
 
-### Module Filename Option
+#### Module Filename Option
 
 With the `moduleFilename` option you can use chunk data to customize the filename. This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk. In the example below, we'll use `moduleFilename` to output the generated css into a different directory.
 
@@ -616,11 +616,11 @@ Please take a moment to read our contributing guidelines if you haven't yet done
 [node-url]: https://nodejs.org
 [deps]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin.svg
 [deps-url]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin
-[tests]: https://dev.azure.com/webpack-contrib/mini-css-extract-plugin/_apis/build/status/webpack-contrib.mini-css-extract-plugin?branchName=master
-[tests-url]: https://dev.azure.com/webpack-contrib/mini-css-extract-plugin/_build/latest?definitionId=6&branchName=master
+[tests]: https://github.com/webpack-contrib/mini-css-extract-plugin/workflows/mini-css-extract-plugin/badge.svg
+[tests-url]: https://github.com/webpack-contrib/mini-css-extract-plugin/actions
 [cover]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin/branch/master/graph/badge.svg
 [cover-url]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin
-[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
+[chat]: https://badges.gitter.im/webpack/webpack.svg
 [chat-url]: https://gitter.im/webpack/webpack
 [size]: https://packagephobia.now.sh/badge?p=mini-css-extract-plugin
 [size-url]: https://packagephobia.now.sh/result?p=mini-css-extract-plugin
