@@ -228,4 +228,6 @@ export function pitch(request) {
   });
 }
 
-export default function() {}
+export default function(source) {
+  return source;
+}
