@@ -28,8 +28,23 @@ function compareDirectory(actual, expected) {
 describe('TestCases', () => {
   const casesDirectory = path.resolve(__dirname, 'cases');
   const outputDirectory = path.resolve(__dirname, 'js');
+  const tests = fs.readdirSync(casesDirectory).filter((test) => {
+    const testDirectory = path.join(casesDirectory, test);
+    const filterPath = path.join(testDirectory, 'test.filter.js');
 
-  for (const directory of fs.readdirSync(casesDirectory)) {
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    if (fs.existsSync(filterPath) && !require(filterPath)()) {
+      describe.skip(test, () => {
+        it('filtered', () => {});
+      });
+
+      return false;
+    }
+
+    return true;
+  });
+
+  for (const directory of tests) {
     if (!/^(\.|_)/.test(directory)) {
       // eslint-disable-next-line no-loop-func
       it(`${directory} should compile to the expected result`, (done) => {
