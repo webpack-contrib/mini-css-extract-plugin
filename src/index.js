@@ -13,6 +13,7 @@ const {
   Template,
   util: { createHash },
 } = webpack;
+const { SyncWaterfallHook } = require('tapable');
 
 const MODULE_TYPE = 'css/mini-extract';
 
@@ -129,6 +130,11 @@ class MiniCssExtractPlugin {
 
   apply(compiler) {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+      // eslint-disable-next-line no-param-reassign
+      compilation.hooks.miniCssExtractPluginBeforeLinkAppend = new SyncWaterfallHook(
+        ['source', 'chunk', 'hash']
+      );
+
       compilation.dependencyFactories.set(
         CssDependency,
         new CssModuleFactory()
@@ -377,6 +383,11 @@ class MiniCssExtractPlugin {
                       ])
                     : '',
                   'var head = document.getElementsByTagName("head")[0];',
+                  compilation.hooks.miniCssExtractPluginBeforeLinkAppend.call(
+                    source,
+                    chunk,
+                    hash
+                  ),
                   'head.appendChild(linkTag);',
                 ]),
                 '}).then(function() {',
