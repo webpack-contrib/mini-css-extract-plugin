@@ -278,7 +278,7 @@ class MiniCssExtractPlugin {
             Template.indent(
               chunk.ids.map((id) => `${JSON.stringify(id)}: 0`).join(',\n')
             ),
-            '}',
+            '};',
           ]);
         }
 
