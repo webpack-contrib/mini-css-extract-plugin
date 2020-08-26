@@ -60,10 +60,7 @@ function findModuleById(modules, id) {
 export function pitch(request) {
   const options = loaderUtils.getOptions(this) || {};
 
-  validateOptions(schema, options, {
-    name: 'Mini CSS Extract Plugin Loader',
-    baseDataPath: 'options',
-  });
+  validateOptions(schema, options, 'Mini CSS Extract Plugin Loader');
 
   const loaders = this.loaders.slice(this.loaderIndex + 1);
 
