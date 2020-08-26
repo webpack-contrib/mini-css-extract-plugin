@@ -59,7 +59,7 @@
     "babel-eslint": "^10.0.2",
     "babel-jest": "^26.3.0",
     "cross-env": "^7.0.2",
-    "css-loader": "^3.3.2",
+    "css-loader": "^4.2.2",
     "del": "^5.1.0",
     "del-cli": "^3.0.1",
     "es-check": "^5.0.0",
