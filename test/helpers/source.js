@@ -15,5 +15,6 @@ export default function getSource(name, stats) {
     }
   }
 
+  // eslint-disable-next-line no-undefined
   return undefined;
 }

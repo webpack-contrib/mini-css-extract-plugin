@@ -223,4 +223,5 @@ export function pitch(request) {
   });
 }
 
+// eslint-disable-next-line func-names
 export default function() {}
