@@ -16,7 +16,7 @@ const { forEach } = Array.prototype;
 function debounce(fn, time) {
   let timeout = 0;
 
-  return function() {
+  return function () {
     const self = this;
     // eslint-disable-next-line prefer-rest-params
     const args = arguments;
@@ -50,7 +50,7 @@ function getCurrentScriptUrl(moduleId) {
     srcByModuleId[moduleId] = src;
   }
 
-  return function(fileMap) {
+  return function (fileMap) {
     if (!src) {
       return null;
     }
@@ -195,7 +195,7 @@ function isUrlRequest(url) {
   return true;
 }
 
-module.exports = function(moduleId, options) {
+module.exports = function (moduleId, options) {
   if (noDocument) {
     console.log('no window.document found, will not HMR CSS');
 

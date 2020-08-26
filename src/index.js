@@ -102,7 +102,10 @@ class CssModuleFactory {
 
 class MiniCssExtractPlugin {
   constructor(options = {}) {
-    validateOptions(schema, options, 'Mini CSS Extract Plugin');
+    validateOptions(schema, options, {
+      name: 'Mini CSS Extract Plugin',
+      baseDataPath: 'options',
+    });
 
     this.options = Object.assign(
       {
