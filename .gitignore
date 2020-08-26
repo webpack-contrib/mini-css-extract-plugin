@@ -5,6 +5,7 @@ npm-debug.log*
 /coverage
 /dist
 /test/js
+/test/outputs
 /local
 /reports
 /node_modules
