@@ -18,7 +18,19 @@ function compareDirectory(actual, expected) {
       );
     } else if (stats.isFile()) {
       const content = fs.readFileSync(path.resolve(expected, file), 'utf8');
-      const actualContent = fs.readFileSync(path.resolve(actual, file), 'utf8');
+      let actualContent;
+
+      try {
+        actualContent = fs.readFileSync(path.resolve(actual, file), 'utf8');
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error);
+
+        const dir = fs.readdirSync(actual);
+
+        // eslint-disable-next-line no-console
+        console.log({ [actual]: dir });
+      }
 
       expect(actualContent).toEqual(content);
     }
