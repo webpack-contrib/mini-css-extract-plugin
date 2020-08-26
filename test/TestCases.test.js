@@ -7,6 +7,23 @@ import path from 'path';
 
 import webpack from 'webpack';
 
+function clearDirectory(dirPath) {
+  let files;
+
+  try {
+    files = fs.readdirSync(dirPath);
+  } catch (e) {
+    return;
+  }
+  if (files.length > 0)
+    for (let i = 0; i < files.length; i++) {
+      const filePath = `${dirPath}/${files[i]}`;
+      if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
+      else clearDirectory(filePath);
+    }
+  fs.rmdirSync(dirPath);
+}
+
 function compareDirectory(actual, expected) {
   const files = fs.readdirSync(expected);
 
@@ -22,7 +39,19 @@ function compareDirectory(actual, expected) {
       );
     } else if (stats.isFile()) {
       const content = fs.readFileSync(path.resolve(expected, file), 'utf8');
-      const actualContent = fs.readFileSync(path.resolve(actual, file), 'utf8');
+      let actualContent;
+
+      try {
+        actualContent = fs.readFileSync(path.resolve(actual, file), 'utf8');
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log(error);
+
+        const dir = fs.readdirSync(actual);
+
+        // eslint-disable-next-line no-console
+        console.log({ [actual]: dir });
+      }
 
       expect(actualContent).toEqual(content);
     }
@@ -47,6 +76,8 @@ describe('TestCases', () => {
 
     return true;
   });
+
+  clearDirectory(outputDirectory);
 
   for (const directory of tests) {
     if (!/^(\.|_)/.test(directory)) {
@@ -86,21 +117,22 @@ describe('TestCases', () => {
           done();
 
           // eslint-disable-next-line no-console
-          console.log(
-            stats.toString({
-              context: path.resolve(__dirname, '..'),
-              chunks: true,
-              chunkModules: true,
-              modules: false,
-            })
-          );
+          // console.log(
+          //   stats.toString({
+          //     context: path.resolve(__dirname, '..'),
+          //     chunks: true,
+          //     chunkModules: true,
+          //     modules: false,
+          //   })
+          // );
 
-          if (stats.hasErrors()) {
+          if (stats.hasErrors() && stats.hasWarnings()) {
             done(
               new Error(
                 stats.toString({
                   context: path.resolve(__dirname, '..'),
                   errorDetails: true,
+                  warnings: true,
                 })
               )
             );
