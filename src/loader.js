@@ -3,11 +3,13 @@ import NativeModule from 'module';
 import path from 'path';
 
 import loaderUtils from 'loader-utils';
+import { version as webpackVersion } from 'webpack';
 import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
 import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
 import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
 import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
+import NormalModule from 'webpack/lib/NormalModule';
 import validateOptions from 'schema-utils';
 
 import CssDependency from './CssDependency';
@@ -15,6 +17,8 @@ import CssDependency from './CssDependency';
 import schema from './loader-options.json';
 
 const pluginName = 'mini-css-extract-plugin';
+
+const isWebpack4 = webpackVersion[0] === '4';
 
 function hotLoader(content, context) {
   const accept = context.locals
@@ -47,9 +51,16 @@ function evalModuleCode(loaderContext, code, filename) {
   return module.exports;
 }
 
-function findModuleById(modules, id) {
+function findModuleById(compilation, id) {
+  const { modules, chunkGraph } = compilation;
+
   for (const module of modules) {
-    if (module.id === id) {
+    const moduleId =
+      typeof chunkGraph !== 'undefined'
+        ? chunkGraph.getModuleId(module)
+        : module.id;
+
+    if (moduleId === id) {
       return module;
     }
   }
@@ -95,41 +106,60 @@ export function pitch(request) {
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
     (compilation) => {
-      compilation.hooks.normalModuleLoader.tap(
-        `${pluginName} loader`,
-        (loaderContext, module) => {
-          // eslint-disable-next-line no-param-reassign
-          loaderContext.emitFile = this.emitFile;
+      const normalModuleHook =
+        typeof NormalModule.getCompilationHooks !== 'undefined'
+          ? NormalModule.getCompilationHooks(compilation).loader
+          : compilation.hooks.normalModuleLoader;
 
-          if (module.request === request) {
-            // eslint-disable-next-line no-param-reassign
-            module.loaders = loaders.map((loader) => {
-              return {
-                loader: loader.path,
-                options: loader.options,
-                ident: loader.ident,
-              };
-            });
-          }
+      normalModuleHook.tap(`${pluginName} loader`, (loaderContext, module) => {
+        // eslint-disable-next-line no-param-reassign
+        loaderContext.emitFile = this.emitFile;
+
+        if (module.request === request) {
+          // eslint-disable-next-line no-param-reassign
+          module.loaders = loaders.map((loader) => {
+            return {
+              loader: loader.path,
+              options: loader.options,
+              ident: loader.ident,
+            };
+          });
         }
-      );
+      });
     }
   );
 
   let source;
 
-  childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-    source =
-      compilation.assets[childFilename] &&
-      compilation.assets[childFilename].source();
+  if (isWebpack4) {
+    childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+      source =
+        compilation.assets[childFilename] &&
+        compilation.assets[childFilename].source();
 
-    // Remove all chunk assets
-    compilation.chunks.forEach((chunk) => {
-      chunk.files.forEach((file) => {
-        delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+      // Remove all chunk assets
+      compilation.chunks.forEach((chunk) => {
+        chunk.files.forEach((file) => {
+          delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+        });
       });
     });
-  });
+  } else {
+    childCompiler.hooks.compilation.tap(pluginName, (compilation) => {
+      compilation.hooks.processAssets.tap(pluginName, () => {
+        source =
+          compilation.assets[childFilename] &&
+          compilation.assets[childFilename].source();
+
+        // Remove all chunk assets
+        compilation.chunks.forEach((chunk) => {
+          chunk.files.forEach((file) => {
+            delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+          });
+        });
+      });
+    });
+  }
 
   const callback = this.async();
 
@@ -187,7 +217,7 @@ export function pitch(request) {
         dependencies = [[null, exports]];
       } else {
         dependencies = exports.map(([id, content, media, sourceMap]) => {
-          const module = findModuleById(compilation.modules, id);
+          const module = findModuleById(compilation, id);
 
           return {
             identifier: module.identifier(),
