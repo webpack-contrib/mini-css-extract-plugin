@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 
-import webpack from 'webpack';
+import webpack, { version as webpackVersion } from 'webpack';
 
 import validateOptions from 'schema-utils';
 
@@ -17,6 +17,8 @@ const {
   util: { createHash },
 } = webpack;
 
+const isWebpack4 = webpackVersion[0] === '4';
+
 const MODULE_TYPE = 'css/mini-extract';
 
 const pluginName = 'mini-css-extract-plugin';
@@ -24,6 +26,7 @@ const pluginName = 'mini-css-extract-plugin';
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
+const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
 
 const compareIds = (a, b) => {
@@ -129,24 +132,15 @@ class MiniCssExtractPlugin {
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
 
-      if (typeof filename !== 'function') {
-        const hasName = filename.includes('[name]');
-        const hasId = filename.includes('[id]');
-        const hasChunkHash = filename.includes('[chunkhash]');
-        const hasContentHash = filename.includes('[contenthash]');
-
-        // Anything changing depending on chunk is fine
-        if (hasChunkHash || hasContentHash || hasName || hasId) {
-          this.options.chunkFilename = filename;
-        } else {
-          // Otherwise prefix "[id]." in front of the basename to make it changing
-          this.options.chunkFilename = filename.replace(
-            /(^|\/)([^/]*(?:\?|$))/,
-            '$1[id].$2'
-          );
-        }
+      // Anything changing depending on chunk is fine
+      if (filename.match(REGEXP_PLACEHOLDERS)) {
+        this.options.chunkFilename = filename;
       } else {
-        this.options.chunkFilename = DEFAULT_FILENAME;
+        // Elsewise prefix '[id].' in front of the basename to make it changing
+        this.options.chunkFilename = filename.replace(
+          /(^|\/)([^/]*(?:\?|$))/,
+          '$1[id].$2'
+        );
       }
     }
   }
@@ -163,8 +157,7 @@ class MiniCssExtractPlugin {
         new CssDependencyTemplate()
       );
 
-      // Webpack 4
-      if (!compilation.hooks.renderManifest) {
+      if (isWebpack4) {
         compilation.mainTemplate.hooks.renderManifest.tap(
           pluginName,
           (result, { chunk }) => {
@@ -272,7 +265,11 @@ class MiniCssExtractPlugin {
         );
       }
 
-      if (typeof webpack.RuntimeModule === 'undefined') {
+      /*
+       * For webpack 5 this will be unneeded once the logic uses a RuntimeModule
+       * as the content of runtime modules is hashed and added to the chunk hash automatically
+       * */
+      if (isWebpack4) {
         compilation.mainTemplate.hooks.hashForChunk.tap(
           pluginName,
           (hash, chunk) => {
@@ -340,27 +337,24 @@ class MiniCssExtractPlugin {
         pluginName,
         (source, chunk, hash) => {
           const chunkMap = this.getCssChunkObject(chunk, compilation);
-          const isWebpackNext = typeof webpack.RuntimeGlobals !== 'undefined';
 
           if (Object.keys(chunkMap).length > 0) {
-            const maintemplateObject = isWebpackNext
-              ? compilation
-              : mainTemplate;
+            const maintemplateObject = isWebpack4 ? mainTemplate : compilation;
             const chunkMaps = chunk.getChunkMaps();
             const { crossOriginLoading } = maintemplateObject.outputOptions;
             const linkHrefPath = maintemplateObject.getAssetPath(
               JSON.stringify(this.options.chunkFilename),
               {
-                hash: isWebpackNext
-                  ? `" + ${webpack.RuntimeGlobals.getFullHash} + "`
-                  : `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
+                hash: isWebpack4
+                  ? `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`
+                  : `" + ${webpack.RuntimeGlobals.getFullHash} + "`,
                 hashWithLength: (length) =>
-                  isWebpackNext
-                    ? `" + ${webpack.RuntimeGlobals.getFullHash} + "`
-                    : `" + ${mainTemplate.renderCurrentHashCode(
+                  isWebpack4
+                    ? `" + ${mainTemplate.renderCurrentHashCode(
                         hash,
                         length
-                      )} + "`,
+                      )} + "`
+                    : `" + ${webpack.RuntimeGlobals.getFullHash} + "`,
                 chunk: {
                   id: '" + chunkId + "',
                   hash: `" + ${JSON.stringify(chunkMaps.hash)}[chunkId] + "`,
@@ -422,9 +416,9 @@ class MiniCssExtractPlugin {
                 Template.indent([
                   `var href = ${linkHrefPath};`,
                   `var fullhref = ${
-                    isWebpackNext
-                      ? '__webpack_require__'
-                      : mainTemplate.requireFn
+                    isWebpack4
+                      ? mainTemplate.requireFn
+                      : webpack.RuntimeGlobals.require
                   }.p + href;`,
                   'var existingLinkTags = document.getElementsByTagName("link");',
                   'for(var i = 0; i < existingLinkTags.length; i++) {',

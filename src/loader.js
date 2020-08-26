@@ -3,7 +3,7 @@ import NativeModule from 'module';
 import path from 'path';
 
 import loaderUtils from 'loader-utils';
-import webpack from 'webpack';
+import { version as webpackVersion } from 'webpack';
 import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
 import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
 import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
@@ -17,6 +17,8 @@ import CssDependency from './CssDependency';
 import schema from './loader-options.json';
 
 const pluginName = 'mini-css-extract-plugin';
+
+const isWebpack4 = webpackVersion[0] === '4';
 
 function hotLoader(content, context) {
   const accept = context.locals
@@ -129,8 +131,21 @@ export function pitch(request) {
 
   let source;
 
-  if (typeof webpack.RuntimeModule !== 'undefined') {
-    childCompiler.hooks.finishMake.tap(pluginName, (compilation) => {
+  if (isWebpack4) {
+    childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+      source =
+        compilation.assets[childFilename] &&
+        compilation.assets[childFilename].source();
+
+      // Remove all chunk assets
+      compilation.chunks.forEach((chunk) => {
+        chunk.files.forEach((file) => {
+          delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+        });
+      });
+    });
+  } else {
+    childCompiler.hooks.compilation.tap(pluginName, (compilation) => {
       compilation.hooks.processAssets.tap(pluginName, () => {
         source =
           compilation.assets[childFilename] &&
@@ -141,19 +156,6 @@ export function pitch(request) {
           chunk.files.forEach((file) => {
             delete compilation.assets[file]; // eslint-disable-line no-param-reassign
           });
-        });
-      });
-    });
-  } else {
-    childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
-      source =
-        compilation.assets[childFilename] &&
-        compilation.assets[childFilename].source();
-
-      // Remove all chunk assets
-      compilation.chunks.forEach((chunk) => {
-        chunk.files.forEach((file) => {
-          delete compilation.assets[file]; // eslint-disable-line no-param-reassign
         });
       });
     });
