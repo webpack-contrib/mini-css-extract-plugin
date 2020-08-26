@@ -1,14 +1,16 @@
 /* eslint-disable class-methods-use-this */
 
 import webpack from 'webpack';
-import sources from 'webpack-sources';
-
 import validateOptions from 'schema-utils';
 
 import CssDependency from './CssDependency';
 import schema from './plugin-options.json';
 
-const { ConcatSource, SourceMapSource, OriginalSource } = sources;
+// webpack 5 exposes the sources property to ensure the right version of webpack-sources is used
+const { ConcatSource, SourceMapSource, OriginalSource } =
+  // eslint-disable-next-line global-require
+  webpack.sources || require('webpack-sources');
+
 const {
   Template,
   util: { createHash },
