@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
 import webpack from 'webpack';
+
 import validateOptions from 'schema-utils';
 
 import CssDependency from './CssDependency';
@@ -23,8 +24,20 @@ const pluginName = 'mini-css-extract-plugin';
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
-const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
+
+const compareIds = (a, b) => {
+  if (typeof a !== typeof b) {
+    return typeof a < typeof b ? -1 : 1;
+  }
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+};
+
+const compareModulesByIdentifier = (a, b) => {
+  return compareIds(a.identifier(), b.identifier());
+};
 
 class CssDependencyTemplate {
   apply() {}
@@ -85,8 +98,8 @@ class CssModule extends webpack.Module {
     callback();
   }
 
-  updateHash(hash) {
-    super.updateHash(hash);
+  updateHash(hash, context) {
+    super.updateHash(hash, context);
 
     hash.update(this.content);
     hash.update(this.media || '');
@@ -116,15 +129,24 @@ class MiniCssExtractPlugin {
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
 
-      // Anything changing depending on chunk is fine
-      if (filename.match(REGEXP_PLACEHOLDERS)) {
-        this.options.chunkFilename = filename;
+      if (typeof filename !== 'function') {
+        const hasName = filename.includes('[name]');
+        const hasId = filename.includes('[id]');
+        const hasChunkHash = filename.includes('[chunkhash]');
+        const hasContentHash = filename.includes('[contenthash]');
+
+        // Anything changing depending on chunk is fine
+        if (hasChunkHash || hasContentHash || hasName || hasId) {
+          this.options.chunkFilename = filename;
+        } else {
+          // Otherwise prefix "[id]." in front of the basename to make it changing
+          this.options.chunkFilename = filename.replace(
+            /(^|\/)([^/]*(?:\?|$))/,
+            '$1[id].$2'
+          );
+        }
       } else {
-        // Elsewise prefix '[id].' in front of the basename to make it changing
-        this.options.chunkFilename = filename.replace(
-          /(^|\/)([^/]*(?:\?|$))/,
-          '$1[id].$2'
-        );
+        this.options.chunkFilename = DEFAULT_FILENAME;
       }
     }
   }
@@ -141,94 +163,148 @@ class MiniCssExtractPlugin {
         new CssDependencyTemplate()
       );
 
-      compilation.mainTemplate.hooks.renderManifest.tap(
-        pluginName,
-        (result, { chunk }) => {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
-          );
+      // Webpack 4
+      if (!compilation.hooks.renderManifest) {
+        compilation.mainTemplate.hooks.renderManifest.tap(
+          pluginName,
+          (result, { chunk }) => {
+            const { chunkGraph } = compilation;
 
-          if (renderedModules.length > 0) {
-            result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
+            const renderedModules = Array.from(
+              this.getChunkModules(chunk, chunkGraph)
+            ).filter((module) => module.type === MODULE_TYPE);
+
+            const filenameTemplate =
+              chunk.filenameTemplate ||
+              (({ chunk: chunkData }) =>
+                this.options.moduleFilename(chunkData));
+
+            if (renderedModules.length > 0) {
+              result.push({
+                render: () =>
+                  this.renderContentAsset(
+                    compilation,
+                    chunk,
+                    renderedModules,
+                    compilation.runtimeTemplate.requestShortener
+                  ),
+                filenameTemplate,
+                pathOptions: {
                   chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: ({ chunk: chunkData }) =>
-                this.options.moduleFilename(chunkData),
-              pathOptions: {
-                chunk,
-                contentHashType: MODULE_TYPE,
-              },
-              identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
-            });
+                  contentHashType: MODULE_TYPE,
+                },
+                identifier: `${pluginName}.${chunk.id}`,
+                hash: chunk.contentHash[MODULE_TYPE],
+              });
+            }
           }
-        }
-      );
+        );
 
-      compilation.chunkTemplate.hooks.renderManifest.tap(
-        pluginName,
-        (result, { chunk }) => {
-          const renderedModules = Array.from(chunk.modulesIterable).filter(
-            (module) => module.type === MODULE_TYPE
-          );
+        compilation.chunkTemplate.hooks.renderManifest.tap(
+          pluginName,
+          (result, { chunk }) => {
+            const { chunkGraph } = compilation;
 
-          if (renderedModules.length > 0) {
-            result.push({
-              render: () =>
-                this.renderContentAsset(
-                  compilation,
+            const renderedModules = Array.from(
+              this.getChunkModules(chunk, chunkGraph)
+            ).filter((module) => module.type === MODULE_TYPE);
+
+            const filenameTemplate =
+              chunk.filenameTemplate || this.options.chunkFilename;
+
+            if (renderedModules.length > 0) {
+              result.push({
+                render: () =>
+                  this.renderContentAsset(
+                    compilation,
+                    chunk,
+                    renderedModules,
+                    compilation.runtimeTemplate.requestShortener
+                  ),
+                filenameTemplate,
+                pathOptions: {
                   chunk,
-                  renderedModules,
-                  compilation.runtimeTemplate.requestShortener
-                ),
-              filenameTemplate: this.options.chunkFilename,
-              pathOptions: {
-                chunk,
-                contentHashType: MODULE_TYPE,
-              },
-              identifier: `${pluginName}.${chunk.id}`,
-              hash: chunk.contentHash[MODULE_TYPE],
-            });
+                  contentHashType: MODULE_TYPE,
+                },
+                identifier: `${pluginName}.${chunk.id}`,
+                hash: chunk.contentHash[MODULE_TYPE],
+              });
+            }
           }
-        }
-      );
+        );
+      } else {
+        compilation.hooks.renderManifest.tap(
+          pluginName,
+          (result, { chunk }) => {
+            const { chunkGraph } = compilation;
 
-      compilation.mainTemplate.hooks.hashForChunk.tap(
-        pluginName,
-        (hash, chunk) => {
-          const { chunkFilename } = this.options;
+            const renderedModules = Array.from(
+              this.getChunkModules(chunk, chunkGraph)
+            ).filter((module) => module.type === MODULE_TYPE);
 
-          if (REGEXP_CHUNKHASH.test(chunkFilename)) {
-            hash.update(JSON.stringify(chunk.getChunkMaps(true).hash));
+            const filenameTemplate =
+              chunk.filenameTemplate ||
+              chunk.hasRuntime() ||
+              chunk.isOnlyInitial()
+                ? ({ chunk: chunkData }) =>
+                    this.options.moduleFilename(chunkData)
+                : this.options.chunkFilename;
+
+            if (renderedModules.length > 0) {
+              result.push({
+                render: () =>
+                  this.renderContentAsset(
+                    compilation,
+                    chunk,
+                    renderedModules,
+                    compilation.runtimeTemplate.requestShortener
+                  ),
+                filenameTemplate,
+                pathOptions: {
+                  chunk,
+                  contentHashType: MODULE_TYPE,
+                },
+                identifier: `${pluginName}.${chunk.id}`,
+                hash: chunk.contentHash[MODULE_TYPE],
+              });
+            }
           }
+        );
+      }
 
-          if (REGEXP_CONTENTHASH.test(chunkFilename)) {
-            hash.update(
-              JSON.stringify(
-                chunk.getChunkMaps(true).contentHash[MODULE_TYPE] || {}
-              )
-            );
-          }
+      if (typeof webpack.RuntimeModule === 'undefined') {
+        compilation.mainTemplate.hooks.hashForChunk.tap(
+          pluginName,
+          (hash, chunk) => {
+            const { chunkFilename } = this.options;
 
-          if (REGEXP_NAME.test(chunkFilename)) {
-            hash.update(JSON.stringify(chunk.getChunkMaps(true).name));
+            if (REGEXP_CHUNKHASH.test(chunkFilename)) {
+              hash.update(JSON.stringify(chunk.getChunkMaps(true).hash));
+            }
+
+            if (REGEXP_CONTENTHASH.test(chunkFilename)) {
+              hash.update(
+                JSON.stringify(
+                  chunk.getChunkMaps(true).contentHash[MODULE_TYPE] || {}
+                )
+              );
+            }
+
+            if (REGEXP_NAME.test(chunkFilename)) {
+              hash.update(JSON.stringify(chunk.getChunkMaps(true).name));
+            }
           }
-        }
-      );
+        );
+      }
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
-        const { outputOptions } = compilation;
+        const { outputOptions, chunkGraph } = compilation;
         const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
         const hash = createHash(hashFunction);
 
-        for (const m of chunk.modulesIterable) {
+        for (const m of this.getChunkModules(chunk, chunkGraph)) {
           if (m.type === MODULE_TYPE) {
-            m.updateHash(hash);
+            m.updateHash(hash, { chunkGraph });
           }
         }
 
@@ -242,7 +318,7 @@ class MiniCssExtractPlugin {
       const { mainTemplate } = compilation;
 
       mainTemplate.hooks.localVars.tap(pluginName, (source, chunk) => {
-        const chunkMap = this.getCssChunkObject(chunk);
+        const chunkMap = this.getCssChunkObject(chunk, compilation);
 
         if (Object.keys(chunkMap).length > 0) {
           return Template.asString([
@@ -263,17 +339,28 @@ class MiniCssExtractPlugin {
       mainTemplate.hooks.requireEnsure.tap(
         pluginName,
         (source, chunk, hash) => {
-          const chunkMap = this.getCssChunkObject(chunk);
+          const chunkMap = this.getCssChunkObject(chunk, compilation);
+          const isWebpackNext = typeof webpack.RuntimeGlobals !== 'undefined';
 
           if (Object.keys(chunkMap).length > 0) {
+            const maintemplateObject = isWebpackNext
+              ? compilation
+              : mainTemplate;
             const chunkMaps = chunk.getChunkMaps();
-            const { crossOriginLoading } = mainTemplate.outputOptions;
-            const linkHrefPath = mainTemplate.getAssetPath(
+            const { crossOriginLoading } = maintemplateObject.outputOptions;
+            const linkHrefPath = maintemplateObject.getAssetPath(
               JSON.stringify(this.options.chunkFilename),
               {
-                hash: `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
+                hash: isWebpackNext
+                  ? `" + ${webpack.RuntimeGlobals.getFullHash} + "`
+                  : `" + ${mainTemplate.renderCurrentHashCode(hash)} + "`,
                 hashWithLength: (length) =>
-                  `" + ${mainTemplate.renderCurrentHashCode(hash, length)} + "`,
+                  isWebpackNext
+                    ? `" + ${webpack.RuntimeGlobals.getFullHash} + "`
+                    : `" + ${mainTemplate.renderCurrentHashCode(
+                        hash,
+                        length
+                      )} + "`,
                 chunk: {
                   id: '" + chunkId + "',
                   hash: `" + ${JSON.stringify(chunkMaps.hash)}[chunkId] + "`,
@@ -334,7 +421,11 @@ class MiniCssExtractPlugin {
                 'promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {',
                 Template.indent([
                   `var href = ${linkHrefPath};`,
-                  `var fullhref = ${mainTemplate.requireFn}.p + href;`,
+                  `var fullhref = ${
+                    isWebpackNext
+                      ? '__webpack_require__'
+                      : mainTemplate.requireFn
+                  }.p + href;`,
                   'var existingLinkTags = document.getElementsByTagName("link");',
                   'for(var i = 0; i < existingLinkTags.length; i++) {',
                   Template.indent([
@@ -395,11 +486,21 @@ class MiniCssExtractPlugin {
     });
   }
 
-  getCssChunkObject(mainChunk) {
+  getChunkModules(chunk, chunkGraph) {
+    return typeof chunkGraph !== 'undefined'
+      ? chunkGraph.getOrderedChunkModulesIterable(
+          chunk,
+          compareModulesByIdentifier
+        )
+      : chunk.modulesIterable;
+  }
+
+  getCssChunkObject(mainChunk, compilation) {
     const obj = {};
+    const { chunkGraph } = compilation;
 
     for (const chunk of mainChunk.getAllAsyncChunks()) {
-      for (const module of chunk.modulesIterable) {
+      for (const module of this.getChunkModules(chunk, chunkGraph)) {
         if (module.type === MODULE_TYPE) {
           obj[chunk.id] = 1;
           break;
@@ -414,8 +515,12 @@ class MiniCssExtractPlugin {
     let usedModules;
 
     const [chunkGroup] = chunk.groupsIterable;
+    const moduleIndexFunctionName =
+      typeof compilation.chunkGraph !== 'undefined'
+        ? 'getModulePostOrderIndex'
+        : 'getModuleIndex2';
 
-    if (typeof chunkGroup.getModuleIndex2 === 'function') {
+    if (typeof chunkGroup[moduleIndexFunctionName] === 'function') {
       // Store dependencies for modules
       const moduleDependencies = new Map(modules.map((m) => [m, new Set()]));
       const moduleDependenciesReasons = new Map(
@@ -430,7 +535,7 @@ class MiniCssExtractPlugin {
           .map((m) => {
             return {
               module: m,
-              index: cg.getModuleIndex2(m),
+              index: cg[moduleIndexFunctionName](m),
             };
           })
           // eslint-disable-next-line no-undefined
