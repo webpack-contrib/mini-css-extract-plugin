@@ -206,13 +206,29 @@ export function pitch(request) {
     }
 
     let locals;
+    let result = '';
 
     try {
       let dependencies;
       let exports = evalModuleCode(this, source, request);
+
+      if (
+        options.modules &&
+        options.modules.namedExport &&
+        // eslint-disable-next-line no-underscore-dangle
+        exports.__esModule
+      ) {
+        Object.keys(exports).forEach((key) => {
+          if (key !== 'default') {
+            result += `\nexport const ${key} = "${exports[key]}";`;
+          }
+        });
+      }
+
       // eslint-disable-next-line no-underscore-dangle
       exports = exports.__esModule ? exports.default : exports;
       locals = exports && exports.locals;
+
       if (!Array.isArray(exports)) {
         dependencies = [[null, exports]];
       } else {
@@ -235,13 +251,16 @@ export function pitch(request) {
 
     const esModule =
       typeof options.esModule !== 'undefined' ? options.esModule : false;
-    const result = locals
-      ? `\n${esModule ? 'export default' : 'module.exports ='} ${JSON.stringify(
-          locals
-        )};`
-      : esModule
-      ? `\nexport {};`
-      : '';
+
+    if (!result) {
+      result += locals
+        ? `\n${
+            esModule ? 'export default' : 'module.exports ='
+          } ${JSON.stringify(locals)};`
+        : esModule
+        ? `\nexport {};`
+        : '';
+    }
 
     let resultSource = `// extracted by ${pluginName}`;
 
