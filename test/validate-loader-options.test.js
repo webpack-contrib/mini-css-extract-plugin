@@ -18,6 +18,10 @@ describe('validate options', () => {
       success: [true, false],
       failure: [1],
     },
+    modules: {
+      success: [{ namedExport: true }, { namedExport: false }],
+      failure: ['true', { namedExport: 'false' }],
+    },
     unknown: {
       success: [],
       // TODO failed in next release

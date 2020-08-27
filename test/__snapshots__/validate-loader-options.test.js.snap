@@ -14,6 +14,20 @@ options.hmr should be boolean
 "
 `;
 
+exports[`validate options should throw an error on the "modules" option with "{"namedExport":"false"}" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.modules.namedExport should be boolean
+"
+`;
+
+exports[`validate options should throw an error on the "modules" option with "true" value 1`] = `
+"Mini CSS Extract Plugin Loader Invalid Options
+
+options.modules should be object
+"
+`;
+
 exports[`validate options should throw an error on the "publicPath" option with "true" value 1`] = `
 "Mini CSS Extract Plugin Loader Invalid Options
 
