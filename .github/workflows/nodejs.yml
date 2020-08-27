@@ -56,12 +56,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         # css-loader doesn't support node@6
-        node-version: [8.x, 10.x, 12.x, 14.x]
+        node-version: [10.x, 12.x, 14.x]
         webpack-version: [latest, next]
-        exclude:
-          # Webpack 5 does not support node 6 and 8
-          - node-version: 8.x
-            webpack-version: next
 
     runs-on: ${{ matrix.os }}
 

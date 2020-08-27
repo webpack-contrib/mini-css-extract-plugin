@@ -195,7 +195,7 @@ Default: `undefined`
 
 Configuration CSS Modules.
 
-##### `namedExport`
+#### `namedExport`
 
 Type: `Boolean`
 Default: `false`
@@ -205,6 +205,8 @@ Enables/disables ES modules named export for locals.
 > ⚠ Names of locals are converted to `camelCase`.
 
 > ⚠ It is not allowed to use JavaScript reserved words in css class names.
+
+> ⚠ Options `esModule` and `modules.namedExport` in `css-loader` and `MiniCssExtractPlugin.loader` should be enabled.
 
 **styles.css**
 
