@@ -15,12 +15,18 @@ function clearDirectory(dirPath) {
   } catch (e) {
     return;
   }
-  if (files.length > 0)
+  if (files.length > 0) {
     for (let i = 0; i < files.length; i++) {
       const filePath = `${dirPath}/${files[i]}`;
-      if (fs.statSync(filePath).isFile()) fs.unlinkSync(filePath);
-      else clearDirectory(filePath);
+
+      if (fs.statSync(filePath).isFile()) {
+        fs.unlinkSync(filePath);
+      } else {
+        clearDirectory(filePath);
+      }
     }
+  }
+
   fs.rmdirSync(dirPath);
 }
 
@@ -115,16 +121,6 @@ describe('TestCases', () => {
           }
 
           done();
-
-          // eslint-disable-next-line no-console
-          // console.log(
-          //   stats.toString({
-          //     context: path.resolve(__dirname, '..'),
-          //     chunks: true,
-          //     chunkModules: true,
-          //     modules: false,
-          //   })
-          // );
 
           if (stats.hasErrors() && stats.hasWarnings()) {
             done(

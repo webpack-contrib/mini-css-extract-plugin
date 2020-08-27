@@ -206,28 +206,33 @@ export function pitch(request) {
     }
 
     let locals;
-    let result = '';
+
+    const esModule =
+      typeof options.esModule !== 'undefined' ? options.esModule : false;
+    const namedExport =
+      esModule && options.modules && options.modules.namedExport;
 
     try {
-      let dependencies;
-      let exports = evalModuleCode(this, source, request);
-
-      if (
-        options.modules &&
-        options.modules.namedExport &&
-        // eslint-disable-next-line no-underscore-dangle
-        exports.__esModule
-      ) {
-        Object.keys(exports).forEach((key) => {
-          if (key !== 'default') {
-            result += `\nexport const ${key} = "${exports[key]}";`;
-          }
-        });
-      }
+      const originalExports = evalModuleCode(this, source, request);
 
       // eslint-disable-next-line no-underscore-dangle
-      exports = exports.__esModule ? exports.default : exports;
-      locals = exports && exports.locals;
+      exports = originalExports.__esModule
+        ? originalExports.default
+        : originalExports;
+
+      if (namedExport) {
+        locals = '';
+
+        Object.keys(originalExports).forEach((key) => {
+          if (key !== 'default') {
+            locals += `\nexport const ${key} = "${originalExports[key]}";`;
+          }
+        });
+      } else {
+        locals = exports && exports.locals;
+      }
+
+      let dependencies;
 
       if (!Array.isArray(exports)) {
         dependencies = [[null, exports]];
@@ -244,23 +249,21 @@ export function pitch(request) {
           };
         });
       }
+
       addDependencies(dependencies);
     } catch (e) {
       return callback(e);
     }
 
-    const esModule =
-      typeof options.esModule !== 'undefined' ? options.esModule : false;
-
-    if (!result) {
-      result += locals
-        ? `\n${
+    const result = locals
+      ? namedExport
+        ? locals
+        : `\n${
             esModule ? 'export default' : 'module.exports ='
           } ${JSON.stringify(locals)};`
-        : esModule
-        ? `\nexport {};`
-        : '';
-    }
+      : esModule
+      ? `\nexport {};`
+      : '';
 
     let resultSource = `// extracted by ${pluginName}`;
 
