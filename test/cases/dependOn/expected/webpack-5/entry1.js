@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],[
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[1],[
 /* 0 */,
 /* 1 */,
 /* 2 */
@@ -18,4 +18,5 @@ __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
 /***/ })
-],[[2,0]]]);
+],
+0,[[2,0]]]);
