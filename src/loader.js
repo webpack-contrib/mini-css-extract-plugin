@@ -1,5 +1,3 @@
-import NativeModule from 'module';
-
 import path from 'path';
 
 import loaderUtils from 'loader-utils';
@@ -13,7 +11,7 @@ import NormalModule from 'webpack/lib/NormalModule';
 import validateOptions from 'schema-utils';
 
 import CssDependency from './CssDependency';
-
+import { findModuleById, evalModuleCode } from './utils';
 import schema from './loader-options.json';
 
 const pluginName = 'mini-css-extract-plugin';
@@ -39,33 +37,6 @@ function hotLoader(content, context) {
       ${accept}
     }
   `;
-}
-
-function evalModuleCode(loaderContext, code, filename) {
-  const module = new NativeModule(filename, loaderContext);
-
-  module.paths = NativeModule._nodeModulePaths(loaderContext.context); // eslint-disable-line no-underscore-dangle
-  module.filename = filename;
-  module._compile(code, filename); // eslint-disable-line no-underscore-dangle
-
-  return module.exports;
-}
-
-function findModuleById(compilation, id) {
-  const { modules, chunkGraph } = compilation;
-
-  for (const module of modules) {
-    const moduleId =
-      typeof chunkGraph !== 'undefined'
-        ? chunkGraph.getModuleId(module)
-        : module.id;
-
-    if (moduleId === id) {
-      return module;
-    }
-  }
-
-  return null;
 }
 
 export function pitch(request) {
