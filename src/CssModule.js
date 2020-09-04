@@ -2,16 +2,24 @@ import webpack from 'webpack';
 
 import { MODULE_TYPE } from './utils';
 
-export default class CssModule extends webpack.Module {
-  constructor(dependency) {
-    super(MODULE_TYPE, dependency.context);
+class CssModule extends webpack.Module {
+  constructor({
+    context,
+    identifier,
+    identifierIndex,
+    content,
+    media,
+    sourceMap,
+  }) {
+    super(MODULE_TYPE, context);
 
     this.id = '';
-    this._identifier = dependency.identifier;
-    this._identifierIndex = dependency.identifierIndex;
-    this.content = dependency.content;
-    this.media = dependency.media;
-    this.sourceMap = dependency.sourceMap;
+    this._context = context;
+    this._identifier = identifier;
+    this._identifierIndex = identifierIndex;
+    this.content = content;
+    this.media = media;
+    this.sourceMap = sourceMap;
   }
 
   // no source() so webpack doesn't do add stuff to the bundle
@@ -55,6 +63,7 @@ export default class CssModule extends webpack.Module {
   build(options, compilation, resolver, fileSystem, callback) {
     this.buildInfo = {};
     this.buildMeta = {};
+
     callback();
   }
 
@@ -65,4 +74,52 @@ export default class CssModule extends webpack.Module {
     hash.update(this.media || '');
     hash.update(this.sourceMap ? JSON.stringify(this.sourceMap) : '');
   }
+
+  serialize(context) {
+    const { write } = context;
+
+    write(this._context);
+    write(this._identifier);
+    write(this._identifierIndex);
+    write(this.content);
+    write(this.media);
+    write(this.sourceMap);
+
+    super.serialize(context);
+  }
+
+  deserialize(context) {
+    super.deserialize(context);
+  }
 }
+
+if (webpack.util && webpack.util.serialization) {
+  webpack.util.serialization.register(
+    CssModule,
+    'mini-css-extract-plugin/src/CssModule',
+    null,
+    {
+      serialize(instance, context) {
+        instance.serialize(context);
+      },
+      deserialize(context) {
+        const { read } = context;
+
+        const dep = new CssModule({
+          context: read(),
+          identifier: read(),
+          identifierIndex: read(),
+          content: read(),
+          media: read(),
+          sourceMap: read(),
+        });
+
+        dep.deserialize(context);
+
+        return dep;
+      },
+    }
+  );
+}
+
+export default CssModule;
