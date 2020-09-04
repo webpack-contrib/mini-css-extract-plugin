@@ -4,8 +4,11 @@ import webpack, { version as webpackVersion } from 'webpack';
 
 import validateOptions from 'schema-utils';
 
+import CssModuleFactory from './CssModuleFactory';
+import CssDependencyTemplate from './CssDependencyTemplate';
 import CssDependency from './CssDependency';
 import schema from './plugin-options.json';
+import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
 // webpack 5 exposes the sources property to ensure the right version of webpack-sources is used
 const { ConcatSource, SourceMapSource, OriginalSource } =
@@ -19,8 +22,6 @@ const {
 
 const isWebpack4 = webpackVersion[0] === '4';
 
-const MODULE_TYPE = 'css/mini-extract';
-
 const pluginName = 'mini-css-extract-plugin';
 
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
@@ -28,93 +29,6 @@ const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
-
-const compareIds = (a, b) => {
-  if (typeof a !== typeof b) {
-    return typeof a < typeof b ? -1 : 1;
-  }
-  if (a < b) return -1;
-  if (a > b) return 1;
-  return 0;
-};
-
-const compareModulesByIdentifier = (a, b) => {
-  return compareIds(a.identifier(), b.identifier());
-};
-
-class CssDependencyTemplate {
-  apply() {}
-}
-
-class CssModule extends webpack.Module {
-  constructor(dependency) {
-    super(MODULE_TYPE, dependency.context);
-
-    this.id = '';
-    this._identifier = dependency.identifier;
-    this._identifierIndex = dependency.identifierIndex;
-    this.content = dependency.content;
-    this.media = dependency.media;
-    this.sourceMap = dependency.sourceMap;
-  }
-
-  // no source() so webpack doesn't do add stuff to the bundle
-
-  size() {
-    return this.content.length;
-  }
-
-  identifier() {
-    return `css ${this._identifier} ${this._identifierIndex}`;
-  }
-
-  readableIdentifier(requestShortener) {
-    return `css ${requestShortener.shorten(this._identifier)}${
-      this._identifierIndex ? ` (${this._identifierIndex})` : ''
-    }`;
-  }
-
-  nameForCondition() {
-    const resource = this._identifier.split('!').pop();
-    const idx = resource.indexOf('?');
-
-    if (idx >= 0) {
-      return resource.substring(0, idx);
-    }
-
-    return resource;
-  }
-
-  updateCacheModule(module) {
-    this.content = module.content;
-    this.media = module.media;
-    this.sourceMap = module.sourceMap;
-  }
-
-  needRebuild() {
-    return true;
-  }
-
-  build(options, compilation, resolver, fileSystem, callback) {
-    this.buildInfo = {};
-    this.buildMeta = {};
-    callback();
-  }
-
-  updateHash(hash, context) {
-    super.updateHash(hash, context);
-
-    hash.update(this.content);
-    hash.update(this.media || '');
-    hash.update(this.sourceMap ? JSON.stringify(this.sourceMap) : '');
-  }
-}
-
-class CssModuleFactory {
-  create({ dependencies: [dependency] }, callback) {
-    callback(null, new CssModule(dependency));
-  }
-}
 
 class MiniCssExtractPlugin {
   constructor(options = {}) {
