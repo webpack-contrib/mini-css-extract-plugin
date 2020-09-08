@@ -125,7 +125,7 @@ export function pitch(request) {
         // Remove all chunk assets
         compilation.chunks.forEach((chunk) => {
           chunk.files.forEach((file) => {
-            delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+            compilation.deleteAsset(file);
           });
         });
       });
