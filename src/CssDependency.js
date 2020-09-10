@@ -41,7 +41,7 @@ class CssDependency extends webpack.Dependency {
 if (webpack.util && webpack.util.serialization) {
   webpack.util.serialization.register(
     CssDependency,
-    'mini-css-extract-plugin/src/CssDependency',
+    'mini-css-extract-plugin/dist/CssDependency',
     null,
     {
       serialize(instance, context) {
