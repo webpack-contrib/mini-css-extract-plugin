@@ -348,6 +348,12 @@ class MiniCssExtractPlugin {
                     'var tag = existingStyleTags[i];',
                     'var dataHref = tag.getAttribute("data-href");',
                     'if(dataHref === href || dataHref === fullhref) return resolve();',
+                    'if(dataHref) {',
+                    Template.indent([
+                      "var hrefs = dataHref.split(',');",
+                      'if (hrefs.indexOf(href) !== -1 || hrefs.indexOf(fullhref) !== -1) return resolve();',
+                    ]),
+                    '}',
                   ]),
                   '}',
                   'var linkTag = document.createElement("link");',
