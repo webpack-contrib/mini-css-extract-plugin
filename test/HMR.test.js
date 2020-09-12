@@ -27,7 +27,8 @@ describe('HMR', () => {
 
     jest.spyOn(Date, 'now').mockImplementation(() => 1479427200000);
 
-    document.head.innerHTML = '<link rel="stylesheet" href="/dist/main.css" />';
+    document.head.innerHTML =
+      '<link rel="preload" as="style" href="/dist/main.css" />';
     document.body.innerHTML = '<script src="/dist/main.js"></script>';
   });
 
