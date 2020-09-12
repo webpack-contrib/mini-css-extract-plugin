@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v0.11.1...v0.11.2) (2020-09-12)
+
+
+### Bug Fixes
+
+* cache for webpack@5 ([6a27b30](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/6a27b30fea43d2d179d7df5deb260887d6b45ccc))
+
 ### [0.11.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v0.11.0...v0.11.1) (2020-09-08)
 
 
