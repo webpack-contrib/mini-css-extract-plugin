@@ -428,7 +428,7 @@ class MiniCssExtractPlugin {
         ? 'getModulePostOrderIndex'
         : 'getModuleIndex2';
 
-    if (typeof chunkGroup[moduleIndexFunctionName] === 'function') {
+    if (chunkGroup && typeof chunkGroup[moduleIndexFunctionName] === 'function') {
       // Store dependencies for modules
       const moduleDependencies = new Map(modules.map((m) => [m, new Set()]));
       const moduleDependenciesReasons = new Map(
