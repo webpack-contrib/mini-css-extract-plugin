@@ -13,7 +13,7 @@ const ENABLE_ES_MODULE =
 module.exports = {
   mode: 'development',
   output: {
-    chunkFilename: '[contenthash].js',
+    chunkFilename: '[name].chunk.js',
     publicPath: '/dist/',
     crossOriginLoading: 'anonymous',
   },
@@ -60,7 +60,7 @@ module.exports = {
   plugins: [
     new Self({
       filename: '[name].css',
-      chunkFilename: '[contenthash].css',
+      chunkFilename: '[name].chunk.css',
     }),
   ],
   devServer: {

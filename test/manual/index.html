@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>mini-css-extract-plugin testcase</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="/dist/preloaded1.css" />
+  <link rel="stylesheet" type="text/css" href="/dist/preloaded1.chunk.css" />
   <style>
     .test {
       background: lightcoral;
@@ -18,7 +18,7 @@
       background: lightgreen;
     }
   </style>
-  <style data-href="preloaded2.css">
+  <style data-href="preloaded2.chunk.css">
     .preloaded-css2 {
       background: lightgreen;
     }
@@ -46,6 +46,9 @@
     <p>But turn orange, when <button class="lazy-button2">pressing this button</button>. Additional clicks have no effect.</p>
     <p>Refresh and press buttons in reverse order: This should turn green instead.</p>
   </div>
+  <div class="test lazy-css-module">
+    <p>Lazy CSS Module: Must be red, but turn green when <button class="lazy-module-button">pressing this button</button>.</p>
+  </div>
   <div class="test lazy-failure-css">
     <p>Lazy CSS: Turn off the network and <button class="lazy-failure-button">press this button</button>.</p>
     <p>An error should have appeared.</p>
@@ -53,11 +56,11 @@
   </div>
   <div class="test preloaded-css1">
     <p>Preloaded CSS: Must be green.</p>
-    <p><button class="preloaded-button1">Pressing this button</button> displays an alert and should turn red.</p>
+    <p><button class="preloaded-button1">Pressing this button</button> displays an alert but has no styling effect.</p>
   </div>
   <div class="test preloaded-css2">
     <p>Preloaded inlined CSS: Must be green.</p>
-    <p><button class="preloaded-button2">Pressing this button</button> displays an alert and should turn red.</p>
+    <p><button class="preloaded-button2">Pressing this button</button> displays an alert but has no styling effect.</p>
   </div>
   <div class="test crossorigin">
     <p>CrossOriginLoading Option: Must be red.</p>
