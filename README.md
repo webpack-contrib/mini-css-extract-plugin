@@ -297,7 +297,7 @@ module.exports = {
               // you can specify a publicPath here
               // by default it uses publicPath in webpackOptions.output
               publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development',
+              hmr: process.env.NODE_ENV === 'development', // webpack 4 only
             },
           },
           'css-loader',
@@ -379,7 +379,7 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              hmr: process.env.NODE_ENV === 'development',
+              hmr: process.env.NODE_ENV === 'development', // webpack 4 only
             },
           },
           'css-loader',
@@ -393,6 +393,8 @@ module.exports = {
 ```
 
 ### Hot Module Reloading (HMR)
+
+Note: HMR is automatically supported in webpack 5. No need to configure it. Skip the following:
 
 The `mini-css-extract-plugin` supports hot reloading of actual css files in development.
 Some options are provided to enable HMR of both standard stylesheets and locally scoped CSS or CSS modules.
@@ -424,7 +426,7 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              // only enable hot in development
+              // only enable hot in development (webpack 4 only)
               hmr: process.env.NODE_ENV === 'development',
               // if hmr does not work, this is a forceful method.
               reloadAll: true,

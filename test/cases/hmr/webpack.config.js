@@ -1,3 +1,5 @@
+import { HotModuleReplacementPlugin, version } from 'webpack';
+
 import Self from '../../../src';
 
 module.exports = {
@@ -7,20 +9,31 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          {
-            loader: Self.loader,
-            options: {
-              hmr: true,
-            },
-          },
+          version.startsWith('4')
+            ? {
+                loader: Self.loader,
+                options: {
+                  hmr: true,
+                },
+              }
+            : {
+                loader: Self.loader,
+              },
           'css-loader',
         ],
       },
     ],
   },
-  plugins: [
-    new Self({
-      filename: '[name].css',
-    }),
-  ],
+  plugins: version.startsWith('4')
+    ? [
+        new Self({
+          filename: '[name].css',
+        }),
+      ]
+    : [
+        new HotModuleReplacementPlugin(),
+        new Self({
+          filename: '[name].css',
+        }),
+      ],
 };

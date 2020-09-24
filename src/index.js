@@ -57,10 +57,22 @@ class MiniCssExtractPlugin {
         );
       }
     }
+
+    if (!isWebpack4 && 'hmr' in this.options) {
+      throw new Error(
+        "The 'hmr' option doesn't exist for the mini-css-extract-plugin when using webpack 5 (it's automatically determined)"
+      );
+    }
   }
 
   /** @param {import("webpack").Compiler} compiler */
   apply(compiler) {
+    const { splitChunks } = compiler.options.optimization;
+    if (splitChunks) {
+      if (splitChunks.defaultSizeTypes.includes('...')) {
+        splitChunks.defaultSizeTypes.push(MODULE_TYPE);
+      }
+    }
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       compilation.dependencyFactories.set(
         CssDependency,
@@ -145,6 +157,10 @@ class MiniCssExtractPlugin {
           pluginName,
           (result, { chunk }) => {
             const { chunkGraph } = compilation;
+
+            // We don't need hot update chunks for css
+            // We will use the real asset instead to update
+            if (chunk instanceof webpack.HotUpdateChunk) return;
 
             const renderedModules = Array.from(
               this.getChunkModules(chunk, chunkGraph)
@@ -381,32 +397,37 @@ class MiniCssExtractPlugin {
           }
         );
       } else {
-        // eslint-disable-next-line global-require
-        const CssLoadingRuntimeModule = require('./CssLoadingRuntimeModule');
+        const enabledChunks = new WeakSet();
+        const handler = (chunk, set) => {
+          if (enabledChunks.has(chunk)) return;
+          enabledChunks.add(chunk);
 
-        compilation.hooks.additionalTreeRuntimeRequirements.tap(
-          pluginName,
-          (chunk, set) => {
-            set.add(webpack.RuntimeGlobals.publicPath);
-            compilation.addRuntimeModule(
-              chunk,
-              new webpack.runtime.GetChunkFilenameRuntimeModule(
-                MODULE_TYPE,
-                'mini-css',
-                `${webpack.RuntimeGlobals.require}.miniCssF`,
-                (referencedChunk) =>
-                  referencedChunk.canBeInitial()
-                    ? ({ chunk: chunkData }) =>
-                        this.options.moduleFilename(chunkData)
-                    : this.options.chunkFilename
-              )
-            );
-            compilation.addRuntimeModule(
-              chunk,
-              new CssLoadingRuntimeModule(set)
-            );
-          }
-        );
+          // eslint-disable-next-line global-require
+          const CssLoadingRuntimeModule = require('./CssLoadingRuntimeModule');
+
+          set.add(webpack.RuntimeGlobals.publicPath);
+          compilation.addRuntimeModule(
+            chunk,
+            new webpack.runtime.GetChunkFilenameRuntimeModule(
+              MODULE_TYPE,
+              'mini-css',
+              `${webpack.RuntimeGlobals.require}.miniCssF`,
+              (referencedChunk) =>
+                referencedChunk.canBeInitial()
+                  ? ({ chunk: chunkData }) =>
+                      this.options.moduleFilename(chunkData)
+                  : this.options.chunkFilename,
+              true
+            )
+          );
+          compilation.addRuntimeModule(chunk, new CssLoadingRuntimeModule(set));
+        };
+        compilation.hooks.runtimeRequirementInTree
+          .for(webpack.RuntimeGlobals.ensureChunkHandlers)
+          .tap(pluginName, handler);
+        compilation.hooks.runtimeRequirementInTree
+          .for(webpack.RuntimeGlobals.hmrDownloadUpdateHandlers)
+          .tap(pluginName, handler);
       }
     });
   }
