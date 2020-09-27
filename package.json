@@ -37,7 +37,8 @@
     "defaults": "webpack-defaults"
   },
   "files": [
-    "dist"
+    "dist",
+    "types.d.ts"
   ],
   "peerDependencies": {
     "webpack": "^4.4.0 || ^5.0.0"
