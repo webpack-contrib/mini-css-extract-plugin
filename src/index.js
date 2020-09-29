@@ -67,10 +67,12 @@ class MiniCssExtractPlugin {
 
   /** @param {import("webpack").Compiler} compiler */
   apply(compiler) {
-    const { splitChunks } = compiler.options.optimization;
-    if (splitChunks) {
-      if (splitChunks.defaultSizeTypes.includes('...')) {
-        splitChunks.defaultSizeTypes.push(MODULE_TYPE);
+    if (!isWebpack4) {
+      const { splitChunks } = compiler.options.optimization;
+      if (splitChunks) {
+        if (splitChunks.defaultSizeTypes.includes('...')) {
+          splitChunks.defaultSizeTypes.push(MODULE_TYPE);
+        }
       }
     }
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
