@@ -23,6 +23,21 @@ Object.keys(classes).forEach((localClass) => {
   replaceClass(localClass, classes[localClass]);
 });
 
+let oldClasses = classes;
+
+if (module.hot) {
+  module.hot.accept('./simple.module.css', () => {
+    Object.keys(oldClasses).forEach((localClass) => {
+      replaceClass(oldClasses[localClass], localClass);
+    });
+    Object.keys(classes).forEach((localClass) => {
+      replaceClass(localClass, classes[localClass]);
+    });
+    oldClasses = classes;
+    alert('HMR updated CSS module');
+  });
+}
+
 const handleError = (err) => {
   document.querySelector('.errors').textContent += `\n${err.toString()}`;
   console.error(err);
@@ -44,6 +59,12 @@ const makeButton = (className, fn, shouldDisable = true) => {
 
 makeButton('.lazy-button', () => import('./lazy.js'));
 makeButton('.lazy-button2', () => import('./lazy2.css'));
+makeButton('.lazy-module-button', () =>
+  import('./lazy.module.css').then((module) => {
+    console.log(module);
+    document.querySelector('.lazy-css-module').classList.add(module.style);
+  })
+);
 
 makeButton('.preloaded-button1', () =>
   import(/* webpackChunkName: "preloaded1" */ './preloaded1')
@@ -56,7 +77,7 @@ makeButton('.lazy-failure-button', () => import('./lazy-failure.js'), false);
 
 makeButton('.crossorigin', () => {
   const originalPublicPath = __webpack_public_path__;
-  __webpack_public_path__ = 'http://0.0.0.0:8080/dist/';
+  __webpack_public_path__ = 'http://127.0.0.1:8080/dist/';
   const promise = import('./crossorigin').then(() => {
     const lastTwoElements = Array.from(document.head.children).slice(-2);
     const hasCrossorigin = lastTwoElements.every(

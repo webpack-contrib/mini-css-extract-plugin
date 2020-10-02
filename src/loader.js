@@ -192,11 +192,10 @@ export function pitch(request) {
         : originalExports;
 
       if (namedExport) {
-        locals = '';
-
         Object.keys(originalExports).forEach((key) => {
           if (key !== 'default') {
-            locals += `\nexport const ${key} = "${originalExports[key]}";`;
+            if (!locals) locals = {};
+            locals[key] = originalExports[key];
           }
         });
       } else {
@@ -228,7 +227,11 @@ export function pitch(request) {
 
     const result = locals
       ? namedExport
-        ? locals
+        ? Object.keys(locals)
+            .map(
+              (key) => `\nexport const ${key} = ${JSON.stringify(locals[key])};`
+            )
+            .join('')
         : `\n${
             esModule ? 'export default' : 'module.exports ='
           } ${JSON.stringify(locals)};`
