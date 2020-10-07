@@ -297,7 +297,6 @@ module.exports = {
               // you can specify a publicPath here
               // by default it uses publicPath in webpackOptions.output
               publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development', // webpack 4 only
             },
           },
           'css-loader',
@@ -356,32 +355,37 @@ Here is an example to have both HMR in `development` and your styles extracted i
 
 (Loaders options left out for clarity, adapt accordingly to your needs.)
 
+You should not use `HotModuleReplacementPlugin` plugin if you are using a `webpack-dev-server`.
+`webpack-dev-server` enables / disables HMR using `hot` option.
+
 **webpack.config.js**
 
 ```js
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const devMode = process.env.NODE_ENV !== 'production';
 
+const plugins = [
+  new MiniCssExtractPlugin({
+    // Options similar to the same options in webpackOptions.output
+    // both options are optional
+    filename: devMode ? '[name].css' : '[name].[hash].css',
+    chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+  }),
+];
+if (devMode) {
+  // only enable hot in development
+  plugins.push(new webpack.HotModuleReplacementPlugin());
+}
+
 module.exports = {
-  plugins: [
-    new MiniCssExtractPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
-      filename: devMode ? '[name].css' : '[name].[hash].css',
-      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
-    }),
-  ],
+  plugins,
   module: {
     rules: [
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: process.env.NODE_ENV === 'development', // webpack 4 only
-            },
-          },
+          MiniCssExtractPlugin.loader,
           'css-loader',
           'postcss-loader',
           'sass-loader',
@@ -404,20 +408,30 @@ While we attempt to hmr css-modules. It is not easy to perform when code-splitti
 `reloadAll` is an option that should only be enabled if HMR isn't working correctly.
 The core challenge with css-modules is that when code-split, the chunk ids can and do end up different compared to the filename.
 
+You should not use `HotModuleReplacementPlugin` plugin if you are using a `webpack-dev-server`.
+`webpack-dev-server` enables / disables HMR using `hot` option.
+
 **webpack.config.js**
 
 ```js
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const plugins = [
+  new MiniCssExtractPlugin({
+    // Options similar to the same options in webpackOptions.output
+    // both options are optional
+    filename: devMode ? '[name].css' : '[name].[hash].css',
+    chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+  }),
+];
+if (devMode) {
+  // only enable hot in development
+  plugins.push(new webpack.HotModuleReplacementPlugin());
+}
+
 module.exports = {
-  plugins: [
-    new MiniCssExtractPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
-      filename: '[name].css',
-      chunkFilename: '[id].css',
-    }),
-  ],
+  plugins,
   module: {
     rules: [
       {
@@ -426,8 +440,6 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              // only enable hot in development (webpack 4 only)
-              hmr: process.env.NODE_ENV === 'development',
               // if hmr does not work, this is a forceful method.
               reloadAll: true,
             },
