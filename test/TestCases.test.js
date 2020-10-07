@@ -47,19 +47,23 @@ function compareDirectory(actual, expected) {
       const content = fs.readFileSync(path.resolve(expected, file), 'utf8');
       let actualContent;
 
-      try {
-        actualContent = fs.readFileSync(path.resolve(actual, file), 'utf8');
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error);
+      if (/^MISSING/.test(content)) {
+        expect(fs.existsSync(path.resolve(actual, file))).toBe(false);
+      } else {
+        try {
+          actualContent = fs.readFileSync(path.resolve(actual, file), 'utf8');
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
 
-        const dir = fs.readdirSync(actual);
+          const dir = fs.readdirSync(actual);
 
-        // eslint-disable-next-line no-console
-        console.log({ [actual]: dir });
+          // eslint-disable-next-line no-console
+          console.log({ [actual]: dir });
+        }
+
+        expect(actualContent).toEqual(content);
       }
-
-      expect(actualContent).toEqual(content);
     }
   }
 }
@@ -117,6 +121,10 @@ describe('TestCases', () => {
         webpack(webpackConfig, (err, stats) => {
           if (err) {
             done(err);
+            return;
+          }
+          if (stats.hasErrors()) {
+            done(new Error(stats.toString()));
             return;
           }
 
