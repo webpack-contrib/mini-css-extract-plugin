@@ -20,6 +20,11 @@ class CssDependency extends webpack.Dependency {
     return `css-module-${this.identifier}-${this.identifierIndex}`;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  getModuleEvaluationSideEffectsState() {
+    return webpack.ModuleGraphConnection.TRANSITIVE_ONLY;
+  }
+
   serialize(context) {
     const { write } = context;
 
