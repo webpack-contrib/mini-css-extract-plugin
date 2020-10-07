@@ -7,13 +7,6 @@ import path from 'path';
 import webpack from 'webpack';
 import del from 'del';
 
-const fileSystemCacheDirectory = path.resolve(
-  __dirname,
-  './outputs/cache/type-filesystem'
-);
-
-del.sync(fileSystemCacheDirectory);
-
 describe('TestCache', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -43,12 +36,18 @@ describe('TestCache', () => {
         directoryForCase,
         'webpack.config.js'
       ));
+      const outputPath = path.resolve(__dirname, 'js/cache-false');
+
+      await del([outputPath]);
 
       const compiler1 = webpack({
         ...webpackConfig,
         mode: 'development',
         context: directoryForCase,
         cache: false,
+        output: {
+          path: outputPath,
+        },
       });
 
       await new Promise((resolve, reject) => {
@@ -59,6 +58,7 @@ describe('TestCache', () => {
             return;
           }
 
+          expect(stats.compilation.emittedAssets.size).toBe(2);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -73,6 +73,9 @@ describe('TestCache', () => {
         mode: 'development',
         context: directoryForCase,
         cache: false,
+        output: {
+          path: outputPath,
+        },
       });
 
       await new Promise((resolve, reject) => {
@@ -83,6 +86,8 @@ describe('TestCache', () => {
             return;
           }
 
+          // Because webpack compare the source content before emitting
+          expect(stats.compilation.emittedAssets.size).toBe(0);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -120,6 +125,9 @@ describe('TestCache', () => {
         directoryForCase,
         'webpack.config.js'
       ));
+      const outputPath = path.resolve(__dirname, 'js/cache-memory');
+
+      await del([outputPath]);
 
       const compiler1 = webpack({
         ...webpackConfig,
@@ -127,6 +135,9 @@ describe('TestCache', () => {
         context: directoryForCase,
         cache: {
           type: 'memory',
+        },
+        output: {
+          path: outputPath,
         },
       });
 
@@ -138,6 +149,7 @@ describe('TestCache', () => {
             return;
           }
 
+          expect(stats.compilation.emittedAssets.size).toBe(2);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -154,6 +166,9 @@ describe('TestCache', () => {
         cache: {
           type: 'memory',
         },
+        output: {
+          path: outputPath,
+        },
       });
 
       await new Promise((resolve, reject) => {
@@ -164,6 +179,7 @@ describe('TestCache', () => {
             return;
           }
 
+          expect(stats.compilation.emittedAssets.size).toBe(0);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -201,6 +217,13 @@ describe('TestCache', () => {
         directoryForCase,
         'webpack.config.js'
       ));
+      const outputPath = path.resolve(__dirname, 'js/cache-filesystem');
+      const fileSystemCacheDirectory = path.resolve(
+        __dirname,
+        './js/.cache/type-filesystem'
+      );
+
+      await del([outputPath, fileSystemCacheDirectory]);
 
       const compiler1 = webpack({
         ...webpackConfig,
@@ -212,6 +235,9 @@ describe('TestCache', () => {
           idleTimeout: 0,
           idleTimeoutForInitialStore: 0,
         },
+        output: {
+          path: outputPath,
+        },
       });
 
       await new Promise((resolve, reject) => {
@@ -222,6 +248,7 @@ describe('TestCache', () => {
             return;
           }
 
+          expect(stats.compilation.emittedAssets.size).toBe(2);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -241,6 +268,9 @@ describe('TestCache', () => {
           idleTimeout: 0,
           idleTimeoutForInitialStore: 0,
         },
+        output: {
+          path: outputPath,
+        },
       });
 
       await new Promise((resolve, reject) => {
@@ -251,6 +281,7 @@ describe('TestCache', () => {
             return;
           }
 
+          expect(stats.compilation.emittedAssets.size).toBe(0);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
