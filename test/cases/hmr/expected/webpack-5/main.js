@@ -2805,10 +2805,8 @@ module.exports = function (x) {
 /******/ 	(() => {
 /******/ 		// This function allow to reference all chunks
 /******/ 		__webpack_require__.miniCssF = (chunkId) => {
-/******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === 0) return "main.css";
 /******/ 			// return url for filenames based on template
-/******/ 			return undefined;
+/******/ 			return "" + "main" + ".css";
 /******/ 		};
 /******/ 	})();
 /******/ 	

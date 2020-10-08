@@ -17,7 +17,7 @@ module.exports = {
   },
   plugins: [
     new Self({
-      moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
+      filename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
     }),
   ],
 };

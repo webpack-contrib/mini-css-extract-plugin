@@ -592,9 +592,11 @@ module.exports = {
 };
 ```
 
-### Module Filename Option
+### Filename Option as function
 
-With the `moduleFilename` option you can use chunk data to customize the filename. This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk. In the example below, we'll use `moduleFilename` to output the generated css into a different directory.
+With the `filename` option you can use chunk data to customize the filename.
+This is particularly useful when dealing with multiple entry points and wanting to get more control out of the filename for a given entry point/chunk.
+In the example below, we'll use `filename` to output the generated css into a different directory.
 
 **webpack.config.js**
 
@@ -604,7 +606,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
-      moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
+      filename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
     }),
   ],
   module: {

@@ -27,7 +27,6 @@ const pluginName = 'mini-css-extract-plugin';
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
-const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
 
 class MiniCssExtractPlugin {
@@ -37,7 +36,6 @@ class MiniCssExtractPlugin {
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
-        moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
         ignoreOrder: false,
       },
       options
@@ -46,15 +44,24 @@ class MiniCssExtractPlugin {
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
 
-      // Anything changing depending on chunk is fine
-      if (filename.match(REGEXP_PLACEHOLDERS)) {
-        this.options.chunkFilename = filename;
+      if (typeof filename !== 'function') {
+        const hasName = filename.includes('[name]');
+        const hasId = filename.includes('[id]');
+        const hasChunkHash = filename.includes('[chunkhash]');
+        const hasContentHash = filename.includes('[contenthash]');
+
+        // Anything changing depending on chunk is fine
+        if (hasChunkHash || hasContentHash || hasName || hasId) {
+          this.options.chunkFilename = filename;
+        } else {
+          // Otherwise prefix "[id]." in front of the basename to make it changing
+          this.options.chunkFilename = filename.replace(
+            /(^|\/)([^/]*(?:\?|$))/,
+            '$1[id].$2'
+          );
+        }
       } else {
-        // Elsewise prefix '[id].' in front of the basename to make it changing
-        this.options.chunkFilename = filename.replace(
-          /(^|\/)([^/]*(?:\?|$))/,
-          '$1[id].$2'
-        );
+        this.options.chunkFilename = '[id].css';
       }
     }
 
@@ -98,8 +105,9 @@ class MiniCssExtractPlugin {
 
             const filenameTemplate =
               chunk.filenameTemplate ||
-              (({ chunk: chunkData }) =>
-                this.options.moduleFilename(chunkData));
+              (typeof this.options.filename !== 'function'
+                ? this.options.filename
+                : ({ chunk: chunkData }) => this.options.filename(chunkData));
 
             if (renderedModules.length > 0) {
               result.push({
@@ -169,7 +177,9 @@ class MiniCssExtractPlugin {
             ).filter((module) => module.type === MODULE_TYPE);
 
             const filenameTemplate = chunk.canBeInitial()
-              ? ({ chunk: chunkData }) => this.options.moduleFilename(chunkData)
+              ? typeof this.options.filename !== 'function'
+                ? this.options.filename
+                : ({ chunk: chunkData }) => this.options.filename(chunkData)
               : this.options.chunkFilename;
 
             if (renderedModules.length > 0) {
@@ -416,8 +426,9 @@ class MiniCssExtractPlugin {
               `${webpack.RuntimeGlobals.require}.miniCssF`,
               (referencedChunk) =>
                 referencedChunk.canBeInitial()
-                  ? ({ chunk: chunkData }) =>
-                      this.options.moduleFilename(chunkData)
+                  ? typeof this.options.filename !== 'function'
+                    ? this.options.filename
+                    : ({ chunk: chunkData }) => this.options.filename(chunkData)
                   : this.options.chunkFilename,
               true
             )
