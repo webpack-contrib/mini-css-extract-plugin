@@ -1092,7 +1092,7 @@ module.exports = function (moduleId, options) {
       return;
     }
 
-    if (reloaded && !options.reloadAll) {
+    if (reloaded) {
       console.log('[HMR] css reload %s', src.join(' '));
     } else {
       console.log('[HMR] Reload all css');
