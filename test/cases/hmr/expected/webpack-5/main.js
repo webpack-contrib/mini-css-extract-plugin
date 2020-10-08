@@ -1,9 +1,12 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ([
 /* 0 */
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
+
     if(true) {
       // 
       var cssReload = __webpack_require__(1)(module.id, {"locals":false});

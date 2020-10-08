@@ -179,7 +179,7 @@ export function pitch(request) {
     let locals;
 
     const esModule =
-      typeof options.esModule !== 'undefined' ? options.esModule : false;
+      typeof options.esModule !== 'undefined' ? options.esModule : true;
     const namedExport =
       esModule && options.modules && options.modules.namedExport;
 
