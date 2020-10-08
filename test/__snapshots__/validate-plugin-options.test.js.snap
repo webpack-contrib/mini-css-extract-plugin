@@ -1,24 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`validate options should throw an error on the "chunkFilename" option with "true" value 1`] = `
-"Mini CSS Extract Plugin Invalid Options
-
-options.chunkFilename should be string
-"
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.chunkFilename should be a string."
 `;
 
 exports[`validate options should throw an error on the "filename" option with "true" value 1`] = `
-"Mini CSS Extract Plugin Invalid Options
-
-options.filename should be string
-options.filename should pass \\"instanceof\\" keyword validation
-options.filename should match some schema in anyOf
-"
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.filename should be one of these:
+   string | function
+   Details:
+    * options.filename should be a string.
+    * options.filename should be an instance of function."
 `;
 
 exports[`validate options should throw an error on the "ignoreOrder" option with "1" value 1`] = `
-"Mini CSS Extract Plugin Invalid Options
-
-options.ignoreOrder should be boolean
-"
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.ignoreOrder should be a boolean."
 `;

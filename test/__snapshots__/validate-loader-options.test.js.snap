@@ -1,38 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`validate options should throw an error on the "esModule" option with "1" value 1`] = `
-"Mini CSS Extract Plugin Loader Invalid Options
-
-options.esModule should be boolean
-"
+"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
+ - options.esModule should be a boolean."
 `;
 
 exports[`validate options should throw an error on the "hmr" option with "1" value 1`] = `
-"Mini CSS Extract Plugin Loader Invalid Options
-
-options.hmr should be boolean
-"
+"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
+ - options.hmr should be a boolean."
 `;
 
 exports[`validate options should throw an error on the "modules" option with "{"namedExport":"false"}" value 1`] = `
-"Mini CSS Extract Plugin Loader Invalid Options
-
-options.modules.namedExport should be boolean
-"
+"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
+ - options.modules.namedExport should be a boolean.
+   -> Enables/disables ES modules named export for locals (https://webpack.js.org/plugins/mini-css-extract-plugin/#namedexport)."
 `;
 
 exports[`validate options should throw an error on the "modules" option with "true" value 1`] = `
-"Mini CSS Extract Plugin Loader Invalid Options
-
-options.modules should be object
-"
+"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
+ - options.modules should be an object:
+   object { namedExport? }"
 `;
 
 exports[`validate options should throw an error on the "publicPath" option with "true" value 1`] = `
-"Mini CSS Extract Plugin Loader Invalid Options
-
-options.publicPath should be string
-options.publicPath should pass \\"instanceof\\" keyword validation
-options.publicPath should match some schema in anyOf
-"
+"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
+ - options.publicPath should be one of these:
+   string | function
+   Details:
+    * options.publicPath should be a string.
+    * options.publicPath should be an instance of function."
 `;
