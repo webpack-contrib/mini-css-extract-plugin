@@ -24,6 +24,10 @@ exports[`HMR should reloads with non http/https link href 1`] = `"[HMR] css relo
 
 exports[`HMR should reloads with non http/https link href 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\"><link rel=\\"shortcut icon\\" href=\\"data:;base64,=\\">"`;
 
+exports[`HMR should work reload all css 1`] = `"[HMR] Reload all css"`;
+
+exports[`HMR should work reload all css 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
+
 exports[`HMR should works 1`] = `"[HMR] css reload %s"`;
 
 exports[`HMR should works 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\">"`;
