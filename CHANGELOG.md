@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v0.12.0...v1.0.0) (2020-10-09)
+
+### BREAKING CHANGE
+
+* minimum supported `Node.js` version is `10.13.0`
+* the `esModule` option is `true` by default, you need to change `const locals = require('./styles.css')`/`require('./styles.css')` on `import locals from './styles.css'`/`import './styles.css''`
+* the `moduleFilename` option was removed in favor the `filename` option
+* the `hmr` option was removed, HMR will work automatically when `HotModuleReplacement` plugin used or `webpack-dev-server` with enabled the `hot` option
+* the `reloadAll` was removed
+
+### Features
+
+- the `chunkFilename` option can be a function for webpack@5
+
+### ⚠ NOTICE
+
+To avoid problems between `mini-css-extract-plugin` and `style-loader` because of changing the `esModule` option to `true` by default we strongly recommend upgrading `style-loader` to `2.0.0` version.
+
 ### [0.12.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v0.11.3...v0.12.0) (2020-10-07)
 
 
