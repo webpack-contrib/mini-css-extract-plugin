@@ -43,8 +43,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      # - name: Security audit
-      # run: npm run security
+      - name: Security audit
+        run: npm run security
 
       - name: Check commit message
         uses: wagoid/commitlint-github-action@v1
@@ -55,7 +55,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        # css-loader doesn't support node@6
         node-version: [10.x, 12.x, 14.x]
         webpack-version: [latest, next]
 
