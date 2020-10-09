@@ -73,14 +73,56 @@ module.exports = {
 
 ## Options
 
-### `publicPath`
+### Plugin Options
+
+|                 Name                  |         Type         |       Default       | Description                                              |
+| :-----------------------------------: | :------------------: | :-----------------: | :------------------------------------------------------- |
+|      **[`filename`](#filename)**      | `{String\|Function}` |    `[name].css`     | This option determines the name of each output CSS file  |
+| **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` | `based on filename` | This option determines the name of non-entry chunk files |
+|   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |       `false`       | Remove Order Warnings                                    |
+
+#### `filename`
+
+Type: `String|Function`
+Default: `[name].css`
+
+This option determines the name of each output CSS file.
+
+Works like [`output.filename`](https://webpack.js.org/configuration/output/#outputfilename)
+
+#### `chunkFilename`
+
+Type: `String|Function`
+Default: `based on filename`
+
+This option determines the name of non-entry chunk files.
+
+Works like [`output.chunkFilename`](https://webpack.js.org/configuration/output/#outputchunkfilename)
+
+#### `ignoreOrder`
+
+Type: `Boolean`
+Default: `false`
+
+**[`Remove Order Warnings`](#removeOrderWarnings)**
+
+### Loader Options
+
+|              Name               |         Type         |              Default               | Description                                                                       |
+| :-----------------------------: | :------------------: | :--------------------------------: | :-------------------------------------------------------------------------------- |
+| **[`publicPath`](#publicPath)** | `{String\|Function}` | `webpackOptions.output.publicPath` | Specifies a custom public path for the external resources like images, files, etc |
+|   **[`esModule`](#esModule)**   |     `{Boolean}`      |               `true`               | Use ES modules syntax                                                             |
+|    **[`modules`](#modules)**    |      `{Object}`      |            `undefined`             | Configuration CSS Modules                                                         |
+
+#### `publicPath`
 
 Type: `String|Function`
 Default: the `publicPath` in `webpackOptions.output`
 
-Specifies a custom public path for the target file(s).
+Specifies a custom public path for the external resources like images, files, etc inside `CSS`.
+Works like [`output.publicPath`](https://webpack.js.org/configuration/output/#outputpublicpath)
 
-#### `String`
+##### `String`
 
 **webpack.config.js**
 
@@ -115,7 +157,7 @@ module.exports = {
 };
 ```
 
-#### `Function`
+##### `Function`
 
 **webpack.config.js**
 
@@ -152,7 +194,7 @@ module.exports = {
 };
 ```
 
-### `esModule`
+#### `esModule`
 
 Type: `Boolean`
 Default: `true`
@@ -188,14 +230,14 @@ module.exports = {
 };
 ```
 
-### `modules`
+#### `modules`
 
 Type: `Object`
 Default: `undefined`
 
 Configuration CSS Modules.
 
-#### `namedExport`
+##### `namedExport`
 
 Type: `Boolean`
 Default: `false`
