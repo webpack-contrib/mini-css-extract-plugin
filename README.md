@@ -104,7 +104,7 @@ Works like [`output.chunkFilename`](https://webpack.js.org/configuration/output/
 Type: `Boolean`
 Default: `false`
 
-**[`Remove Order Warnings`](#removeOrderWarnings)**
+Remove Order Warnings
 
 ### Loader Options
 
