@@ -1,17 +1,23 @@
+import { version as webpackVersion } from 'webpack';
+
 import MiniCssExtractPlugin from '../src';
 
 describe('validate options', () => {
   const tests = {
     filename: {
-      success: ['[name].css'],
+      success: [
+        '[name].css',
+        ({ name }) => `${name.replace('/js/', '/css/')}.css`,
+      ],
       failure: [true],
     },
     chunkFilename: {
-      success: ['[id].css'],
-      failure: [true],
-    },
-    moduleFilename: {
-      success: [({ name }) => `${name.replace('/js/', '/css/')}.css`],
+      success: [
+        '[id].css',
+        webpackVersion[0] === '4'
+          ? '[id].[name].css'
+          : ({ chunk }) => `${chunk.id}.${chunk.name}.css`,
+      ],
       failure: [true],
     },
     ignoreOrder: {

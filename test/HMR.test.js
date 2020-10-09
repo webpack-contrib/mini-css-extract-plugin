@@ -126,9 +126,9 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should reloads with reloadAll option', (done) => {
+  it('should work reload all css', (done) => {
     const update = hotModuleReplacement('./src/style.css', {
-      reloadAll: true,
+      filename: 'unreload_url',
     });
 
     update();

@@ -34,6 +34,7 @@ if (module.hot) {
       replaceClass(localClass, classes[localClass]);
     });
     oldClasses = classes;
+    // eslint-disable-next-line no-alert
     alert('HMR updated CSS module');
   });
 }

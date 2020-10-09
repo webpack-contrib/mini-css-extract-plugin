@@ -8,7 +8,7 @@ import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
 import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
 import NormalModule from 'webpack/lib/NormalModule';
-import validateOptions from 'schema-utils';
+import { validate } from 'schema-utils';
 
 import CssDependency from './CssDependency';
 import { findModuleById, evalModuleCode } from './utils';
@@ -42,7 +42,10 @@ function hotLoader(content, context) {
 export function pitch(request) {
   const options = loaderUtils.getOptions(this) || {};
 
-  validateOptions(schema, options, 'Mini CSS Extract Plugin Loader');
+  validate(schema, options, {
+    name: 'Mini CSS Extract Plugin Loader',
+    baseDataPath: 'options',
+  });
 
   const loaders = this.loaders.slice(this.loaderIndex + 1);
 
@@ -179,7 +182,7 @@ export function pitch(request) {
     let locals;
 
     const esModule =
-      typeof options.esModule !== 'undefined' ? options.esModule : false;
+      typeof options.esModule !== 'undefined' ? options.esModule : true;
     const namedExport =
       esModule && options.modules && options.modules.namedExport;
 
@@ -241,7 +244,7 @@ export function pitch(request) {
 
     let resultSource = `// extracted by ${pluginName}`;
 
-    resultSource += options.hmr
+    resultSource += this.hot
       ? hotLoader(result, { context: this.context, options, locals })
       : result;
 

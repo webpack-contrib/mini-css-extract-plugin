@@ -150,6 +150,43 @@ describe('TestCases', () => {
             `webpack-${webpack.version[0]}`
           );
 
+          if (/^hmr/.test(directory)) {
+            let res = fs
+              .readFileSync(path.resolve(outputDirectoryForCase, 'main.js'))
+              .toString();
+
+            const date = Date.now().toString().slice(0, 6);
+            const dateRegexp = new RegExp(`${date}\\d+`, 'gi');
+
+            res = res.replace(dateRegexp, '');
+
+            if (webpack.version[0] === '4') {
+              const matchAll = res.match(/var hotCurrentHash = "([\d\w].*)"/i);
+              const replacer = new Array(matchAll[1].length);
+
+              res = res.replace(
+                /var hotCurrentHash = "([\d\w].*)"/i,
+                `var hotCurrentHash = "${replacer.fill('x').join('')}"`
+              );
+            } else {
+              const matchAll = res.match(
+                /__webpack_require__\.h = \(\) => "([\d\w].*)"/i
+              );
+
+              const replacer = new Array(matchAll[1].length);
+
+              res = res.replace(
+                /__webpack_require__\.h = \(\) => "([\d\w].*)"/i,
+                `__webpack_require__.h = () => "${replacer.fill('x').join('')}"`
+              );
+            }
+
+            fs.writeFileSync(
+              path.resolve(outputDirectoryForCase, 'main.js'),
+              res
+            );
+          }
+
           if (fs.existsSync(expectedDirectoryByVersion)) {
             compareDirectory(
               outputDirectoryForCase,

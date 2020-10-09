@@ -2,7 +2,7 @@
 
 import webpack, { version as webpackVersion } from 'webpack';
 
-import validateOptions from 'schema-utils';
+import { validate } from 'schema-utils';
 
 import CssModuleFactory from './CssModuleFactory';
 import CssDependencyTemplate from './CssDependencyTemplate';
@@ -27,17 +27,18 @@ const pluginName = 'mini-css-extract-plugin';
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
-const REGEXP_PLACEHOLDERS = /\[(name|id|chunkhash)\]/g;
 const DEFAULT_FILENAME = '[name].css';
 
 class MiniCssExtractPlugin {
   constructor(options = {}) {
-    validateOptions(schema, options, 'Mini CSS Extract Plugin');
+    validate(schema, options, {
+      name: 'Mini CSS Extract Plugin',
+      baseDataPath: 'options',
+    });
 
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
-        moduleFilename: () => this.options.filename || DEFAULT_FILENAME,
         ignoreOrder: false,
       },
       options
@@ -46,15 +47,24 @@ class MiniCssExtractPlugin {
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
 
-      // Anything changing depending on chunk is fine
-      if (filename.match(REGEXP_PLACEHOLDERS)) {
-        this.options.chunkFilename = filename;
+      if (typeof filename !== 'function') {
+        const hasName = filename.includes('[name]');
+        const hasId = filename.includes('[id]');
+        const hasChunkHash = filename.includes('[chunkhash]');
+        const hasContentHash = filename.includes('[contenthash]');
+
+        // Anything changing depending on chunk is fine
+        if (hasChunkHash || hasContentHash || hasName || hasId) {
+          this.options.chunkFilename = filename;
+        } else {
+          // Otherwise prefix "[id]." in front of the basename to make it changing
+          this.options.chunkFilename = filename.replace(
+            /(^|\/)([^/]*(?:\?|$))/,
+            '$1[id].$2'
+          );
+        }
       } else {
-        // Elsewise prefix '[id].' in front of the basename to make it changing
-        this.options.chunkFilename = filename.replace(
-          /(^|\/)([^/]*(?:\?|$))/,
-          '$1[id].$2'
-        );
+        this.options.chunkFilename = '[id].css';
       }
     }
 
@@ -97,9 +107,7 @@ class MiniCssExtractPlugin {
             ).filter((module) => module.type === MODULE_TYPE);
 
             const filenameTemplate =
-              chunk.filenameTemplate ||
-              (({ chunk: chunkData }) =>
-                this.options.moduleFilename(chunkData));
+              chunk.filenameTemplate || this.options.filename;
 
             if (renderedModules.length > 0) {
               result.push({
@@ -169,7 +177,7 @@ class MiniCssExtractPlugin {
             ).filter((module) => module.type === MODULE_TYPE);
 
             const filenameTemplate = chunk.canBeInitial()
-              ? ({ chunk: chunkData }) => this.options.moduleFilename(chunkData)
+              ? this.options.filename
               : this.options.chunkFilename;
 
             if (renderedModules.length > 0) {
@@ -416,8 +424,7 @@ class MiniCssExtractPlugin {
               `${webpack.RuntimeGlobals.require}.miniCssF`,
               (referencedChunk) =>
                 referencedChunk.canBeInitial()
-                  ? ({ chunk: chunkData }) =>
-                      this.options.moduleFilename(chunkData)
+                  ? this.options.filename
                   : this.options.chunkFilename,
               true
             )

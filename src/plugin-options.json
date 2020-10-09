@@ -3,13 +3,24 @@
   "additionalProperties": true,
   "properties": {
     "filename": {
-      "type": "string"
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
     },
     "chunkFilename": {
-      "type": "string"
-    },
-    "moduleFilename": {
-      "instanceof": "Function"
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
     },
     "ignoreOrder": {
       "type": "boolean"

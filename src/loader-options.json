@@ -18,9 +18,6 @@
     "hmr": {
       "type": "boolean"
     },
-    "reloadAll": {
-      "type": "boolean"
-    },
     "modules": {
       "type": "object",
       "additionalProperties": false,
