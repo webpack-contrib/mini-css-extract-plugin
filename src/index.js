@@ -107,10 +107,7 @@ class MiniCssExtractPlugin {
             ).filter((module) => module.type === MODULE_TYPE);
 
             const filenameTemplate =
-              chunk.filenameTemplate ||
-              (typeof this.options.filename !== 'function'
-                ? this.options.filename
-                : ({ chunk: chunkData }) => this.options.filename(chunkData));
+              chunk.filenameTemplate || this.options.filename;
 
             if (renderedModules.length > 0) {
               result.push({
@@ -180,9 +177,7 @@ class MiniCssExtractPlugin {
             ).filter((module) => module.type === MODULE_TYPE);
 
             const filenameTemplate = chunk.canBeInitial()
-              ? typeof this.options.filename !== 'function'
-                ? this.options.filename
-                : ({ chunk: chunkData }) => this.options.filename(chunkData)
+              ? this.options.filename
               : this.options.chunkFilename;
 
             if (renderedModules.length > 0) {
@@ -429,9 +424,7 @@ class MiniCssExtractPlugin {
               `${webpack.RuntimeGlobals.require}.miniCssF`,
               (referencedChunk) =>
                 referencedChunk.canBeInitial()
-                  ? typeof this.options.filename !== 'function'
-                    ? this.options.filename
-                    : ({ chunk: chunkData }) => this.options.filename(chunkData)
+                  ? this.options.filename
                   : this.options.chunkFilename,
               true
             )

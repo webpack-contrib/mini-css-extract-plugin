@@ -599,7 +599,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
-      filename: ({ name }) => `${name.replace('/js/', '/css/')}.css`,
+      filename: ({ chunk }) => `${chunk.name.replace('/js/', '/css/')}.css`,
     }),
   ],
   module: {
