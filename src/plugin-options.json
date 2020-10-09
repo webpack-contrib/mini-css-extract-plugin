@@ -13,7 +13,14 @@
       ]
     },
     "chunkFilename": {
-      "type": "string"
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
     },
     "ignoreOrder": {
       "type": "boolean"

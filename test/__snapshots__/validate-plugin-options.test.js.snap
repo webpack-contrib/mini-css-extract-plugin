@@ -2,7 +2,11 @@
 
 exports[`validate options should throw an error on the "chunkFilename" option with "true" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
- - options.chunkFilename should be a string."
+ - options.chunkFilename should be one of these:
+   string | function
+   Details:
+    * options.chunkFilename should be a string.
+    * options.chunkFilename should be an instance of function."
 `;
 
 exports[`validate options should throw an error on the "filename" option with "true" value 1`] = `
