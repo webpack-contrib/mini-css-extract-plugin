@@ -95,6 +95,8 @@ Works like [`output.filename`](https://webpack.js.org/configuration/output/#outp
 Type: `String|Function`
 Default: `based on filename`
 
+> i Specifying `chunkFilename` as a `function` is only available in webpack@5
+
 This option determines the name of non-entry chunk files.
 
 Works like [`output.chunkFilename`](https://webpack.js.org/configuration/output/#outputchunkfilename)
@@ -104,7 +106,8 @@ Works like [`output.chunkFilename`](https://webpack.js.org/configuration/output/
 Type: `Boolean`
 Default: `false`
 
-Remove Order Warnings
+Remove Order Warnings.
+See [examples](#remove-order-warnings) below for details.
 
 ### Loader Options
 
@@ -391,7 +394,7 @@ module.exports = {
 
 ### Advanced configuration example
 
-This plugin should be used only on `production` builds without `style-loader` in the loaders chain, especially if you want to have HMR in `development`.
+This plugin should not be used with `style-loader` in the loaders chain.
 
 Here is an example to have both HMR in `development` and your styles extracted in a file for `production` builds.
 
@@ -411,8 +414,8 @@ const plugins = [
   new MiniCssExtractPlugin({
     // Options similar to the same options in webpackOptions.output
     // both options are optional
-    filename: devMode ? '[name].css' : '[name].[hash].css',
-    chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+    filename: devMode ? '[name].css' : '[name].[contenthash].css',
+    chunkFilename: devMode ? '[id].css' : '[id].[contenthash].css',
   }),
 ];
 if (devMode) {
@@ -459,8 +462,8 @@ const plugins = [
   new MiniCssExtractPlugin({
     // Options similar to the same options in webpackOptions.output
     // both options are optional
-    filename: devMode ? '[name].css' : '[name].[hash].css',
-    chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+    filename: devMode ? '[name].css' : '[name].[contenthash].css',
+    chunkFilename: devMode ? '[id].css' : '[id].[contenthash].css',
   }),
 ];
 if (devMode) {
