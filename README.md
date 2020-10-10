@@ -80,6 +80,7 @@ module.exports = {
 |      **[`filename`](#filename)**      | `{String\|Function}` |    `[name].css`     | This option determines the name of each output CSS file  |
 | **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` | `based on filename` | This option determines the name of non-entry chunk files |
 |   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |       `false`       | Remove Order Warnings                                    |
+|        **[`insert`](#insert)**        | `{String\|Function}` |     `undefined`     | Inserts `<link>` at the given position                   |
 
 #### `filename`
 
@@ -108,6 +109,57 @@ Default: `false`
 
 Remove Order Warnings.
 See [examples](#remove-order-warnings) below for details.
+
+#### `insert`
+
+Type: `String|Function`
+Default: `undefined`
+
+By default, the `extract-css-chunks-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
+
+However in some circumstances it might be necessary to have finer control over the append target or even delay `link` elements instertion.
+For example this is the case when you asynchronously load styles for an application that runs inside of an iframe.
+In such cases `insert` can be configured to be a function or a custom selector.
+
+If you target an [iframe](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement) make sure that the parent document has sufficient access rights to reach into the frame document and append elements to it.
+
+##### `String`
+
+Allows to setup custom [query selector](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector).
+A new `<link>` element will be inserted after the found item.
+
+**webpack.config.js**
+
+```js
+new MiniCssExtractPlugin({
+  insert: '#some-element',
+});
+```
+
+A new `<link>` element will be inserted after the element with id `some-element`.
+
+##### `Function`
+
+Allows to override default behavior and insert styles at any position.
+
+> ⚠ Do not forget that this code will run in the browser alongside your application. Since not all browsers support latest ECMA features like `let`, `const`, `arrow function expression` and etc we recommend you to use only ECMA 5 features and syntax.
+
+> > ⚠ The `insert` function is serialized to string and passed to the plugin. This means that it won't have access to the scope of the webpack configuration module.
+
+**webpack.config.js**
+
+```js
+new MiniCssExtractPlugin({
+  insert: function insert(linkTag) {
+    const reference = document.querySelector('#some-element');
+    if (reference) {
+      reference.parentNode.insertBefore(linkTag, reference);
+    }
+  },
+});
+```
+
+A new `<link>` element will be inserted before the element with id `some-element`.
 
 ### Loader Options
 

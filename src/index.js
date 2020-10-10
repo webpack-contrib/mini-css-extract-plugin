@@ -36,12 +36,27 @@ class MiniCssExtractPlugin {
       baseDataPath: 'options',
     });
 
+    const insert =
+      typeof options.insert !== 'undefined'
+        ? typeof options.insert === 'function'
+          ? Template.asString([options.insert, 'insert(linkTag);'])
+          : Template.asString([
+              `var target = document.querySelector("${options.insert}");`,
+              "if (!target) {throw new Error(\"Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.\")}",
+              `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
+            ])
+        : Template.asString([
+            'var head = document.getElementsByTagName("head")[0];',
+            'head.appendChild(linkTag);',
+          ]);
+
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
         ignoreOrder: false,
       },
-      options
+      options,
+      { insert }
     );
 
     if (!this.options.chunkFilename) {
@@ -392,8 +407,7 @@ class MiniCssExtractPlugin {
                           '}',
                         ])
                       : '',
-                    'var head = document.getElementsByTagName("head")[0];',
-                    'head.appendChild(linkTag);',
+                    this.options.insert,
                   ]),
                   '}).then(function() {',
                   Template.indent(['installedCssChunks[chunkId] = 0;']),

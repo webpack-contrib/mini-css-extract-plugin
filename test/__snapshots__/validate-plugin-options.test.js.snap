@@ -22,3 +22,33 @@ exports[`validate options should throw an error on the "ignoreOrder" option with
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.ignoreOrder should be a boolean."
 `;
+
+exports[`validate options should throw an error on the "insert" option with "{}" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.insert should be one of these:
+   string | function
+   -> Inserts \`<link>\` at the given position (https://github.com/webpack-contrib/mini-css-extract-plugin#insert).
+   Details:
+    * options.insert should be a string.
+    * options.insert should be an instance of function."
+`;
+
+exports[`validate options should throw an error on the "insert" option with "1" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.insert should be one of these:
+   string | function
+   -> Inserts \`<link>\` at the given position (https://github.com/webpack-contrib/mini-css-extract-plugin#insert).
+   Details:
+    * options.insert should be a string.
+    * options.insert should be an instance of function."
+`;
+
+exports[`validate options should throw an error on the "insert" option with "true" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.insert should be one of these:
+   string | function
+   -> Inserts \`<link>\` at the given position (https://github.com/webpack-contrib/mini-css-extract-plugin#insert).
+   Details:
+    * options.insert should be a string.
+    * options.insert should be an instance of function."
+`;

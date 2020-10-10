@@ -24,6 +24,17 @@
     },
     "ignoreOrder": {
       "type": "boolean"
+    },
+    "insert": {
+      "description": "Inserts `<link>` at the given position (https://github.com/webpack-contrib/mini-css-extract-plugin#insert).",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
     }
   }
 }
