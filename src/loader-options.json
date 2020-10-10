@@ -15,9 +15,6 @@
     "esModule": {
       "type": "boolean"
     },
-    "hmr": {
-      "type": "boolean"
-    },
     "modules": {
       "type": "object",
       "additionalProperties": false,
