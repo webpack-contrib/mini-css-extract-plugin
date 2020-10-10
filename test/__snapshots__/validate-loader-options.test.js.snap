@@ -5,11 +5,6 @@ exports[`validate options should throw an error on the "esModule" option with "1
  - options.esModule should be a boolean."
 `;
 
-exports[`validate options should throw an error on the "hmr" option with "1" value 1`] = `
-"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
- - options.hmr should be a boolean."
-`;
-
 exports[`validate options should throw an error on the "modules" option with "{"namedExport":"false"}" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options.modules.namedExport should be a boolean.
