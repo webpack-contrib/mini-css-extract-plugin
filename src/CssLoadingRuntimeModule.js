@@ -27,9 +27,10 @@ const getCssChunkObject = (mainChunk, compilation) => {
 };
 
 module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
-  constructor(runtimeRequirements) {
+  constructor(runtimeRequirements, insert) {
     super('css loading', 10);
     this.runtimeRequirements = runtimeRequirements;
+    this.insert = insert;
   }
 
   generate() {
@@ -77,8 +78,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
                 '}',
               ])
             : '',
-          'var head = document.getElementsByTagName("head")[0];',
-          'head.appendChild(linkTag);',
+          this.insert,
           'return linkTag;',
         ]
       )};`,

@@ -19,6 +19,7 @@ describe('insert option', () => {
       {
         mode: 'none',
         output: {
+          publicPath: '',
           path: path.resolve(__dirname, '../outputs'),
           filename: '[name].bundle.js',
         },
@@ -46,6 +47,7 @@ describe('insert option', () => {
       {
         mode: 'none',
         output: {
+          publicPath: '',
           path: path.resolve(__dirname, '../outputs'),
           filename: '[name].bundle.js',
         },
@@ -74,6 +76,7 @@ describe('insert option', () => {
       {
         mode: 'none',
         output: {
+          publicPath: '',
           path: path.resolve(__dirname, '../outputs'),
           filename: '[name].bundle.js',
         },

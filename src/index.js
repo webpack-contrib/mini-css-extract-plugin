@@ -443,7 +443,10 @@ class MiniCssExtractPlugin {
               true
             )
           );
-          compilation.addRuntimeModule(chunk, new CssLoadingRuntimeModule(set));
+          compilation.addRuntimeModule(
+            chunk,
+            new CssLoadingRuntimeModule(set, this.options.insert)
+          );
         };
         compilation.hooks.runtimeRequirementInTree
           .for(webpack.RuntimeGlobals.ensureChunkHandlers)
