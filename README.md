@@ -81,6 +81,7 @@ module.exports = {
 | **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` |                               `based on filename`                                | This option determines the name of non-entry chunk files |
 |   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |                                     `false`                                      | Remove Order Warnings                                    |
 |        **[`insert`](#insert)**        | `{String\|Function}` | `var head = document.getElementsByTagName("head")[0];head.appendChild(linkTag);` | Inserts `<link>` at the given position                   |
+|    **[`attributes`](#attributes)**    |      `{Object}`      |        `{}`         | Adds custom attributes to tag                            |
 
 #### `filename`
 
@@ -160,6 +161,40 @@ new MiniCssExtractPlugin({
 ```
 
 A new `<link>` element will be inserted before the element with id `some-element`.
+
+#### `attributes`
+
+Type: `Object`
+Default: `{}`
+
+If defined, the `mini-css-extract-plugin` will attach given attributes with their values on <link> element.
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      attributes: {
+        id: 'target',
+        'data-target': 'example',
+      },
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
+
+Note: It's only applied to dynamically loaded css chunks, if you want to modify link attributes inside html file, please using [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin)
 
 ### Loader Options
 
