@@ -57,6 +57,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
           'var linkTag = document.createElement("link");',
           'linkTag.rel = "stylesheet";',
           'linkTag.type = "text/css";',
+          this.runtimeOptions.attributes,
           'linkTag.onload = resolve;',
           'linkTag.onerror = function(event) {',
           Template.indent([
