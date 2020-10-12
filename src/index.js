@@ -55,9 +55,12 @@ class MiniCssExtractPlugin {
         filename: DEFAULT_FILENAME,
         ignoreOrder: false,
       },
-      options,
-      { insert }
+      options
     );
+
+    this.runtimeOptions = {
+      insert,
+    };
 
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
@@ -407,7 +410,7 @@ class MiniCssExtractPlugin {
                           '}',
                         ])
                       : '',
-                    this.options.insert,
+                    this.runtimeOptions.insert,
                   ]),
                   '}).then(function() {',
                   Template.indent(['installedCssChunks[chunkId] = 0;']),
@@ -445,7 +448,7 @@ class MiniCssExtractPlugin {
           );
           compilation.addRuntimeModule(
             chunk,
-            new CssLoadingRuntimeModule(set, this.options.insert)
+            new CssLoadingRuntimeModule(set, this.runtimeOptions)
           );
         };
         compilation.hooks.runtimeRequirementInTree
