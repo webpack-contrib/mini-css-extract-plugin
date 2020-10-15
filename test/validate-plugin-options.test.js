@@ -24,6 +24,10 @@ describe('validate options', () => {
       success: [true, false],
       failure: [1],
     },
+    insert: {
+      success: ['#existing-style', function insert() {}],
+      failure: [1, true, {}],
+    },
     unknown: {
       success: [],
       // TODO failed in next release

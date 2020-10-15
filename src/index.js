@@ -36,6 +36,19 @@ class MiniCssExtractPlugin {
       baseDataPath: 'options',
     });
 
+    const insert =
+      typeof options.insert !== 'undefined'
+        ? typeof options.insert === 'function'
+          ? `(${options.insert.toString()})(linkTag)`
+          : Template.asString([
+              `var target = document.querySelector("${options.insert}");`,
+              `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
+            ])
+        : Template.asString([
+            'var head = document.getElementsByTagName("head")[0];',
+            'head.appendChild(linkTag);',
+          ]);
+
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
@@ -43,6 +56,10 @@ class MiniCssExtractPlugin {
       },
       options
     );
+
+    this.runtimeOptions = {
+      insert,
+    };
 
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
@@ -392,8 +409,7 @@ class MiniCssExtractPlugin {
                           '}',
                         ])
                       : '',
-                    'var head = document.getElementsByTagName("head")[0];',
-                    'head.appendChild(linkTag);',
+                    this.runtimeOptions.insert,
                   ]),
                   '}).then(function() {',
                   Template.indent(['installedCssChunks[chunkId] = 0;']),
@@ -429,7 +445,10 @@ class MiniCssExtractPlugin {
               true
             )
           );
-          compilation.addRuntimeModule(chunk, new CssLoadingRuntimeModule(set));
+          compilation.addRuntimeModule(
+            chunk,
+            new CssLoadingRuntimeModule(set, this.runtimeOptions)
+          );
         };
         compilation.hooks.runtimeRequirementInTree
           .for(webpack.RuntimeGlobals.ensureChunkHandlers)
