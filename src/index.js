@@ -60,7 +60,9 @@ class MiniCssExtractPlugin {
       options
     );
 
-    this.runtimeOptions = {};
+    this.runtimeOptions = {
+      insert,
+    };
 
     this.runtimeOptions.attributes = Template.asString(
       Object.entries(attributes).map((entry) => {
@@ -71,10 +73,6 @@ class MiniCssExtractPlugin {
         )});`;
       })
     );
-
-    this.runtimeOptions = {
-      insert,
-    };
 
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
@@ -400,7 +398,7 @@ class MiniCssExtractPlugin {
                     'var linkTag = document.createElement("link");',
                     this.runtimeOptions.attributes,
                     'linkTag.rel = "stylesheet";',
-                    `linkTag.type = "text/css";`,
+                    'linkTag.type = "text/css";',
                     'linkTag.onload = resolve;',
                     'linkTag.onerror = function(event) {',
                     Template.indent([

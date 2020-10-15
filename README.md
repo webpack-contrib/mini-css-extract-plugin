@@ -81,7 +81,7 @@ module.exports = {
 | **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` |                               `based on filename`                                | This option determines the name of non-entry chunk files |
 |   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |                                     `false`                                      | Remove Order Warnings                                    |
 |        **[`insert`](#insert)**        | `{String\|Function}` | `var head = document.getElementsByTagName("head")[0];head.appendChild(linkTag);` | Inserts `<link>` at the given position                   |
-|    **[`attributes`](#attributes)**    |      `{Object}`      |        `{}`         | Adds custom attributes to tag                            |
+|    **[`attributes`](#attributes)**    |      `{Object}`      |                                       `{}`                                       | Adds custom attributes to tag                            |
 
 #### `filename`
 
@@ -114,7 +114,7 @@ See [examples](#remove-order-warnings) below for details.
 #### `insert`
 
 Type: `String|Function`
-Default: `var head = document.getElementsByTagName("head")[0];head.appendChild(linkTag);`
+Default: `var head = document.getElementsByTagName("head")[0]; head.appendChild(linkTag);`
 
 By default, the `extract-css-chunks-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
 
@@ -152,7 +152,7 @@ Allows to override default behavior and insert styles at any position.
 ```js
 new MiniCssExtractPlugin({
   insert: function (linkTag) {
-    const reference = document.querySelector('#some-element');
+    var reference = document.querySelector('#some-element');
     if (reference) {
       reference.parentNode.insertBefore(linkTag, reference);
     }
