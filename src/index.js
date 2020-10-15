@@ -57,23 +57,19 @@ class MiniCssExtractPlugin {
         filename: DEFAULT_FILENAME,
         ignoreOrder: false,
       },
-      options,
-      { attributes }
+      options
     );
 
     this.runtimeOptions = {};
 
     this.runtimeOptions.attributes = Template.asString(
-      Object.entries(this.options.attributes).reduce((accumulator, entry) => {
+      Object.entries(attributes).map((entry) => {
         const [key, value] = entry;
-        accumulator.push(
-          `linkTag.setAttribute(${JSON.stringify(key)}, ${JSON.stringify(
-            value
-          )});`
-        );
 
-        return accumulator;
-      }, [])
+        return `linkTag.setAttribute(${JSON.stringify(key)}, ${JSON.stringify(
+          value
+        )});`;
+      })
     );
 
     this.runtimeOptions = {
