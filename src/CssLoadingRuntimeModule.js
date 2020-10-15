@@ -55,6 +55,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
         'fullhref, resolve, reject',
         [
           'var linkTag = document.createElement("link");',
+          this.runtimeOptions.attributes,
           'linkTag.rel = "stylesheet";',
           'linkTag.type = "text/css";',
           'linkTag.onload = resolve;',

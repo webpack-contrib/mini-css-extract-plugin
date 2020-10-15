@@ -49,6 +49,9 @@ class MiniCssExtractPlugin {
             'head.appendChild(linkTag);',
           ]);
 
+    const attributes =
+      typeof options.attributes === 'object' ? options.attributes : {};
+
     this.options = Object.assign(
       {
         filename: DEFAULT_FILENAME,
@@ -60,6 +63,16 @@ class MiniCssExtractPlugin {
     this.runtimeOptions = {
       insert,
     };
+
+    this.runtimeOptions.attributes = Template.asString(
+      Object.entries(attributes).map((entry) => {
+        const [key, value] = entry;
+
+        return `linkTag.setAttribute(${JSON.stringify(key)}, ${JSON.stringify(
+          value
+        )});`;
+      })
+    );
 
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
@@ -383,6 +396,7 @@ class MiniCssExtractPlugin {
                     ]),
                     '}',
                     'var linkTag = document.createElement("link");',
+                    this.runtimeOptions.attributes,
                     'linkTag.rel = "stylesheet";',
                     'linkTag.type = "text/css";',
                     'linkTag.onload = resolve;',

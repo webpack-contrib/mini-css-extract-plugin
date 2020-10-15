@@ -1,5 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`validate options should throw an error on the "attributes" option with "true" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.attributes should be an object:
+   object { … }
+   -> Adds custom attributes to tag (https://github.com/webpack-contrib/mini-css-extract-plugin#attributes)."
+`;
+
 exports[`validate options should throw an error on the "chunkFilename" option with "true" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.chunkFilename should be one of these:
