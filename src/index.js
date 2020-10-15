@@ -39,10 +39,9 @@ class MiniCssExtractPlugin {
     const insert =
       typeof options.insert !== 'undefined'
         ? typeof options.insert === 'function'
-          ? Template.asString([options.insert, 'insert(linkTag);'])
+          ? `(${options.insert.toString()})(linkTag)`
           : Template.asString([
               `var target = document.querySelector("${options.insert}");`,
-              "if (!target) {throw new Error(\"Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.\")}",
               `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
             ])
         : Template.asString([

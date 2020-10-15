@@ -173,7 +173,6 @@
 /******/ 			linkTag.href = fullhref;
 /******/ 		
 /******/ 			var target = document.querySelector("script[src='1.js']");
-/******/ 			if (!target) {throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.")}
 /******/ 			target.parentNode.insertBefore(linkTag, target.nextSibling);
 /******/ 			return linkTag;
 /******/ 		};

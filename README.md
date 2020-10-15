@@ -75,12 +75,12 @@ module.exports = {
 
 ### Plugin Options
 
-|                 Name                  |         Type         |       Default       | Description                                              |
-| :-----------------------------------: | :------------------: | :-----------------: | :------------------------------------------------------- |
-|      **[`filename`](#filename)**      | `{String\|Function}` |    `[name].css`     | This option determines the name of each output CSS file  |
-| **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` | `based on filename` | This option determines the name of non-entry chunk files |
-|   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |       `false`       | Remove Order Warnings                                    |
-|        **[`insert`](#insert)**        | `{String\|Function}` |     `undefined`     | Inserts `<link>` at the given position                   |
+|                 Name                  |         Type         |                                     Default                                      | Description                                              |
+| :-----------------------------------: | :------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------- |
+|      **[`filename`](#filename)**      | `{String\|Function}` |                                   `[name].css`                                   | This option determines the name of each output CSS file  |
+| **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` |                               `based on filename`                                | This option determines the name of non-entry chunk files |
+|   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |                                     `false`                                      | Remove Order Warnings                                    |
+|        **[`insert`](#insert)**        | `{String\|Function}` | `var head = document.getElementsByTagName("head")[0];head.appendChild(linkTag);` | Inserts `<link>` at the given position                   |
 
 #### `filename`
 
@@ -113,7 +113,7 @@ See [examples](#remove-order-warnings) below for details.
 #### `insert`
 
 Type: `String|Function`
-Default: `undefined`
+Default: `var head = document.getElementsByTagName("head")[0];head.appendChild(linkTag);`
 
 By default, the `extract-css-chunks-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
 
@@ -150,7 +150,7 @@ Allows to override default behavior and insert styles at any position.
 
 ```js
 new MiniCssExtractPlugin({
-  insert: function insert(linkTag) {
+  insert: function (linkTag) {
     const reference = document.querySelector('#some-element');
     if (reference) {
       reference.parentNode.insertBefore(linkTag, reference);

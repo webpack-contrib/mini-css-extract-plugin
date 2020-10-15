@@ -115,14 +115,13 @@
 /******/ 				};
 /******/ 				linkTag.href = fullhref;
 /******/
-/******/ 				function insert(linkTag) {
+/******/ 				(function (linkTag) {
 /******/ 				      const reference = document.querySelector('.hot-reload');
 /******/
 /******/ 				      if (reference) {
 /******/ 				        reference.parentNode.insertBefore(linkTag, reference);
 /******/ 				      }
-/******/ 				    }
-/******/ 				insert(linkTag);
+/******/ 				    })(linkTag)
 /******/ 			}).then(function() {
 /******/ 				installedCssChunks[chunkId] = 0;
 /******/ 			}));

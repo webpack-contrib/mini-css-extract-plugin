@@ -22,7 +22,8 @@ module.exports = {
     new Self({
       filename: '[name].css',
       chunkFilename: '[id].css',
-      insert: function insert(linkTag) {
+      // eslint-disable-next-line
+      insert: function (linkTag) {
         const reference = document.querySelector('.hot-reload');
         if (reference) {
           reference.parentNode.insertBefore(linkTag, reference);
