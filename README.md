@@ -616,20 +616,15 @@ module.exports = {
 
 ### Minimizing For Production
 
-To minify the output, use a plugin like [optimize-css-assets-webpack-plugin](https://github.com/NMFR/optimize-css-assets-webpack-plugin).
-Setting `optimization.minimizer` overrides the defaults provided by webpack, so make sure to also specify a JS minimizer:
+To minify the output, use a plugin like [css-minimizer-webpack-plugin](https://github.com/webpack-contrib/css-minimizer-webpack-plugin).
 
 **webpack.config.js**
 
 ```js
-const TerserJSPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
-  optimization: {
-    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
-  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].css',
@@ -644,8 +639,17 @@ module.exports = {
       },
     ],
   },
+  optimization: {
+    minimizer: [
+      // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+      // `...`
+      new CssMinimizerPlugin(),
+    ],
+  },
 };
 ```
+
+This will enable CSS optimization only in production mode. If you want to run it also in development set the `optimization.minimize` option to true.
 
 ### Using preloaded or inlined CSS
 
