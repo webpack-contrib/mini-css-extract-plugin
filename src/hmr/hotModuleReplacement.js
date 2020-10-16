@@ -5,7 +5,7 @@
   func-names
 */
 
-const normalizeUrl = require('normalize-url');
+const normalizeUrl = require('./normalize-url');
 
 const srcByModuleId = Object.create(null);
 
