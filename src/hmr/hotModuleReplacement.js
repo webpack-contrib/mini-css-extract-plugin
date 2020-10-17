@@ -70,8 +70,7 @@ function getCurrentScriptUrl(moduleId) {
       const reg = new RegExp(`${filename}\\.js$`, 'g');
 
       return normalizeUrl(
-        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`),
-        { stripWWW: false }
+        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`)
       );
     });
   };
