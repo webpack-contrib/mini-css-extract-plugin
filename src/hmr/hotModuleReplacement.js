@@ -5,7 +5,7 @@
   func-names
 */
 
-const normalizeUrl = require('normalize-url');
+const normalizeUrl = require('./normalize-url');
 
 const srcByModuleId = Object.create(null);
 
@@ -70,8 +70,7 @@ function getCurrentScriptUrl(moduleId) {
       const reg = new RegExp(`${filename}\\.js$`, 'g');
 
       return normalizeUrl(
-        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`),
-        { stripWWW: false }
+        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`)
       );
     });
   };
