@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.0.0...v1.1.0) (2020-10-19)
+
+
+### Features
+
+* added the `attributes` option ([e8a2d5a](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/e8a2d5a09ded967e0f4be145f1f52c1e5f7f6df1))
+* added the `insert` option ([a5f17c4](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/a5f17c48cbf0c198ebc955032d11593434ef2373))
+
+
+### Bug Fixes
+
+* ignore modules without identifier ([#627](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/627)) ([71a9ce9](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/71a9ce91b377fff892068b87445372fe1c2db142))
+* remove `normalize-url` from deps ([#623](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/623)) ([9ae47e5](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/9ae47e51f198f2e0258d0e87d6e708e57c05bf86))
+
 ### [1.0.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v0.12.0...v1.0.0) (2020-10-09)
 
 ### BREAKING CHANGE
