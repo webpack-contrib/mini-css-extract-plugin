@@ -1114,37 +1114,22 @@ module.exports = function (moduleId, options) {
 /* eslint-disable */
 
 function normalizeUrl(pathComponents) {
-  var result = [];
+  return pathComponents
+    .reduce((accumulator, item) => {
+      switch (item) {
+        case '..':
+          accumulator.pop();
+          break;
+        case '.':
+          break;
+        default:
+          accumulator.push(item);
+      }
 
-  pathComponents.forEach((item) => {
-    switch (item) {
-      case '..':
-        result.pop();
-        break;
-      case '.':
-        break;
-      default:
-        result.push(item);
-    }
-  });
-
-  return result.join('/');
+      return accumulator;
+    }, [])
+    .join('/');
 }
-
-var parseUrl = function (url) {
-  var protocol =
-    url.indexOf('//') !== -1 ? url.split('//')[0] + '//' : 'http://';
-  var components = url.replace(new RegExp(protocol, 'i'), '').split('/');
-  var host = components[0];
-
-  components[0] = '';
-
-  return {
-    protocol: protocol,
-    host: host.toLowerCase(),
-    path: normalizeUrl(components),
-  };
-};
 
 module.exports = function (urlString) {
   urlString = urlString.trim();
@@ -1153,30 +1138,16 @@ module.exports = function (urlString) {
     return urlString;
   }
 
-  var hasRelativeProtocol =
-    urlString.length > 2 && urlString[0] === '/' && urlString[1] === '/';
+  var protocol =
+    urlString.indexOf('//') !== -1 ? urlString.split('//')[0] + '//' : '';
+  var components = urlString.replace(new RegExp(protocol, 'i'), '').split('/');
+  var host = components[0].toLowerCase().replace(/\.$/, '');
 
-  var urlObj = parseUrl(urlString);
+  components[0] = '';
 
-  var keepTrailingSlash = false;
+  var path = normalizeUrl(components);
 
-  if (urlObj.path) {
-    keepTrailingSlash = /\/$/i.test(urlString) && /\/$/i.test(urlObj.path);
-  }
-
-  if (urlObj.host) {
-    urlObj.host = urlObj.host.replace(/\.$/, '');
-  }
-
-  urlString = urlObj.protocol + urlObj.host + urlObj.path;
-
-  if (!keepTrailingSlash && urlObj.hash === '') {
-    urlString = urlString.replace(/\/$/, '');
-  }
-
-  if (hasRelativeProtocol) {
-    urlString = urlString.replace(/^http:\/\//, '//');
-  }
+  urlString = protocol + host + path;
 
   return urlString;
 };

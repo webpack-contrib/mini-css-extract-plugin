@@ -1,9 +1,8 @@
 {
   "main": [
-    ["example.com", "http://example.com"],
-    ["example.com ", "http://example.com"],
-    ["example.com.", "http://example.com"],
-    ["example.com", "http://example.com"],
+    ["example.com", "example.com"],
+    ["example.com ", "example.com"],
+    ["example.com.", "example.com"],
     ["http://example.com", "http://example.com"],
     ["http://example.com:80", "http://example.com:80"],
     ["https://example.com:443", "https://example.com:443"],
@@ -31,7 +30,7 @@
     ["http://example.com/foo///bar//baz/", "http://example.com/foo///bar//baz/"],
     ["sindre://www.sorhus.com/", "sindre://www.sorhus.com/"],
     ["sindre://www.sorhus.com/foo/bar", "sindre://www.sorhus.com/foo/bar"],
-    ["www.example.com", "http://www.example.com"],
+    ["www.example.com", "www.example.com"],
     ["sindre://www.sorhus.com", "sindre://www.sorhus.com"],
     ["http://www.sorhus.xx--bck1b9a5dre4c", "http://www.sorhus.xx--bck1b9a5dre4c"],
     ["http://www.www.example.com", "http://www.www.example.com"],
