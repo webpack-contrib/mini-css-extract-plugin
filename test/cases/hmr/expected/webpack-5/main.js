@@ -289,9 +289,7 @@ module.exports = function (urlString) {
 
   var path = normalizeUrl(components);
 
-  urlString = protocol + host + path;
-
-  return urlString;
+  return protocol + host + path;
 };
 
 
