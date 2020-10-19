@@ -150,6 +150,11 @@ export function pitch(request) {
       const identifierCountMap = new Map();
 
       for (const dependency of dependencies) {
+        if (!dependency.identifier) {
+          // eslint-disable-next-line no-continue
+          continue;
+        }
+
         const count = identifierCountMap.get(dependency.identifier) || 0;
 
         this._module.addDependency(
@@ -197,7 +202,10 @@ export function pitch(request) {
       if (namedExport) {
         Object.keys(originalExports).forEach((key) => {
           if (key !== 'default') {
-            if (!locals) locals = {};
+            if (!locals) {
+              locals = {};
+            }
+
             locals[key] = originalExports[key];
           }
         });
