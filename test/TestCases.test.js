@@ -192,7 +192,7 @@ describe('TestCases', () => {
               outputDirectoryForCase,
               expectedDirectoryByVersion
             );
-          } else {
+          } else if (fs.existsSync(expectedDirectory)) {
             compareDirectory(outputDirectoryForCase, expectedDirectory);
           }
 
