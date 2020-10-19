@@ -257,7 +257,7 @@ module.exports = function (moduleId, options) {
 
 function normalizeUrl(pathComponents) {
   return pathComponents
-    .reduce((accumulator, item) => {
+    .reduce(function (accumulator, item) {
       switch (item) {
         case '..':
           accumulator.pop();
