@@ -710,11 +710,16 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 function recursiveIssuer(m) {
   if (m.issuer) {
     return recursiveIssuer(m.issuer);
-  } else if (m.name) {
-    return m.name;
-  } else {
-    return false;
   }
+
+  const chunks = m.getChunks();
+  // For webpack@4 chunks = m._chunks
+
+  for (const chunk of chunks) {
+    return chunk.name;
+  }
+
+  return false;
 }
 
 module.exports = {
@@ -726,14 +731,14 @@ module.exports = {
     splitChunks: {
       cacheGroups: {
         fooStyles: {
-          name: 'foo',
+          name: 'styles_foo',
           test: (m, c, entry = 'foo') =>
             m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
           chunks: 'all',
           enforce: true,
         },
         barStyles: {
-          name: 'bar',
+          name: 'styles_bar',
           test: (m, c, entry = 'bar') =>
             m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
           chunks: 'all',
