@@ -52,7 +52,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
 
     return Template.asString([
       `var createStylesheet = ${runtimeTemplate.basicFunction(
-        'fullhref, resolve, reject',
+        'chunkId, fullhref, resolve, reject',
         [
           'var linkTag = document.createElement("link");',
           this.runtimeOptions.attributes,
@@ -61,7 +61,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
           'linkTag.onload = resolve;',
           'linkTag.onerror = function(event) {',
           Template.indent([
-            'var request = event && event.target && event.target.src || fullhref;',
+            'var request = event && event.target && event.target.href || fullhref;',
             'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
             'err.code = "CSS_CHUNK_LOAD_FAILED";',
             'err.request = request;',
@@ -107,7 +107,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
           `var href = ${RuntimeGlobals.require}.miniCssF(chunkId);`,
           `var fullhref = ${RuntimeGlobals.publicPath} + href;`,
           'if(findStylesheet(href, fullhref)) return resolve();',
-          'createStylesheet(fullhref, resolve, reject);',
+          'createStylesheet(chunkId, fullhref, resolve, reject);',
         ])});`
       )}`,
       withLoading
@@ -171,7 +171,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
                   `promises.push(new Promise(${runtimeTemplate.basicFunction(
                     'resolve, reject',
                     [
-                      `var tag = createStylesheet(fullhref, ${runtimeTemplate.basicFunction(
+                      `var tag = createStylesheet(chunkId, fullhref, ${runtimeTemplate.basicFunction(
                         '',
                         [
                           'tag.as = "style";',

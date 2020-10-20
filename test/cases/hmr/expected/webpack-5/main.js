@@ -818,14 +818,14 @@ module.exports = function (urlString) {
 /******/ 	
 /******/ 	/* webpack/runtime/css loading */
 /******/ 	(() => {
-/******/ 		var createStylesheet = (fullhref, resolve, reject) => {
+/******/ 		var createStylesheet = (chunkId, fullhref, resolve, reject) => {
 /******/ 			var linkTag = document.createElement("link");
 /******/ 		
 /******/ 			linkTag.rel = "stylesheet";
 /******/ 			linkTag.type = "text/css";
 /******/ 			linkTag.onload = resolve;
 /******/ 			linkTag.onerror = function(event) {
-/******/ 				var request = event && event.target && event.target.src || fullhref;
+/******/ 				var request = event && event.target && event.target.href || fullhref;
 /******/ 				var err = new Error("Loading CSS chunk " + chunkId + " failed.\n(" + request + ")");
 /******/ 				err.code = "CSS_CHUNK_LOAD_FAILED";
 /******/ 				err.request = request;
@@ -857,7 +857,7 @@ module.exports = function (urlString) {
 /******/ 				var href = __webpack_require__.miniCssF(chunkId);
 /******/ 				var fullhref = __webpack_require__.p + href;
 /******/ 				if(findStylesheet(href, fullhref)) return resolve();
-/******/ 				createStylesheet(fullhref, resolve, reject);
+/******/ 				createStylesheet(chunkId, fullhref, resolve, reject);
 /******/ 			});
 /******/ 		}
 /******/ 		// no chunk loading
@@ -884,7 +884,7 @@ module.exports = function (urlString) {
 /******/ 				const oldTag = findStylesheet(href, fullhref);
 /******/ 				if(!oldTag) return;
 /******/ 				promises.push(new Promise((resolve, reject) => {
-/******/ 					var tag = createStylesheet(fullhref, () => {
+/******/ 					var tag = createStylesheet(chunkId, fullhref, () => {
 /******/ 						tag.as = "style";
 /******/ 						tag.rel = "preload";
 /******/ 						resolve();

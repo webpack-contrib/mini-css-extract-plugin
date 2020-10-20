@@ -402,7 +402,7 @@ class MiniCssExtractPlugin {
                     'linkTag.onload = resolve;',
                     'linkTag.onerror = function(event) {',
                     Template.indent([
-                      'var request = event && event.target && event.target.src || fullhref;',
+                      'var request = event && event.target && event.target.href || fullhref;',
                       'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
                       'err.code = "CSS_CHUNK_LOAD_FAILED";',
                       'err.request = request;',
