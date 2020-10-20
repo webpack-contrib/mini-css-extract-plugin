@@ -706,14 +706,14 @@ This also prevents the CSS duplication issue one had with the ExtractTextPlugin.
 ```js
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const webpackVersion = require('webpack').version;
 
 function recursiveIssuer(m) {
   if (m.issuer) {
     return recursiveIssuer(m.issuer);
   }
 
-  const chunks = webpackVersion === '4' ? m._chunks : m.getChunks();
+  const chunks = m.getChunks();
+  // For webpack@4 chunks = m._chunks
 
   for (const chunk of chunks) {
     return chunk.name;
