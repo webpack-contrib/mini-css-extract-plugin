@@ -75,14 +75,14 @@ module.exports = {
 
 ### Plugin Options
 
-|                 Name                  |         Type         |                                     Default                                      | Description                                                |
-| :-----------------------------------: | :------------------: | :------------------------------------------------------------------------------: | :--------------------------------------------------------- |
-|      **[`filename`](#filename)**      | `{String\|Function}` |                                   `[name].css`                                   | This option determines the name of each output CSS file    |
-| **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` |                               `based on filename`                                | This option determines the name of non-entry chunk files   |
-|   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |                                     `false`                                      | Remove Order Warnings                                      |
-|        **[`insert`](#insert)**        | `{String\|Function}` | `var head = document.getElementsByTagName("head")[0];head.appendChild(linkTag);` | Inserts `<link>` at the given position                     |
-|    **[`attributes`](#attributes)**    |      `{Object}`      |                                       `{}`                                       | Adds custom attributes to tag                              |
-|      **[`linkType`](#linkType)**      | `{String\|Boolean}`  |                                    `text/css`                                    | Allows loading asynchronous chunks with a custom link type |
+|                 Name                  |         Type         |                Default                | Description                                                |
+| :-----------------------------------: | :------------------: | :-----------------------------------: | :--------------------------------------------------------- |
+|      **[`filename`](#filename)**      | `{String\|Function}` |             `[name].css`              | This option determines the name of each output CSS file    |
+| **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` |          `based on filename`          | This option determines the name of non-entry chunk files   |
+|   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |                `false`                | Remove Order Warnings                                      |
+|        **[`insert`](#insert)**        | `{String\|Function}` | `document.head.appendChild(linkTag);` | Inserts `<link>` at the given position                     |
+|    **[`attributes`](#attributes)**    |      `{Object}`      |                 `{}`                  | Adds custom attributes to tag                              |
+|      **[`linkType`](#linkType)**      | `{String\|Boolean}`  |              `text/css`               | Allows loading asynchronous chunks with a custom link type |
 
 #### `filename`
 
@@ -115,7 +115,7 @@ See [examples](#remove-order-warnings) below for details.
 #### `insert`
 
 Type: `String|Function`
-Default: `var head = document.getElementsByTagName("head")[0]; head.appendChild(linkTag);`
+Default: `document.head.appendChild(linkTag);`
 
 By default, the `extract-css-chunks-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
 
