@@ -259,6 +259,31 @@ describe('HMR', () => {
     }, 100);
   });
 
+  it('should reloads with non-file script in the end of page', (done) => {
+    document.body.appendChild(document.createElement('script'));
+
+    const update = hotModuleReplacement('./src/non_file_styles.css', {});
+
+    update();
+
+    setTimeout(() => {
+      expect(console.log.mock.calls[0][0]).toMatchSnapshot();
+
+      const links = Array.prototype.slice.call(
+        document.querySelectorAll('link')
+      );
+
+      expect(links[0].visited).toBe(true);
+      expect(document.head.innerHTML).toMatchSnapshot();
+
+      links[1].dispatchEvent(getLoadEvent());
+
+      expect(links[1].isLoaded).toBe(true);
+
+      done();
+    }, 100);
+  });
+
   it('should handle error event', (done) => {
     const update = hotModuleReplacement('./src/style.css', {});
 

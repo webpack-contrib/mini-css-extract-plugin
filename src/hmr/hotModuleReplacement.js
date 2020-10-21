@@ -143,6 +143,10 @@ function getReloadUrl(href, src) {
 }
 
 function reloadStyle(src) {
+  if (!src) {
+    return false;
+  }
+
   const elements = document.querySelectorAll('link');
   let loaded = false;
 
