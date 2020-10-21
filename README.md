@@ -75,13 +75,14 @@ module.exports = {
 
 ### Plugin Options
 
-|                 Name                  |         Type         |                                     Default                                      | Description                                              |
-| :-----------------------------------: | :------------------: | :------------------------------------------------------------------------------: | :------------------------------------------------------- |
-|      **[`filename`](#filename)**      | `{String\|Function}` |                                   `[name].css`                                   | This option determines the name of each output CSS file  |
-| **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` |                               `based on filename`                                | This option determines the name of non-entry chunk files |
-|   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |                                     `false`                                      | Remove Order Warnings                                    |
-|        **[`insert`](#insert)**        | `{String\|Function}` | `var head = document.getElementsByTagName("head")[0];head.appendChild(linkTag);` | Inserts `<link>` at the given position                   |
-|    **[`attributes`](#attributes)**    |      `{Object}`      |                                       `{}`                                       | Adds custom attributes to tag                            |
+|                 Name                  |         Type         |                                     Default                                      | Description                                                |
+| :-----------------------------------: | :------------------: | :------------------------------------------------------------------------------: | :--------------------------------------------------------- |
+|      **[`filename`](#filename)**      | `{String\|Function}` |                                   `[name].css`                                   | This option determines the name of each output CSS file    |
+| **[`chunkFilename`](#chunkFilename)** | `{String\|Function}` |                               `based on filename`                                | This option determines the name of non-entry chunk files   |
+|   **[`ignoreOrder`](#ignoreOrder)**   |     `{Boolean}`      |                                     `false`                                      | Remove Order Warnings                                      |
+|        **[`insert`](#insert)**        | `{String\|Function}` | `var head = document.getElementsByTagName("head")[0];head.appendChild(linkTag);` | Inserts `<link>` at the given position                     |
+|    **[`attributes`](#attributes)**    |      `{Object}`      |                                       `{}`                                       | Adds custom attributes to tag                              |
+|      **[`linkType`](#linkType)**      | `{String\|Boolean}`  |                                    `text/css`                                    | Allows loading asynchronous chunks with a custom link type |
 
 #### `filename`
 
@@ -195,6 +196,65 @@ module.exports = {
 ```
 
 Note: It's only applied to dynamically loaded css chunks, if you want to modify link attributes inside html file, please using [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin)
+
+#### `linkType`
+
+Type: `String|Boolean`
+Default: `text/css`
+
+This option allows loading asynchronous chunks with a custom link type, such as <link type="text/css" ...>.
+
+##### `String`
+
+Possible values: `text/css`
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      linkType: 'text/css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
+
+##### `Boolean`
+
+`false` disables the link `type` attribute
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      linkType: false,
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
 
 ### Loader Options
 

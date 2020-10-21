@@ -116,8 +116,7 @@
 /******/ 				};
 /******/ 				linkTag.href = fullhref;
 /******/
-/******/ 				var head = document.getElementsByTagName("head")[0];
-/******/ 				head.appendChild(linkTag);
+/******/ 				document.head.appendChild(linkTag);
 /******/ 			}).then(function() {
 /******/ 				installedCssChunks[chunkId] = 0;
 /******/ 			}));

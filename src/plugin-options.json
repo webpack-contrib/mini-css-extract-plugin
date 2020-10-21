@@ -39,6 +39,16 @@
     "attributes": {
       "description": "Adds custom attributes to tag (https://github.com/webpack-contrib/mini-css-extract-plugin#attributes).",
       "type": "object"
+    },
+    "linkType": {
+      "anyOf": [
+        {
+          "enum": ["text/css"]
+        },
+        {
+          "type": "boolean"
+        }
+      ]
     }
   }
 }
