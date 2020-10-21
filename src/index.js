@@ -49,6 +49,7 @@ class MiniCssExtractPlugin {
     const attributes =
       typeof options.attributes === 'object' ? options.attributes : {};
 
+    // Todo in next major release set default to "false"
     const linkType =
       options.linkType === true || typeof options.linkType === 'undefined'
         ? 'text/css'
