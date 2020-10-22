@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.1.0...v1.1.2) (2020-10-22)
+
+
+### Bug Fixes
+
+* compatibility with webpack@4 and webpack@5 for monorepos ([#636](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/636)) ([3413439](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/341343924d96f5d0076f27b98c96f9439bff6347))
+* error when reloading async chunk ([#633](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/633)) ([89e7a0a](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/89e7a0acf08f36711c916a4827ea6afff7028afb))
+
 ### [1.1.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.1.0...v1.1.1) (2020-10-20)
 
 
