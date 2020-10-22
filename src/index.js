@@ -42,13 +42,16 @@ class MiniCssExtractPlugin {
               `var target = document.querySelector("${options.insert}");`,
               `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
             ])
-        : Template.asString([
-            'var head = document.getElementsByTagName("head")[0];',
-            'head.appendChild(linkTag);',
-          ]);
+        : Template.asString(['document.head.appendChild(linkTag);']);
 
     const attributes =
       typeof options.attributes === 'object' ? options.attributes : {};
+
+    // Todo in next major release set default to "false"
+    const linkType =
+      options.linkType === true || typeof options.linkType === 'undefined'
+        ? 'text/css'
+        : options.linkType;
 
     this.options = Object.assign(
       {
@@ -60,6 +63,7 @@ class MiniCssExtractPlugin {
 
     this.runtimeOptions = {
       insert,
+      linkType,
     };
 
     this.runtimeOptions.attributes = Template.asString(
@@ -394,7 +398,11 @@ class MiniCssExtractPlugin {
                     'var linkTag = document.createElement("link");',
                     this.runtimeOptions.attributes,
                     'linkTag.rel = "stylesheet";',
-                    'linkTag.type = "text/css";',
+                    this.runtimeOptions.linkType
+                      ? `linkTag.type = ${JSON.stringify(
+                          this.runtimeOptions.linkType
+                        )};`
+                      : '',
                     'linkTag.onload = resolve;',
                     'linkTag.onerror = function(event) {',
                     Template.indent([

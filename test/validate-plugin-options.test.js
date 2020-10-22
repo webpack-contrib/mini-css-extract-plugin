@@ -32,6 +32,10 @@ describe('validate options', () => {
       success: [{}, { id: 'id' }],
       failure: [true],
     },
+    linkType: {
+      success: [true, false, 'text/css'],
+      failure: [1, {}, [], 'invalid/type'],
+    },
     unknown: {
       success: [],
       // TODO failed in next release

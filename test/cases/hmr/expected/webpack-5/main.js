@@ -838,8 +838,7 @@ module.exports = function (urlString) {
 /******/ 			};
 /******/ 			linkTag.href = fullhref;
 /******/ 		
-/******/ 			var head = document.getElementsByTagName("head")[0];
-/******/ 			head.appendChild(linkTag);
+/******/ 			document.head.appendChild(linkTag);
 /******/ 			return linkTag;
 /******/ 		};
 /******/ 		var findStylesheet = (href, fullhref) => {

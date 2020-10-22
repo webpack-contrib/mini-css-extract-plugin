@@ -59,3 +59,39 @@ exports[`validate options should throw an error on the "insert" option with "tru
     * options.insert should be a string.
     * options.insert should be an instance of function."
 `;
+
+exports[`validate options should throw an error on the "linkType" option with "[]" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.linkType should be one of these:
+   \\"text/css\\" | boolean
+   Details:
+    * options.linkType should be \\"text/css\\".
+    * options.linkType should be a boolean."
+`;
+
+exports[`validate options should throw an error on the "linkType" option with "{}" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.linkType should be one of these:
+   \\"text/css\\" | boolean
+   Details:
+    * options.linkType should be \\"text/css\\".
+    * options.linkType should be a boolean."
+`;
+
+exports[`validate options should throw an error on the "linkType" option with "1" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.linkType should be one of these:
+   \\"text/css\\" | boolean
+   Details:
+    * options.linkType should be \\"text/css\\".
+    * options.linkType should be a boolean."
+`;
+
+exports[`validate options should throw an error on the "linkType" option with "invalid/type" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.linkType should be one of these:
+   \\"text/css\\" | boolean
+   Details:
+    * options.linkType should be \\"text/css\\".
+    * options.linkType should be a boolean."
+`;
