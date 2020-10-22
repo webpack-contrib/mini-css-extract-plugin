@@ -16,8 +16,6 @@ import schema from './loader-options.json';
 
 const pluginName = 'mini-css-extract-plugin';
 
-const isWebpack4 = webpackVersion[0] === '4';
-
 function hotLoader(content, context) {
   const accept = context.locals
     ? ''
@@ -104,6 +102,8 @@ export function pitch(request) {
   );
 
   let source;
+
+  const isWebpack4 = childCompiler.webpack ? false : webpackVersion[0] === '4';
 
   if (isWebpack4) {
     childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
