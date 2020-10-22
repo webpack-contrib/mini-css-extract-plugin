@@ -20,8 +20,6 @@ const {
   util: { createHash },
 } = webpack;
 
-const isWebpack4 = webpackVersion[0] === '4';
-
 const pluginName = 'mini-css-extract-plugin';
 
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
@@ -97,16 +95,12 @@ class MiniCssExtractPlugin {
         this.options.chunkFilename = '[id].css';
       }
     }
-
-    if (!isWebpack4 && 'hmr' in this.options) {
-      throw new Error(
-        "The 'hmr' option doesn't exist for the mini-css-extract-plugin when using webpack 5 (it's automatically determined)"
-      );
-    }
   }
 
   /** @param {import("webpack").Compiler} compiler */
   apply(compiler) {
+    const isWebpack4 = compiler.webpack ? false : webpackVersion[0] === '4';
+
     if (!isWebpack4) {
       const { splitChunks } = compiler.options.optimization;
       if (splitChunks) {
@@ -200,7 +194,9 @@ class MiniCssExtractPlugin {
 
             // We don't need hot update chunks for css
             // We will use the real asset instead to update
-            if (chunk instanceof webpack.HotUpdateChunk) return;
+            if (chunk instanceof webpack.HotUpdateChunk) {
+              return;
+            }
 
             const renderedModules = Array.from(
               this.getChunkModules(chunk, chunkGraph)
@@ -439,7 +435,10 @@ class MiniCssExtractPlugin {
       } else {
         const enabledChunks = new WeakSet();
         const handler = (chunk, set) => {
-          if (enabledChunks.has(chunk)) return;
+          if (enabledChunks.has(chunk)) {
+            return;
+          }
+
           enabledChunks.add(chunk);
 
           // eslint-disable-next-line global-require
