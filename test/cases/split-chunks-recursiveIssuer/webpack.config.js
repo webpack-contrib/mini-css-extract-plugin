@@ -2,13 +2,17 @@ import { version as webpackVersion } from 'webpack';
 
 import Self from '../../../src';
 
-function recursiveIssuer(m) {
-  if (m.issuer) {
-    return recursiveIssuer(m.issuer);
+function recursiveIssuer(m, c) {
+  const issuer =
+    webpackVersion[0] === '4' ? m.issuer : c.moduleGraph.getIssuer(m);
+
+  if (issuer) {
+    return recursiveIssuer(issuer, c);
   }
 
-  // eslint-disable-next-line no-underscore-dangle
-  const chunks = webpackVersion === '4' ? m._chunks : m.getChunks();
+  const chunks =
+    // eslint-disable-next-line no-underscore-dangle
+    webpackVersion[0] === '4' ? m._chunks : c.chunkGraph.getModuleChunks(m);
 
   for (const chunk of chunks) {
     return chunk.name;
@@ -36,14 +40,16 @@ module.exports = {
         aStyles: {
           name: 'styles_a',
           test: (m, c, entry = 'a') =>
-            m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+            m.constructor.name === 'CssModule' &&
+            recursiveIssuer(m, c) === entry,
           chunks: 'all',
           enforce: true,
         },
         bStyles: {
           name: 'styles_b',
           test: (m, c, entry = 'b') =>
-            m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+            m.constructor.name === 'CssModule' &&
+            recursiveIssuer(m, c) === entry,
           chunks: 'all',
           enforce: true,
         },
