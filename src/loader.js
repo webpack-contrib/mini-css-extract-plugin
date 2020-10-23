@@ -1,7 +1,6 @@
 import path from 'path';
 
 import loaderUtils from 'loader-utils';
-import { version as webpackVersion } from 'webpack';
 import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
 import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
 import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
@@ -103,7 +102,9 @@ export function pitch(request) {
 
   let source;
 
-  const isWebpack4 = childCompiler.webpack ? false : webpackVersion[0] === '4';
+  const isWebpack4 = childCompiler.webpack
+    ? false
+    : typeof childCompiler.resolvers !== 'undefined';
 
   if (isWebpack4) {
     childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
