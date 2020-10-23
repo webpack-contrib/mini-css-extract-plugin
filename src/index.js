@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 
-import webpack, { version as webpackVersion } from 'webpack';
+import webpack from 'webpack';
 
 import { validate } from 'schema-utils';
 
@@ -103,7 +103,9 @@ class MiniCssExtractPlugin {
 
   /** @param {import("webpack").Compiler} compiler */
   apply(compiler) {
-    const isWebpack4 = compiler.webpack ? false : webpackVersion[0] === '4';
+    const isWebpack4 = compiler.webpack
+      ? false
+      : typeof compiler.resolvers !== 'undefined';
 
     if (!isWebpack4) {
       const { splitChunks } = compiler.options.optimization;
