@@ -405,9 +405,15 @@ class MiniCssExtractPlugin {
                           this.runtimeOptions.linkType
                         )};`
                       : '',
-                    'linkTag.onload = resolve;',
+                    'linkTag.onload = function() {',
+                    Template.indent([
+                      'linkTag.onerror = linkTag.onload = null;',
+                      'resolve();',
+                    ]),
+                    '};',
                     'linkTag.onerror = function(event) {',
                     Template.indent([
+                      'linkTag.onerror = linkTag.onload = null;',
                       'var request = event && event.target && event.target.href || fullhref;',
                       'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
                       'err.code = "CSS_CHUNK_LOAD_FAILED";',

@@ -162,8 +162,12 @@
 /******/ 		
 /******/ 			linkTag.rel = "stylesheet";
 /******/ 			linkTag.type = "text/css";
-/******/ 			linkTag.onload = resolve;
+/******/ 			linkTag.onload = function() {
+/******/ 				linkTag.onerror = linkTag.onload = null;
+/******/ 				resolve();
+/******/ 			};
 /******/ 			linkTag.onerror = function(event) {
+/******/ 				linkTag.onerror = linkTag.onload = null;
 /******/ 				var request = event && event.target && event.target.href || fullhref;
 /******/ 				var err = new Error("Loading CSS chunk " + chunkId + " failed.\n(" + request + ")");
 /******/ 				err.code = "CSS_CHUNK_LOAD_FAILED";
