@@ -162,7 +162,7 @@
 /******/ 		
 /******/ 			linkTag.rel = "stylesheet";
 /******/ 			linkTag.type = "text/css";
-/******/ 			var onLinkComplete = function (event) {
+/******/ 			var onLinkComplete = (event) => {
 /******/ 				// avoid mem leaks.
 /******/ 				linkTag.onerror = linkTag.onload = null;
 /******/ 				if (event.type === 'load') {
@@ -175,7 +175,7 @@
 /******/ 					linkTag.parentNode.removeChild(linkTag)
 /******/ 					reject(err);
 /******/ 				}
-/******/ 			};
+/******/ 			}
 /******/ 			linkTag.onerror = linkTag.onload = onLinkComplete;
 /******/ 			linkTag.href = fullhref;
 /******/ 		

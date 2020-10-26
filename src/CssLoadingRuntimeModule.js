@@ -60,8 +60,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
           this.runtimeOptions.linkType
             ? `linkTag.type = ${JSON.stringify(this.runtimeOptions.linkType)};`
             : '',
-          'var onLinkComplete = function (event) {',
-          Template.indent([
+          `var onLinkComplete = ${runtimeTemplate.basicFunction('event', [
             '// avoid mem leaks.',
             'linkTag.onerror = linkTag.onload = null;',
             "if (event.type === 'load') {",
@@ -76,8 +75,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
               'reject(err);',
             ]),
             '}',
-          ]),
-          '};',
+          ])}`,
           'linkTag.onerror = linkTag.onload = onLinkComplete;',
           'linkTag.href = fullhref;',
           crossOriginLoading
