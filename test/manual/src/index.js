@@ -63,7 +63,10 @@ makeButton('.lazy-button2', () => import('./lazy2.css'));
 makeButton('.lazy-module-button', () =>
   import('./lazy.module.css').then((module) => {
     console.log(module);
-    document.querySelector('.lazy-css-module').classList.add(module.style);
+    document
+      .querySelector('.lazy-css-module')
+      // eslint-disable-next-line no-underscore-dangle
+      .classList.add(module.__esModule ? module.default.style : module.style);
   })
 );
 
