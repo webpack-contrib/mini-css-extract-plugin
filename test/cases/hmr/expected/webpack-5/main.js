@@ -827,15 +827,21 @@ module.exports = function (urlString) {
 /******/ 		
 /******/ 			linkTag.rel = "stylesheet";
 /******/ 			linkTag.type = "text/css";
-/******/ 			linkTag.onload = resolve;
-/******/ 			linkTag.onerror = function(event) {
-/******/ 				var request = event && event.target && event.target.href || fullhref;
-/******/ 				var err = new Error("Loading CSS chunk " + chunkId + " failed.\n(" + request + ")");
-/******/ 				err.code = "CSS_CHUNK_LOAD_FAILED";
-/******/ 				err.request = request;
-/******/ 				linkTag.parentNode.removeChild(linkTag)
-/******/ 				reject(err);
-/******/ 			};
+/******/ 			var onLinkComplete = (event) => {
+/******/ 				// avoid mem leaks.
+/******/ 				linkTag.onerror = linkTag.onload = null;
+/******/ 				if (event.type === 'load') {
+/******/ 					resolve();
+/******/ 				} else {
+/******/ 					var request = event && event.target && event.target.href || fullhref;
+/******/ 					var err = new Error("Loading CSS chunk " + chunkId + " failed.\n(" + request + ")");
+/******/ 					err.code = "CSS_CHUNK_LOAD_FAILED";
+/******/ 					err.request = request;
+/******/ 					linkTag.parentNode.removeChild(linkTag)
+/******/ 					reject(err);
+/******/ 				}
+/******/ 			}
+/******/ 			linkTag.onerror = linkTag.onload = onLinkComplete;
 /******/ 			linkTag.href = fullhref;
 /******/ 		
 /******/ 			document.head.appendChild(linkTag);

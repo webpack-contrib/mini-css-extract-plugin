@@ -60,17 +60,23 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
           this.runtimeOptions.linkType
             ? `linkTag.type = ${JSON.stringify(this.runtimeOptions.linkType)};`
             : '',
-          'linkTag.onload = resolve;',
-          'linkTag.onerror = function(event) {',
-          Template.indent([
-            'var request = event && event.target && event.target.href || fullhref;',
-            'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
-            'err.code = "CSS_CHUNK_LOAD_FAILED";',
-            'err.request = request;',
-            'linkTag.parentNode.removeChild(linkTag)',
-            'reject(err);',
-          ]),
-          '};',
+          `var onLinkComplete = ${runtimeTemplate.basicFunction('event', [
+            '// avoid mem leaks.',
+            'linkTag.onerror = linkTag.onload = null;',
+            "if (event.type === 'load') {",
+            Template.indent(['resolve();']),
+            '} else {',
+            Template.indent([
+              'var request = event && event.target && event.target.href || fullhref;',
+              'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
+              'err.code = "CSS_CHUNK_LOAD_FAILED";',
+              'err.request = request;',
+              'linkTag.parentNode.removeChild(linkTag)',
+              'reject(err);',
+            ]),
+            '}',
+          ])}`,
+          'linkTag.onerror = linkTag.onload = onLinkComplete;',
           'linkTag.href = fullhref;',
           crossOriginLoading
             ? Template.asString([

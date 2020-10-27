@@ -405,18 +405,26 @@ class MiniCssExtractPlugin {
                           this.runtimeOptions.linkType
                         )};`
                       : '',
-                    'linkTag.onload = resolve;',
-                    'linkTag.onerror = function(event) {',
+                    'var onLinkComplete = function (event) {',
                     Template.indent([
-                      'var request = event && event.target && event.target.href || fullhref;',
-                      'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
-                      'err.code = "CSS_CHUNK_LOAD_FAILED";',
-                      'err.request = request;',
-                      'delete installedCssChunks[chunkId]',
-                      'linkTag.parentNode.removeChild(linkTag)',
-                      'reject(err);',
+                      '// avoid mem leaks.',
+                      'linkTag.onerror = linkTag.onload = null;',
+                      "if (event.type === 'load') {",
+                      Template.indent(['resolve();']),
+                      '} else {',
+                      Template.indent([
+                        'var request = event && event.target && event.target.href || fullhref;',
+                        'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + request + ")");',
+                        'err.code = "CSS_CHUNK_LOAD_FAILED";',
+                        'err.request = request;',
+                        'delete installedCssChunks[chunkId]',
+                        'linkTag.parentNode.removeChild(linkTag)',
+                        'reject(err);',
+                      ]),
+                      '}',
                     ]),
                     '};',
+                    'linkTag.onerror = linkTag.onload = onLinkComplete;',
                     'linkTag.href = fullhref;',
                     crossOriginLoading
                       ? Template.asString([
