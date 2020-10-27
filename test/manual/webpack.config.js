@@ -3,12 +3,12 @@ const Self = require('../../');
 const ENABLE_HMR =
   typeof process.env.ENABLE_HMR !== 'undefined'
     ? Boolean(process.env.ENABLE_HMR)
-    : false;
+    : true;
 
 const ENABLE_ES_MODULE =
   typeof process.env.ES_MODULE !== 'undefined'
     ? Boolean(process.env.ES_MODULE)
-    : false;
+    : true;
 
 module.exports = {
   mode: 'development',
@@ -39,6 +39,9 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
+            options: {
+              esModule: ENABLE_ES_MODULE,
+            },
           },
           {
             loader: 'css-loader',
