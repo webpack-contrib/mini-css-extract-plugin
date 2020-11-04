@@ -225,7 +225,7 @@ export function pitch(request) {
           return {
             identifier: module.identifier(),
             context: module.context,
-            content,
+            content: Buffer.from(content),
             media,
             sourceMap,
           };
