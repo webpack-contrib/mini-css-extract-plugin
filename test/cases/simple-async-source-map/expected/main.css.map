@@ -1,1 +1,1 @@
-{"version":3,"sources":["webpack:///main.css"],"names":[],"mappings":"AAAA;EACE,eAAe;AACjB","file":"main.css","sourcesContent":["body {\n  background: red;\n}\n"],"sourceRoot":""}
+{"version":3,"sources":["webpack:///./main.css"],"names":[],"mappings":"AAAA;EACE,eAAe;AACjB","file":"main.css","sourcesContent":["body {\n  background: red;\n}\n"],"sourceRoot":""}

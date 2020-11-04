@@ -9,7 +9,7 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _styleB_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
-
+;
 
 
 /***/ }),
@@ -28,7 +28,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _styleA_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
-
+;
 
 
 /***/ }),

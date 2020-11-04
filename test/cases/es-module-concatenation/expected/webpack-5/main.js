@@ -17,7 +17,7 @@ __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
 // CONCATENATED MODULE: ./index.js
-
+;
 
 
 
