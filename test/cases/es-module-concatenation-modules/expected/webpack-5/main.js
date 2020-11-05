@@ -48,7 +48,7 @@ const b = "foo__b";
 const c = "foo__c";
 // CONCATENATED MODULE: ./index.js
 /* eslint-disable import/no-namespace */
-
+;
 
 
 
