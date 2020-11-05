@@ -659,11 +659,11 @@ class MiniCssExtractPlugin {
     const externalsSource = new ConcatSource();
 
     for (const m of usedModules) {
-      if (/^@import url/.test(m.content)) {
+      let content = m.content.toString();
+
+      if (/^@import url/.test(content)) {
         // HACK for IE
         // http://stackoverflow.com/a/14676665/1458162
-        let { content } = m;
-
         if (m.media) {
           // insert media into the @import
           // this is rar
@@ -681,17 +681,14 @@ class MiniCssExtractPlugin {
         if (m.sourceMap) {
           source.add(
             new SourceMapSource(
-              m.content,
+              content,
               m.readableIdentifier(requestShortener),
               m.sourceMap
             )
           );
         } else {
           source.add(
-            new OriginalSource(
-              m.content,
-              m.readableIdentifier(requestShortener)
-            )
+            new OriginalSource(content, m.readableIdentifier(requestShortener))
           );
         }
         source.add('\n');
