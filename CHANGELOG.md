@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.2.1...v1.3.0) (2020-11-06)
+
+
+### ⚠ POTENTIAL BREAKING CHANGE
+
+Options are now validated according to stricter rules - no unknown additional properties. For example, if you have not removed the `hmr` option for the loader when migrating to `mini-css-extract-plugin@1`, you will get an error. Just remove them from your configuration(s). We did this because many developers started making these mistakes. 
+
+### Features
+
+* added the `type` property for loading errors ([#651](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/651)) ([be9ddcb](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/be9ddcba7f4b216aa52dcd64a0e450a312b7156f))
+
+
+### Bug Fixes
+
+* schema ([#652](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/652)) ([4e4733d](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/4e4733dc10fd8a8ecda5b47421b390a479b826aa))
+* serializing big strings ([#647](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/647)) ([022d945](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/022d9459a6f158166e700c11a02b9063154c96bc))
+* source map url for devtool (only webpack@5) ([#650](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/650)) ([5889d43](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/5889d43bafe8613a29e3a8156f0b5052b6ad88b9))
+
 ### [1.2.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.2.0...v1.2.1) (2020-10-27)
 
 
