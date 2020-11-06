@@ -11,7 +11,7 @@ import schema from './plugin-options.json';
 import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
 // webpack 5 exposes the sources property to ensure the right version of webpack-sources is used
-const { ConcatSource, SourceMapSource, OriginalSource } =
+const { ConcatSource, SourceMapSource, RawSource } =
   // eslint-disable-next-line global-require
   webpack.sources || require('webpack-sources');
 
@@ -688,7 +688,7 @@ class MiniCssExtractPlugin {
           );
         } else {
           source.add(
-            new OriginalSource(content, m.readableIdentifier(requestShortener))
+            new RawSource(content, m.readableIdentifier(requestShortener))
           );
         }
         source.add('\n');
