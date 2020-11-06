@@ -833,10 +833,12 @@ module.exports = function (urlString) {
 /******/ 				if (event.type === 'load') {
 /******/ 					resolve();
 /******/ 				} else {
-/******/ 					var request = event && event.target && event.target.href || fullhref;
-/******/ 					var err = new Error("Loading CSS chunk " + chunkId + " failed.\n(" + request + ")");
+/******/ 					var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 					var realHref = event && event.target && event.target.href || fullhref;
+/******/ 					var err = new Error("Loading CSS chunk " + chunkId + " failed.\n(" + realHref + ")");
 /******/ 					err.code = "CSS_CHUNK_LOAD_FAILED";
-/******/ 					err.request = request;
+/******/ 					err.type = errorType;
+/******/ 					err.request = realHref;
 /******/ 					linkTag.parentNode.removeChild(linkTag)
 /******/ 					reject(err);
 /******/ 				}
