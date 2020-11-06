@@ -10,9 +10,6 @@ module.exports = [1, 2].map((n) => {
           use: [
             {
               loader: Self.loader,
-              options: {
-                hmr: false,
-              },
             },
             {
               loader: 'css-loader',
