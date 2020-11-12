@@ -83,9 +83,6 @@ export function pitch(request) {
           : compilation.hooks.normalModuleLoader;
 
       normalModuleHook.tap(`${pluginName} loader`, (loaderContext, module) => {
-        // eslint-disable-next-line no-param-reassign
-        loaderContext.emitFile = this.emitFile;
-
         if (module.request === request) {
           // eslint-disable-next-line no-param-reassign
           module.loaders = loaders.map((loader) => {
@@ -139,6 +136,21 @@ export function pitch(request) {
   const callback = this.async();
 
   childCompiler.runAsChild((err, entries, compilation) => {
+    for (const asset of compilation.getAssets()) {
+      const { buildInfo } = this._module;
+
+      if (!buildInfo.assets) {
+        buildInfo.assets = Object.create(null);
+      }
+
+      if (!buildInfo.assetsInfo) {
+        buildInfo.assetsInfo = new Map();
+      }
+
+      buildInfo.assets[asset.name] = asset.source;
+      buildInfo.assetsInfo.set(asset.name, asset.info);
+    }
+
     const addDependencies = (dependencies) => {
       if (!Array.isArray(dependencies) && dependencies != null) {
         throw new Error(

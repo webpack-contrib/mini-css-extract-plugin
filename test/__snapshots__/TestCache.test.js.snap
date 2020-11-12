@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TestCache should work with the "filesystem" cache and asset modules: first 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and asset modules: first emitted 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and asset modules: second 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and asset modules: second emitted 1`] = `Array []`;
+
+exports[`TestCache should work with the "filesystem" cache and file-loader: first 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and file-loader: first emitted 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and file-loader: second 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and file-loader: second emitted 1`] = `Array []`;
+
+exports[`TestCache should work with the "filesystem" cache: first 1`] = `
+Array [
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache: first emitted 1`] = `
+Array [
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache: second 1`] = `
+Array [
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache: second emitted 1`] = `Array []`;
+
+exports[`TestCache should work with the "memory" cache: first 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "memory" cache: first emitted 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "memory" cache: second 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "memory" cache: second emitted 1`] = `Array []`;
+
+exports[`TestCache should work without cache: first 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work without cache: first emitted 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work without cache: second 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work without cache: second emitted 1`] = `Array []`;
