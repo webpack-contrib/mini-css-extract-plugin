@@ -58,12 +58,28 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'first'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('first emitted');
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -91,12 +107,20 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'second'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('second emitted');
+          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -158,12 +182,28 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'first'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('first emitted');
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -193,12 +233,20 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'second'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('second emitted');
+          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -267,12 +315,23 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'first'
-          );
           expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('first emitted');
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+            ]
+          `
+          );
+          expect(Array.from(stats.compilation.emittedAssets).sort())
+            .toMatchInlineSnapshot(`
+            Array [
+              "main.css",
+              "main.js",
+            ]
+          `);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -305,12 +364,19 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'second'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('second emitted');
+          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -379,12 +445,28 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'first'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('first emitted');
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -417,12 +499,20 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'second'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('second emitted');
+          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -491,12 +581,28 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'first'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('first emitted');
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -529,12 +635,20 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            'second'
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
           );
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot('second emitted');
+          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
