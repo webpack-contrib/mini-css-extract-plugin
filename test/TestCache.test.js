@@ -30,7 +30,7 @@ describe('TestCache', () => {
         });
 
       const casesDirectory = path.resolve(__dirname, 'cases');
-      const directoryForCase = path.resolve(casesDirectory, 'simple');
+      const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
       // eslint-disable-next-line import/no-dynamic-require, global-require
       const webpackConfig = require(path.resolve(
         directoryForCase,
@@ -58,7 +58,28 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(stats.compilation.emittedAssets.size).toBe(2);
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -86,8 +107,20 @@ describe('TestCache', () => {
             return;
           }
 
-          // Because webpack compare the source content before emitting
-          expect(stats.compilation.emittedAssets.size).toBe(0);
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -119,7 +152,7 @@ describe('TestCache', () => {
         });
 
       const casesDirectory = path.resolve(__dirname, 'cases');
-      const directoryForCase = path.resolve(casesDirectory, 'simple');
+      const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
       // eslint-disable-next-line import/no-dynamic-require, global-require
       const webpackConfig = require(path.resolve(
         directoryForCase,
@@ -149,7 +182,28 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(stats.compilation.emittedAssets.size).toBe(2);
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -179,7 +233,20 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(stats.compilation.emittedAssets.size).toBe(0);
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -248,7 +315,23 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(stats.compilation.emittedAssets.size).toBe(2);
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+            ]
+          `
+          );
+          expect(Array.from(stats.compilation.emittedAssets).sort())
+            .toMatchInlineSnapshot(`
+            Array [
+              "main.css",
+              "main.js",
+            ]
+          `);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -281,7 +364,291 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(stats.compilation.emittedAssets.size).toBe(0);
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(`Array []`);
+          expect(stats.compilation.warnings).toHaveLength(0);
+          expect(stats.compilation.errors).toHaveLength(0);
+
+          compiler2.close(() => {
+            resolve();
+          });
+        });
+      });
+    } else {
+      expect(true).toBe(true);
+    }
+  });
+
+  it('should work with the "filesystem" cache and asset modules', async () => {
+    if (webpack.version[0] !== '4') {
+      const originalRegister = webpack.util.serialization.register;
+
+      webpack.util.serialization.register = jest
+        .fn()
+        .mockImplementation((...args) => {
+          if (args[1].startsWith('mini-css-extract-plugin')) {
+            // eslint-disable-next-line no-param-reassign
+            args[1] = args[1].replace(/dist/, 'src');
+
+            return originalRegister(...args);
+          }
+
+          return originalRegister(...args);
+        });
+
+      const casesDirectory = path.resolve(__dirname, 'cases');
+      const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      const webpackConfig = require(path.resolve(
+        directoryForCase,
+        'webpack.config.js'
+      ));
+      const outputPath = path.resolve(__dirname, 'js/cache-filesystem');
+      const fileSystemCacheDirectory = path.resolve(
+        __dirname,
+        './js/.cache/type-filesystem'
+      );
+
+      await del([outputPath, fileSystemCacheDirectory]);
+
+      const compiler1 = webpack({
+        ...webpackConfig,
+        mode: 'development',
+        context: directoryForCase,
+        cache: {
+          type: 'filesystem',
+          cacheDirectory: fileSystemCacheDirectory,
+          idleTimeout: 0,
+          idleTimeoutForInitialStore: 0,
+        },
+        output: {
+          path: outputPath,
+        },
+      });
+
+      await new Promise((resolve, reject) => {
+        compiler1.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(stats.compilation.warnings).toHaveLength(0);
+          expect(stats.compilation.errors).toHaveLength(0);
+
+          compiler1.close(() => {
+            resolve();
+          });
+        });
+      });
+
+      const compiler2 = webpack({
+        ...webpackConfig,
+        mode: 'development',
+        context: directoryForCase,
+        cache: {
+          type: 'filesystem',
+          cacheDirectory: fileSystemCacheDirectory,
+          idleTimeout: 0,
+          idleTimeoutForInitialStore: 0,
+        },
+        output: {
+          path: outputPath,
+        },
+      });
+
+      await new Promise((resolve, reject) => {
+        compiler2.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(`Array []`);
+          expect(stats.compilation.warnings).toHaveLength(0);
+          expect(stats.compilation.errors).toHaveLength(0);
+
+          compiler2.close(() => {
+            resolve();
+          });
+        });
+      });
+    } else {
+      expect(true).toBe(true);
+    }
+  });
+
+  it('should work with the "filesystem" cache and file-loader', async () => {
+    if (webpack.version[0] !== '4') {
+      const originalRegister = webpack.util.serialization.register;
+
+      webpack.util.serialization.register = jest
+        .fn()
+        .mockImplementation((...args) => {
+          if (args[1].startsWith('mini-css-extract-plugin')) {
+            // eslint-disable-next-line no-param-reassign
+            args[1] = args[1].replace(/dist/, 'src');
+
+            return originalRegister(...args);
+          }
+
+          return originalRegister(...args);
+        });
+
+      const casesDirectory = path.resolve(__dirname, 'cases');
+      const directoryForCase = path.resolve(casesDirectory, 'file-loader');
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      const webpackConfig = require(path.resolve(
+        directoryForCase,
+        'webpack.config.js'
+      ));
+      const outputPath = path.resolve(__dirname, 'js/cache-filesystem');
+      const fileSystemCacheDirectory = path.resolve(
+        __dirname,
+        './js/.cache/type-filesystem'
+      );
+
+      await del([outputPath, fileSystemCacheDirectory]);
+
+      const compiler1 = webpack({
+        ...webpackConfig,
+        mode: 'development',
+        context: directoryForCase,
+        cache: {
+          type: 'filesystem',
+          cacheDirectory: fileSystemCacheDirectory,
+          idleTimeout: 0,
+          idleTimeoutForInitialStore: 0,
+        },
+        output: {
+          path: outputPath,
+        },
+      });
+
+      await new Promise((resolve, reject) => {
+        compiler1.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(stats.compilation.warnings).toHaveLength(0);
+          expect(stats.compilation.errors).toHaveLength(0);
+
+          compiler1.close(() => {
+            resolve();
+          });
+        });
+      });
+
+      const compiler2 = webpack({
+        ...webpackConfig,
+        mode: 'development',
+        context: directoryForCase,
+        cache: {
+          type: 'filesystem',
+          cacheDirectory: fileSystemCacheDirectory,
+          idleTimeout: 0,
+          idleTimeoutForInitialStore: 0,
+        },
+        output: {
+          path: outputPath,
+        },
+      });
+
+      await new Promise((resolve, reject) => {
+        compiler2.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          expect(
+            Object.keys(stats.compilation.assets).sort()
+          ).toMatchInlineSnapshot(
+            `
+            Array [
+              "main.css",
+              "main.js",
+              "static/react.svg",
+            ]
+          `
+          );
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort()
+          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
