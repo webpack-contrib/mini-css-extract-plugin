@@ -37,18 +37,18 @@ __webpack_require__.d(index_namespaceObject, {
   "c": () => c
 });
 
-// CONCATENATED MODULE: ./a.css
+;// CONCATENATED MODULE: ./a.css
 // extracted by mini-css-extract-plugin
 const a = "foo__a";
-// CONCATENATED MODULE: ./b.css
+;// CONCATENATED MODULE: ./b.css
 // extracted by mini-css-extract-plugin
 const b = "foo__b";
-// CONCATENATED MODULE: ./c.css
+;// CONCATENATED MODULE: ./c.css
 // extracted by mini-css-extract-plugin
 const c = "foo__c";
-// CONCATENATED MODULE: ./index.js
+;// CONCATENATED MODULE: ./index.js
 /* eslint-disable import/no-namespace */
-;
+
 
 
 

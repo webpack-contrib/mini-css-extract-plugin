@@ -7,17 +7,17 @@
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: ./a.css
+;// CONCATENATED MODULE: ./a.css
 // extracted by mini-css-extract-plugin
 
-// CONCATENATED MODULE: ./b.css
+;// CONCATENATED MODULE: ./b.css
 // extracted by mini-css-extract-plugin
 
-// CONCATENATED MODULE: ./c.css
+;// CONCATENATED MODULE: ./c.css
 // extracted by mini-css-extract-plugin
 
-// CONCATENATED MODULE: ./index.js
-;
+;// CONCATENATED MODULE: ./index.js
+
 
 
 
