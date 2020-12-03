@@ -14,6 +14,10 @@ class CssDependency extends webpack.Dependency {
     this.media = media;
     this.sourceMap = sourceMap;
     this.context = context;
+    // eslint-disable-next-line no-undefined
+    this.assets = undefined;
+    // eslint-disable-next-line no-undefined
+    this.assetsInfo = undefined;
   }
 
   getResourceIdentifier() {
@@ -34,6 +38,8 @@ class CssDependency extends webpack.Dependency {
     write(this.sourceMap);
     write(this.context);
     write(this.identifierIndex);
+    write(this.assets);
+    write(this.assetsInfo);
 
     super.serialize(context);
   }
@@ -64,6 +70,12 @@ if (webpack.util && webpack.util.serialization) {
           read(),
           read()
         );
+
+        const assets = read();
+        const assetsInfo = read();
+
+        dep.assets = assets;
+        dep.assetsInfo = assetsInfo;
 
         dep.deserialize(context);
 
