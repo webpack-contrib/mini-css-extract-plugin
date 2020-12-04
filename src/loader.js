@@ -136,19 +136,12 @@ export function pitch(request) {
   const callback = this.async();
 
   childCompiler.runAsChild((err, entries, compilation) => {
+    const assets = Object.create(null);
+    const assetsInfo = new Map();
+
     for (const asset of compilation.getAssets()) {
-      const { buildInfo } = this._module;
-
-      if (!buildInfo.assets) {
-        buildInfo.assets = Object.create(null);
-      }
-
-      if (!buildInfo.assetsInfo) {
-        buildInfo.assetsInfo = new Map();
-      }
-
-      buildInfo.assets[asset.name] = asset.source;
-      buildInfo.assetsInfo.set(asset.name, asset.info);
+      assets[asset.name] = asset.source;
+      assetsInfo.set(asset.name, asset.info);
     }
 
     const addDependencies = (dependencies) => {
@@ -162,6 +155,8 @@ export function pitch(request) {
 
       const identifierCountMap = new Map();
 
+      let lastDep;
+
       for (const dependency of dependencies) {
         if (!dependency.identifier) {
           // eslint-disable-next-line no-continue
@@ -171,9 +166,14 @@ export function pitch(request) {
         const count = identifierCountMap.get(dependency.identifier) || 0;
 
         this._module.addDependency(
-          new CssDependency(dependency, dependency.context, count)
+          (lastDep = new CssDependency(dependency, dependency.context, count))
         );
         identifierCountMap.set(dependency.identifier, count + 1);
+      }
+
+      if (lastDep) {
+        lastDep.assets = assets;
+        lastDep.assetsInfo = assetsInfo;
       }
     };
 

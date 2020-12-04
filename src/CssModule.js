@@ -16,6 +16,8 @@ class CssModule extends webpack.Module {
     content,
     media,
     sourceMap,
+    assets,
+    assetsInfo,
   }) {
     super(MODULE_TYPE, context);
 
@@ -26,7 +28,10 @@ class CssModule extends webpack.Module {
     this.content = content;
     this.media = media;
     this.sourceMap = sourceMap;
-    this.buildInfo = {};
+    this.buildInfo = {
+      assets,
+      assetsInfo,
+    };
     this.buildMeta = {};
   }
 
@@ -107,6 +112,7 @@ class CssModule extends webpack.Module {
     write(this.content);
     write(this.media);
     write(this.sourceMap);
+    write(this.buildInfo);
 
     super.serialize(context);
   }
@@ -128,13 +134,23 @@ if (webpack.util && webpack.util.serialization) {
       deserialize(context) {
         const { read } = context;
 
+        const contextModule = read();
+        const identifier = read();
+        const identifierIndex = read();
+        const content = read();
+        const media = read();
+        const sourceMap = read();
+        const { assets, assetsInfo } = read();
+
         const dep = new CssModule({
-          context: read(),
-          identifier: read(),
-          identifierIndex: read(),
-          content: read(),
-          media: read(),
-          sourceMap: read(),
+          context: contextModule,
+          identifier,
+          identifierIndex,
+          content,
+          media,
+          sourceMap,
+          assets,
+          assetsInfo,
         });
 
         dep.deserialize(context);
