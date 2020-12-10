@@ -98,6 +98,10 @@ describe('TestCases', () => {
     if (!/^(\.|_)/.test(directory)) {
       // eslint-disable-next-line no-loop-func
       it(`${directory} should compile to the expected result`, (done) => {
+        if (directory === 'serializingBigStrings') {
+          clearDirectory(path.resolve(__dirname, '../node_modules/.cache'));
+        }
+
         const directoryForCase = path.resolve(casesDirectory, directory);
         const outputDirectoryForCase = path.resolve(outputDirectory, directory);
         // eslint-disable-next-line import/no-dynamic-require, global-require

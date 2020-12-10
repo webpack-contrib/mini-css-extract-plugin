@@ -239,7 +239,10 @@ export function pitch(request) {
             context: module.context,
             content: Buffer.from(content),
             media,
-            sourceMap,
+            sourceMap: sourceMap
+              ? Buffer.from(JSON.stringify(sourceMap))
+              : // eslint-disable-next-line no-undefined
+                undefined,
           };
         });
       }

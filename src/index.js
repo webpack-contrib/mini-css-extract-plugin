@@ -685,7 +685,7 @@ class MiniCssExtractPlugin {
             new SourceMapSource(
               content,
               m.readableIdentifier(requestShortener),
-              m.sourceMap
+              m.sourceMap.toString()
             )
           );
         } else {
