@@ -64,6 +64,7 @@ class MiniCssExtractPlugin {
     this.runtimeOptions = {
       insert,
       linkType,
+      query: options.query,
     };
 
     this.runtimeOptions.attributes = Template.asString(
@@ -369,6 +370,17 @@ class MiniCssExtractPlugin {
                 }
               );
 
+              let queryPostfix = '';
+              if (typeof this.runtimeOptions.query === 'string') {
+                queryPostfix = ` + ${JSON.stringify(
+                  this.runtimeOptions.query
+                )}`;
+              } else if (typeof this.runtimeOptions.query === 'function') {
+                queryPostfix = ` + ${JSON.stringify(
+                  this.runtimeOptions.query() || ''
+                )}`;
+              }
+
               return Template.asString([
                 source,
                 '',
@@ -379,7 +391,7 @@ class MiniCssExtractPlugin {
                 Template.indent([
                   'promises.push(installedCssChunks[chunkId] = new Promise(function(resolve, reject) {',
                   Template.indent([
-                    `var href = ${linkHrefPath};`,
+                    `var href = ${linkHrefPath}${queryPostfix};`,
                     `var fullhref = ${mainTemplate.requireFn}.p + href;`,
                     'var existingLinkTags = document.getElementsByTagName("link");',
                     'for(var i = 0; i < existingLinkTags.length; i++) {',

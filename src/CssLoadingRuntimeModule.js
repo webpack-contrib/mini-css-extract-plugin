@@ -50,6 +50,13 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
 
     if (!withLoading && !withHmr) return null;
 
+    let queryPostfix = '';
+    if (typeof this.runtimeOptions.query === 'string') {
+      queryPostfix = ` + ${JSON.stringify(this.runtimeOptions.query)}`;
+    } else if (typeof this.runtimeOptions.query === 'function') {
+      queryPostfix = ` + ${JSON.stringify(this.runtimeOptions.query() || '')}`;
+    }
+
     return Template.asString([
       `var createStylesheet = ${runtimeTemplate.basicFunction(
         'chunkId, fullhref, resolve, reject',
@@ -174,7 +181,7 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
               [
                 'applyHandlers.push(applyHandler);',
                 `chunkIds.forEach(${runtimeTemplate.basicFunction('chunkId', [
-                  `var href = ${RuntimeGlobals.require}.miniCssF(chunkId);`,
+                  `var href = ${RuntimeGlobals.require}.miniCssF(chunkId)${queryPostfix};`,
                   `var fullhref = ${RuntimeGlobals.publicPath} + href;`,
                   'const oldTag = findStylesheet(href, fullhref);',
                   'if(!oldTag) return;',

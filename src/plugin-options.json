@@ -49,6 +49,17 @@
           "type": "boolean"
         }
       ]
+    },
+    "query": {
+      "description": "A configurable postfix to be appended to the href of the chunk.",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
     }
   }
 }
