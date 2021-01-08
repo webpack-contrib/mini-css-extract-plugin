@@ -1,5 +1,5 @@
-export default (compiler) => {
-  return new Promise((resolve, reject) => {
+export default (compiler) =>
+  new Promise((resolve, reject) => {
     compiler.run((error, stats) => {
       if (error) {
         return reject(error);
@@ -8,4 +8,3 @@ export default (compiler) => {
       return resolve(stats);
     });
   });
-};
