@@ -7,7 +7,6 @@ import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
 import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
 import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
 import NormalModule from 'webpack/lib/NormalModule';
-import { validate } from 'schema-utils';
 
 import CssDependency from './CssDependency';
 import { findModuleById, evalModuleCode } from './utils';
@@ -37,13 +36,7 @@ function hotLoader(content, context) {
 }
 
 export function pitch(request) {
-  const options = loaderUtils.getOptions(this) || {};
-
-  validate(schema, options, {
-    name: 'Mini CSS Extract Plugin Loader',
-    baseDataPath: 'options',
-  });
-
+  const options = this.getOptions(schema);
   const loaders = this.loaders.slice(this.loaderIndex + 1);
 
   this.addDependency(this.resourcePath);

@@ -2,8 +2,6 @@
 
 import webpack from 'webpack';
 
-import { validate } from 'schema-utils';
-
 import CssModuleFactory from './CssModuleFactory';
 import CssDependencyTemplate from './CssDependencyTemplate';
 import CssDependency from './CssDependency';
@@ -29,7 +27,7 @@ const DEFAULT_FILENAME = '[name].css';
 
 class MiniCssExtractPlugin {
   constructor(options = {}) {
-    validate(schema, options, {
+    webpack.validateSchema(schema, options, {
       name: 'Mini CSS Extract Plugin',
       baseDataPath: 'options',
     });
