@@ -1,8 +1,4 @@
-import webpack from 'webpack';
-
 import { getCompiler, source, compile } from './helpers';
-
-const isWebpack4 = webpack.version[0] === '4';
 
 it('should enforce esm for empty module without options.esModule', async (done) => {
   const compiler = getCompiler(
@@ -18,7 +14,7 @@ it('should enforce esm for empty module without options.esModule', async (done) 
   const { modules } = stats.toJson({ all: false, modules: true });
   expect(
     modules.filter((m) => m.moduleType !== 'runtime' && !m.orphan).length
-  ).toBe(isWebpack4 ? 1 : 2);
+  ).toBe(2);
   expect(source('./simple.css', stats)).toMatchInlineSnapshot(`
     "// extracted by mini-css-extract-plugin
     export {};"
@@ -40,7 +36,7 @@ it('should enforce esm for empty module with options.esModule', async (done) => 
   const { modules } = stats.toJson({ all: false, modules: true });
   expect(
     modules.filter((m) => m.moduleType !== 'runtime' && !m.orphan).length
-  ).toBe(isWebpack4 ? 1 : 2);
+  ).toBe(2);
   expect(source('./simple.css', stats)).toMatchInlineSnapshot(`
     "// extracted by mini-css-extract-plugin
     export {};"

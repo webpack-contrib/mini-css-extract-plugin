@@ -90,11 +90,6 @@ describe('TestCases', () => {
   clearDirectory(outputDirectory);
 
   for (const directory of tests) {
-    if (directory === 'auxiliaryAssets' && webpack.version[0] === '4') {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-
     if (!/^(\.|_)/.test(directory)) {
       // eslint-disable-next-line no-loop-func
       it(`${directory} should compile to the expected result`, (done) => {
@@ -169,26 +164,16 @@ describe('TestCases', () => {
 
             res = res.replace(dateRegexp, '');
 
-            if (webpack.version[0] === '4') {
-              const matchAll = res.match(/var hotCurrentHash = "([\d\w].*)"/i);
-              const replacer = new Array(matchAll[1].length);
+            const matchAll = res.match(
+              /__webpack_require__\.h = \(\) => "([\d\w].*)"/i
+            );
 
-              res = res.replace(
-                /var hotCurrentHash = "([\d\w].*)"/i,
-                `var hotCurrentHash = "${replacer.fill('x').join('')}"`
-              );
-            } else {
-              const matchAll = res.match(
-                /__webpack_require__\.h = \(\) => "([\d\w].*)"/i
-              );
+            const replacer = new Array(matchAll[1].length);
 
-              const replacer = new Array(matchAll[1].length);
-
-              res = res.replace(
-                /__webpack_require__\.h = \(\) => "([\d\w].*)"/i,
-                `__webpack_require__.h = () => "${replacer.fill('x').join('')}"`
-              );
-            }
+            res = res.replace(
+              /__webpack_require__\.h = \(\) => "([\d\w].*)"/i,
+              `__webpack_require__.h = () => "${replacer.fill('x').join('')}"`
+            );
 
             fs.writeFileSync(
               path.resolve(outputDirectoryForCase, 'main.js'),
