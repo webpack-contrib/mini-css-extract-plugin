@@ -92,12 +92,8 @@ export function pitch(request) {
 
   let source;
 
-  const isWebpack4 = childCompiler.webpack
-    ? false
-    : typeof childCompiler.resolvers !== 'undefined';
-
-  if (isWebpack4) {
-    childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+  childCompiler.hooks.compilation.tap(pluginName, (compilation) => {
+    compilation.hooks.processAssets.tap(pluginName, () => {
       source =
         compilation.assets[childFilename] &&
         compilation.assets[childFilename].source();
@@ -105,26 +101,11 @@ export function pitch(request) {
       // Remove all chunk assets
       compilation.chunks.forEach((chunk) => {
         chunk.files.forEach((file) => {
-          delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+          compilation.deleteAsset(file);
         });
       });
     });
-  } else {
-    childCompiler.hooks.compilation.tap(pluginName, (compilation) => {
-      compilation.hooks.processAssets.tap(pluginName, () => {
-        source =
-          compilation.assets[childFilename] &&
-          compilation.assets[childFilename].source();
-
-        // Remove all chunk assets
-        compilation.chunks.forEach((chunk) => {
-          chunk.files.forEach((file) => {
-            compilation.deleteAsset(file);
-          });
-        });
-      });
-    });
-  }
+  });
 
   const callback = this.async();
 

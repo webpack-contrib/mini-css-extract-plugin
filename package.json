@@ -43,8 +43,7 @@
     "webpack": "^5.0.0"
   },
   "dependencies": {
-    "loader-utils": "^2.0.0",
-    "webpack-sources": "^1.1.0"
+    "loader-utils": "^2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.1",
