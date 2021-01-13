@@ -42,7 +42,7 @@ class CssModule extends webpack.Module {
   }
 
   identifier() {
-    return `css ${this._identifier} ${this._identifierIndex}`;
+    return `css|${this._identifier}|${this._identifierIndex}`;
   }
 
   readableIdentifier(requestShortener) {
