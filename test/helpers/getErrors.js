@@ -1,5 +1,3 @@
 import normalizeErrors from './normalizeErrors';
 
-export default (stats) => {
-  return normalizeErrors(stats.compilation.errors);
-};
+export default (stats) => normalizeErrors(stats.compilation.errors);
