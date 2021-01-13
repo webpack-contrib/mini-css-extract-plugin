@@ -1,5 +1,3 @@
 const webpack = require('webpack');
 
-module.exports = () => {
-  return webpack.version[0] !== '4';
-};
+module.exports = () => webpack.version[0] !== '4';
