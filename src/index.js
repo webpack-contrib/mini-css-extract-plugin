@@ -268,17 +268,20 @@ class MiniCssExtractPlugin {
         const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
         const hash = createHash(hashFunction);
 
-        for (const m of this.getChunkModules(chunk, chunkGraph)) {
-          if (m.type === MODULE_TYPE) {
+        const modules = Array.from(
+          this.getChunkModules(chunk, chunkGraph)
+        ).filter((module) => module.type === MODULE_TYPE);
+        if (modules.length) {
+          for (const m of modules) {
             m.updateHash(hash, { chunkGraph });
           }
+
+          const { contentHash } = chunk;
+
+          contentHash[MODULE_TYPE] = hash
+            .digest(hashDigest)
+            .substring(0, hashDigestLength);
         }
-
-        const { contentHash } = chunk;
-
-        contentHash[MODULE_TYPE] = hash
-          .digest(hashDigest)
-          .substring(0, hashDigestLength);
       });
 
       const { mainTemplate } = compilation;
