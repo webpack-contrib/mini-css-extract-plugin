@@ -306,4 +306,31 @@ describe('HMR', () => {
       done();
     }, 100);
   });
+
+  it('should not remove old link when new link is loaded twice', (done) => {
+
+    const link = document.createElement('link');
+
+    link.innerHTML = '<link rel="preload stylesheet" href="./dist/main.css" />';
+    document.head.appendChild(link);
+    document.head.removeChild = jest.fn();
+
+    const update = hotModuleReplacement('./dist/main.css', {});
+
+    update();
+
+    setTimeout(() => {
+
+      const links = Array.prototype.slice.call(
+        document.querySelectorAll('link')
+      );
+
+      links[1].dispatchEvent(getLoadEvent());
+      links[1].dispatchEvent(getLoadEvent());
+
+      expect(document.head.removeChild).toHaveBeenCalledTimes(1);
+
+      done();
+    }, 100);
+  });
 });
