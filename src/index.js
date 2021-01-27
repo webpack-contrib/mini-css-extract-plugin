@@ -265,10 +265,11 @@ class MiniCssExtractPlugin {
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions, chunkGraph } = compilation;
-        const modules = chunkGraph.getChunkModulesIterableBySourceType(
-          chunk,
-          MODULE_TYPE
-        );
+        const modules = isWebpack4
+          ? Array.from(this.getChunkModules(chunk, chunkGraph)).filter(
+              (module) => module.type === MODULE_TYPE
+            )
+          : chunkGraph.getChunkModulesIterableBySourceType(chunk, MODULE_TYPE);
 
         if (modules) {
           const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
