@@ -265,20 +265,24 @@ class MiniCssExtractPlugin {
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions, chunkGraph } = compilation;
-        const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
-        const hash = createHash(hashFunction);
+        const modules = chunkGraph.getChunkModulesIterableBySourceType(
+          chunk,
+          MODULE_TYPE
+        );
 
-        for (const m of this.getChunkModules(chunk, chunkGraph)) {
-          if (m.type === MODULE_TYPE) {
+        if (modules) {
+          const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
+          const hash = createHash(hashFunction);
+
+          for (const m of modules) {
             m.updateHash(hash, { chunkGraph });
           }
+
+          // eslint-disable-next-line no-param-reassign
+          chunk.contentHash[MODULE_TYPE] = hash
+            .digest(hashDigest)
+            .substring(0, hashDigestLength);
         }
-
-        const { contentHash } = chunk;
-
-        contentHash[MODULE_TYPE] = hash
-          .digest(hashDigest)
-          .substring(0, hashDigestLength);
       });
 
       const { mainTemplate } = compilation;
@@ -465,6 +469,7 @@ class MiniCssExtractPlugin {
           const CssLoadingRuntimeModule = require('./CssLoadingRuntimeModule');
 
           set.add(webpack.RuntimeGlobals.publicPath);
+
           compilation.addRuntimeModule(
             chunk,
             new webpack.runtime.GetChunkFilenameRuntimeModule(
@@ -483,6 +488,7 @@ class MiniCssExtractPlugin {
             new CssLoadingRuntimeModule(set, this.runtimeOptions)
           );
         };
+
         compilation.hooks.runtimeRequirementInTree
           .for(webpack.RuntimeGlobals.ensureChunkHandlers)
           .tap(pluginName, handler);
