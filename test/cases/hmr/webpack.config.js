@@ -4,6 +4,7 @@ import Self from '../../../src';
 
 module.exports = {
   entry: './index.css',
+  mode: 'development',
   module: {
     rules: [
       {

@@ -479,7 +479,7 @@ class MiniCssExtractPlugin {
               `${webpack.RuntimeGlobals.require}.miniCssF`,
               (referencedChunk) => {
                 if (!referencedChunk.contentHash[MODULE_TYPE]) {
-                  return '';
+                  return false;
                 }
 
                 return referencedChunk.canBeInitial()
