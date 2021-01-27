@@ -108,11 +108,19 @@ function updateCss(el, url) {
   newEl.isLoaded = false;
 
   newEl.addEventListener('load', () => {
+    if (newEl.isLoaded) {
+      return;
+    }
+
     newEl.isLoaded = true;
     el.parentNode.removeChild(el);
   });
 
   newEl.addEventListener('error', () => {
+    if (newEl.isLoaded) {
+      return;
+    }
+
     newEl.isLoaded = true;
     el.parentNode.removeChild(el);
   });
