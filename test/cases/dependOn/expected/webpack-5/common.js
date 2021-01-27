@@ -157,6 +157,6 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /************************************************************************/
 /******/ 	// run startup
-/******/ 	return __webpack_require__.x();
+/******/ 	__webpack_require__.x();
 /******/ })()
 ;
