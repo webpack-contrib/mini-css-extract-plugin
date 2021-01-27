@@ -54,10 +54,8 @@
 /******/ 	(() => {
 /******/ 		// This function allow to reference all chunks
 /******/ 		__webpack_require__.miniCssF = (chunkId) => {
-/******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === 1) return "1.css";
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + "main" + ".css";
+/******/ 			return "" + chunkId + ".css";
 /******/ 		};
 /******/ 	})();
 /******/ 	

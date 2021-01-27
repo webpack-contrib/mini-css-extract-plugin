@@ -477,10 +477,15 @@ class MiniCssExtractPlugin {
               MODULE_TYPE,
               'mini-css',
               `${webpack.RuntimeGlobals.require}.miniCssF`,
-              (referencedChunk) =>
-                referencedChunk.canBeInitial()
+              (referencedChunk) => {
+                if (!referencedChunk.contentHash[MODULE_TYPE]) {
+                  return false;
+                }
+
+                return referencedChunk.canBeInitial()
                   ? this.options.filename
-                  : this.options.chunkFilename,
+                  : this.options.chunkFilename;
+              },
               true
             )
           );
