@@ -27,6 +27,20 @@ const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 const DEFAULT_FILENAME = '[name].css';
 
+if (webpack.util.serialization && webpack.util.serialization.registerLoader) {
+  const pathLength = `${pluginName}/dist`.length;
+
+  webpack.util.serialization.registerLoader(
+    /^mini-css-extract-plugin\//,
+    (request) => {
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      require(`.${request.slice(pathLength)}`);
+
+      return true;
+    }
+  );
+}
+
 class MiniCssExtractPlugin {
   constructor(options = {}) {
     validate(schema, options, {

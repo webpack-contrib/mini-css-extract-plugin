@@ -14,21 +14,6 @@ describe('TestCache', () => {
 
   it('should work without cache', async () => {
     if (webpack.version[0] !== '4') {
-      const originalRegister = webpack.util.serialization.register;
-
-      webpack.util.serialization.register = jest
-        .fn()
-        .mockImplementation((...args) => {
-          if (args[1].startsWith('mini-css-extract-plugin')) {
-            // eslint-disable-next-line no-param-reassign
-            args[1] = args[1].replace(/dist/, 'src');
-
-            return originalRegister(...args);
-          }
-
-          return originalRegister(...args);
-        });
-
       const casesDirectory = path.resolve(__dirname, 'cases');
       const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
       // eslint-disable-next-line import/no-dynamic-require, global-require
@@ -136,21 +121,6 @@ describe('TestCache', () => {
 
   it('should work with the "memory" cache', async () => {
     if (webpack.version[0] !== '4') {
-      const originalRegister = webpack.util.serialization.register;
-
-      webpack.util.serialization.register = jest
-        .fn()
-        .mockImplementation((...args) => {
-          if (args[1].startsWith('mini-css-extract-plugin')) {
-            // eslint-disable-next-line no-param-reassign
-            args[1] = args[1].replace(/dist/, 'src');
-
-            return originalRegister(...args);
-          }
-
-          return originalRegister(...args);
-        });
-
       const casesDirectory = path.resolve(__dirname, 'cases');
       const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
       // eslint-disable-next-line import/no-dynamic-require, global-require
@@ -262,21 +232,6 @@ describe('TestCache', () => {
 
   it('should work with the "filesystem" cache', async () => {
     if (webpack.version[0] !== '4') {
-      const originalRegister = webpack.util.serialization.register;
-
-      webpack.util.serialization.register = jest
-        .fn()
-        .mockImplementation((...args) => {
-          if (args[1].startsWith('mini-css-extract-plugin')) {
-            // eslint-disable-next-line no-param-reassign
-            args[1] = args[1].replace(/dist/, 'src');
-
-            return originalRegister(...args);
-          }
-
-          return originalRegister(...args);
-        });
-
       const casesDirectory = path.resolve(__dirname, 'cases');
       const directoryForCase = path.resolve(casesDirectory, 'simple');
       // eslint-disable-next-line import/no-dynamic-require, global-require
@@ -392,21 +347,6 @@ describe('TestCache', () => {
 
   it('should work with the "filesystem" cache and asset modules', async () => {
     if (webpack.version[0] !== '4') {
-      const originalRegister = webpack.util.serialization.register;
-
-      webpack.util.serialization.register = jest
-        .fn()
-        .mockImplementation((...args) => {
-          if (args[1].startsWith('mini-css-extract-plugin')) {
-            // eslint-disable-next-line no-param-reassign
-            args[1] = args[1].replace(/dist/, 'src');
-
-            return originalRegister(...args);
-          }
-
-          return originalRegister(...args);
-        });
-
       const casesDirectory = path.resolve(__dirname, 'cases');
       const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
       // eslint-disable-next-line import/no-dynamic-require, global-require
@@ -528,21 +468,6 @@ describe('TestCache', () => {
 
   it('should work with the "filesystem" cache and file-loader', async () => {
     if (webpack.version[0] !== '4') {
-      const originalRegister = webpack.util.serialization.register;
-
-      webpack.util.serialization.register = jest
-        .fn()
-        .mockImplementation((...args) => {
-          if (args[1].startsWith('mini-css-extract-plugin')) {
-            // eslint-disable-next-line no-param-reassign
-            args[1] = args[1].replace(/dist/, 'src');
-
-            return originalRegister(...args);
-          }
-
-          return originalRegister(...args);
-        });
-
       const casesDirectory = path.resolve(__dirname, 'cases');
       const directoryForCase = path.resolve(casesDirectory, 'file-loader');
       // eslint-disable-next-line import/no-dynamic-require, global-require
