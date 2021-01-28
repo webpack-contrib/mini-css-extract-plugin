@@ -734,7 +734,9 @@ module.exports = {
       cacheGroups: {
         styles: {
           name: 'styles',
-          test: /\.css$/,
+          type: 'css/mini-extract',
+          // For webpack@4
+          // test: /\.css$/,
           chunks: 'all',
           enforce: true,
         },
