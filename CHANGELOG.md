@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.5](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.3.4...v1.3.5) (2021-01-28)
+
+
+### Bug Fixes
+
+* bloated runtime ([#687](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/687)) ([70ce174](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/70ce174941016174bb82ff46c808593a1e1b7e1e))
+* hmr runtime on preloaded stylesheet link ([#686](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/686)) ([05e2951](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/05e29514952bf3ff3f30ec33c4bda66999d8486b))
+* yarn pnp compatibility ([#688](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/688)) ([05b188a](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/05b188a055ee6663f8d307e99b22c51200fee320))
+
 ### [1.3.4](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.3.3...v1.3.4) (2021-01-13)
 
 
