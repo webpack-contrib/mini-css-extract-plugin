@@ -16,9 +16,17 @@ import schema from './loader-options.json';
 const pluginName = 'mini-css-extract-plugin';
 
 function hotLoader(content, context) {
-  const accept = context.locals
-    ? ''
-    : 'module.hot.accept(undefined, cssReload);';
+  const accept = `
+    if (!_locals || module.hot.invalidate) {
+      if (module.hot.invalidate &&
+          module.hot.data &&
+          module.hot.data.oldLocals &&
+          !isEqualLocals(module.hot.data.oldLocals, _locals)) {
+          module.hot.invalidate();
+      } else {
+         module.hot.accept();
+      }
+    }`;
 
   return `${content}
     if(module.hot) {
@@ -30,7 +38,15 @@ function hotLoader(content, context) {
     ...context.options,
     locals: !!context.locals,
   })});
-      module.hot.dispose(cssReload);
+      var _locals = ${JSON.stringify(context.locals)};
+      var isEqualLocals = require(${loaderUtils.stringifyRequest(
+        context.context,
+        path.join(__dirname, 'hmr/isEqualLocals.js')
+      )});
+      module.hot.dispose(function(data) {
+        cssReload();
+        data.oldLocals = _locals;
+      });
       ${accept}
     }
   `;
@@ -269,7 +285,12 @@ export function pitch(request) {
     let resultSource = `// extracted by ${pluginName}`;
 
     resultSource += this.hot
-      ? hotLoader(result, { context: this.context, options, locals })
+      ? hotLoader(result, {
+          context: this.context,
+          options,
+          locals,
+          namedExport,
+        })
       : result;
 
     return callback(null, resultSource);
