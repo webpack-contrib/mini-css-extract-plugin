@@ -25,16 +25,16 @@ function hotLoader(content, context) {
     return `var ${name} = require(${request});`;
   };
   const accept = `
-    if (!_locals || module.hot.invalidate) {
-      if (module.hot.invalidate &&
-          module.hot.data &&
-          module.hot.data.oldLocals &&
-          !isEqualLocals(module.hot.data.oldLocals, _locals)) {
-          module.hot.invalidate();
-      } else {
-         module.hot.accept();
-      }
-    }`;
+      if (!_locals || module.hot.invalidate) {
+        if (module.hot.invalidate &&
+            module.hot.data &&
+            module.hot.data.oldLocals &&
+            !isEqualLocals(module.hot.data.oldLocals, _locals)) {
+            module.hot.invalidate();
+        } else {
+           module.hot.accept();
+        }
+      }`;
 
   return `${content}
     ${renderImport(
@@ -57,7 +57,7 @@ function hotLoader(content, context) {
         data.oldLocals = _locals;
       });
       ${accept}
-    }
+  }
   `;
 }
 
