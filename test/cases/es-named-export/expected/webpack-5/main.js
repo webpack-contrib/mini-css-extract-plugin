@@ -18,9 +18,9 @@ console.log({ css: _style_css__WEBPACK_IMPORTED_MODULE_0__.default, aClass: _sty
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "aClass": () => /* binding */ aClass,
-/* harmony export */   "bClass": () => /* binding */ bClass,
-/* harmony export */   "cClass": () => /* binding */ cClass
+/* harmony export */   "aClass": () => (/* binding */ aClass),
+/* harmony export */   "bClass": () => (/* binding */ bClass),
+/* harmony export */   "cClass": () => (/* binding */ cClass)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
 const aClass = "foo__style__a-class";
@@ -68,7 +68,7 @@ const cClass = "foo__style__cClass";
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
