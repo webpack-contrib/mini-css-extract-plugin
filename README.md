@@ -771,7 +771,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 function recursiveIssuer(m, c) {
   const issuer = c.moduleGraph.getIssuer(m);
-  // For webpack@4 chunks = m.issuer
+  // For webpack@4 issuer = m.issuer
 
   if (issuer) {
     return recursiveIssuer(issuer, c);
