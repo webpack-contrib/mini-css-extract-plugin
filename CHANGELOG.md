@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.6](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.3.5...v1.3.6) (2021-02-08)
+
+
+### Bug Fixes
+
+* do not crash on using `[fullhash]` ([#695](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/695)) ([dbb708c](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/dbb708cf181d8f3d69af11cc15f959f187e38ffa))
+
 ### [1.3.5](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.3.4...v1.3.5) (2021-01-28)
 
 
