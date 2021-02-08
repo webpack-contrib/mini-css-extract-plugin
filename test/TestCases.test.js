@@ -179,14 +179,16 @@ describe('TestCases', () => {
               );
             } else {
               const matchAll = res.match(
-                /__webpack_require__\.h = \(\) => "([\d\w].*)"/i
+                /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i
               );
 
               const replacer = new Array(matchAll[1].length);
 
               res = res.replace(
-                /__webpack_require__\.h = \(\) => "([\d\w].*)"/i,
-                `__webpack_require__.h = () => "${replacer.fill('x').join('')}"`
+                /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i,
+                `__webpack_require__.h = () => ("${replacer
+                  .fill('x')
+                  .join('')}")`
               );
             }
 
