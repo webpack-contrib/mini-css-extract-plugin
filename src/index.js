@@ -480,8 +480,12 @@ class MiniCssExtractPlugin {
 
           enabledChunks.add(chunk);
 
-          // eslint-disable-next-line global-require
-          const CssLoadingRuntimeModule = require('./CssLoadingRuntimeModule');
+          if (
+            typeof this.options.chunkFilename === 'string' &&
+            /\[(full)?hash(:\d+)?\]/.test(this.options.chunkFilename)
+          ) {
+            set.add(webpack.RuntimeGlobals.getFullHash);
+          }
 
           set.add(webpack.RuntimeGlobals.publicPath);
 
@@ -503,6 +507,10 @@ class MiniCssExtractPlugin {
               true
             )
           );
+
+          // eslint-disable-next-line global-require
+          const CssLoadingRuntimeModule = require('./CssLoadingRuntimeModule');
+
           compilation.addRuntimeModule(
             chunk,
             new CssLoadingRuntimeModule(set, this.runtimeOptions)
