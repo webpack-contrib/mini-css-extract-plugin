@@ -10,10 +10,7 @@ import CssDependency from './CssDependency';
 import schema from './plugin-options.json';
 import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
-const {
-  Template,
-  util: { createHash },
-} = webpack;
+const { Template } = webpack;
 
 const pluginName = 'mini-css-extract-plugin';
 
@@ -285,6 +282,11 @@ class MiniCssExtractPlugin {
 
         if (modules) {
           const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
+          // TODO remove after drop webpack v4
+          const createHash = compiler.webpack
+            ? compiler.webpack.util.createHash
+            : // eslint-disable-next-line global-require
+              require('webpack').util.createHash;
           const hash = createHash(hashFunction);
 
           for (const m of modules) {
