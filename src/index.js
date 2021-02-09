@@ -10,11 +10,6 @@ import CssDependency from './CssDependency';
 import schema from './plugin-options.json';
 import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
-// webpack 5 exposes the sources property to ensure the right version of webpack-sources is used
-const { ConcatSource, SourceMapSource, RawSource } =
-  // eslint-disable-next-line global-require
-  webpack.sources || require('webpack-sources');
-
 const {
   Template,
   util: { createHash },
@@ -157,6 +152,7 @@ class MiniCssExtractPlugin {
               result.push({
                 render: () =>
                   this.renderContentAsset(
+                    compiler,
                     compilation,
                     chunk,
                     renderedModules,
@@ -190,6 +186,7 @@ class MiniCssExtractPlugin {
               result.push({
                 render: () =>
                   this.renderContentAsset(
+                    compiler,
                     compilation,
                     chunk,
                     renderedModules,
@@ -230,6 +227,7 @@ class MiniCssExtractPlugin {
               result.push({
                 render: () =>
                   this.renderContentAsset(
+                    compiler,
                     compilation,
                     chunk,
                     renderedModules,
@@ -552,7 +550,7 @@ class MiniCssExtractPlugin {
     return obj;
   }
 
-  renderContentAsset(compilation, chunk, modules, requestShortener) {
+  renderContentAsset(compiler, compilation, chunk, modules, requestShortener) {
     let usedModules;
 
     const [chunkGroup] = chunk.groupsIterable;
@@ -690,6 +688,12 @@ class MiniCssExtractPlugin {
       modules.sort((a, b) => a.index2 - b.index2);
       usedModules = modules;
     }
+
+    // TODO remove after drop webpack v4
+    const { ConcatSource, SourceMapSource, RawSource } = compiler.webpack
+      ? compiler.webpack.sources
+      : // eslint-disable-next-line global-require
+        require('webpack-sources');
 
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
