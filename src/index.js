@@ -205,10 +205,15 @@ class MiniCssExtractPlugin {
           pluginName,
           (result, { chunk }) => {
             const { chunkGraph } = compilation;
+            // TODO remove after drop webpack v4
+            const { HotUpdateChunk } = compiler.webpack
+              ? compiler.webpack
+              : // eslint-disable-next-line global-require
+                require('webpack');
 
             // We don't need hot update chunks for css
             // We will use the real asset instead to update
-            if (chunk instanceof compiler.webpack.HotUpdateChunk) {
+            if (chunk instanceof HotUpdateChunk) {
               return;
             }
 
