@@ -49,37 +49,20 @@ class MiniCssExtractPlugin {
             ])
         : Template.asString(['document.head.appendChild(linkTag);']);
 
-    const attributes =
-      typeof options.attributes === 'object' ? options.attributes : {};
-
-    // Todo in next major release set default to "false"
-    const linkType =
-      options.linkType === true || typeof options.linkType === 'undefined'
-        ? 'text/css'
-        : options.linkType;
-
     this.options = Object.assign(
-      {
-        filename: DEFAULT_FILENAME,
-        ignoreOrder: false,
-      },
+      { filename: DEFAULT_FILENAME, ignoreOrder: false },
       options
     );
 
     this.runtimeOptions = {
       insert,
-      linkType,
+      linkType:
+        // Todo in next major release set default to "false"
+        options.linkType === true || typeof options.linkType === 'undefined'
+          ? 'text/css'
+          : options.linkType,
+      attributes: options.attributes,
     };
-
-    this.runtimeOptions.attributes = Template.asString(
-      Object.entries(attributes).map((entry) => {
-        const [key, value] = entry;
-
-        return `linkTag.setAttribute(${JSON.stringify(key)}, ${JSON.stringify(
-          value
-        )});`;
-      })
-    );
 
     if (!this.options.chunkFilename) {
       const { filename } = this.options;
@@ -426,7 +409,19 @@ class MiniCssExtractPlugin {
                     ]),
                     '}',
                     'var linkTag = document.createElement("link");',
-                    this.runtimeOptions.attributes,
+                    this.runtimeOptions.attributes
+                      ? Template.asString(
+                          Object.entries(this.runtimeOptions.attributes).map(
+                            (entry) => {
+                              const [key, value] = entry;
+
+                              return `linkTag.setAttribute(${JSON.stringify(
+                                key
+                              )}, ${JSON.stringify(value)});`;
+                            }
+                          )
+                        )
+                      : '',
                     'linkTag.rel = "stylesheet";',
                     this.runtimeOptions.linkType
                       ? `linkTag.type = ${JSON.stringify(

@@ -48,14 +48,26 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
       RuntimeGlobals.hmrDownloadUpdateHandlers
     );
 
-    if (!withLoading && !withHmr) return null;
+    if (!withLoading && !withHmr) {
+      return null;
+    }
 
     return Template.asString([
       `var createStylesheet = ${runtimeTemplate.basicFunction(
         'chunkId, fullhref, resolve, reject',
         [
           'var linkTag = document.createElement("link");',
-          this.runtimeOptions.attributes,
+          this.runtimeOptions.attributes
+            ? Template.asString(
+                Object.entries(this.runtimeOptions.attributes).map((entry) => {
+                  const [key, value] = entry;
+
+                  return `linkTag.setAttribute(${JSON.stringify(
+                    key
+                  )}, ${JSON.stringify(value)});`;
+                })
+              )
+            : '',
           'linkTag.rel = "stylesheet";',
           this.runtimeOptions.linkType
             ? `linkTag.type = ${JSON.stringify(this.runtimeOptions.linkType)};`
