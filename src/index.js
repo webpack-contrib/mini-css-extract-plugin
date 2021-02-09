@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 
 import webpack from 'webpack';
-
 import { validate } from 'schema-utils';
 
 import CssModuleFactory from './CssModuleFactory';
@@ -482,6 +481,11 @@ class MiniCssExtractPlugin {
           }
         );
       } else {
+        // TODO remove after drop webpack v4
+        const { RuntimeGlobals, runtime } = compiler.webpack
+          ? compiler.webpack
+          : // eslint-disable-next-line global-require
+            require('webpack');
         const enabledChunks = new WeakSet();
         const handler = (chunk, set) => {
           if (enabledChunks.has(chunk)) {
@@ -494,17 +498,17 @@ class MiniCssExtractPlugin {
             typeof this.options.chunkFilename === 'string' &&
             /\[(full)?hash(:\d+)?\]/.test(this.options.chunkFilename)
           ) {
-            set.add(webpack.RuntimeGlobals.getFullHash);
+            set.add(RuntimeGlobals.getFullHash);
           }
 
-          set.add(webpack.RuntimeGlobals.publicPath);
+          set.add(RuntimeGlobals.publicPath);
 
           compilation.addRuntimeModule(
             chunk,
-            new webpack.runtime.GetChunkFilenameRuntimeModule(
+            new runtime.GetChunkFilenameRuntimeModule(
               MODULE_TYPE,
               'mini-css',
-              `${webpack.RuntimeGlobals.require}.miniCssF`,
+              `${RuntimeGlobals.require}.miniCssF`,
               (referencedChunk) => {
                 if (!referencedChunk.contentHash[MODULE_TYPE]) {
                   return false;
@@ -528,10 +532,10 @@ class MiniCssExtractPlugin {
         };
 
         compilation.hooks.runtimeRequirementInTree
-          .for(webpack.RuntimeGlobals.ensureChunkHandlers)
+          .for(RuntimeGlobals.ensureChunkHandlers)
           .tap(pluginName, handler);
         compilation.hooks.runtimeRequirementInTree
-          .for(webpack.RuntimeGlobals.hmrDownloadUpdateHandlers)
+          .for(RuntimeGlobals.hmrDownloadUpdateHandlers)
           .tap(pluginName, handler);
       }
     });
