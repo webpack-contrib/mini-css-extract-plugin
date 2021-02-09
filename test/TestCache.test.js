@@ -69,7 +69,9 @@ describe('TestCache', () => {
           expect(stats.compilation.errors).toHaveLength(0);
 
           compiler1.close(() => {
-            resolve();
+            process.nextTick(() => {
+              resolve();
+            });
           });
         });
       });
@@ -110,7 +112,9 @@ describe('TestCache', () => {
           expect(stats.compilation.errors).toHaveLength(0);
 
           compiler2.close(() => {
-            resolve();
+            process.nextTick(() => {
+              resolve();
+            });
           });
         });
       });
