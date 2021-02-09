@@ -305,6 +305,11 @@ class MiniCssExtractPlugin {
         }
       });
 
+      // TODO remove after drop webpack v4
+      const { Template } = compiler.webpack
+        ? compiler.webpack
+        : // eslint-disable-next-line global-require
+          require('webpack');
       const { mainTemplate } = compilation;
 
       if (isWebpack4) {
