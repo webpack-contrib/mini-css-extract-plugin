@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
 
-import webpack from 'webpack';
 import { validate } from 'schema-utils';
 
 import CssModule from './CssModule';
@@ -15,22 +14,9 @@ const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 const DEFAULT_FILENAME = '[name].css';
 
-if (webpack.util.serialization && webpack.util.serialization.registerLoader) {
-  const pathLength = `${pluginName}/dist`.length;
-
-  webpack.util.serialization.registerLoader(
-    /^mini-css-extract-plugin\//,
-    (request) => {
-      // eslint-disable-next-line global-require, import/no-dynamic-require
-      require(`.${request.slice(pathLength)}`);
-
-      return true;
-    }
-  );
-}
+const pathLength = `${pluginName}/dist`.length;
 
 class MiniCssExtractPlugin {
-  // eslint-disable-next-line no-shadow
   static getCssLoadingRuntimeModule(webpack) {
     const { RuntimeModule, RuntimeGlobals, Template } = webpack;
 
@@ -316,6 +302,27 @@ class MiniCssExtractPlugin {
 
   /** @param {import("webpack").Compiler} compiler */
   apply(compiler) {
+    const webpack = compiler.webpack
+      ? compiler.webpack
+      : // eslint-disable-next-line global-require
+        require('webpack');
+
+    if (
+      webpack.util &&
+      webpack.util.serialization &&
+      webpack.util.serialization.registerLoader
+    ) {
+      webpack.util.serialization.registerLoader(
+        /^mini-css-extract-plugin\//,
+        (request) => {
+          // eslint-disable-next-line global-require, import/no-dynamic-require
+          require(`.${request.slice(pathLength)}`);
+
+          return true;
+        }
+      );
+    }
+
     const isWebpack4 = compiler.webpack
       ? false
       : typeof compiler.resolvers !== 'undefined';
@@ -426,11 +433,7 @@ class MiniCssExtractPlugin {
           pluginName,
           (result, { chunk }) => {
             const { chunkGraph } = compilation;
-            // TODO remove after drop webpack v4
-            const { HotUpdateChunk } = compiler.webpack
-              ? compiler.webpack
-              : // eslint-disable-next-line global-require
-                require('webpack');
+            const { HotUpdateChunk } = webpack;
 
             // We don't need hot update chunks for css
             // We will use the real asset instead to update
@@ -508,11 +511,9 @@ class MiniCssExtractPlugin {
 
         if (modules) {
           const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
-          // TODO remove after drop webpack v4
           const createHash = compiler.webpack
             ? compiler.webpack.util.createHash
-            : // eslint-disable-next-line global-require
-              require('webpack').util.createHash;
+            : webpack.util.createHash;
           const hash = createHash(hashFunction);
 
           for (const m of modules) {
@@ -526,11 +527,7 @@ class MiniCssExtractPlugin {
         }
       });
 
-      // TODO remove after drop webpack v4
-      const { Template } = compiler.webpack
-        ? compiler.webpack
-        : // eslint-disable-next-line global-require
-          require('webpack');
+      const { Template } = webpack;
       const { mainTemplate } = compilation;
 
       if (isWebpack4) {
@@ -724,11 +721,7 @@ class MiniCssExtractPlugin {
           }
         );
       } else {
-        // TODO remove after drop webpack v4
-        const { RuntimeGlobals, runtime } = compiler.webpack
-          ? compiler.webpack
-          : // eslint-disable-next-line global-require
-            require('webpack');
+        const { RuntimeGlobals, runtime } = webpack;
         const enabledChunks = new WeakSet();
         const handler = (chunk, set) => {
           if (enabledChunks.has(chunk)) {
@@ -767,10 +760,7 @@ class MiniCssExtractPlugin {
 
           // eslint-disable-next-line global-require
           const CssLoadingRuntimeModule = MiniCssExtractPlugin.getCssLoadingRuntimeModule(
-            compiler.webpack
-              ? compiler.webpack
-              : // eslint-disable-next-line global-require
-                require('webpack')
+            webpack
           );
 
           compilation.addRuntimeModule(
