@@ -101,7 +101,14 @@ module.exports = class CssLoadingRuntimeModule extends RuntimeModule {
                 '}',
               ])
             : '',
-          this.runtimeOptions.insert,
+          typeof this.runtimeOptions.insert !== 'undefined'
+            ? typeof this.runtimeOptions.insert === 'function'
+              ? `(${this.runtimeOptions.insert.toString()})(linkTag)`
+              : Template.asString([
+                  `var target = document.querySelector("${this.runtimeOptions.insert}");`,
+                  `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
+                ])
+            : Template.asString(['document.head.appendChild(linkTag);']),
           'return linkTag;',
         ]
       )};`,

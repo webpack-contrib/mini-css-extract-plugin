@@ -9,8 +9,6 @@ import CssDependency from './CssDependency';
 import schema from './plugin-options.json';
 import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
-const { Template } = webpack;
-
 const pluginName = 'mini-css-extract-plugin';
 
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
@@ -39,23 +37,13 @@ class MiniCssExtractPlugin {
       baseDataPath: 'options',
     });
 
-    const insert =
-      typeof options.insert !== 'undefined'
-        ? typeof options.insert === 'function'
-          ? `(${options.insert.toString()})(linkTag)`
-          : Template.asString([
-              `var target = document.querySelector("${options.insert}");`,
-              `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
-            ])
-        : Template.asString(['document.head.appendChild(linkTag);']);
-
     this.options = Object.assign(
       { filename: DEFAULT_FILENAME, ignoreOrder: false },
       options
     );
 
     this.runtimeOptions = {
-      insert,
+      insert: options.insert,
       linkType:
         // Todo in next major release set default to "false"
         options.linkType === true || typeof options.linkType === 'undefined'
@@ -462,7 +450,16 @@ class MiniCssExtractPlugin {
                           '}',
                         ])
                       : '',
-                    this.runtimeOptions.insert,
+                    typeof this.runtimeOptions.insert !== 'undefined'
+                      ? typeof this.runtimeOptions.insert === 'function'
+                        ? `(${this.runtimeOptions.insert.toString()})(linkTag)`
+                        : Template.asString([
+                            `var target = document.querySelector("${this.runtimeOptions.insert}");`,
+                            `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
+                          ])
+                      : Template.asString([
+                          'document.head.appendChild(linkTag);',
+                        ]),
                   ]),
                   '}).then(function() {',
                   Template.indent(['installedCssChunks[chunkId] = 0;']),
