@@ -208,7 +208,7 @@ class MiniCssExtractPlugin {
 
             // We don't need hot update chunks for css
             // We will use the real asset instead to update
-            if (chunk instanceof webpack.HotUpdateChunk) {
+            if (chunk instanceof compiler.webpack.HotUpdateChunk) {
               return;
             }
 
