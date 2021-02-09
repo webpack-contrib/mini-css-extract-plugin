@@ -1,12 +1,6 @@
 import path from 'path';
 
 import loaderUtils from 'loader-utils';
-import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
-import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
-import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
-import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
-import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
-import NormalModule from 'webpack/lib/NormalModule';
 import { validate } from 'schema-utils';
 
 import CssDependency from './CssDependency';
@@ -66,13 +60,53 @@ export function pitch(request) {
     outputOptions
   );
 
+  // TODO simplify after drop  webpack v4
+  // eslint-disable-next-line global-require
+  const webpack = this._compiler.webpack || require('webpack');
+
+  const { NodeTemplatePlugin } = webpack.node;
+  const NodeTargetPlugin = webpack.node.NodeTargetPlugin
+    ? webpack.node.NodeTargetPlugin
+    : // eslint-disable-next-line global-require
+      require('webpack/lib/node/NodeTargetPlugin');
+
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
-  new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
-  new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
-    childCompiler
-  );
+
+  const { EntryOptionPlugin } = webpack;
+
+  if (EntryOptionPlugin) {
+    const {
+      library: { EnableLibraryPlugin },
+    } = webpack;
+
+    new EnableLibraryPlugin('commonjs2').apply(childCompiler);
+
+    EntryOptionPlugin.applyEntryOption(childCompiler, this.context, {
+      child: {
+        library: {
+          type: 'commonjs2',
+        },
+        import: [`!!${request}`],
+      },
+    });
+  } else {
+    const { LibraryTemplatePlugin, SingleEntryPlugin } = webpack;
+
+    new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
+    new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
+      childCompiler
+    );
+  }
+
+  const { LimitChunkCountPlugin } = webpack.optimize;
+
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
+
+  const NormalModule = webpack.NormalModule
+    ? webpack.NormalModule
+    : // eslint-disable-next-line global-require
+      require('webpack/lib/NormalModule');
 
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
@@ -122,6 +156,8 @@ export function pitch(request) {
         source =
           compilation.assets[childFilename] &&
           compilation.assets[childFilename].source();
+
+        // console.log(source);
 
         // Remove all chunk assets
         compilation.chunks.forEach((chunk) => {
