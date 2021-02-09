@@ -3,7 +3,7 @@
 import webpack from 'webpack';
 import { validate } from 'schema-utils';
 
-import CssModuleFactory from './CssModuleFactory';
+import CssModule from './CssModule';
 import CssDependencyTemplate from './CssDependencyTemplate';
 import CssDependency from './CssDependency';
 import schema from './plugin-options.json';
@@ -92,6 +92,13 @@ class MiniCssExtractPlugin {
       }
     }
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
+      class CssModuleFactory {
+        // eslint-disable-next-line class-methods-use-this
+        create({ dependencies: [dependency] }, callback) {
+          callback(null, new CssModule(dependency));
+        }
+      }
+
       compilation.dependencyFactories.set(
         CssDependency,
         new CssModuleFactory()
