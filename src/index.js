@@ -2,9 +2,8 @@
 
 import { validate } from 'schema-utils';
 
-import CssDependency from './CssDependency';
 import schema from './plugin-options.json';
-import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
+import { shared, MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
 const pluginName = 'mini-css-extract-plugin';
 
@@ -13,70 +12,14 @@ const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
 const REGEXP_NAME = /\[name\]/i;
 const DEFAULT_FILENAME = '[name].css';
 
-const pathLength = `${pluginName}/dist`.length;
-
 const TYPES = new Set([MODULE_TYPE]);
 const CODE_GENERATION_RESULT = {
   sources: new Map(),
   runtimeRequirements: new Set(),
 };
 
-const registeredSerializers = new Set();
-
 class MiniCssExtractPlugin {
-  constructor(options = {}) {
-    validate(schema, options, {
-      name: 'Mini CSS Extract Plugin',
-      baseDataPath: 'options',
-    });
-
-    this.options = Object.assign(
-      { filename: DEFAULT_FILENAME, ignoreOrder: false },
-      options
-    );
-
-    this.runtimeOptions = {
-      insert: options.insert,
-      linkType:
-        // Todo in next major release set default to "false"
-        options.linkType === true || typeof options.linkType === 'undefined'
-          ? 'text/css'
-          : options.linkType,
-      attributes: options.attributes,
-    };
-
-    if (!this.options.chunkFilename) {
-      const { filename } = this.options;
-
-      if (typeof filename !== 'function') {
-        const hasName = filename.includes('[name]');
-        const hasId = filename.includes('[id]');
-        const hasChunkHash = filename.includes('[chunkhash]');
-        const hasContentHash = filename.includes('[contenthash]');
-
-        // Anything changing depending on chunk is fine
-        if (hasChunkHash || hasContentHash || hasName || hasId) {
-          this.options.chunkFilename = filename;
-        } else {
-          // Otherwise prefix "[id]." in front of the basename to make it changing
-          this.options.chunkFilename = filename.replace(
-            /(^|\/)([^/]*(?:\?|$))/,
-            '$1[id].$2'
-          );
-        }
-      } else {
-        this.options.chunkFilename = '[id].css';
-      }
-    }
-  }
-
-  /** @param {import("webpack").Compiler} compiler */
-  apply(compiler) {
-    const webpack = compiler.webpack
-      ? compiler.webpack
-      : // eslint-disable-next-line global-require
-        require('webpack');
-
+  static getCssModule(webpack) {
     class CssModule extends webpack.Module {
       constructor({
         context,
@@ -196,56 +139,205 @@ class MiniCssExtractPlugin {
       webpack.util.serialization &&
       webpack.util.serialization.register
     ) {
-      webpack.util.serialization.registerLoader(
-        /^mini-css-extract-plugin\//,
-        (request) => {
-          // eslint-disable-next-line global-require, import/no-dynamic-require
-          require(`.${request.slice(pathLength)}`);
+      webpack.util.serialization.register(
+        CssModule,
+        'mini-css-extract-plugin/dist/CssModule',
+        null,
+        {
+          serialize(instance, context) {
+            instance.serialize(context);
+          },
+          deserialize(context) {
+            const { read } = context;
 
-          return true;
+            const contextModule = read();
+            const identifier = read();
+            const identifierIndex = read();
+            const content = read();
+            const media = read();
+            const sourceMap = read();
+            const { assets, assetsInfo } = read();
+
+            const dep = new CssModule({
+              context: contextModule,
+              identifier,
+              identifierIndex,
+              content,
+              media,
+              sourceMap,
+              assets,
+              assetsInfo,
+            });
+
+            dep.deserialize(context);
+
+            return dep;
+          },
         }
       );
+    }
 
-      if (!registeredSerializers.has('CssModule')) {
-        registeredSerializers.add('CssModule');
+    return CssModule;
+  }
 
-        webpack.util.serialization.register(
-          CssModule,
-          'mini-css-extract-plugin/dist',
-          'CssModule',
-          {
-            serialize(instance, context) {
-              instance.serialize(context);
-            },
-            deserialize(context) {
-              const { read } = context;
+  static getCssDependency(webpack) {
+    // eslint-disable-next-line no-shadow
+    class CssDependency extends webpack.Dependency {
+      constructor(
+        { identifier, content, media, sourceMap },
+        context,
+        identifierIndex
+      ) {
+        super();
 
-              const contextModule = read();
-              const identifier = read();
-              const identifierIndex = read();
-              const content = read();
-              const media = read();
-              const sourceMap = read();
-              const { assets, assetsInfo } = read();
-
-              const dep = new CssModule({
-                context: contextModule,
-                identifier,
-                identifierIndex,
-                content,
-                media,
-                sourceMap,
-                assets,
-                assetsInfo,
-              });
-
-              dep.deserialize(context);
-
-              return dep;
-            },
-          }
-        );
+        this.identifier = identifier;
+        this.identifierIndex = identifierIndex;
+        this.content = content;
+        this.media = media;
+        this.sourceMap = sourceMap;
+        this.context = context;
+        // eslint-disable-next-line no-undefined
+        this.assets = undefined;
+        // eslint-disable-next-line no-undefined
+        this.assetsInfo = undefined;
       }
+
+      getResourceIdentifier() {
+        return `css-module-${this.identifier}-${this.identifierIndex}`;
+      }
+
+      // eslint-disable-next-line class-methods-use-this
+      getModuleEvaluationSideEffectsState() {
+        return webpack.ModuleGraphConnection.TRANSITIVE_ONLY;
+      }
+
+      serialize(context) {
+        const { write } = context;
+
+        write(this.identifier);
+        write(this.content);
+        write(this.media);
+        write(this.sourceMap);
+        write(this.context);
+        write(this.identifierIndex);
+        write(this.assets);
+        write(this.assetsInfo);
+
+        super.serialize(context);
+      }
+
+      deserialize(context) {
+        super.deserialize(context);
+      }
+    }
+
+    if (
+      webpack.util &&
+      webpack.util.serialization &&
+      webpack.util.serialization.register
+    ) {
+      webpack.util.serialization.register(
+        CssDependency,
+        'mini-css-extract-plugin/dist/CssDependency',
+        null,
+        {
+          serialize(instance, context) {
+            instance.serialize(context);
+          },
+          deserialize(context) {
+            const { read } = context;
+            const dep = new CssDependency(
+              {
+                identifier: read(),
+                content: read(),
+                media: read(),
+                sourceMap: read(),
+              },
+              read(),
+              read()
+            );
+
+            const assets = read();
+            const assetsInfo = read();
+
+            dep.assets = assets;
+            dep.assetsInfo = assetsInfo;
+
+            dep.deserialize(context);
+
+            return dep;
+          },
+        }
+      );
+    }
+
+    return CssDependency;
+  }
+
+  constructor(options = {}) {
+    validate(schema, options, {
+      name: 'Mini CSS Extract Plugin',
+      baseDataPath: 'options',
+    });
+
+    this.options = Object.assign(
+      { filename: DEFAULT_FILENAME, ignoreOrder: false },
+      options
+    );
+
+    this.runtimeOptions = {
+      insert: options.insert,
+      linkType:
+        // Todo in next major release set default to "false"
+        options.linkType === true || typeof options.linkType === 'undefined'
+          ? 'text/css'
+          : options.linkType,
+      attributes: options.attributes,
+    };
+
+    if (!this.options.chunkFilename) {
+      const { filename } = this.options;
+
+      if (typeof filename !== 'function') {
+        const hasName = filename.includes('[name]');
+        const hasId = filename.includes('[id]');
+        const hasChunkHash = filename.includes('[chunkhash]');
+        const hasContentHash = filename.includes('[contenthash]');
+
+        // Anything changing depending on chunk is fine
+        if (hasChunkHash || hasContentHash || hasName || hasId) {
+          this.options.chunkFilename = filename;
+        } else {
+          // Otherwise prefix "[id]." in front of the basename to make it changing
+          this.options.chunkFilename = filename.replace(
+            /(^|\/)([^/]*(?:\?|$))/,
+            '$1[id].$2'
+          );
+        }
+      } else {
+        this.options.chunkFilename = '[id].css';
+      }
+    }
+  }
+
+  /** @param {import("webpack").Compiler} compiler */
+  apply(compiler) {
+    const webpack = compiler.webpack
+      ? compiler.webpack
+      : // eslint-disable-next-line global-require
+        require('webpack');
+
+    // TODO bug in webpack, remove it after it will be fixed
+    // webpack tries to `require` loader firstly when serializer doesn't found
+    if (
+      webpack.util &&
+      webpack.util.serialization &&
+      webpack.util.serialization.registerLoader
+    ) {
+      webpack.util.serialization.registerLoader(
+        /^mini-css-extract-plugin\//,
+        () => true
+      );
     }
 
     const isWebpack4 = compiler.webpack
@@ -261,6 +353,17 @@ class MiniCssExtractPlugin {
         }
       }
     }
+
+    // initializeCssDependency
+    // eslint-disable-next-line no-shadow
+    const { CssModule, CssDependency } = shared(webpack, (webpack) => {
+      // eslint-disable-next-line no-shadow
+      const CssModule = MiniCssExtractPlugin.getCssModule(webpack);
+      // eslint-disable-next-line no-shadow
+      const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
+
+      return { CssModule, CssDependency };
+    });
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {
