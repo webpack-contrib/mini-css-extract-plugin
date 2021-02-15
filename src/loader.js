@@ -170,7 +170,7 @@ export function pitch(request) {
 
   const callback = this.async();
 
-  childCompiler.runAsChild((err, entries, compilation) => {
+  childCompiler.runAsChild((error, entries, compilation) => {
     const assets = Object.create(null);
     const assetsInfo = new Map();
 
@@ -199,7 +199,15 @@ export function pitch(request) {
         }
 
         const count = identifierCountMap.get(dependency.identifier) || 0;
-        const { CssDependency } = shared(this._compiler.webpack);
+        const { CssDependency } = shared(webpack, () => {
+          return {};
+        });
+
+        if (!CssDependency) {
+          throw new Error(
+            "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
+          );
+        }
 
         this._module.addDependency(
           (lastDep = new CssDependency(dependency, dependency.context, count))
@@ -213,8 +221,8 @@ export function pitch(request) {
       }
     };
 
-    if (err) {
-      return callback(err);
+    if (error) {
+      return callback(error);
     }
 
     if (compilation.errors.length > 0) {
