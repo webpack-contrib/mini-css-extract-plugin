@@ -1,18 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
-/* 0 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-
-
-/* eslint-disable-next-line no-unused-expressions */
-__webpack_require__.e(/* import() | async */ 0).then(__webpack_require__.bind(__webpack_require__, 2));
-
-
-/***/ }),
+/* 0 */,
 /* 1 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -83,7 +72,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("df29c3e015e275d25a20")
+/******/ 		__webpack_require__.h = () => ("f4055680253d27bc029e")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
@@ -349,9 +338,17 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	// startup
-/******/ 	// Load entry module
-/******/ 	__webpack_require__(0);
-/******/ 	// This entry module used 'exports' so it can't be inlined
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+
+
+/* eslint-disable-next-line no-unused-expressions */
+__webpack_require__.e(/* import() | async */ 0).then(__webpack_require__.bind(__webpack_require__, 2));
+
+})();
+
 /******/ })()
 ;
