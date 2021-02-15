@@ -6,7 +6,18 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: [Self.loader, 'css-loader'],
+        use: [
+          Self.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                mode: 'local',
+                localIdentName: 'foo__[name]__[local]',
+              },
+            },
+          },
+        ],
       },
     ],
   },

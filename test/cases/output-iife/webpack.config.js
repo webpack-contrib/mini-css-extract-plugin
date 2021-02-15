@@ -11,11 +11,7 @@ module.exports = {
     ],
   },
   output: {
-    module: true,
     iife: false,
-  },
-  experiments: {
-    outputModule: true,
   },
   plugins: [
     new Self({
