@@ -1402,9 +1402,11 @@ module.exports = function (urlString) {
 /******/ 	})();
 /******/ 	
 /************************************************************************/
+/******/ 	
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
-/******/ 	// Load entry module
-/******/ 	__webpack_require__(0);
+/******/ 	// Load entry module and return exports
+/******/ 	var __webpack_exports__ = __webpack_require__(0);
+/******/ 	
 /******/ })()
 ;

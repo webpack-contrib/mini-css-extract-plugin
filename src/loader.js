@@ -1,16 +1,9 @@
 import path from 'path';
 
 import loaderUtils from 'loader-utils';
-import NodeTemplatePlugin from 'webpack/lib/node/NodeTemplatePlugin';
-import NodeTargetPlugin from 'webpack/lib/node/NodeTargetPlugin';
-import LibraryTemplatePlugin from 'webpack/lib/LibraryTemplatePlugin';
-import SingleEntryPlugin from 'webpack/lib/SingleEntryPlugin';
-import LimitChunkCountPlugin from 'webpack/lib/optimize/LimitChunkCountPlugin';
-import NormalModule from 'webpack/lib/NormalModule';
 import { validate } from 'schema-utils';
 
-import CssDependency from './CssDependency';
-import { findModuleById, evalModuleCode } from './utils';
+import { shared, findModuleById, evalModuleCode } from './utils';
 import schema from './loader-options.json';
 
 const pluginName = 'mini-css-extract-plugin';
@@ -66,13 +59,53 @@ export function pitch(request) {
     outputOptions
   );
 
+  // TODO simplify after drop  webpack v4
+  // eslint-disable-next-line global-require
+  const webpack = this._compiler.webpack || require('webpack');
+
+  const { NodeTemplatePlugin } = webpack.node;
+  const NodeTargetPlugin = webpack.node.NodeTargetPlugin
+    ? webpack.node.NodeTargetPlugin
+    : // eslint-disable-next-line global-require
+      require('webpack/lib/node/NodeTargetPlugin');
+
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
-  new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
-  new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
-    childCompiler
-  );
+
+  const { EntryOptionPlugin } = webpack;
+
+  if (EntryOptionPlugin) {
+    const {
+      library: { EnableLibraryPlugin },
+    } = webpack;
+
+    new EnableLibraryPlugin('commonjs2').apply(childCompiler);
+
+    EntryOptionPlugin.applyEntryOption(childCompiler, this.context, {
+      child: {
+        library: {
+          type: 'commonjs2',
+        },
+        import: [`!!${request}`],
+      },
+    });
+  } else {
+    const { LibraryTemplatePlugin, SingleEntryPlugin } = webpack;
+
+    new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
+    new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
+      childCompiler
+    );
+  }
+
+  const { LimitChunkCountPlugin } = webpack.optimize;
+
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
+
+  const NormalModule = webpack.NormalModule
+    ? webpack.NormalModule
+    : // eslint-disable-next-line global-require
+      require('webpack/lib/NormalModule');
 
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
@@ -123,6 +156,8 @@ export function pitch(request) {
           compilation.assets[childFilename] &&
           compilation.assets[childFilename].source();
 
+        // console.log(source);
+
         // Remove all chunk assets
         compilation.chunks.forEach((chunk) => {
           chunk.files.forEach((file) => {
@@ -135,7 +170,7 @@ export function pitch(request) {
 
   const callback = this.async();
 
-  childCompiler.runAsChild((err, entries, compilation) => {
+  childCompiler.runAsChild((error, entries, compilation) => {
     const assets = Object.create(null);
     const assetsInfo = new Map();
 
@@ -164,6 +199,15 @@ export function pitch(request) {
         }
 
         const count = identifierCountMap.get(dependency.identifier) || 0;
+        const { CssDependency } = shared(webpack, () => {
+          return {};
+        });
+
+        if (!CssDependency) {
+          throw new Error(
+            "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
+          );
+        }
 
         this._module.addDependency(
           (lastDep = new CssDependency(dependency, dependency.context, count))
@@ -177,8 +221,8 @@ export function pitch(request) {
       }
     };
 
-    if (err) {
-      return callback(err);
+    if (error) {
+      return callback(error);
     }
 
     if (compilation.errors.length > 0) {

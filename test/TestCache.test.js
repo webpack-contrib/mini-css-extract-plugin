@@ -43,33 +43,29 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          `);
+          expect(Array.from(stats.compilation.emittedAssets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
+          `);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
           compiler1.close(() => {
-            resolve();
+            process.nextTick(() => {
+              resolve();
+            });
           });
         });
       });
@@ -92,17 +88,14 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
+          `);
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchInlineSnapshot(`Array []`);
@@ -110,7 +103,9 @@ describe('TestCache', () => {
           expect(stats.compilation.errors).toHaveLength(0);
 
           compiler2.close(() => {
-            resolve();
+            process.nextTick(() => {
+              resolve();
+            });
           });
         });
       });
@@ -152,28 +147,22 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          `);
+          expect(Array.from(stats.compilation.emittedAssets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
+          `);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -203,17 +192,14 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
+          `);
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchInlineSnapshot(`Array []`);
@@ -270,16 +256,13 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
             ]
-          `
-          );
+          `);
           expect(Array.from(stats.compilation.emittedAssets).sort())
             .toMatchInlineSnapshot(`
             Array [
@@ -319,16 +302,13 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
             ]
-          `
-          );
+          `);
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchInlineSnapshot(`Array []`);
@@ -385,28 +365,22 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          `);
+          expect(Array.from(stats.compilation.emittedAssets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
+          `);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -439,17 +413,14 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
+          `);
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchInlineSnapshot(`Array []`);
@@ -506,28 +477,22 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          `);
+          expect(Array.from(stats.compilation.emittedAssets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
+          `);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -560,17 +525,14 @@ describe('TestCache', () => {
             return;
           }
 
-          expect(
-            Object.keys(stats.compilation.assets).sort()
-          ).toMatchInlineSnapshot(
-            `
+          expect(Object.keys(stats.compilation.assets).sort())
+            .toMatchInlineSnapshot(`
             Array [
               "main.css",
               "main.js",
               "static/react.svg",
             ]
-          `
-          );
+          `);
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchInlineSnapshot(`Array []`);

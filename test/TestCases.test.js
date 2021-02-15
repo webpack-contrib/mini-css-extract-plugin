@@ -127,17 +127,41 @@ describe('TestCases', () => {
           );
         }
 
-        webpack(webpackConfig, (err, stats) => {
-          if (err) {
-            done(err);
-            return;
-          }
-          if (stats.hasErrors()) {
-            done(new Error(stats.toString()));
+        webpack(webpackConfig, (error, stats) => {
+          if (error) {
+            done(error);
+
             return;
           }
 
-          done();
+          if (stats.hasErrors()) {
+            const errorsPath = path.join(directoryForCase, './errors.test.js');
+
+            if (fs.existsSync(errorsPath)) {
+              const { errors } = stats.compilation;
+              // eslint-disable-next-line global-require, import/no-dynamic-require
+              const errorFilters = require(errorsPath);
+              const filteredErrors = errors.filter(
+                // eslint-disable-next-line no-shadow
+                (error) =>
+                  !errorFilters.some((errorFilter) => errorFilter.test(error))
+              );
+
+              if (filteredErrors.length > 0) {
+                done(new Error(`Errors:\n${filteredErrors.join(',\n')}`));
+
+                return;
+              }
+
+              done();
+
+              return;
+            }
+
+            done(new Error(stats.toString()));
+
+            return;
+          }
 
           if (stats.hasErrors() && stats.hasWarnings()) {
             done(
