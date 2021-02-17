@@ -535,7 +535,11 @@ class MiniCssExtractPlugin {
           ? Array.from(this.getChunkModules(chunk, chunkGraph)).filter(
               (module) => module.type === MODULE_TYPE
             )
-          : chunkGraph.getChunkModulesIterableBySourceType(chunk, MODULE_TYPE);
+          : chunkGraph.getOrderedChunkModulesIterableBySourceType(
+              chunk,
+              MODULE_TYPE,
+              webpack.util.comparators.compareModulesByIdentifier
+            );
 
         if (modules) {
           const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
