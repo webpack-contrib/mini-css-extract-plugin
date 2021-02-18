@@ -325,8 +325,13 @@ class MiniCssExtractPlugin {
   sortedModules(compilation, chunk, modules, requestShortener) {
     let cache = this._sortedModulesCache.get(chunk);
 
-    if (!cache) {
-      cache = this.sortModules(compilation, chunk, modules, requestShortener);
+    if (!cache && modules) {
+      cache = this.sortModules(
+        compilation,
+        chunk,
+        [...modules],
+        requestShortener
+      );
       this._sortedModulesCache.set(chunk, cache);
     }
 
@@ -544,20 +549,21 @@ class MiniCssExtractPlugin {
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions, chunkGraph } = compilation;
-        let modules = isWebpack4
+        const modules = isWebpack4
           ? Array.from(this.getChunkModules(chunk, chunkGraph)).filter(
               (module) => module.type === MODULE_TYPE
             )
-          : chunkGraph.getChunkModulesIterableBySourceType(chunk, MODULE_TYPE);
+          : this.sortedModules(
+              compilation,
+              chunk,
+              chunkGraph.getChunkModulesIterableBySourceType(
+                chunk,
+                MODULE_TYPE
+              ),
+              compilation.runtimeTemplate.requestShortener
+            );
 
         if (modules) {
-          modules = this.sortedModules(
-            compilation,
-            chunk,
-            [...modules],
-            compilation.runtimeTemplate.requestShortener
-          );
-
           const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
           const createHash = compiler.webpack
             ? compiler.webpack.util.createHash
