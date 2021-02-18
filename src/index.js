@@ -18,8 +18,13 @@ const CODE_GENERATION_RESULT = {
   runtimeRequirements: new Set(),
 };
 
+const cssModuleCache = new WeakMap();
+
 class MiniCssExtractPlugin {
   static getCssModule(webpack) {
+    if(cssModuleCache.has(webpack)) {
+      return cssModuleCache.get(webpack);
+    }
     class CssModule extends webpack.Module {
       constructor({
         context,
@@ -133,7 +138,9 @@ class MiniCssExtractPlugin {
         super.deserialize(context);
       }
     }
-
+    
+    cssModuleCache.set(webpack, CssModule);
+    
     if (
       webpack.util &&
       webpack.util.serialization &&
