@@ -280,6 +280,8 @@ class MiniCssExtractPlugin {
       baseDataPath: 'options',
     });
 
+    this._sortedModulesCache = new WeakMap();
+
     this.options = Object.assign(
       { filename: DEFAULT_FILENAME, ignoreOrder: false },
       options
@@ -535,7 +537,15 @@ class MiniCssExtractPlugin {
           ? Array.from(this.getChunkModules(chunk, chunkGraph)).filter(
               (module) => module.type === MODULE_TYPE
             )
-          : chunkGraph.getChunkModulesIterableBySourceType(chunk, MODULE_TYPE);
+          : this.sortModules(
+              compilation,
+              chunk,
+              chunkGraph.getChunkModulesIterableBySourceType(
+                chunk,
+                MODULE_TYPE
+              ),
+              compilation.runtimeTemplate.requestShortener
+            );
 
         if (modules) {
           const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
@@ -1076,8 +1086,14 @@ class MiniCssExtractPlugin {
     return obj;
   }
 
-  renderContentAsset(compiler, compilation, chunk, modules, requestShortener) {
-    let usedModules;
+  sortModules(compilation, chunk, modules, requestShortener) {
+    let usedModules = this._sortedModulesCache.get(chunk);
+
+    if (usedModules || !modules) {
+      return usedModules;
+    }
+
+    modules = [...modules];
 
     const [chunkGroup] = chunk.groupsIterable;
     const moduleIndexFunctionName =
@@ -1214,6 +1230,19 @@ class MiniCssExtractPlugin {
       modules.sort((a, b) => a.index2 - b.index2);
       usedModules = modules;
     }
+
+    this._sortedModulesCache.set(chunk, usedModules);
+
+    return usedModules;
+  }
+
+  renderContentAsset(compiler, compilation, chunk, modules, requestShortener) {
+    const usedModules = this.sortModules(
+      compilation,
+      chunk,
+      modules,
+      requestShortener
+    );
 
     // TODO remove after drop webpack v4
     const { ConcatSource, SourceMapSource, RawSource } = compiler.webpack
