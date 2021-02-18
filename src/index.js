@@ -280,6 +280,8 @@ class MiniCssExtractPlugin {
       baseDataPath: 'options',
     });
 
+    this.sortedModulesWeakCache = new WeakMap();
+
     this.options = Object.assign(
       { filename: DEFAULT_FILENAME, ignoreOrder: false },
       options
@@ -531,17 +533,22 @@ class MiniCssExtractPlugin {
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions, chunkGraph } = compilation;
-        const modules = isWebpack4
+        let modules = isWebpack4
           ? Array.from(this.getChunkModules(chunk, chunkGraph)).filter(
               (module) => module.type === MODULE_TYPE
             )
-          : chunkGraph.getOrderedChunkModulesIterableBySourceType(
-              chunk,
-              MODULE_TYPE,
-              webpack.util.comparators.compareModulesByIdentifier
-            );
+          : chunkGraph.getChunkModulesIterableBySourceType(chunk, MODULE_TYPE);
 
         if (modules) {
+          modules = this.sortModules(
+            compilation,
+            chunk,
+            [...modules],
+            compilation.runtimeTemplate.requestShortener
+          );
+
+          this.sortedModulesWeakCache.set(chunk, modules);
+
           const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
           const createHash = compiler.webpack
             ? compiler.webpack.util.createHash
@@ -1080,7 +1087,7 @@ class MiniCssExtractPlugin {
     return obj;
   }
 
-  renderContentAsset(compiler, compilation, chunk, modules, requestShortener) {
+  sortModules(compilation, chunk, modules, requestShortener) {
     let usedModules;
 
     const [chunkGroup] = chunk.groupsIterable;
@@ -1218,6 +1225,12 @@ class MiniCssExtractPlugin {
       modules.sort((a, b) => a.index2 - b.index2);
       usedModules = modules;
     }
+
+    return usedModules;
+  }
+
+  renderContentAsset(compiler, compilation, chunk, modules, requestShortener) {
+    const usedModules = this.sortedModulesWeakCache.get(chunk);
 
     // TODO remove after drop webpack v4
     const { ConcatSource, SourceMapSource, RawSource } = compiler.webpack
