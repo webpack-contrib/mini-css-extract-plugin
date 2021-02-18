@@ -322,22 +322,6 @@ class MiniCssExtractPlugin {
     }
   }
 
-  sortedModules(compilation, chunk, modules, requestShortener) {
-    let cache = this._sortedModulesCache.get(chunk);
-
-    if (!cache && modules) {
-      cache = this.sortModules(
-        compilation,
-        chunk,
-        [...modules],
-        requestShortener
-      );
-      this._sortedModulesCache.set(chunk, cache);
-    }
-
-    return cache;
-  }
-
   /** @param {import("webpack").Compiler} compiler */
   apply(compiler) {
     const webpack = compiler.webpack
@@ -553,7 +537,7 @@ class MiniCssExtractPlugin {
           ? Array.from(this.getChunkModules(chunk, chunkGraph)).filter(
               (module) => module.type === MODULE_TYPE
             )
-          : this.sortedModules(
+          : this.sortModules(
               compilation,
               chunk,
               chunkGraph.getChunkModulesIterableBySourceType(
@@ -1103,7 +1087,13 @@ class MiniCssExtractPlugin {
   }
 
   sortModules(compilation, chunk, modules, requestShortener) {
-    let usedModules;
+    let usedModules = this._sortedModulesCache.get(chunk);
+
+    if (usedModules || !modules) {
+      return usedModules;
+    }
+
+    modules = [...modules];
 
     const [chunkGroup] = chunk.groupsIterable;
     const moduleIndexFunctionName =
@@ -1241,11 +1231,13 @@ class MiniCssExtractPlugin {
       usedModules = modules;
     }
 
+    this._sortedModulesCache.set(chunk, usedModules);
+
     return usedModules;
   }
 
   renderContentAsset(compiler, compilation, chunk, modules, requestShortener) {
-    const usedModules = this.sortedModules(
+    const usedModules = this.sortModules(
       compilation,
       chunk,
       modules,
