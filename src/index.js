@@ -3,7 +3,7 @@
 import { validate } from 'schema-utils';
 
 import schema from './plugin-options.json';
-import { shared, MODULE_TYPE, compareModulesByIdentifier } from './utils';
+import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
 const pluginName = 'mini-css-extract-plugin';
 
@@ -381,16 +381,8 @@ class MiniCssExtractPlugin {
       }
     }
 
-    // initializeCssDependency
-    // eslint-disable-next-line no-shadow
-    const { CssModule, CssDependency } = shared(webpack, (webpack) => {
-      // eslint-disable-next-line no-shadow
-      const CssModule = MiniCssExtractPlugin.getCssModule(webpack);
-      // eslint-disable-next-line no-shadow
-      const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
-
-      return { CssModule, CssDependency };
-    });
+    const CssModule = MiniCssExtractPlugin.getCssModule(webpack);
+    const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {

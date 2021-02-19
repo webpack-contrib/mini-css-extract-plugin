@@ -3,8 +3,10 @@ import path from 'path';
 import loaderUtils from 'loader-utils';
 import { validate } from 'schema-utils';
 
-import { shared, findModuleById, evalModuleCode } from './utils';
+import { findModuleById, evalModuleCode } from './utils';
 import schema from './loader-options.json';
+
+import MiniCssExtractPlugin from './index';
 
 const pluginName = 'mini-css-extract-plugin';
 
@@ -199,9 +201,7 @@ export function pitch(request) {
         }
 
         const count = identifierCountMap.get(dependency.identifier) || 0;
-        const { CssDependency } = shared(webpack, () => {
-          return {};
-        });
+        const { CssDependency } = MiniCssExtractPlugin.getCssDependency(webpack)
 
         if (!CssDependency) {
           throw new Error(
