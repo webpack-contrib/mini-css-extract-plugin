@@ -1106,7 +1106,7 @@ class MiniCssExtractPlugin {
       return usedModules;
     }
 
-    modules = [...modules];
+    const modulesList = [...modules];
 
     const [chunkGroup] = chunk.groupsIterable;
     const moduleIndexFunctionName =
@@ -1116,16 +1116,16 @@ class MiniCssExtractPlugin {
 
     if (typeof chunkGroup[moduleIndexFunctionName] === 'function') {
       // Store dependencies for modules
-      const moduleDependencies = new Map(modules.map((m) => [m, new Set()]));
+      const moduleDependencies = new Map(modulesList.map((m) => [m, new Set()]));
       const moduleDependenciesReasons = new Map(
-        modules.map((m) => [m, new Map()])
+        modulesList.map((m) => [m, new Map()])
       );
 
       // Get ordered list of modules per chunk group
       // This loop also gathers dependencies from the ordered lists
       // Lists are in reverse order to allow to use Array.pop()
       const modulesByChunkGroup = Array.from(chunk.groupsIterable, (cg) => {
-        const sortedModules = modules
+        const sortedModules = modulesList
           .map((m) => {
             return {
               module: m,
@@ -1158,7 +1158,7 @@ class MiniCssExtractPlugin {
 
       const unusedModulesFilter = (m) => !usedModules.has(m);
 
-      while (usedModules.size < modules.length) {
+      while (usedModules.size < modulesList.length) {
         let success = false;
         let bestMatch;
         let bestMatchDeps;
@@ -1240,8 +1240,8 @@ class MiniCssExtractPlugin {
       // (to avoid a breaking change)
       // TODO remove this in next major version
       // and increase minimum webpack version to 4.12.0
-      modules.sort((a, b) => a.index2 - b.index2);
-      usedModules = modules;
+      modulesList.sort((a, b) => a.index2 - b.index2);
+      usedModules = modulesList;
     }
 
     this._sortedModulesCache.set(chunk, usedModules);
