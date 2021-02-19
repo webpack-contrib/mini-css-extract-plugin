@@ -18,10 +18,16 @@ const CODE_GENERATION_RESULT = {
   runtimeRequirements: new Set(),
 };
 
+/**
+ * @type WeakMap<webpack, CssModule>
+ */
 const cssModuleCache = new WeakMap();
 
 class MiniCssExtractPlugin {
   static getCssModule(webpack) {
+    /**
+    * Prevent creation of multiple CssModule classes to allow other integrations to get the current CssModule.
+    */
     if(cssModuleCache.has(webpack)) {
       return cssModuleCache.get(webpack);
     }
