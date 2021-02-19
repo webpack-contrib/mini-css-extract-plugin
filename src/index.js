@@ -22,13 +22,17 @@ const CODE_GENERATION_RESULT = {
  * @type WeakMap<webpack, CssModule>
  */
 const cssModuleCache = new WeakMap();
+/**
+ * @type WeakMap<webpack, CssDependency>
+ */
+const cssDependencyCache = new WeakMap();
 
 class MiniCssExtractPlugin {
   static getCssModule(webpack) {
     /**
     * Prevent creation of multiple CssModule classes to allow other integrations to get the current CssModule.
     */
-    if(cssModuleCache.has(webpack)) {
+    if (cssModuleCache.has(webpack)) {
       return cssModuleCache.get(webpack);
     }
     class CssModule extends webpack.Module {
@@ -194,6 +198,12 @@ class MiniCssExtractPlugin {
   }
 
   static getCssDependency(webpack) {
+    /**
+    * Prevent creation of multiple CssDependency classes to allow other integrations to get the current CssDependency.
+    */
+    if (cssDependencyCache.has(webpack)) {
+      return cssDependencyCache.get(webpack);
+    }
     // eslint-disable-next-line no-shadow
     class CssDependency extends webpack.Dependency {
       constructor(
@@ -243,6 +253,8 @@ class MiniCssExtractPlugin {
         super.deserialize(context);
       }
     }
+
+    cssDependencyCache.set(webpack, CssDependency);
 
     if (
       webpack.util &&
