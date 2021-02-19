@@ -6,7 +6,7 @@ import { validate } from 'schema-utils';
 import { findModuleById, evalModuleCode, provideLoaderContext } from './utils';
 import schema from './loader-options.json';
 
-import MiniCssExtractPlugin, {pluginName, pluginSymbol} from './index';
+import MiniCssExtractPlugin, { pluginName, pluginSymbol } from './index';
 
 function hotLoader(content, context) {
   const accept = context.locals

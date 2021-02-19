@@ -3,7 +3,11 @@
 import { validate } from 'schema-utils';
 
 import schema from './plugin-options.json';
-import { MODULE_TYPE, compareModulesByIdentifier, provideLoaderContext } from './utils';
+import {
+  MODULE_TYPE,
+  compareModulesByIdentifier,
+  provideLoaderContext,
+} from './utils';
 
 export const pluginName = 'mini-css-extract-plugin';
 export const pluginSymbol = Symbol(pluginName);
@@ -31,8 +35,8 @@ const cssDependencyCache = new WeakMap();
 class MiniCssExtractPlugin {
   static getCssModule(webpack) {
     /**
-    * Prevent creation of multiple CssModule classes to allow other integrations to get the current CssModule.
-    */
+     * Prevent creation of multiple CssModule classes to allow other integrations to get the current CssModule.
+     */
     if (cssModuleCache.has(webpack)) {
       return cssModuleCache.get(webpack);
     }
@@ -149,9 +153,9 @@ class MiniCssExtractPlugin {
         super.deserialize(context);
       }
     }
-    
+
     cssModuleCache.set(webpack, CssModule);
-    
+
     if (
       webpack.util &&
       webpack.util.serialization &&
@@ -200,8 +204,8 @@ class MiniCssExtractPlugin {
 
   static getCssDependency(webpack) {
     /**
-    * Prevent creation of multiple CssDependency classes to allow other integrations to get the current CssDependency.
-    */
+     * Prevent creation of multiple CssDependency classes to allow other integrations to get the current CssDependency.
+     */
     if (cssDependencyCache.has(webpack)) {
       return cssDependencyCache.get(webpack);
     }
@@ -385,10 +389,15 @@ class MiniCssExtractPlugin {
     const CssModule = MiniCssExtractPlugin.getCssModule(webpack);
     const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
-    provideLoaderContext(compiler, `${pluginName} loader context`, (loaderContext)=>{
-      // eslint-disable-next-line no-param-reassign
-      loaderContext[pluginSymbol] = true;
-    }, false)
+    provideLoaderContext(
+      compiler,
+      `${pluginName} loader context`,
+      (loaderContext) => {
+        // eslint-disable-next-line no-param-reassign
+        loaderContext[pluginSymbol] = true;
+      },
+      false
+    );
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {
@@ -1126,7 +1135,9 @@ class MiniCssExtractPlugin {
 
     if (typeof chunkGroup[moduleIndexFunctionName] === 'function') {
       // Store dependencies for modules
-      const moduleDependencies = new Map(modulesList.map((m) => [m, new Set()]));
+      const moduleDependencies = new Map(
+        modulesList.map((m) => [m, new Set()])
+      );
       const moduleDependenciesReasons = new Map(
         modulesList.map((m) => [m, new Map()])
       );

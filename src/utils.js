@@ -49,13 +49,14 @@ function compareModulesByIdentifier(a, b) {
   return compareIds(a.identifier(), b.identifier());
 }
 
-function provideLoaderContext(compiler, name, handler, thisCompilation = true){
-  const NormalModule = compiler.webpack && compiler.webpack.NormalModule
-  ? compiler.webpack.NormalModule
-  : // eslint-disable-next-line global-require
-    require('webpack/lib/NormalModule');
+function provideLoaderContext(compiler, name, handler, thisCompilation = true) {
+  const NormalModule =
+    compiler.webpack && compiler.webpack.NormalModule
+      ? compiler.webpack.NormalModule
+      : // eslint-disable-next-line global-require
+        require('webpack/lib/NormalModule');
 
-  compiler.hooks[thisCompilation ? 'thisCompilation': 'compilation'].tap(
+  compiler.hooks[thisCompilation ? 'thisCompilation' : 'compilation'].tap(
     name,
     (compilation) => {
       const normalModuleHook =
@@ -63,7 +64,9 @@ function provideLoaderContext(compiler, name, handler, thisCompilation = true){
           ? NormalModule.getCompilationHooks(compilation).loader
           : compilation.hooks.normalModuleLoader;
 
-      normalModuleHook.tap(name, (loaderContext, module) => handler(loaderContext, module, compilation));
+      normalModuleHook.tap(name, (loaderContext, module) =>
+        handler(loaderContext, module, compilation)
+      );
     }
   );
 }
