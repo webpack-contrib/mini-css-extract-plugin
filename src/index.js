@@ -3,9 +3,10 @@
 import { validate } from 'schema-utils';
 
 import schema from './plugin-options.json';
-import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
+import { MODULE_TYPE, compareModulesByIdentifier, provideLoaderContext } from './utils';
 
-const pluginName = 'mini-css-extract-plugin';
+export const pluginName = 'mini-css-extract-plugin';
+export const pluginSymbol = Symbol(pluginName);
 
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
@@ -383,6 +384,11 @@ class MiniCssExtractPlugin {
 
     const CssModule = MiniCssExtractPlugin.getCssModule(webpack);
     const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
+
+    provideLoaderContext(compiler, `${pluginName} loader context`, (loaderContext)=>{
+      // eslint-disable-next-line no-param-reassign
+      loaderContext[pluginSymbol] = true;
+    }, false)
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {
