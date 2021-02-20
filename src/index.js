@@ -1112,7 +1112,7 @@ class MiniCssExtractPlugin {
       // This loop also gathers dependencies from the ordered lists
       // Lists are in reverse order to allow to use Array.pop()
       const modulesByChunkGroup = Array.from(chunk.groupsIterable, (cg) => {
-        const sortedModules = modules
+        let sortedModules = modules
           .map((m) => {
             return {
               module: m,
@@ -1123,6 +1123,18 @@ class MiniCssExtractPlugin {
           .filter((item) => item.index !== undefined)
           .sort((a, b) => b.index - a.index)
           .map((item) => item.module);
+
+        // if no modules were found by getModuleIndex2, dive into each chunk
+        // in the group
+        if (!sortedModules || !sortedModules.length) {
+          sortedModules = cg.chunks
+            // reduce each chunk's modules into a flat array
+            .reduce((arr, ch) => [...arr, ...ch.modulesIterable], [])
+            // filter only the modules that match
+            .filter((m) => modules.find((mod) => mod === m))
+            // sort in reverse order
+            .sort((a, b) => a.index2 - b.index2);
+        }
 
         for (let i = 0; i < sortedModules.length; i++) {
           const set = moduleDependencies.get(sortedModules[i]);
