@@ -3,11 +3,7 @@
 import { validate } from 'schema-utils';
 
 import schema from './plugin-options.json';
-import {
-  MODULE_TYPE,
-  compareModulesByIdentifier,
-  provideLoaderContext,
-} from './utils';
+import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
 export const pluginName = 'mini-css-extract-plugin';
 export const pluginSymbol = Symbol(pluginName);
@@ -389,15 +385,23 @@ class MiniCssExtractPlugin {
     const CssModule = MiniCssExtractPlugin.getCssModule(webpack);
     const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
-    provideLoaderContext(
-      compiler,
-      `${pluginName} loader context`,
-      (loaderContext) => {
+    const NormalModule =
+      compiler.webpack && compiler.webpack.NormalModule
+        ? compiler.webpack.NormalModule
+        : // eslint-disable-next-line global-require
+          require('webpack/lib/NormalModule');
+
+    compiler.hooks.compilation.tap(pluginName, (compilation) => {
+      const normalModuleHook =
+        typeof NormalModule.getCompilationHooks !== 'undefined'
+          ? NormalModule.getCompilationHooks(compilation).loader
+          : compilation.hooks.normalModuleLoader;
+
+      normalModuleHook.tap(pluginName, (loaderContext) => {
         // eslint-disable-next-line no-param-reassign
         loaderContext[pluginSymbol] = true;
-      },
-      false
-    );
+      });
+    });
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {

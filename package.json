@@ -33,8 +33,7 @@
     "test:coverage": "npm run test:only -- --collectCoverageFrom=\"src/**/*.js\" --coverage",
     "test:manual": "npm run build && webpack serve ./test/manual/src/index.js --open --config ./test/manual/webpack.config.js",
     "pretest": "npm run lint",
-    "test": "cross-env NODE_ENV=test npm run test:coverage",
-    "defaults": "webpack-defaults"
+    "test": "cross-env NODE_ENV=test npm run test:coverage"
   },
   "files": [
     "dist"
@@ -53,7 +52,6 @@
     "@babel/preset-env": "^7.12.16",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
-    "@webpack-contrib/defaults": "^6.3.0",
     "@webpack-contrib/eslint-config-webpack": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
@@ -62,7 +60,7 @@
     "css-loader": "^5.0.2",
     "del": "^6.0.0",
     "del-cli": "^3.0.1",
-    "es-check": "^5.2.0",
+    "es-check": "5.2.0",
     "eslint": "^7.20.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-import": "^2.22.1",
