@@ -3,7 +3,7 @@ import path from 'path';
 import loaderUtils from 'loader-utils';
 import { validate } from 'schema-utils';
 
-import { findModuleById, evalModuleCode, provideLoaderContext } from './utils';
+import { findModuleById, evalModuleCode } from './utils';
 import schema from './loader-options.json';
 
 import MiniCssExtractPlugin, { pluginName, pluginSymbol } from './index';
@@ -37,10 +37,16 @@ export function pitch(request) {
     baseDataPath: 'options',
   });
 
+  const callback = this.async();
+
   if (!this[pluginSymbol]) {
-    throw new Error(
-      "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
+    callback(
+      new Error(
+        "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
+      )
     );
+
+    return;
   }
 
   const loaders = this.loaders.slice(this.loaderIndex + 1);
@@ -114,18 +120,33 @@ export function pitch(request) {
 
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
 
-  provideLoaderContext(childCompiler, `${pluginName} loader`, (_, module) => {
-    if (module.request === request) {
-      // eslint-disable-next-line no-param-reassign
-      module.loaders = loaders.map((loader) => {
-        return {
-          loader: loader.path,
-          options: loader.options,
-          ident: loader.ident,
-        };
+  const NormalModule = webpack.NormalModule
+    ? webpack.NormalModule
+    : // eslint-disable-next-line global-require
+      require('webpack/lib/NormalModule');
+
+  childCompiler.hooks.thisCompilation.tap(
+    `${pluginName} loader`,
+    (compilation) => {
+      const normalModuleHook =
+        typeof NormalModule.getCompilationHooks !== 'undefined'
+          ? NormalModule.getCompilationHooks(compilation).loader
+          : compilation.hooks.normalModuleLoader;
+
+      normalModuleHook.tap(`${pluginName} loader`, (loaderContext, module) => {
+        if (module.request === request) {
+          // eslint-disable-next-line no-param-reassign
+          module.loaders = loaders.map((loader) => {
+            return {
+              loader: loader.path,
+              options: loader.options,
+              ident: loader.ident,
+            };
+          });
+        }
       });
     }
-  });
+  );
 
   let source;
 
@@ -164,8 +185,6 @@ export function pitch(request) {
       });
     });
   }
-
-  const callback = this.async();
 
   childCompiler.runAsChild((error, entries, compilation) => {
     const assets = Object.create(null);
