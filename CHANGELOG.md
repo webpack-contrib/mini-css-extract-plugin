@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.9](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.3.8...v1.3.9) (2021-02-25)
+
+
+### Bug Fixes
+
+* allow consumers to access `CssModule` and `CssDependency` ([#703](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/703)) ([6484345](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/64843452a7c07963637a749bce9628d808694eac))
+* allow to use `auto` value with the `publicPath` option ([#709](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/709)) ([1be21d2](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/1be21d29053c32cfec26eb58aa5deabd65069c71))
+
 ### [1.3.8](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.3.7...v1.3.8) (2021-02-18)
 
 
