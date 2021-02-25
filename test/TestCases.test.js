@@ -90,11 +90,6 @@ describe('TestCases', () => {
   clearDirectory(outputDirectory);
 
   for (const directory of tests) {
-    if (directory === 'auxiliaryAssets' && webpack.version[0] === '4') {
-      // eslint-disable-next-line no-continue
-      continue;
-    }
-
     if (!/^(\.|_)/.test(directory)) {
       // eslint-disable-next-line no-loop-func
       it(`${directory} should compile to the expected result`, (done) => {
