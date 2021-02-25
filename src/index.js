@@ -3,9 +3,14 @@
 import { validate } from 'schema-utils';
 
 import schema from './plugin-options.json';
-import { shared, MODULE_TYPE, compareModulesByIdentifier } from './utils';
+import {
+  MODULE_TYPE,
+  compareModulesByIdentifier,
+  provideLoaderContext,
+} from './utils';
 
-const pluginName = 'mini-css-extract-plugin';
+export const pluginName = 'mini-css-extract-plugin';
+export const pluginSymbol = Symbol(pluginName);
 
 const REGEXP_CHUNKHASH = /\[chunkhash(?::(\d+))?\]/i;
 const REGEXP_CONTENTHASH = /\[contenthash(?::(\d+))?\]/i;
@@ -18,8 +23,23 @@ const CODE_GENERATION_RESULT = {
   runtimeRequirements: new Set(),
 };
 
+/**
+ * @type WeakMap<webpack, CssModule>
+ */
+const cssModuleCache = new WeakMap();
+/**
+ * @type WeakMap<webpack, CssDependency>
+ */
+const cssDependencyCache = new WeakMap();
+
 class MiniCssExtractPlugin {
   static getCssModule(webpack) {
+    /**
+     * Prevent creation of multiple CssModule classes to allow other integrations to get the current CssModule.
+     */
+    if (cssModuleCache.has(webpack)) {
+      return cssModuleCache.get(webpack);
+    }
     class CssModule extends webpack.Module {
       constructor({
         context,
@@ -134,6 +154,8 @@ class MiniCssExtractPlugin {
       }
     }
 
+    cssModuleCache.set(webpack, CssModule);
+
     if (
       webpack.util &&
       webpack.util.serialization &&
@@ -181,6 +203,12 @@ class MiniCssExtractPlugin {
   }
 
   static getCssDependency(webpack) {
+    /**
+     * Prevent creation of multiple CssDependency classes to allow other integrations to get the current CssDependency.
+     */
+    if (cssDependencyCache.has(webpack)) {
+      return cssDependencyCache.get(webpack);
+    }
     // eslint-disable-next-line no-shadow
     class CssDependency extends webpack.Dependency {
       constructor(
@@ -230,6 +258,8 @@ class MiniCssExtractPlugin {
         super.deserialize(context);
       }
     }
+
+    cssDependencyCache.set(webpack, CssDependency);
 
     if (
       webpack.util &&
@@ -356,16 +386,18 @@ class MiniCssExtractPlugin {
       }
     }
 
-    // initializeCssDependency
-    // eslint-disable-next-line no-shadow
-    const { CssModule, CssDependency } = shared(webpack, (webpack) => {
-      // eslint-disable-next-line no-shadow
-      const CssModule = MiniCssExtractPlugin.getCssModule(webpack);
-      // eslint-disable-next-line no-shadow
-      const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
+    const CssModule = MiniCssExtractPlugin.getCssModule(webpack);
+    const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
-      return { CssModule, CssDependency };
-    });
+    provideLoaderContext(
+      compiler,
+      `${pluginName} loader context`,
+      (loaderContext) => {
+        // eslint-disable-next-line no-param-reassign
+        loaderContext[pluginSymbol] = true;
+      },
+      false
+    );
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {
@@ -1093,7 +1125,7 @@ class MiniCssExtractPlugin {
       return usedModules;
     }
 
-    modules = [...modules];
+    const modulesList = [...modules];
 
     const [chunkGroup] = chunk.groupsIterable;
     const moduleIndexFunctionName =
@@ -1103,16 +1135,18 @@ class MiniCssExtractPlugin {
 
     if (typeof chunkGroup[moduleIndexFunctionName] === 'function') {
       // Store dependencies for modules
-      const moduleDependencies = new Map(modules.map((m) => [m, new Set()]));
+      const moduleDependencies = new Map(
+        modulesList.map((m) => [m, new Set()])
+      );
       const moduleDependenciesReasons = new Map(
-        modules.map((m) => [m, new Map()])
+        modulesList.map((m) => [m, new Map()])
       );
 
       // Get ordered list of modules per chunk group
       // This loop also gathers dependencies from the ordered lists
       // Lists are in reverse order to allow to use Array.pop()
       const modulesByChunkGroup = Array.from(chunk.groupsIterable, (cg) => {
-        const sortedModules = modules
+        const sortedModules = modulesList
           .map((m) => {
             return {
               module: m,
@@ -1145,7 +1179,7 @@ class MiniCssExtractPlugin {
 
       const unusedModulesFilter = (m) => !usedModules.has(m);
 
-      while (usedModules.size < modules.length) {
+      while (usedModules.size < modulesList.length) {
         let success = false;
         let bestMatch;
         let bestMatchDeps;
@@ -1227,8 +1261,8 @@ class MiniCssExtractPlugin {
       // (to avoid a breaking change)
       // TODO remove this in next major version
       // and increase minimum webpack version to 4.12.0
-      modules.sort((a, b) => a.index2 - b.index2);
-      usedModules = modules;
+      modulesList.sort((a, b) => a.index2 - b.index2);
+      usedModules = modulesList;
     }
 
     this._sortedModulesCache.set(chunk, usedModules);

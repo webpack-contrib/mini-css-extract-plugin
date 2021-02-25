@@ -49,26 +49,30 @@ function compareModulesByIdentifier(a, b) {
   return compareIds(a.identifier(), b.identifier());
 }
 
-const initializeCache = new WeakMap();
+function provideLoaderContext(compiler, name, handler, thisCompilation = true) {
+  const NormalModule =
+    compiler.webpack && compiler.webpack.NormalModule
+      ? compiler.webpack.NormalModule
+      : // eslint-disable-next-line global-require
+        require('webpack/lib/NormalModule');
 
-function shared(webpack, initializer) {
-  const cacheEntry = initializeCache.get(webpack);
+  compiler.hooks[thisCompilation ? 'thisCompilation' : 'compilation'].tap(
+    name,
+    (compilation) => {
+      const normalModuleHook =
+        typeof NormalModule.getCompilationHooks !== 'undefined'
+          ? NormalModule.getCompilationHooks(compilation).loader
+          : compilation.hooks.normalModuleLoader;
 
-  // eslint-disable-next-line no-undefined
-  if (cacheEntry !== undefined) {
-    return cacheEntry;
-  }
-
-  const constructors = initializer(webpack);
-  const result = { ...constructors };
-
-  initializeCache.set(webpack, result);
-
-  return result;
+      normalModuleHook.tap(name, (loaderContext, module) =>
+        handler(loaderContext, module, compilation)
+      );
+    }
+  );
 }
 
 export {
-  shared,
+  provideLoaderContext,
   MODULE_TYPE,
   findModuleById,
   evalModuleCode,

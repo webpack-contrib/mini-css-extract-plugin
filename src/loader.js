@@ -3,10 +3,10 @@ import path from 'path';
 import loaderUtils from 'loader-utils';
 import { validate } from 'schema-utils';
 
-import { shared, findModuleById, evalModuleCode } from './utils';
+import { findModuleById, evalModuleCode, provideLoaderContext } from './utils';
 import schema from './loader-options.json';
 
-const pluginName = 'mini-css-extract-plugin';
+import MiniCssExtractPlugin, { pluginName, pluginSymbol } from './index';
 
 function hotLoader(content, context) {
   const accept = context.locals
@@ -36,6 +36,12 @@ export function pitch(request) {
     name: 'Mini CSS Extract Plugin Loader',
     baseDataPath: 'options',
   });
+
+  if (!this[pluginSymbol]) {
+    throw new Error(
+      "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
+    );
+  }
 
   const loaders = this.loaders.slice(this.loaderIndex + 1);
 
@@ -108,33 +114,18 @@ export function pitch(request) {
 
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
 
-  const NormalModule = webpack.NormalModule
-    ? webpack.NormalModule
-    : // eslint-disable-next-line global-require
-      require('webpack/lib/NormalModule');
-
-  childCompiler.hooks.thisCompilation.tap(
-    `${pluginName} loader`,
-    (compilation) => {
-      const normalModuleHook =
-        typeof NormalModule.getCompilationHooks !== 'undefined'
-          ? NormalModule.getCompilationHooks(compilation).loader
-          : compilation.hooks.normalModuleLoader;
-
-      normalModuleHook.tap(`${pluginName} loader`, (loaderContext, module) => {
-        if (module.request === request) {
-          // eslint-disable-next-line no-param-reassign
-          module.loaders = loaders.map((loader) => {
-            return {
-              loader: loader.path,
-              options: loader.options,
-              ident: loader.ident,
-            };
-          });
-        }
+  provideLoaderContext(childCompiler, `${pluginName} loader`, (_, module) => {
+    if (module.request === request) {
+      // eslint-disable-next-line no-param-reassign
+      module.loaders = loaders.map((loader) => {
+        return {
+          loader: loader.path,
+          options: loader.options,
+          ident: loader.ident,
+        };
       });
     }
-  );
+  });
 
   let source;
 
@@ -205,15 +196,7 @@ export function pitch(request) {
         }
 
         const count = identifierCountMap.get(dependency.identifier) || 0;
-        const { CssDependency } = shared(webpack, () => {
-          return {};
-        });
-
-        if (!CssDependency) {
-          throw new Error(
-            "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
-          );
-        }
+        const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
         this._module.addDependency(
           (lastDep = new CssDependency(dependency, dependency.context, count))
