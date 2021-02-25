@@ -342,7 +342,10 @@ describe('TestCache', () => {
         directoryForCase,
         'webpack.config.js'
       ));
-      const outputPath = path.resolve(__dirname, 'js/cache-filesystem');
+      const outputPath = path.resolve(
+        __dirname,
+        'js/cache-filesystem-asset-modules'
+      );
       const fileSystemCacheDirectory = path.resolve(
         __dirname,
         './js/.cache/type-filesystem'
@@ -458,7 +461,10 @@ describe('TestCache', () => {
         directoryForCase,
         'webpack.config.js'
       ));
-      const outputPath = path.resolve(__dirname, 'js/cache-filesystem');
+      const outputPath = path.resolve(
+        __dirname,
+        'js/cache-filesystem-file-loader'
+      );
       const fileSystemCacheDirectory = path.resolve(
         __dirname,
         './js/.cache/type-filesystem'
