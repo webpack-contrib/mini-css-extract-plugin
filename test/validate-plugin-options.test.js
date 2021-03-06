@@ -20,6 +20,10 @@ describe('validate options', () => {
       ],
       failure: [true],
     },
+    emitFile: {
+      success: [true, false],
+      failure: [1],
+    },
     ignoreOrder: {
       success: [true, false],
       failure: [1],
