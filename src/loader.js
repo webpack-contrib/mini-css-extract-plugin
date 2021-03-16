@@ -92,6 +92,11 @@ export function pitch(request) {
 
   const { EntryOptionPlugin } = webpack;
 
+  let entryRequest = `!!${request}`;
+  if (typeof this._module.matchResource !== 'undefined') {
+    entryRequest = `${this._module.matchResource}!=!${entryRequest}`;
+  }
+
   if (EntryOptionPlugin) {
     const {
       library: { EnableLibraryPlugin },
@@ -104,14 +109,14 @@ export function pitch(request) {
         library: {
           type: 'commonjs2',
         },
-        import: [`!!${request}`],
+        import: [entryRequest],
       },
     });
   } else {
     const { LibraryTemplatePlugin, SingleEntryPlugin } = webpack;
 
     new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
-    new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
+    new SingleEntryPlugin(this.context, entryRequest, pluginName).apply(
       childCompiler
     );
   }
