@@ -16,6 +16,12 @@ exports[`validate options should throw an error on the "chunkFilename" option wi
     * options.chunkFilename should be an instance of function."
 `;
 
+exports[`validate options should throw an error on the "emitFile" option with "1" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.emitFile should be a boolean.
+   -> If true, emits a file (writes a file to the filesystem). If false, the plugin will extract the CSS but will not emit the file. It is often useful to disable this option for server-side packages. (https://github.com/webpack-contrib/mini-css-extract-plugin#emitFile)."
+`;
+
 exports[`validate options should throw an error on the "filename" option with "true" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.filename should be one of these:
@@ -99,47 +105,47 @@ exports[`validate options should throw an error on the "linkType" option with "i
 exports[`validate options should throw an error on the "unknown" option with "/test/" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { filename?, chunkFilename?, ignoreOrder?, insert?, attributes?, linkType? }"
+   object { filename?, chunkFilename?, emitFile?, ignoreOrder?, insert?, attributes?, linkType? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "[]" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { filename?, chunkFilename?, ignoreOrder?, insert?, attributes?, linkType? }"
+   object { filename?, chunkFilename?, emitFile?, ignoreOrder?, insert?, attributes?, linkType? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "{"foo":"bar"}" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { filename?, chunkFilename?, ignoreOrder?, insert?, attributes?, linkType? }"
+   object { filename?, chunkFilename?, emitFile?, ignoreOrder?, insert?, attributes?, linkType? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "{}" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { filename?, chunkFilename?, ignoreOrder?, insert?, attributes?, linkType? }"
+   object { filename?, chunkFilename?, emitFile?, ignoreOrder?, insert?, attributes?, linkType? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "1" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { filename?, chunkFilename?, ignoreOrder?, insert?, attributes?, linkType? }"
+   object { filename?, chunkFilename?, emitFile?, ignoreOrder?, insert?, attributes?, linkType? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "false" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { filename?, chunkFilename?, ignoreOrder?, insert?, attributes?, linkType? }"
+   object { filename?, chunkFilename?, emitFile?, ignoreOrder?, insert?, attributes?, linkType? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "test" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { filename?, chunkFilename?, ignoreOrder?, insert?, attributes?, linkType? }"
+   object { filename?, chunkFilename?, emitFile?, ignoreOrder?, insert?, attributes?, linkType? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "true" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { filename?, chunkFilename?, ignoreOrder?, insert?, attributes?, linkType? }"
+   object { filename?, chunkFilename?, emitFile?, ignoreOrder?, insert?, attributes?, linkType? }"
 `;

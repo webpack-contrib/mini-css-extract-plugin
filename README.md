@@ -104,6 +104,15 @@ This option determines the name of non-entry chunk files.
 
 Works like [`output.chunkFilename`](https://webpack.js.org/configuration/output/#outputchunkfilename)
 
+#### `emitFile`
+
+Type: `Boolean`
+Default: `true`
+
+If true, emits a file (writes a file to the filesystem). If false, the plugin
+will extract the CSS but **will not** emit the file. It is often useful to
+disable this option for server-side packages.
+
 #### `ignoreOrder`
 
 Type: `Boolean`

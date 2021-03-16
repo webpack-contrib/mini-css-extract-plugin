@@ -22,6 +22,10 @@
         }
       ]
     },
+    "emitFile": {
+      "description": "If true, emits a file (writes a file to the filesystem). If false, the plugin will extract the CSS but will not emit the file. It is often useful to disable this option for server-side packages. (https://github.com/webpack-contrib/mini-css-extract-plugin#emitFile).",
+      "type": "boolean"
+    },
     "ignoreOrder": {
       "type": "boolean"
     },
