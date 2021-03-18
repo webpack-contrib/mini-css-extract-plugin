@@ -199,14 +199,6 @@ export function pitch(request) {
       }
 
       addDependencies = (dependencies) => {
-        if (!Array.isArray(dependencies) && dependencies != null) {
-          throw new Error(
-            `Exported value was not extracted as an array: ${JSON.stringify(
-              dependencies
-            )}`
-          );
-        }
-
         const identifierCountMap = new Map();
 
         let lastDep;
