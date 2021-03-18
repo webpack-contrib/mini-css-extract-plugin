@@ -104,7 +104,7 @@ This option determines the name of non-entry chunk files.
 
 Works like [`output.chunkFilename`](https://webpack.js.org/configuration/output/#outputchunkfilename)
 
-#### `emitFile`
+#### `emit`
 
 Type: `Boolean`
 Default: `true`

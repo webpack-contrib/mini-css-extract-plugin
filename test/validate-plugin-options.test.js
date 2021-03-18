@@ -20,7 +20,7 @@ describe('validate options', () => {
       ],
       failure: [true],
     },
-    emitFile: {
+    emit: {
       success: [true, false],
       failure: [1],
     },
