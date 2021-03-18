@@ -20,10 +20,6 @@ describe('validate options', () => {
       ],
       failure: [true],
     },
-    emit: {
-      success: [true, false],
-      failure: [1],
-    },
     ignoreOrder: {
       success: [true, false],
       failure: [1],

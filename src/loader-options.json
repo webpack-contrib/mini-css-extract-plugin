@@ -12,6 +12,9 @@
         }
       ]
     },
+    "emit": {
+      "type": "boolean"
+    },
     "esModule": {
       "type": "boolean"
     },

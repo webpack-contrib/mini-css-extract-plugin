@@ -1,5 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`validate options should throw an error on the "emit" option with "1" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
+ - options.emit should be a boolean."
+`;
+
 exports[`validate options should throw an error on the "esModule" option with "1" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options.esModule should be a boolean."
@@ -29,47 +34,47 @@ exports[`validate options should throw an error on the "publicPath" option with 
 exports[`validate options should throw an error on the "unknown" option with "/test/" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, esModule?, modules? }"
+   object { publicPath?, emit?, esModule?, modules? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "[]" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, esModule?, modules? }"
+   object { publicPath?, emit?, esModule?, modules? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "{"foo":"bar"}" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, esModule?, modules? }"
+   object { publicPath?, emit?, esModule?, modules? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "{}" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, esModule?, modules? }"
+   object { publicPath?, emit?, esModule?, modules? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "1" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, esModule?, modules? }"
+   object { publicPath?, emit?, esModule?, modules? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "false" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, esModule?, modules? }"
+   object { publicPath?, emit?, esModule?, modules? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "test" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, esModule?, modules? }"
+   object { publicPath?, emit?, esModule?, modules? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "true" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, esModule?, modules? }"
+   object { publicPath?, emit?, esModule?, modules? }"
 `;

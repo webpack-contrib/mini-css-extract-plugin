@@ -189,45 +189,49 @@ export function pitch(request) {
   childCompiler.runAsChild((error, entries, compilation) => {
     const assets = Object.create(null);
     const assetsInfo = new Map();
+    const emit = typeof options.emit !== 'undefined' ? options.emit : true;
 
-    for (const asset of compilation.getAssets()) {
-      assets[asset.name] = asset.source;
-      assetsInfo.set(asset.name, asset.info);
-    }
-
-    const addDependencies = (dependencies) => {
-      if (!Array.isArray(dependencies) && dependencies != null) {
-        throw new Error(
-          `Exported value was not extracted as an array: ${JSON.stringify(
-            dependencies
-          )}`
-        );
+    let addDependencies;
+    if (emit) {
+      for (const asset of compilation.getAssets()) {
+        assets[asset.name] = asset.source;
+        assetsInfo.set(asset.name, asset.info);
       }
 
-      const identifierCountMap = new Map();
-
-      let lastDep;
-
-      for (const dependency of dependencies) {
-        if (!dependency.identifier) {
-          // eslint-disable-next-line no-continue
-          continue;
+      addDependencies = (dependencies) => {
+        if (!Array.isArray(dependencies) && dependencies != null) {
+          throw new Error(
+            `Exported value was not extracted as an array: ${JSON.stringify(
+              dependencies
+            )}`
+          );
         }
 
-        const count = identifierCountMap.get(dependency.identifier) || 0;
-        const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
+        const identifierCountMap = new Map();
 
-        this._module.addDependency(
-          (lastDep = new CssDependency(dependency, dependency.context, count))
-        );
-        identifierCountMap.set(dependency.identifier, count + 1);
-      }
+        let lastDep;
 
-      if (lastDep) {
-        lastDep.assets = assets;
-        lastDep.assetsInfo = assetsInfo;
-      }
-    };
+        for (const dependency of dependencies) {
+          if (!dependency.identifier) {
+            // eslint-disable-next-line no-continue
+            continue;
+          }
+
+          const count = identifierCountMap.get(dependency.identifier) || 0;
+          const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
+
+          this._module.addDependency(
+            (lastDep = new CssDependency(dependency, dependency.context, count))
+          );
+          identifierCountMap.set(dependency.identifier, count + 1);
+        }
+
+        if (lastDep) {
+          lastDep.assets = assets;
+          lastDep.assetsInfo = assetsInfo;
+        }
+      };
+    }
 
     if (error) {
       return callback(error);
@@ -278,28 +282,30 @@ export function pitch(request) {
         locals = exports && exports.locals;
       }
 
-      let dependencies;
+      if (emit) {
+        let dependencies;
 
-      if (!Array.isArray(exports)) {
-        dependencies = [[null, exports]];
-      } else {
-        dependencies = exports.map(([id, content, media, sourceMap]) => {
-          const module = findModuleById(compilation, id);
+        if (!Array.isArray(exports)) {
+          dependencies = [[null, exports]];
+        } else {
+          dependencies = exports.map(([id, content, media, sourceMap]) => {
+            const module = findModuleById(compilation, id);
 
-          return {
-            identifier: module.identifier(),
-            context: module.context,
-            content: Buffer.from(content),
-            media,
-            sourceMap: sourceMap
-              ? Buffer.from(JSON.stringify(sourceMap))
-              : // eslint-disable-next-line no-undefined
-                undefined,
-          };
-        });
+            return {
+              identifier: module.identifier(),
+              context: module.context,
+              content: Buffer.from(content),
+              media,
+              sourceMap: sourceMap
+                ? Buffer.from(JSON.stringify(sourceMap))
+                : // eslint-disable-next-line no-undefined
+                  undefined,
+            };
+          });
+        }
+
+        addDependencies(dependencies);
       }
-
-      addDependencies(dependencies);
     } catch (e) {
       return callback(e);
     }

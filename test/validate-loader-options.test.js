@@ -6,6 +6,10 @@ describe('validate options', () => {
       success: ['/public/path/to/'],
       failure: [true],
     },
+    emit: {
+      success: [true, false],
+      failure: [1],
+    },
     esModule: {
       success: [true, false],
       failure: [1],

@@ -309,7 +309,7 @@ class MiniCssExtractPlugin {
     this._sortedModulesCache = new WeakMap();
 
     this.options = Object.assign(
-      { filename: DEFAULT_FILENAME, ignoreOrder: false, emit: true },
+      { filename: DEFAULT_FILENAME, ignoreOrder: false },
       options
     );
 
@@ -426,7 +426,6 @@ class MiniCssExtractPlugin {
         new CssDependencyTemplate()
       );
 
-      const { emit } = this.options;
       if (isWebpack4) {
         compilation.mainTemplate.hooks.renderManifest.tap(
           pluginName,
@@ -440,7 +439,7 @@ class MiniCssExtractPlugin {
             const filenameTemplate =
               chunk.filenameTemplate || this.options.filename;
 
-            if (renderedModules.length > 0 && emit) {
+            if (renderedModules.length > 0) {
               result.push({
                 render: () =>
                   this.renderContentAsset(
@@ -474,7 +473,7 @@ class MiniCssExtractPlugin {
             const filenameTemplate =
               chunk.filenameTemplate || this.options.chunkFilename;
 
-            if (renderedModules.length > 0 && emit) {
+            if (renderedModules.length > 0) {
               result.push({
                 render: () =>
                   this.renderContentAsset(
@@ -516,7 +515,7 @@ class MiniCssExtractPlugin {
               ? this.options.filename
               : this.options.chunkFilename;
 
-            if (renderedModules.length > 0 && emit) {
+            if (renderedModules.length > 0) {
               result.push({
                 render: () =>
                   this.renderContentAsset(

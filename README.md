@@ -104,15 +104,6 @@ This option determines the name of non-entry chunk files.
 
 Works like [`output.chunkFilename`](https://webpack.js.org/configuration/output/#outputchunkfilename)
 
-#### `emit`
-
-Type: `Boolean`
-Default: `true`
-
-If true, emits a file (writes a file to the filesystem). If false, the plugin
-will extract the CSS but **will not** emit the file. It is often useful to
-disable this option for server-side packages.
-
 #### `ignoreOrder`
 
 Type: `Boolean`
@@ -270,6 +261,7 @@ module.exports = {
 |              Name               |         Type         |              Default               | Description                                                                       |
 | :-----------------------------: | :------------------: | :--------------------------------: | :-------------------------------------------------------------------------------- |
 | **[`publicPath`](#publicPath)** | `{String\|Function}` | `webpackOptions.output.publicPath` | Specifies a custom public path for the external resources like images, files, etc |
+|       **[`emit`](#emit)**       |     `{Boolean}`      |               `true`               | If false, the plugin will extract the CSS but **will not** emit the file          |
 |   **[`esModule`](#esModule)**   |     `{Boolean}`      |               `true`               | Use ES modules syntax                                                             |
 |    **[`modules`](#modules)**    |      `{Object}`      |            `undefined`             | Configuration CSS Modules                                                         |
 
@@ -352,6 +344,14 @@ module.exports = {
   },
 };
 ```
+
+#### `emit`
+
+Type: `Boolean`
+Default: `true`
+
+If true, emits a file (writes a file to the filesystem). If false, the plugin will extract the CSS but **will not** emit the file.
+It is often useful to disable this option for server-side packages.
 
 #### `esModule`
 
