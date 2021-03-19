@@ -191,39 +191,38 @@ export function pitch(request) {
     const assetsInfo = new Map();
     const emit = typeof options.emit !== 'undefined' ? options.emit : true;
 
-    let addDependencies;
     if (emit) {
       for (const asset of compilation.getAssets()) {
         assets[asset.name] = asset.source;
         assetsInfo.set(asset.name, asset.info);
       }
-
-      addDependencies = (dependencies) => {
-        const identifierCountMap = new Map();
-
-        let lastDep;
-
-        for (const dependency of dependencies) {
-          if (!dependency.identifier) {
-            // eslint-disable-next-line no-continue
-            continue;
-          }
-
-          const count = identifierCountMap.get(dependency.identifier) || 0;
-          const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
-
-          this._module.addDependency(
-            (lastDep = new CssDependency(dependency, dependency.context, count))
-          );
-          identifierCountMap.set(dependency.identifier, count + 1);
-        }
-
-        if (lastDep) {
-          lastDep.assets = assets;
-          lastDep.assetsInfo = assetsInfo;
-        }
-      };
     }
+
+    const addDependencies = (dependencies) => {
+      const identifierCountMap = new Map();
+
+      let lastDep;
+
+      for (const dependency of dependencies) {
+        if (!dependency.identifier) {
+          // eslint-disable-next-line no-continue
+          continue;
+        }
+
+        const count = identifierCountMap.get(dependency.identifier) || 0;
+        const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
+
+        this._module.addDependency(
+          (lastDep = new CssDependency(dependency, dependency.context, count))
+        );
+        identifierCountMap.set(dependency.identifier, count + 1);
+      }
+
+      if (lastDep) {
+        lastDep.assets = assets;
+        lastDep.assetsInfo = assetsInfo;
+      }
+    };
 
     if (error) {
       return callback(error);
@@ -274,30 +273,29 @@ export function pitch(request) {
         locals = exports && exports.locals;
       }
 
-      if (emit) {
-        let dependencies;
+      let dependencies;
 
-        if (!Array.isArray(exports)) {
-          dependencies = [[null, exports]];
-        } else {
-          dependencies = exports.map(([id, content, media, sourceMap]) => {
-            const module = findModuleById(compilation, id);
+      if (!Array.isArray(exports)) {
+        dependencies = [[null, exports]];
+      } else if (!emit) {
+        dependencies = exports;
+      } else {
+        dependencies = exports.map(([id, content, media, sourceMap]) => {
+          const module = findModuleById(compilation, id);
 
-            return {
-              identifier: module.identifier(),
-              context: module.context,
-              content: Buffer.from(content),
-              media,
-              sourceMap: sourceMap
-                ? Buffer.from(JSON.stringify(sourceMap))
-                : // eslint-disable-next-line no-undefined
-                  undefined,
-            };
-          });
-        }
-
-        addDependencies(dependencies);
+          return {
+            identifier: module.identifier(),
+            context: module.context,
+            content: Buffer.from(content),
+            media,
+            sourceMap: sourceMap
+              ? Buffer.from(JSON.stringify(sourceMap))
+              : // eslint-disable-next-line no-undefined
+                undefined,
+          };
+        });
       }
+      addDependencies(dependencies);
     } catch (e) {
       return callback(e);
     }
