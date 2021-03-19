@@ -295,6 +295,7 @@ export function pitch(request) {
           };
         });
       }
+
       addDependencies(dependencies);
     } catch (e) {
       return callback(e);
