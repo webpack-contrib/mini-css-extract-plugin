@@ -25,6 +25,7 @@ function hotLoader(content, context) {
   })});
       module.hot.dispose(cssReload);
       ${accept}
+      cssReload();
     }
   `;
 }
