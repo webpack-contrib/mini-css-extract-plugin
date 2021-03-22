@@ -314,8 +314,10 @@ module.exports = function (urlString) {
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		if(__webpack_module_cache__[moduleId]) {
-/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			if (cachedModule.error !== undefined) throw cachedModule.error;
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
@@ -325,10 +327,15 @@ module.exports = function (urlString) {
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		var execOptions = { id: moduleId, module: module, factory: __webpack_modules__[moduleId], require: __webpack_require__ };
-/******/ 		__webpack_require__.i.forEach(function(handler) { handler(execOptions); });
-/******/ 		module = execOptions.module;
-/******/ 		execOptions.factory.call(module.exports, module, module.exports, execOptions.require);
+/******/ 		try {
+/******/ 			var execOptions = { id: moduleId, module: module, factory: __webpack_modules__[moduleId], require: __webpack_require__ };
+/******/ 			__webpack_require__.i.forEach(function(handler) { handler(execOptions); });
+/******/ 			module = execOptions.module;
+/******/ 			execOptions.factory.call(module.exports, module, module.exports, execOptions.require);
+/******/ 		} catch(e) {
+/******/ 			module.error = e;
+/******/ 			throw e;
+/******/ 		}
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -537,6 +544,7 @@ module.exports = function (urlString) {
 /******/ 			var hot = {
 /******/ 				// private stuff
 /******/ 				_acceptedDependencies: {},
+/******/ 				_acceptedErrorHandlers: {},
 /******/ 				_declinedDependencies: {},
 /******/ 				_selfAccepted: false,
 /******/ 				_selfDeclined: false,
@@ -551,13 +559,18 @@ module.exports = function (urlString) {
 /******/ 		
 /******/ 				// Module API
 /******/ 				active: true,
-/******/ 				accept: function (dep, callback) {
+/******/ 				accept: function (dep, callback, errorHandler) {
 /******/ 					if (dep === undefined) hot._selfAccepted = true;
 /******/ 					else if (typeof dep === "function") hot._selfAccepted = dep;
-/******/ 					else if (typeof dep === "object" && dep !== null)
-/******/ 						for (var i = 0; i < dep.length; i++)
+/******/ 					else if (typeof dep === "object" && dep !== null) {
+/******/ 						for (var i = 0; i < dep.length; i++) {
 /******/ 							hot._acceptedDependencies[dep[i]] = callback || function () {};
-/******/ 					else hot._acceptedDependencies[dep] = callback || function () {};
+/******/ 							hot._acceptedErrorHandlers[dep[i]] = errorHandler;
+/******/ 						}
+/******/ 					} else {
+/******/ 						hot._acceptedDependencies[dep] = callback || function () {};
+/******/ 						hot._acceptedErrorHandlers[dep] = errorHandler;
+/******/ 					}
 /******/ 				},
 /******/ 				decline: function (dep) {
 /******/ 					if (dep === undefined) hot._selfDeclined = true;
@@ -922,11 +935,10 @@ module.exports = function (urlString) {
 /******/ 		
 /******/ 		// object to store loaded and loading chunks
 /******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// Promise = chunk loading, 0 = chunk loaded
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			0: 0
 /******/ 		};
-/******/ 		
 /******/ 		
 /******/ 		// no chunk on demand loading
 /******/ 		
@@ -1160,18 +1172,19 @@ module.exports = function (urlString) {
 /******/ 			var outdatedSelfAcceptedModules = [];
 /******/ 			for (var j = 0; j < outdatedModules.length; j++) {
 /******/ 				var outdatedModuleId = outdatedModules[j];
+/******/ 				var module = __webpack_require__.c[outdatedModuleId];
 /******/ 				if (
-/******/ 					__webpack_require__.c[outdatedModuleId] &&
-/******/ 					__webpack_require__.c[outdatedModuleId].hot._selfAccepted &&
+/******/ 					module &&
+/******/ 					module.hot._selfAccepted &&
 /******/ 					// removed self-accepted modules should not be required
 /******/ 					appliedUpdate[outdatedModuleId] !== warnUnexpectedRequire &&
 /******/ 					// when called invalidate self-accepting is not possible
-/******/ 					!__webpack_require__.c[outdatedModuleId].hot._selfInvalidated
+/******/ 					!module.hot._selfInvalidated
 /******/ 				) {
 /******/ 					outdatedSelfAcceptedModules.push({
 /******/ 						module: outdatedModuleId,
-/******/ 						require: __webpack_require__.c[outdatedModuleId].hot._requireSelf,
-/******/ 						errorHandler: __webpack_require__.c[outdatedModuleId].hot._selfAccepted
+/******/ 						require: module.hot._requireSelf,
+/******/ 						errorHandler: module.hot._selfAccepted
 /******/ 					});
 /******/ 				}
 /******/ 			}
@@ -1259,14 +1272,18 @@ module.exports = function (urlString) {
 /******/ 								moduleOutdatedDependencies =
 /******/ 									outdatedDependencies[outdatedModuleId];
 /******/ 								var callbacks = [];
+/******/ 								var errorHandlers = [];
 /******/ 								var dependenciesForCallbacks = [];
 /******/ 								for (var j = 0; j < moduleOutdatedDependencies.length; j++) {
 /******/ 									var dependency = moduleOutdatedDependencies[j];
 /******/ 									var acceptCallback =
 /******/ 										module.hot._acceptedDependencies[dependency];
+/******/ 									var errorHandler =
+/******/ 										module.hot._acceptedErrorHandlers[dependency];
 /******/ 									if (acceptCallback) {
 /******/ 										if (callbacks.indexOf(acceptCallback) !== -1) continue;
 /******/ 										callbacks.push(acceptCallback);
+/******/ 										errorHandlers.push(errorHandler);
 /******/ 										dependenciesForCallbacks.push(dependency);
 /******/ 									}
 /******/ 								}
@@ -1274,16 +1291,39 @@ module.exports = function (urlString) {
 /******/ 									try {
 /******/ 										callbacks[k].call(null, moduleOutdatedDependencies);
 /******/ 									} catch (err) {
-/******/ 										if (options.onErrored) {
-/******/ 											options.onErrored({
-/******/ 												type: "accept-errored",
-/******/ 												moduleId: outdatedModuleId,
-/******/ 												dependencyId: dependenciesForCallbacks[k],
-/******/ 												error: err
-/******/ 											});
-/******/ 										}
-/******/ 										if (!options.ignoreErrored) {
-/******/ 											reportError(err);
+/******/ 										if (typeof errorHandlers[k] === "function") {
+/******/ 											try {
+/******/ 												errorHandlers[k](err, {
+/******/ 													moduleId: outdatedModuleId,
+/******/ 													dependencyId: dependenciesForCallbacks[k]
+/******/ 												});
+/******/ 											} catch (err2) {
+/******/ 												if (options.onErrored) {
+/******/ 													options.onErrored({
+/******/ 														type: "accept-error-handler-errored",
+/******/ 														moduleId: outdatedModuleId,
+/******/ 														dependencyId: dependenciesForCallbacks[k],
+/******/ 														error: err2,
+/******/ 														originalError: err
+/******/ 													});
+/******/ 												}
+/******/ 												if (!options.ignoreErrored) {
+/******/ 													reportError(err2);
+/******/ 													reportError(err);
+/******/ 												}
+/******/ 											}
+/******/ 										} else {
+/******/ 											if (options.onErrored) {
+/******/ 												options.onErrored({
+/******/ 													type: "accept-errored",
+/******/ 													moduleId: outdatedModuleId,
+/******/ 													dependencyId: dependenciesForCallbacks[k],
+/******/ 													error: err
+/******/ 												});
+/******/ 											}
+/******/ 											if (!options.ignoreErrored) {
+/******/ 												reportError(err);
+/******/ 											}
 /******/ 										}
 /******/ 									}
 /******/ 								}
@@ -1300,7 +1340,10 @@ module.exports = function (urlString) {
 /******/ 						} catch (err) {
 /******/ 							if (typeof item.errorHandler === "function") {
 /******/ 								try {
-/******/ 									item.errorHandler(err);
+/******/ 									item.errorHandler(err, {
+/******/ 										moduleId: moduleId,
+/******/ 										module: __webpack_require__.c[moduleId]
+/******/ 									});
 /******/ 								} catch (err2) {
 /******/ 									if (options.onErrored) {
 /******/ 										options.onErrored({
@@ -1312,8 +1355,8 @@ module.exports = function (urlString) {
 /******/ 									}
 /******/ 									if (!options.ignoreErrored) {
 /******/ 										reportError(err2);
+/******/ 										reportError(err);
 /******/ 									}
-/******/ 									reportError(err);
 /******/ 								}
 /******/ 							} else {
 /******/ 								if (options.onErrored) {
@@ -1394,11 +1437,9 @@ module.exports = function (urlString) {
 /******/ 			});
 /******/ 		};
 /******/ 		
-/******/ 		// no deferred startup
+/******/ 		// no on chunks loaded
 /******/ 		
 /******/ 		// no jsonp function
-/******/ 		
-/******/ 		// no deferred startup
 /******/ 	})();
 /******/ 	
 /************************************************************************/
