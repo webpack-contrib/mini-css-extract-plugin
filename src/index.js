@@ -3,7 +3,8 @@
 import { validate } from 'schema-utils';
 
 import schema from './plugin-options.json';
-import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
+import { AUTO_PUBLIC_PATH, MODULE_TYPE, compareModulesByIdentifier } from './utils';
+import path from 'path';
 
 export const pluginName = 'mini-css-extract-plugin';
 export const pluginSymbol = Symbol(pluginName);
@@ -1310,6 +1311,9 @@ class MiniCssExtractPlugin {
         if (m.media) {
           source.add(`@media ${m.media} {\n`);
         }
+
+        const publicPath = path.relative(path.dirname(chunk.name), '') + '/';
+        content = content.replace(new RegExp(AUTO_PUBLIC_PATH, 'g'), publicPath);
 
         if (m.sourceMap) {
           source.add(
