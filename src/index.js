@@ -1,10 +1,15 @@
 /* eslint-disable class-methods-use-this */
 
+import path from 'path';
+
 import { validate } from 'schema-utils';
 
 import schema from './plugin-options.json';
-import { AUTO_PUBLIC_PATH, MODULE_TYPE, compareModulesByIdentifier } from './utils';
-import path from 'path';
+import {
+  AUTO_PUBLIC_PATH,
+  MODULE_TYPE,
+  compareModulesByIdentifier,
+} from './utils';
 
 export const pluginName = 'mini-css-extract-plugin';
 export const pluginSymbol = Symbol(pluginName);
@@ -1312,8 +1317,11 @@ class MiniCssExtractPlugin {
           source.add(`@media ${m.media} {\n`);
         }
 
-        const publicPath = path.relative(path.dirname(chunk.name), '') + '/';
-        content = content.replace(new RegExp(AUTO_PUBLIC_PATH, 'g'), publicPath);
+        const publicPath = `${path.relative(path.dirname(chunk.name), '')}/`;
+        content = content.replace(
+          new RegExp(AUTO_PUBLIC_PATH, 'g'),
+          publicPath
+        );
 
         if (m.sourceMap) {
           source.add(
