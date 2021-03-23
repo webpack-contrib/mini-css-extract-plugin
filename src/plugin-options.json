@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "filename": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
+    },
+    "chunkFilename": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
+    },
+    "ignoreOrder": {
+      "type": "boolean"
+    },
+    "insert": {
+      "description": "Inserts `<link>` at the given position (https://github.com/webpack-contrib/mini-css-extract-plugin#insert).",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "instanceof": "Function"
+        }
+      ]
+    },
+    "attributes": {
+      "description": "Adds custom attributes to tag (https://github.com/webpack-contrib/mini-css-extract-plugin#attributes).",
+      "type": "object"
+    },
+    "linkType": {
+      "anyOf": [
+        {
+          "enum": ["text/css"]
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    }
+  }
+}

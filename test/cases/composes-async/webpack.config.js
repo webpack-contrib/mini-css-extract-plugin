@@ -1,4 +1,4 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = {
   entry: './index.js',
@@ -11,9 +11,11 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              localIdentName: '[local]'
-            }
-          }
+              modules: {
+                localIdentName: '[local]',
+              },
+            },
+          },
         ],
       },
     ],
@@ -23,12 +25,13 @@ module.exports = {
       cacheGroups: {
         cssDedupe: {
           test: /\.css$/,
+          name: 'dedupe',
           chunks: 'all',
           minChunks: 2,
-          enforce: true
-        }
-      }
-    }
+          enforce: true,
+        },
+      },
+    },
   },
   plugins: [
     new Self({

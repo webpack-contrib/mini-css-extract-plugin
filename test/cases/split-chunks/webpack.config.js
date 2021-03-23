@@ -1,4 +1,4 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = {
   entry: './index.js',
@@ -6,10 +6,7 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: [
-          Self.loader,
-          'css-loader',
-        ],
+        use: [Self.loader, 'css-loader'],
       },
     ],
   },
@@ -18,11 +15,12 @@ module.exports = {
       chunks: 'all',
       cacheGroups: {
         vendors: {
+          name: 'vendors',
           test: /node_modules/,
-          enforce: true
-        }
-      }
-    }
+          enforce: true,
+        },
+      },
+    },
   },
   plugins: [
     new Self({

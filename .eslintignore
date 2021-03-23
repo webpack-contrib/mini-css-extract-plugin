@@ -1,5 +1,6 @@
-/node_modules
+/coverage
 /dist
-/test/cases
+/node_modules
+/test/fixtures
+/test/cases/*/expected
 /test/js
-/test/manual

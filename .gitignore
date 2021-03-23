@@ -5,6 +5,7 @@ npm-debug.log*
 /coverage
 /dist
 /test/js
+/test/outputs
 /local
 /reports
 /node_modules
@@ -14,3 +15,5 @@ Thumbs.db
 .vscode
 *.sublime-project
 *.sublime-workspace
+.idea
+*.iml

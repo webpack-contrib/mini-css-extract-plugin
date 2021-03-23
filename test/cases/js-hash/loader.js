@@ -1,4 +1,4 @@
-module.exports = function(source) {
+module.exports = function loader(source) {
   const { number } = this.query;
-  return source.split(/\r?\n/)[number-1];
+  return source.split(/\/\* break \*\//)[number - 1];
 };

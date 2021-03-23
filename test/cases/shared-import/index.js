@@ -1,4 +1,5 @@
 import './a.css';
 import './b.css';
 
-import("./c.css");
+/* eslint-disable-next-line no-unused-expressions */
+import('./c.css');

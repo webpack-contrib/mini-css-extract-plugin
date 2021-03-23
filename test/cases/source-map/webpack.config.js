@@ -1,8 +1,8 @@
-const Self = require('../../../');
+import Self from '../../../src';
 
 module.exports = {
   entry: './index.js',
-  devtool: "source-map",
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -10,16 +10,13 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
-            options: {
-              sourceMap: true
-            }
           },
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
-            }
-          }
+              sourceMap: true,
+            },
+          },
         ],
       },
     ],
