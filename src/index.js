@@ -1317,7 +1317,12 @@ class MiniCssExtractPlugin {
           source.add(`@media ${m.media} {\n`);
         }
 
-        const publicPath = `${path.relative(path.dirname(chunk.name), '')}/`;
+        let publicPath = chunk.name
+          ? `${path.relative(path.dirname(chunk.name), '') || '.'}/`
+          : '';
+        if (publicPath.startsWith('./')) {
+          publicPath = publicPath.substring(2);
+        }
         content = content.replace(
           new RegExp(AUTO_PUBLIC_PATH, 'g'),
           publicPath
