@@ -453,7 +453,8 @@ class MiniCssExtractPlugin {
                     compilation,
                     chunk,
                     renderedModules,
-                    compilation.runtimeTemplate.requestShortener
+                    compilation.runtimeTemplate.requestShortener,
+                    filenameTemplate
                   ),
                 filenameTemplate,
                 pathOptions: {
@@ -487,7 +488,8 @@ class MiniCssExtractPlugin {
                     compilation,
                     chunk,
                     renderedModules,
-                    compilation.runtimeTemplate.requestShortener
+                    compilation.runtimeTemplate.requestShortener,
+                    filenameTemplate
                   ),
                 filenameTemplate,
                 pathOptions: {
@@ -529,7 +531,8 @@ class MiniCssExtractPlugin {
                     compilation,
                     chunk,
                     renderedModules,
-                    compilation.runtimeTemplate.requestShortener
+                    compilation.runtimeTemplate.requestShortener,
+                    filenameTemplate
                   ),
                 filenameTemplate,
                 pathOptions: {
@@ -1280,7 +1283,14 @@ class MiniCssExtractPlugin {
     return usedModules;
   }
 
-  renderContentAsset(compiler, compilation, chunk, modules, requestShortener) {
+  renderContentAsset(
+    compiler,
+    compilation,
+    chunk,
+    modules,
+    requestShortener,
+    filenameTemplate
+  ) {
     const usedModules = this.sortModules(
       compilation,
       chunk,
@@ -1318,7 +1328,16 @@ class MiniCssExtractPlugin {
         }
 
         let publicPath = chunk.name
-          ? `${path.relative(path.dirname(chunk.name), '') || '.'}/`
+          ? `${
+              path.relative(
+                path.dirname(
+                  typeof filenameTemplate === 'string'
+                    ? filenameTemplate.replace(/\[name\]/g, chunk.name)
+                    : ''
+                ),
+                ''
+              ) || '.'
+            }/`
           : '';
         if (publicPath.startsWith('./')) {
           publicPath = publicPath.substring(2);
