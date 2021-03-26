@@ -7,7 +7,13 @@ import del from 'del';
 
 import MiniCssExtractPlugin from '../src';
 
-import { compile, getCompiler, runInJsDom } from './helpers/index';
+import {
+  compile,
+  getCompiler,
+  getErrors,
+  getWarnings,
+  runInJsDom,
+} from './helpers/index';
 
 describe('emit option', () => {
   it(`should work without emit option`, async () => {
@@ -31,9 +37,11 @@ describe('emit option', () => {
     );
     const stats = await compile(compiler);
 
-    expect(stats.compilation.getAsset('main.css')).toBeDefined();
-    expect(stats.compilation.warnings).toHaveLength(0);
-    expect(stats.compilation.errors).toHaveLength(0);
+    expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
+      'assets'
+    );
+    expect(getWarnings(stats)).toMatchSnapshot('warnings');
+    expect(getErrors(stats)).toMatchSnapshot('errors');
   });
 
   it(`should work when emit option is "true"`, async () => {
@@ -47,7 +55,6 @@ describe('emit option', () => {
         output: {
           publicPath: '',
           path: path.resolve(__dirname, '../outputs'),
-          filename: '[name].[contenthash].[fullhash].js',
         },
 
         plugins: [
@@ -59,14 +66,11 @@ describe('emit option', () => {
     );
     const stats = await compile(compiler);
 
-    expect(
-      stats.compilation.getAsset(
-        'main.9a73ed992e802ad0462e.5e3448a6abbe6ad89a93.js'
-      )
-    ).toBeDefined();
-    expect(stats.compilation.getAsset('main.css')).toBeDefined();
-    expect(stats.compilation.warnings).toHaveLength(0);
-    expect(stats.compilation.errors).toHaveLength(0);
+    expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
+      'assets'
+    );
+    expect(getWarnings(stats)).toMatchSnapshot('warnings');
+    expect(getErrors(stats)).toMatchSnapshot('errors');
   });
 
   it(`should work when emit option is "false"`, async () => {
@@ -80,7 +84,6 @@ describe('emit option', () => {
         output: {
           publicPath: '',
           path: path.resolve(__dirname, '../outputs'),
-          filename: '[name].[contenthash].[fullhash].js',
         },
         plugins: [
           new MiniCssExtractPlugin({
@@ -91,14 +94,11 @@ describe('emit option', () => {
     );
     const stats = await compile(compiler);
 
-    expect(stats.compilation.getAsset('main.css')).toBeUndefined();
-    expect(
-      stats.compilation.getAsset(
-        'main.15f4ba3ceaa4de358bed.0df63dd1b4a35fa4358d.js'
-      )
-    ).toBeDefined();
-    expect(stats.compilation.warnings).toHaveLength(0);
-    expect(stats.compilation.errors).toHaveLength(0);
+    expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
+      'assets'
+    );
+    expect(getWarnings(stats)).toMatchSnapshot('warnings');
+    expect(getErrors(stats)).toMatchSnapshot('errors');
   });
 
   it(`should work with locals when emit option is "false"`, async () => {
@@ -144,8 +144,8 @@ describe('emit option', () => {
     runInJsDom('main.bundle.js', compiler, stats, (dom) => {
       expect(dom.serialize()).toMatchSnapshot('DOM');
     });
-    expect(stats.compilation.warnings).toHaveLength(0);
-    expect(stats.compilation.errors).toHaveLength(0);
+    expect(getWarnings(stats)).toMatchSnapshot('warnings');
+    expect(getErrors(stats)).toMatchSnapshot('errors');
   });
 
   it(`should work with locals and invalidate cache when emit option is "false"`, async () => {
@@ -229,23 +229,17 @@ describe('emit option', () => {
           }
 
           compiler1.close(() => {
-            expect(Object.keys(stats.compilation.assets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                          ]
-                      `);
-            expect(Array.from(stats.compilation.emittedAssets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                          ]
-                      `);
+            expect(
+              Object.keys(stats.compilation.assets).sort()
+            ).toMatchSnapshot(`assets`);
+            expect(
+              Array.from(stats.compilation.emittedAssets).sort()
+            ).toMatchSnapshot(`emittedAssets`);
             runInJsDom('main.js', compiler1, stats, (dom) => {
               expect(dom.serialize()).toMatchSnapshot('DOM');
             });
-            expect(stats.compilation.warnings).toHaveLength(0);
-            expect(stats.compilation.errors).toHaveLength(0);
+            expect(getWarnings(stats)).toMatchSnapshot('warnings');
+            expect(getErrors(stats)).toMatchSnapshot('errors');
 
             resolve();
           });
@@ -263,23 +257,17 @@ describe('emit option', () => {
           }
 
           compiler2.close(() => {
-            expect(Object.keys(stats.compilation.assets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                          ]
-                      `);
-            expect(Array.from(stats.compilation.emittedAssets).sort())
-              .toMatchInlineSnapshot(`
-              Array [
-                "main.js",
-              ]
-            `);
+            expect(
+              Object.keys(stats.compilation.assets).sort()
+            ).toMatchSnapshot(`assets`);
+            expect(
+              Array.from(stats.compilation.emittedAssets).sort()
+            ).toMatchSnapshot(`emittedAssets`);
             runInJsDom('main.js', compiler2, stats, (dom) => {
               expect(dom.serialize()).toMatchSnapshot('DOM');
             });
-            expect(stats.compilation.warnings).toHaveLength(0);
-            expect(stats.compilation.errors).toHaveLength(0);
+            expect(getWarnings(stats)).toMatchSnapshot('warnings');
+            expect(getErrors(stats)).toMatchSnapshot('errors');
 
             resolve();
           });
@@ -349,22 +337,14 @@ describe('emit option', () => {
           }
 
           compiler1.close(() => {
-            expect(Object.keys(stats.compilation.assets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                            "static/react.svg",
-                          ]
-                      `);
-            expect(Array.from(stats.compilation.emittedAssets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                            "static/react.svg",
-                          ]
-                      `);
-            expect(stats.compilation.warnings).toHaveLength(0);
-            expect(stats.compilation.errors).toHaveLength(0);
+            expect(
+              Object.keys(stats.compilation.assets).sort()
+            ).toMatchSnapshot(`assets`);
+            expect(
+              Array.from(stats.compilation.emittedAssets).sort()
+            ).toMatchSnapshot(`emittedAssets`);
+            expect(getWarnings(stats)).toMatchSnapshot('warnings');
+            expect(getErrors(stats)).toMatchSnapshot('errors');
 
             resolve();
           });
@@ -382,18 +362,14 @@ describe('emit option', () => {
           }
 
           compiler2.close(() => {
-            expect(Object.keys(stats.compilation.assets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                            "static/react.svg",
-                          ]
-                      `);
+            expect(
+              Object.keys(stats.compilation.assets).sort()
+            ).toMatchSnapshot(`assets`);
             expect(
               Array.from(stats.compilation.emittedAssets).sort()
-            ).toMatchInlineSnapshot(`Array []`);
-            expect(stats.compilation.warnings).toHaveLength(0);
-            expect(stats.compilation.errors).toHaveLength(0);
+            ).toMatchSnapshot(`emittedAssets`);
+            expect(getWarnings(stats)).toMatchSnapshot('warnings');
+            expect(getErrors(stats)).toMatchSnapshot('errors');
 
             resolve();
           });
@@ -483,22 +459,14 @@ describe('emit option', () => {
           }
 
           compiler1.close(() => {
-            expect(Object.keys(stats.compilation.assets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                            "static/react.svg",
-                          ]
-                      `);
-            expect(Array.from(stats.compilation.emittedAssets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                            "static/react.svg",
-                          ]
-                      `);
-            expect(stats.compilation.warnings).toHaveLength(0);
-            expect(stats.compilation.errors).toHaveLength(0);
+            expect(
+              Object.keys(stats.compilation.assets).sort()
+            ).toMatchSnapshot(`assets`);
+            expect(
+              Array.from(stats.compilation.emittedAssets).sort()
+            ).toMatchSnapshot(`emittedAssets`);
+            expect(getWarnings(stats)).toMatchSnapshot('warnings');
+            expect(getErrors(stats)).toMatchSnapshot('errors');
 
             resolve();
           });
@@ -516,17 +484,14 @@ describe('emit option', () => {
           }
 
           compiler2.close(() => {
-            expect(Object.keys(stats.compilation.assets).sort())
-              .toMatchInlineSnapshot(`
-                          Array [
-                            "main.js",
-                          ]
-                      `);
+            expect(
+              Object.keys(stats.compilation.assets).sort()
+            ).toMatchSnapshot(`assets`);
             expect(
               Array.from(stats.compilation.emittedAssets).sort()
-            ).toMatchInlineSnapshot(`Array []`);
-            expect(stats.compilation.warnings).toHaveLength(0);
-            expect(stats.compilation.errors).toHaveLength(0);
+            ).toMatchSnapshot(`emittedAssets`);
+            expect(getWarnings(stats)).toMatchSnapshot('warnings');
+            expect(getErrors(stats)).toMatchSnapshot('errors');
 
             resolve();
           });

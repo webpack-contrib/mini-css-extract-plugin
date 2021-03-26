@@ -32,14 +32,29 @@ export default (fixture, loaderOptions = {}, config = {}) => {
             },
           ],
         },
-        {
-          test: /\.svg$/,
-          type: 'asset/resource',
-          generator: {
-            filename: '[name][ext]',
-          },
-        },
-      ],
+      ].concat(
+        webpack.version[0] !== '4'
+          ? {
+              test: /\.svg$/,
+              type: 'asset/resource',
+              generator: {
+                filename: '[name][ext]',
+              },
+            }
+          : [
+              {
+                test: /\.svg$/i,
+                rules: [
+                  {
+                    loader: 'file-loader',
+                    options: {
+                      name: '[name].[ext]',
+                    },
+                  },
+                ],
+              },
+            ]
+      ),
     },
     plugins: [
       new MiniCssExtractPlugin({
