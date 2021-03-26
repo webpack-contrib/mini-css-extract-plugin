@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`emit option should work with locals and invalidate cache when emit option is "false": DOM 1`] = `
+"<!DOCTYPE html><html><head>
+  <title>style-loader test</title>
+  <style id=\\"existing-style\\">.existing { color: yellow }</style>
+</head>
+<body>
+css.foo: _1F17fUrdX_cbcyDHpFqmAD
+css.bar: _3TZVxmkrZR2cTfifKhDoZn
+css.baz: M-pzkE59YBii7EXzFyxE6
+</body></html>"
+`;
+
+exports[`emit option should work with locals and invalidate cache when emit option is "false": DOM 2`] = `
+"<!DOCTYPE html><html><head>
+  <title>style-loader test</title>
+  <style id=\\"existing-style\\">.existing { color: yellow }</style>
+</head>
+<body>
+css.foo-bar: VWLDg_rByGM4Rdhz5T3Ns
+css.bar: _3TZVxmkrZR2cTfifKhDoZn
+css.baz: M-pzkE59YBii7EXzFyxE6
+</body></html>"
+`;
+
+exports[`emit option should work with locals when emit option is "false": DOM 1`] = `
+"<!DOCTYPE html><html><head>
+  <title>style-loader test</title>
+  <style id=\\"existing-style\\">.existing { color: yellow }</style>
+</head>
+<body>
+css.foo: _1F17fUrdX_cbcyDHpFqmAD
+css.bar: _3TZVxmkrZR2cTfifKhDoZn
+css.baz: M-pzkE59YBii7EXzFyxE6
+</body></html>"
+`;

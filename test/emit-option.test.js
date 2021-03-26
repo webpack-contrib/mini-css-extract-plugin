@@ -1,0 +1,541 @@
+/* eslint-env browser */
+import fs from 'fs';
+import path from 'path';
+
+import webpack from 'webpack';
+import del from 'del';
+
+import MiniCssExtractPlugin from '../src';
+
+import { compile, getCompiler, runInJsDom } from './helpers/index';
+
+describe('emit option', () => {
+  it(`should work without emit option`, async () => {
+    const compiler = getCompiler(
+      'style-url.js',
+      {},
+      {
+        mode: 'none',
+        output: {
+          publicPath: '',
+          path: path.resolve(__dirname, '../outputs'),
+          filename: '[name].bundle.js',
+        },
+
+        plugins: [
+          new MiniCssExtractPlugin({
+            filename: '[name].css',
+          }),
+        ],
+      }
+    );
+    const stats = await compile(compiler);
+
+    expect(stats.compilation.getAsset('main.css')).toBeDefined();
+    expect(stats.compilation.warnings).toHaveLength(0);
+    expect(stats.compilation.errors).toHaveLength(0);
+  });
+
+  it(`should work when emit option is "true"`, async () => {
+    const compiler = getCompiler(
+      'style-url.js',
+      {
+        emit: true,
+      },
+      {
+        mode: 'none',
+        output: {
+          publicPath: '',
+          path: path.resolve(__dirname, '../outputs'),
+          filename: '[name].[contenthash].[fullhash].js',
+        },
+
+        plugins: [
+          new MiniCssExtractPlugin({
+            filename: '[name].css',
+          }),
+        ],
+      }
+    );
+    const stats = await compile(compiler);
+
+    expect(
+      stats.compilation.getAsset(
+        'main.9a73ed992e802ad0462e.5e3448a6abbe6ad89a93.js'
+      )
+    ).toBeDefined();
+    expect(stats.compilation.getAsset('main.css')).toBeDefined();
+    expect(stats.compilation.warnings).toHaveLength(0);
+    expect(stats.compilation.errors).toHaveLength(0);
+  });
+
+  it(`should work when emit option is "false"`, async () => {
+    const compiler = getCompiler(
+      'style-url.js',
+      {
+        emit: false,
+      },
+      {
+        mode: 'none',
+        output: {
+          publicPath: '',
+          path: path.resolve(__dirname, '../outputs'),
+          filename: '[name].[contenthash].[fullhash].js',
+        },
+        plugins: [
+          new MiniCssExtractPlugin({
+            filename: '[name].css',
+          }),
+        ],
+      }
+    );
+    const stats = await compile(compiler);
+
+    expect(stats.compilation.getAsset('main.css')).toBeUndefined();
+    expect(
+      stats.compilation.getAsset(
+        'main.15f4ba3ceaa4de358bed.0df63dd1b4a35fa4358d.js'
+      )
+    ).toBeDefined();
+    expect(stats.compilation.warnings).toHaveLength(0);
+    expect(stats.compilation.errors).toHaveLength(0);
+  });
+
+  it(`should work with locals when emit option is "false"`, async () => {
+    const compiler = getCompiler(
+      'locals.js',
+      {},
+      {
+        output: {
+          publicPath: '',
+          path: path.resolve(__dirname, '../outputs'),
+          filename: '[name].bundle.js',
+        },
+        module: {
+          rules: [
+            {
+              test: /\.css$/,
+              use: [
+                {
+                  loader: MiniCssExtractPlugin.loader,
+                  options: {
+                    emit: false,
+                  },
+                },
+                {
+                  loader: 'css-loader',
+                  options: {
+                    modules: true,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        plugins: [
+          new MiniCssExtractPlugin({
+            filename: '[name].css',
+          }),
+        ],
+      }
+    );
+    const stats = await compile(compiler);
+
+    runInJsDom('main.bundle.js', compiler, stats, (dom) => {
+      expect(dom.serialize()).toMatchSnapshot('DOM');
+    });
+    expect(stats.compilation.warnings).toHaveLength(0);
+    expect(stats.compilation.errors).toHaveLength(0);
+  });
+
+  it(`should work with locals and invalidate cache when emit option is "false"`, async () => {
+    const modifyAsset = path.resolve(__dirname, 'fixtures', 'locals/index.css');
+    const modifyAssetContent = fs.readFileSync(modifyAsset);
+
+    class AssetsModifyPlugin {
+      constructor(options = {}) {
+        this.options = options;
+      }
+
+      apply(compiler) {
+        compiler.hooks.emit.tapAsync(
+          'AssetsModifyPlugin',
+          (compilation, callback) => {
+            const newContent = modifyAssetContent
+              .toString()
+              .replace(/foo/i, 'foo-bar');
+            fs.writeFileSync(this.options.file, newContent);
+
+            callback();
+          }
+        );
+      }
+    }
+
+    if (webpack.version[0] !== '4') {
+      const outputPath = path.resolve(__dirname, './js/cache-memory');
+      const webpackConfig = {
+        mode: 'development',
+        context: path.resolve(__dirname, './fixtures'),
+        cache: {
+          type: 'memory',
+        },
+        entry: './locals.js',
+        output: {
+          publicPath: '',
+          path: outputPath,
+        },
+        module: {
+          rules: [
+            {
+              test: /\.css$/,
+              use: [
+                {
+                  loader: MiniCssExtractPlugin.loader,
+                  options: {
+                    emit: false,
+                  },
+                },
+                {
+                  loader: 'css-loader',
+                  options: {
+                    modules: true,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        plugins: [
+          new MiniCssExtractPlugin({
+            filename: '[name].css',
+          }),
+          new AssetsModifyPlugin({
+            file: modifyAsset,
+          }),
+        ],
+      };
+
+      await del([outputPath]);
+
+      const compiler1 = webpack(webpackConfig);
+
+      await new Promise((resolve, reject) => {
+        compiler1.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          compiler1.close(() => {
+            expect(Object.keys(stats.compilation.assets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                          ]
+                      `);
+            expect(Array.from(stats.compilation.emittedAssets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                          ]
+                      `);
+            runInJsDom('main.js', compiler1, stats, (dom) => {
+              expect(dom.serialize()).toMatchSnapshot('DOM');
+            });
+            expect(stats.compilation.warnings).toHaveLength(0);
+            expect(stats.compilation.errors).toHaveLength(0);
+
+            resolve();
+          });
+        });
+      });
+
+      const compiler2 = webpack(webpackConfig);
+
+      await new Promise((resolve, reject) => {
+        compiler2.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          compiler2.close(() => {
+            expect(Object.keys(stats.compilation.assets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                          ]
+                      `);
+            expect(Array.from(stats.compilation.emittedAssets).sort())
+              .toMatchInlineSnapshot(`
+              Array [
+                "main.js",
+              ]
+            `);
+            runInJsDom('main.js', compiler2, stats, (dom) => {
+              expect(dom.serialize()).toMatchSnapshot('DOM');
+            });
+            expect(stats.compilation.warnings).toHaveLength(0);
+            expect(stats.compilation.errors).toHaveLength(0);
+
+            resolve();
+          });
+        });
+      });
+
+      fs.writeFileSync(modifyAsset, modifyAssetContent);
+    } else {
+      expect(true).toBe(true);
+    }
+  });
+
+  it('should work with the "memory" cache and disabled "emit" option', async () => {
+    if (webpack.version[0] !== '4') {
+      const outputPath = path.resolve(__dirname, './js/cache-memory');
+      const webpackConfig = {
+        mode: 'development',
+        context: path.resolve(__dirname, 'fixtures'),
+        cache: {
+          type: 'memory',
+        },
+        output: {
+          path: outputPath,
+        },
+        entry: './style-url.js',
+        module: {
+          rules: [
+            {
+              test: /\.css$/,
+              use: [
+                {
+                  loader: MiniCssExtractPlugin.loader,
+                  options: {
+                    publicPath: '',
+                    emit: false,
+                  },
+                },
+                'css-loader',
+              ],
+            },
+            {
+              test: /\.svg$/,
+              type: 'asset/resource',
+              generator: {
+                filename: 'static/[name][ext][query]',
+              },
+            },
+          ],
+        },
+        plugins: [
+          new MiniCssExtractPlugin({
+            filename: '[name].css',
+          }),
+        ],
+      };
+
+      await del([outputPath]);
+
+      const compiler1 = webpack(webpackConfig);
+
+      await new Promise((resolve, reject) => {
+        compiler1.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          compiler1.close(() => {
+            expect(Object.keys(stats.compilation.assets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                            "static/react.svg",
+                          ]
+                      `);
+            expect(Array.from(stats.compilation.emittedAssets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                            "static/react.svg",
+                          ]
+                      `);
+            expect(stats.compilation.warnings).toHaveLength(0);
+            expect(stats.compilation.errors).toHaveLength(0);
+
+            resolve();
+          });
+        });
+      });
+
+      const compiler2 = webpack(webpackConfig);
+
+      await new Promise((resolve, reject) => {
+        compiler2.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          compiler2.close(() => {
+            expect(Object.keys(stats.compilation.assets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                            "static/react.svg",
+                          ]
+                      `);
+            expect(
+              Array.from(stats.compilation.emittedAssets).sort()
+            ).toMatchInlineSnapshot(`Array []`);
+            expect(stats.compilation.warnings).toHaveLength(0);
+            expect(stats.compilation.errors).toHaveLength(0);
+
+            resolve();
+          });
+        });
+      });
+    } else {
+      expect(true).toBe(true);
+    }
+  });
+
+  it('should invalidate the cache with disabled "emit" option', async () => {
+    class AssetsModifyPlugin {
+      constructor(options = {}) {
+        this.options = options;
+      }
+
+      apply(compiler) {
+        compiler.hooks.emit.tapAsync(
+          'AssetsModifyPlugin',
+          (compilation, callback) => {
+            fs.writeFileSync(this.options.file, `.a{color: red;}`);
+
+            callback();
+          }
+        );
+      }
+    }
+
+    if (webpack.version[0] !== '4') {
+      const outputPath = path.resolve(__dirname, './js/cache-memory');
+      const modifyAsset = path.resolve(__dirname, 'fixtures', 'style-url.css');
+      const modifyAssetContent = fs.readFileSync(modifyAsset);
+      const webpackConfig = {
+        mode: 'development',
+        context: path.resolve(__dirname, 'fixtures'),
+        cache: {
+          type: 'memory',
+        },
+        output: {
+          path: outputPath,
+        },
+        entry: './style-url.js',
+        module: {
+          rules: [
+            {
+              test: /\.css$/,
+              use: [
+                {
+                  loader: MiniCssExtractPlugin.loader,
+                  options: {
+                    publicPath: '',
+                    emit: false,
+                  },
+                },
+                'css-loader',
+              ],
+            },
+            {
+              test: /\.svg$/,
+              type: 'asset/resource',
+              generator: {
+                filename: 'static/[name][ext][query]',
+              },
+            },
+          ],
+        },
+        plugins: [
+          new MiniCssExtractPlugin({
+            filename: '[name].css',
+          }),
+          new AssetsModifyPlugin({
+            file: modifyAsset,
+          }),
+        ],
+      };
+
+      await del([outputPath]);
+
+      const compiler1 = webpack(webpackConfig);
+
+      await new Promise((resolve, reject) => {
+        compiler1.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          compiler1.close(() => {
+            expect(Object.keys(stats.compilation.assets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                            "static/react.svg",
+                          ]
+                      `);
+            expect(Array.from(stats.compilation.emittedAssets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                            "static/react.svg",
+                          ]
+                      `);
+            expect(stats.compilation.warnings).toHaveLength(0);
+            expect(stats.compilation.errors).toHaveLength(0);
+
+            resolve();
+          });
+        });
+      });
+
+      const compiler2 = webpack(webpackConfig);
+
+      await new Promise((resolve, reject) => {
+        compiler2.run((error, stats) => {
+          if (error) {
+            reject(error);
+
+            return;
+          }
+
+          compiler2.close(() => {
+            expect(Object.keys(stats.compilation.assets).sort())
+              .toMatchInlineSnapshot(`
+                          Array [
+                            "main.js",
+                          ]
+                      `);
+            expect(
+              Array.from(stats.compilation.emittedAssets).sort()
+            ).toMatchInlineSnapshot(`Array []`);
+            expect(stats.compilation.warnings).toHaveLength(0);
+            expect(stats.compilation.errors).toHaveLength(0);
+
+            resolve();
+          });
+        });
+      });
+
+      fs.writeFileSync(modifyAsset, modifyAssetContent);
+    } else {
+      expect(true).toBe(true);
+    }
+  });
+});

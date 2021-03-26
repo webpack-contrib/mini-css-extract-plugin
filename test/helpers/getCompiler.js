@@ -32,6 +32,13 @@ export default (fixture, loaderOptions = {}, config = {}) => {
             },
           ],
         },
+        {
+          test: /\.svg$/,
+          type: 'asset/resource',
+          generator: {
+            filename: '[name][ext]',
+          },
+        },
       ],
     },
     plugins: [
