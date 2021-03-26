@@ -21,4 +21,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ })
 ],
-0,[[2,0]]]);
+/******/ __webpack_require__ => { // webpackRuntimeModules
+/******/ "use strict";
+/******/ 
+/******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
+/******/ var __webpack_exports__ = (__webpack_exec__(2));
+/******/ }
+]);

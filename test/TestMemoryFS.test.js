@@ -3,7 +3,7 @@ import path from 'path';
 import { createFsFromVolume, Volume } from 'memfs';
 import webpack from 'webpack';
 
-const assetsNames = (json) => json.assets.map((asset) => asset.name);
+const assetsNames = (assets) => assets.map((asset) => asset.name);
 
 describe('TestMemoryFS', () => {
   it('should preserve asset even if not emitted', (done) => {
@@ -40,8 +40,8 @@ describe('TestMemoryFS', () => {
           return;
         }
 
-        expect(assetsNames(stats1.toJson())).toEqual(
-          assetsNames(stats2.toJson())
+        expect(assetsNames(stats1.compilation.getAssets())).toEqual(
+          assetsNames(stats2.compilation.getAssets())
         );
 
         done();
