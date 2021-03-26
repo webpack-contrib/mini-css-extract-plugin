@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.3.9...v1.4.0) (2021-03-26)
+
+
+### Features
+
+* added the `emit` option for SSR ([#732](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/732)) ([03b4293](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/03b4293023e85e89abf46a2e42d61ec8684cb318))
+
 ### [1.3.9](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.3.8...v1.3.9) (2021-02-25)
 
 
