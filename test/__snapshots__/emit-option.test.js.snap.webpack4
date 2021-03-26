@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`emit option should work when emit option is "false": assets 1`] = `
+Array [
+  "main.js",
+  "react.svg",
+]
+`;
+
+exports[`emit option should work when emit option is "false": errors 1`] = `Array []`;
+
+exports[`emit option should work when emit option is "false": warnings 1`] = `Array []`;
+
+exports[`emit option should work when emit option is "true": assets 1`] = `
+Array [
+  "main.css",
+  "main.js",
+  "react.svg",
+]
+`;
+
+exports[`emit option should work when emit option is "true": errors 1`] = `Array []`;
+
+exports[`emit option should work when emit option is "true": warnings 1`] = `Array []`;
+
+exports[`emit option should work with locals when emit option is "false": DOM 1`] = `
+"<!DOCTYPE html><html><head>
+  <title>style-loader test</title>
+  <style id=\\"existing-style\\">.existing { color: yellow }</style>
+</head>
+<body>
+css.foo: _1F17fUrdX_cbcyDHpFqmAD
+css.bar: _3TZVxmkrZR2cTfifKhDoZn
+css.baz: M-pzkE59YBii7EXzFyxE6
+</body></html>"
+`;
+
+exports[`emit option should work with locals when emit option is "false": errors 1`] = `Array []`;
+
+exports[`emit option should work with locals when emit option is "false": warnings 1`] = `Array []`;
+
+exports[`emit option should work without emit option: assets 1`] = `
+Array [
+  "main.bundle.js",
+  "main.css",
+  "react.svg",
+]
+`;
+
+exports[`emit option should work without emit option: errors 1`] = `Array []`;
+
+exports[`emit option should work without emit option: warnings 1`] = `Array []`;

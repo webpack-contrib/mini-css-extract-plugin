@@ -205,11 +205,11 @@ export function pitch(request) {
       }
 
       const identifierCountMap = new Map();
-
+      const emit = typeof options.emit !== 'undefined' ? options.emit : true;
       let lastDep;
 
       for (const dependency of dependencies) {
-        if (!dependency.identifier) {
+        if (!dependency.identifier || !emit) {
           // eslint-disable-next-line no-continue
           continue;
         }
