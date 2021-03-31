@@ -56,14 +56,14 @@ export function pitch(request) {
   const childFilename = '*';
   const publicPath =
     typeof options.publicPath === 'string'
-      ? options.publicPath === 'auto'
+      ? options.publicPath === 'auto' || options.publicPath === ''
         ? AUTO_PUBLIC_PATH
         : options.publicPath === '' || options.publicPath.endsWith('/')
         ? options.publicPath
         : `${options.publicPath}/`
       : typeof options.publicPath === 'function'
       ? options.publicPath(this.resourcePath, this.rootContext)
-      : this._compilation.outputOptions.publicPath === 'auto'
+      : this._compilation.outputOptions.publicPath === 'auto' || this._compilation.outputOptions.publicPath === ''
       ? AUTO_PUBLIC_PATH
       : this._compilation.outputOptions.publicPath;
 
