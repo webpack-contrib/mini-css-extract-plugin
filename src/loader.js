@@ -63,7 +63,8 @@ export function pitch(request) {
         : `${options.publicPath}/`
       : typeof options.publicPath === 'function'
       ? options.publicPath(this.resourcePath, this.rootContext)
-      : this._compilation.outputOptions.publicPath === 'auto' || this._compilation.outputOptions.publicPath === ''
+      : this._compilation.outputOptions.publicPath === 'auto' ||
+        this._compilation.outputOptions.publicPath === ''
       ? AUTO_PUBLIC_PATH
       : this._compilation.outputOptions.publicPath;
 
