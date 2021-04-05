@@ -768,6 +768,8 @@ module.exports = {
 };
 ```
 
+Note that `type` should be used instead of `test` in Webpack 5, or else an extra `.js` file can be generated besides the `.css` file. This is because `test` doesn't know which modules should be dropped (in this case, it won't detect that `.js` should be dropped).
+
 ### Extracting CSS based on entry
 
 You may also extract the CSS based on the webpack entry name.
