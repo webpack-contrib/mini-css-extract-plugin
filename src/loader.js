@@ -9,23 +9,48 @@ import schema from './loader-options.json';
 import MiniCssExtractPlugin, { pluginName, pluginSymbol } from './index';
 
 function hotLoader(content, context) {
-  const accept = context.locals
-    ? ''
-    : 'module.hot.accept(undefined, cssReload);';
+  const renderImport = (name, modulePath) => {
+    const request = loaderUtils.stringifyRequest(context.context, modulePath);
+
+    if (context.esModule) {
+      return `import ${name} from ${request};`;
+    }
+    return `var ${name} = require(${request});`;
+  };
+  const accept = `
+      if (!_locals || module.hot.invalidate) {
+        if (module.hot.invalidate &&
+            module.hot.data &&
+            module.hot.data.oldLocals &&
+            !isEqualLocals(module.hot.data.oldLocals, _locals)) {
+            module.hot.invalidate();
+        } else {
+           module.hot.accept();
+        }
+      }`;
 
   return `${content}
+    ${renderImport(
+      'cssReloadModule',
+      path.join(__dirname, 'hmr/hotModuleReplacement.js')
+    )}
+    ${renderImport(
+      'isEqualLocals',
+      path.join(__dirname, 'hmr/isEqualLocals.js')
+    )}
     if(module.hot) {
       // ${Date.now()}
-      var cssReload = require(${loaderUtils.stringifyRequest(
-        context.context,
-        path.join(__dirname, 'hmr/hotModuleReplacement.js')
-      )})(module.id, ${JSON.stringify({
-    ...context.options,
-    locals: !!context.locals,
-  })});
-      module.hot.dispose(cssReload);
+      var cssReload = cssReloadModule(module.id, ${JSON.stringify({
+        ...context.options,
+        locals: !!context.locals,
+      })});
+      var _locals = ${JSON.stringify(context.locals)};
+      module.hot.dispose(function(data) {
+        cssReload();
+        data.oldLocals = _locals;
+      });
       ${accept}
-    }
+  }
   `;
 }
 
@@ -321,7 +346,13 @@ export function pitch(request) {
     let resultSource = `// extracted by ${pluginName}`;
 
     resultSource += this.hot
-      ? hotLoader(result, { context: this.context, options, locals })
+      ? hotLoader(result, {
+          context: this.context,
+          options,
+          locals,
+          namedExport,
+          esModule,
+        })
       : result;
 
     return callback(null, resultSource);
