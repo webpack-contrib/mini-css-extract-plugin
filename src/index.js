@@ -1017,7 +1017,7 @@ class MiniCssExtractPlugin {
                           [
                             `var href = ${RuntimeGlobals.require}.miniCssF(chunkId);`,
                             `var fullhref = ${RuntimeGlobals.publicPath} + href;`,
-                            'const oldTag = findStylesheet(href, fullhref);',
+                            'var oldTag = findStylesheet(href, fullhref);',
                             'if(!oldTag) return;',
                             `promises.push(new Promise(${runtimeTemplate.basicFunction(
                               'resolve, reject',
