@@ -914,7 +914,7 @@ module.exports = function (urlString) {
 /******/ 			chunkIds.forEach((chunkId) => {
 /******/ 				var href = __webpack_require__.miniCssF(chunkId);
 /******/ 				var fullhref = __webpack_require__.p + href;
-/******/ 				const oldTag = findStylesheet(href, fullhref);
+/******/ 				var oldTag = findStylesheet(href, fullhref);
 /******/ 				if(!oldTag) return;
 /******/ 				promises.push(new Promise((resolve, reject) => {
 /******/ 					var tag = createStylesheet(chunkId, fullhref, () => {
