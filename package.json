@@ -44,6 +44,7 @@
   "dependencies": {
     "loader-utils": "^2.0.0",
     "schema-utils": "^3.0.0",
+    "tapable": "^2.2.0",
     "webpack-sources": "^1.1.0"
   },
   "devDependencies": {
