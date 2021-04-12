@@ -309,7 +309,11 @@ class MiniCssExtractPlugin {
     this._sortedModulesCache = new WeakMap();
 
     this.options = Object.assign(
-      { filename: DEFAULT_FILENAME, ignoreOrder: false },
+      {
+        filename: DEFAULT_FILENAME,
+        ignoreOrder: false,
+        experimentalUseImportModule: false,
+      },
       options
     );
 
@@ -355,6 +359,18 @@ class MiniCssExtractPlugin {
       : // eslint-disable-next-line global-require
         require('webpack');
 
+    if (this.options.experimentalUseImportModule) {
+      if (!compiler.options.experiments) {
+        throw new Error(
+          'experimentalUseImportModule is only support for webpack >= 5.32.0'
+        );
+      }
+      if (typeof compiler.options.experiments.executeModule === 'undefined') {
+        // eslint-disable-next-line no-param-reassign
+        compiler.options.experiments.executeModule = true;
+      }
+    }
+
     // TODO bug in webpack, remove it after it will be fixed
     // webpack tries to `require` loader firstly when serializer doesn't found
     if (
@@ -399,7 +415,9 @@ class MiniCssExtractPlugin {
 
       normalModuleHook.tap(pluginName, (loaderContext) => {
         // eslint-disable-next-line no-param-reassign
-        loaderContext[pluginSymbol] = true;
+        loaderContext[pluginSymbol] = {
+          experimentalUseImportModule: this.options.experimentalUseImportModule,
+        };
       });
     });
 

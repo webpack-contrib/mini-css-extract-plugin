@@ -39,13 +39,165 @@ export function pitch(request) {
 
   const callback = this.async();
 
-  if (!this[pluginSymbol]) {
+  const optionsFromPlugin = this[pluginSymbol];
+  if (!optionsFromPlugin) {
     callback(
       new Error(
         "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
       )
     );
 
+    return;
+  }
+
+  // TODO simplify after drop  webpack v4
+  // eslint-disable-next-line global-require
+  const webpack = this._compiler.webpack || require('webpack');
+
+  const handleExports = (originalExports, compilation, assets, assetsInfo) => {
+    let locals;
+
+    const esModule =
+      typeof options.esModule !== 'undefined' ? options.esModule : true;
+    const namedExport =
+      esModule && options.modules && options.modules.namedExport;
+
+    const addDependencies = (dependencies) => {
+      if (!Array.isArray(dependencies) && dependencies != null) {
+        throw new Error(
+          `Exported value was not extracted as an array: ${JSON.stringify(
+            dependencies
+          )}`
+        );
+      }
+
+      const identifierCountMap = new Map();
+      const emit = typeof options.emit !== 'undefined' ? options.emit : true;
+      let lastDep;
+
+      for (const dependency of dependencies) {
+        if (!dependency.identifier || !emit) {
+          // eslint-disable-next-line no-continue
+          continue;
+        }
+
+        const count = identifierCountMap.get(dependency.identifier) || 0;
+        const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
+
+        this._module.addDependency(
+          (lastDep = new CssDependency(dependency, dependency.context, count))
+        );
+        identifierCountMap.set(dependency.identifier, count + 1);
+      }
+
+      if (lastDep && assets) {
+        lastDep.assets = assets;
+        lastDep.assetsInfo = assetsInfo;
+      }
+    };
+
+    try {
+      // eslint-disable-next-line no-underscore-dangle
+      exports = originalExports.__esModule
+        ? originalExports.default
+        : originalExports;
+
+      if (namedExport) {
+        Object.keys(originalExports).forEach((key) => {
+          if (key !== 'default') {
+            if (!locals) {
+              locals = {};
+            }
+
+            locals[key] = originalExports[key];
+          }
+        });
+      } else {
+        locals = exports && exports.locals;
+      }
+
+      let dependencies;
+
+      if (!Array.isArray(exports)) {
+        dependencies = [[null, exports]];
+      } else {
+        dependencies = exports.map(([id, content, media, sourceMap]) => {
+          let identifier = id;
+          let context;
+          if (compilation) {
+            const module = findModuleById(compilation, id);
+            identifier = module.identifier();
+            ({ context } = module);
+          } else {
+            // TODO check if this context is used somewhere
+            context = this.rootContext;
+          }
+
+          return {
+            identifier,
+            context,
+            content: Buffer.from(content),
+            media,
+            sourceMap: sourceMap
+              ? Buffer.from(JSON.stringify(sourceMap))
+              : // eslint-disable-next-line no-undefined
+                undefined,
+          };
+        });
+      }
+
+      addDependencies(dependencies);
+    } catch (e) {
+      return callback(e);
+    }
+
+    const result = locals
+      ? namedExport
+        ? Object.keys(locals)
+            .map(
+              (key) => `\nexport const ${key} = ${JSON.stringify(locals[key])};`
+            )
+            .join('')
+        : `\n${
+            esModule ? 'export default' : 'module.exports ='
+          } ${JSON.stringify(locals)};`
+      : esModule
+      ? `\nexport {};`
+      : '';
+
+    let resultSource = `// extracted by ${pluginName}`;
+
+    resultSource += this.hot
+      ? hotLoader(result, { context: this.context, options, locals })
+      : result;
+
+    return callback(null, resultSource);
+  };
+
+  if (optionsFromPlugin.experimentalUseImportModule) {
+    if (!this.importModule) {
+      callback(
+        new Error(
+          "You are using experimentalUseImportModule but 'this.importModule' is not available in loader context. You need to have at least webpack 5.32.0."
+        )
+      );
+      return;
+    }
+    this.importModule(
+      `${this.resourcePath}.webpack[javascript/auto]!=!${request}`,
+      {
+        layer: options.layer,
+        publicPath: options.publicPath,
+      },
+      (err, exports) => {
+        if (err) {
+          callback(err);
+          return;
+        }
+
+        handleExports(exports);
+      }
+    );
     return;
   }
 
@@ -76,10 +228,6 @@ export function pitch(request) {
     `${pluginName} ${request}`,
     outputOptions
   );
-
-  // TODO simplify after drop  webpack v4
-  // eslint-disable-next-line global-require
-  const webpack = this._compiler.webpack || require('webpack');
 
   const { NodeTemplatePlugin } = webpack.node;
   const NodeTargetPlugin = webpack.node.NodeTargetPlugin
@@ -195,40 +343,6 @@ export function pitch(request) {
       assetsInfo.set(asset.name, asset.info);
     }
 
-    const addDependencies = (dependencies) => {
-      if (!Array.isArray(dependencies) && dependencies != null) {
-        throw new Error(
-          `Exported value was not extracted as an array: ${JSON.stringify(
-            dependencies
-          )}`
-        );
-      }
-
-      const identifierCountMap = new Map();
-      const emit = typeof options.emit !== 'undefined' ? options.emit : true;
-      let lastDep;
-
-      for (const dependency of dependencies) {
-        if (!dependency.identifier || !emit) {
-          // eslint-disable-next-line no-continue
-          continue;
-        }
-
-        const count = identifierCountMap.get(dependency.identifier) || 0;
-        const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
-
-        this._module.addDependency(
-          (lastDep = new CssDependency(dependency, dependency.context, count))
-        );
-        identifierCountMap.set(dependency.identifier, count + 1);
-      }
-
-      if (lastDep) {
-        lastDep.assets = assets;
-        lastDep.assetsInfo = assetsInfo;
-      }
-    };
-
     if (error) {
       return callback(error);
     }
@@ -249,82 +363,14 @@ export function pitch(request) {
       return callback(new Error("Didn't get a result from child compiler"));
     }
 
-    let locals;
-
-    const esModule =
-      typeof options.esModule !== 'undefined' ? options.esModule : true;
-    const namedExport =
-      esModule && options.modules && options.modules.namedExport;
-
+    let originalExports;
     try {
-      const originalExports = evalModuleCode(this, source, request);
-
-      // eslint-disable-next-line no-underscore-dangle
-      exports = originalExports.__esModule
-        ? originalExports.default
-        : originalExports;
-
-      if (namedExport) {
-        Object.keys(originalExports).forEach((key) => {
-          if (key !== 'default') {
-            if (!locals) {
-              locals = {};
-            }
-
-            locals[key] = originalExports[key];
-          }
-        });
-      } else {
-        locals = exports && exports.locals;
-      }
-
-      let dependencies;
-
-      if (!Array.isArray(exports)) {
-        dependencies = [[null, exports]];
-      } else {
-        dependencies = exports.map(([id, content, media, sourceMap]) => {
-          const module = findModuleById(compilation, id);
-
-          return {
-            identifier: module.identifier(),
-            context: module.context,
-            content: Buffer.from(content),
-            media,
-            sourceMap: sourceMap
-              ? Buffer.from(JSON.stringify(sourceMap))
-              : // eslint-disable-next-line no-undefined
-                undefined,
-          };
-        });
-      }
-
-      addDependencies(dependencies);
+      originalExports = evalModuleCode(this, source, request);
     } catch (e) {
       return callback(e);
     }
 
-    const result = locals
-      ? namedExport
-        ? Object.keys(locals)
-            .map(
-              (key) => `\nexport const ${key} = ${JSON.stringify(locals[key])};`
-            )
-            .join('')
-        : `\n${
-            esModule ? 'export default' : 'module.exports ='
-          } ${JSON.stringify(locals)};`
-      : esModule
-      ? `\nexport {};`
-      : '';
-
-    let resultSource = `// extracted by ${pluginName}`;
-
-    resultSource += this.hot
-      ? hotLoader(result, { context: this.context, options, locals })
-      : result;
-
-    return callback(null, resultSource);
+    return handleExports(originalExports, compilation, assets, assetsInfo);
   });
 }
 

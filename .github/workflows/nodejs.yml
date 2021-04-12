@@ -57,8 +57,15 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [10.x, 12.x, 14.x]
         webpack-version: [4, latest]
+        experimental-use-import-module: [false]
+        include:
+          - os: 'ubuntu-latest'
+            node-version: 14.x
+            webpack-version: latest
+            experimental-use-import-module: true
 
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental-use-import-module }}
 
     steps:
       - name: Setup Git
@@ -87,7 +94,12 @@ jobs:
         run: npm i webpack@${{ matrix.webpack-version }}
 
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
+        if: ${{ !matrix.experimental-use-import-module }}
         run: npm run test:coverage -- --ci
+
+      - name: Run optional tests for webpack version ${{ matrix.webpack-version }} with import module
+        if: ${{ matrix.experimental-use-import-module }}
+        run: EXPERIMENTAL_USE_IMPORT_MODULE=true npm run test:coverage -- --ci
 
       - name: Submit coverage data to codecov
         uses: codecov/codecov-action@v1

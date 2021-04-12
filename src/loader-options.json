@@ -18,6 +18,9 @@
     "esModule": {
       "type": "boolean"
     },
+    "layer": {
+      "type": "string"
+    },
     "modules": {
       "type": "object",
       "additionalProperties": false,
