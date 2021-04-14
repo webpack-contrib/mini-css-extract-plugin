@@ -174,6 +174,19 @@ export function pitch(request) {
     return callback(null, resultSource);
   };
 
+  const publicPath =
+    typeof options.publicPath === 'string'
+      ? options.publicPath === 'auto'
+        ? ''
+        : options.publicPath === '' || options.publicPath.endsWith('/')
+        ? options.publicPath
+        : `${options.publicPath}/`
+      : typeof options.publicPath === 'function'
+      ? options.publicPath(this.resourcePath, this.rootContext)
+      : this._compilation.outputOptions.publicPath === 'auto'
+      ? ''
+      : this._compilation.outputOptions.publicPath;
+
   if (optionsFromPlugin.experimentalUseImportModule) {
     if (!this.importModule) {
       callback(
@@ -183,11 +196,12 @@ export function pitch(request) {
       );
       return;
     }
+    console.log(publicPath);
     this.importModule(
       `${this.resourcePath}.webpack[javascript/auto]!=!${request}`,
       {
         layer: options.layer,
-        publicPath: options.publicPath,
+        publicPath,
       },
       (err, exports) => {
         if (err) {
@@ -206,18 +220,6 @@ export function pitch(request) {
   this.addDependency(this.resourcePath);
 
   const childFilename = '*';
-  const publicPath =
-    typeof options.publicPath === 'string'
-      ? options.publicPath === 'auto'
-        ? ''
-        : options.publicPath === '' || options.publicPath.endsWith('/')
-        ? options.publicPath
-        : `${options.publicPath}/`
-      : typeof options.publicPath === 'function'
-      ? options.publicPath(this.resourcePath, this.rootContext)
-      : this._compilation.outputOptions.publicPath === 'auto'
-      ? ''
-      : this._compilation.outputOptions.publicPath;
 
   const outputOptions = {
     filename: childFilename,
