@@ -191,7 +191,7 @@ export function pitch(request) {
     if (!this.importModule) {
       callback(
         new Error(
-          "You are using experimentalUseImportModule but 'this.importModule' is not available in loader context. You need to have at least webpack 5.32.0."
+          "You are using experimentalUseImportModule but 'this.importModule' is not available in loader context. You need to have at least webpack 5.33.2."
         )
       );
       return;

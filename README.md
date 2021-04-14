@@ -265,6 +265,8 @@ This improves performance and memory usage a lot, but isn't as stable as the nor
 
 When combined with `experiments.layers`, this adds a `layer` option to the loader options to specify the layer of the css execution.
 
+You need to have at least webpack 5.33.2.
+
 ### Loader Options
 
 |              Name               |         Type         |              Default               | Description                                                                       |
