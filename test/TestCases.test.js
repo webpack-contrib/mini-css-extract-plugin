@@ -7,6 +7,8 @@ import path from 'path';
 
 import webpack from 'webpack';
 
+import Self from '../src/index';
+
 function clearDirectory(dirPath) {
   let files;
 
@@ -111,14 +113,26 @@ describe('TestCases', () => {
             {
               mode: 'none',
               context: directoryForCase,
+            },
+            config,
+            {
               output: Object.assign(
                 {
                   path: outputDirectoryForCase,
                 },
                 config.output
               ),
-            },
-            config
+              plugins:
+                config.plugins &&
+                config.plugins.map((p) => {
+                  if (p.constructor === Self) {
+                    const { options } = p;
+                    options.experimentalUseImportModule = !!process.env
+                      .EXPERIMENTAL_USE_IMPORT_MODULE;
+                  }
+                  return p;
+                }),
+            }
           );
         }
 
@@ -175,7 +189,9 @@ describe('TestCases', () => {
           const expectedDirectory = path.resolve(directoryForCase, 'expected');
           const expectedDirectoryByVersion = path.join(
             expectedDirectory,
-            `webpack-${webpack.version[0]}`
+            `webpack-${webpack.version[0]}${
+              process.env.EXPERIMENTAL_USE_IMPORT_MODULE ? '-importModule' : ''
+            }`
           );
 
           if (/^hmr/.test(directory)) {

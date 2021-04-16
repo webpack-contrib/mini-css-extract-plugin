@@ -22,6 +22,10 @@
         }
       ]
     },
+    "experimentalUseImportModule": {
+      "description": "Enable the experimental importModule approach instead of using child compilers. This uses less memory and is faster.",
+      "type": "boolean"
+    },
     "ignoreOrder": {
       "type": "boolean"
     },
