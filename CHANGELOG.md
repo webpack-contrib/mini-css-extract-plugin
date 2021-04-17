@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.4.1...v1.5.0) (2021-04-17)
+
+
+### Features
+
+* add experimental support for `importModule`, improve perfomance ([#737](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/737)) ([8471ac2](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/8471ac24dde3d7e874995f8ab4814cc94b4179e1))
+
 ### [1.4.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.4.0...v1.4.1) (2021-04-07)
 
 
