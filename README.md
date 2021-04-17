@@ -267,6 +267,28 @@ When combined with `experiments.layers`, this adds a `layer` option to the loade
 
 You need to have at least webpack 5.33.2.
 
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      experimentalUseImportModule: true,
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+    ],
+  },
+};
+```
+
 ### Loader Options
 
 |              Name               |         Type         |              Default               | Description                                                                       |
