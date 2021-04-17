@@ -30,6 +30,9 @@
           "type": "boolean"
         }
       }
+    },
+    "experimentalUseImportModule": {
+      "type": "boolean"
     }
   }
 }
