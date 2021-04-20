@@ -544,9 +544,9 @@ module.exports = {
 ### Common use case
 
 `mini-css-extract-plugin` is more often used in `production` mode to get separate css files.
-For `development` mode (including `webpack-dev-server`) you can use `style-loader`, because it injects CSS into the DOM using multiple <style></style> and works faster.
+For `development` mode (including `webpack-dev-server`) you can use `style-loader`, because it injects CSS into the DOM using multiple `<style></style>` and works faster.
 
-> i Do not use together `style-loader` and `mini-css-extract-plugin`.
+> ⚠️ Do not use `style-loader` and `mini-css-extract-plugin` together.
 
 **webpack.config.js**
 
