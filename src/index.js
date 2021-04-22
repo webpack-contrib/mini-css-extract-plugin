@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
 import { validate } from 'schema-utils';
+import { SyncWaterfallHook } from 'tapable';
 
 import schema from './plugin-options.json';
 import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
@@ -27,6 +28,8 @@ const cssModuleCache = new WeakMap();
  * @type WeakMap<webpack, CssDependency>
  */
 const cssDependencyCache = new WeakMap();
+
+const compilerHookMap = new WeakMap();
 
 class MiniCssExtractPlugin {
   static getCssModule(webpack) {
@@ -298,6 +301,20 @@ class MiniCssExtractPlugin {
     }
 
     return CssDependency;
+  }
+
+  static getCompilerHooks(compiler) {
+    /**
+     * Prevent creation of multiple compiler hook maps to allow other integrations to get the current mapping.
+     */
+    let hooks = compilerHookMap.get(compiler);
+    if (!hooks) {
+      hooks = {
+        customize: new SyncWaterfallHook(['attributes']),
+      };
+      compilerHookMap.set(compiler, hooks);
+    }
+    return hooks;
   }
 
   constructor(options = {}) {
@@ -865,30 +882,46 @@ class MiniCssExtractPlugin {
               return null;
             }
 
+            const attributes = {
+              href: `${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId)`,
+              rel: JSON.stringify('stylesheet'),
+              onload: 'onLinkComplete',
+              onerror: 'onLinkComplete',
+            };
+
+            // Some attributes cannot be assigned through setAttribute, so we maintain
+            // a list of attributes that can safely be assigned through dot notation
+            const safeAttrs = ['href', 'rel', 'type', 'onload', 'onerror'];
+
+            if (this.runtimeOptions.linkType) {
+              attributes.type = JSON.stringify(this.runtimeOptions.linkType);
+            }
+
+            if (crossOriginLoading) {
+              attributes.crossOrigin = `(linkTag.href.indexOf(window.location.origin + '/') !== 0)
+                  ? ${JSON.stringify(crossOriginLoading)}
+                  : undefined`;
+            }
+
+            // Append static attributes
+            if (this.runtimeOptions.attributes) {
+              Object.entries(this.runtimeOptions.attributes).forEach(
+                ([key, value]) => {
+                  attributes[key] = JSON.stringify(value);
+                }
+              );
+            }
+
+            // Append dynamic attributes
+            MiniCssExtractPlugin.getCompilerHooks(compiler).customize.call(
+              attributes
+            );
+
             return Template.asString([
               `var createStylesheet = ${runtimeTemplate.basicFunction(
                 'chunkId, fullhref, resolve, reject',
                 [
                   'var linkTag = document.createElement("link");',
-                  this.runtimeOptions.attributes
-                    ? Template.asString(
-                        Object.entries(this.runtimeOptions.attributes).map(
-                          (entry) => {
-                            const [key, value] = entry;
-
-                            return `linkTag.setAttribute(${JSON.stringify(
-                              key
-                            )}, ${JSON.stringify(value)});`;
-                          }
-                        )
-                      )
-                    : '',
-                  'linkTag.rel = "stylesheet";',
-                  this.runtimeOptions.linkType
-                    ? `linkTag.type = ${JSON.stringify(
-                        this.runtimeOptions.linkType
-                      )};`
-                    : '',
                   `var onLinkComplete = ${runtimeTemplate.basicFunction(
                     'event',
                     [
@@ -910,19 +943,17 @@ class MiniCssExtractPlugin {
                       '}',
                     ]
                   )}`,
-                  'linkTag.onerror = linkTag.onload = onLinkComplete;',
-                  'linkTag.href = fullhref;',
-                  crossOriginLoading
-                    ? Template.asString([
-                        `if (linkTag.href.indexOf(window.location.origin + '/') !== 0) {`,
-                        Template.indent(
-                          `linkTag.crossOrigin = ${JSON.stringify(
-                            crossOriginLoading
-                          )};`
-                        ),
-                        '}',
-                      ])
-                    : '',
+                  Template.asString(
+                    Object.entries(attributes).map(([key, value]) => {
+                      if (safeAttrs.includes(key)) {
+                        return `linkTag.${key} = ${value};`;
+                      }
+
+                      return `linkTag.setAttribute(${JSON.stringify(
+                        key
+                      )}, ${value});`;
+                    })
+                  ),
                   typeof this.runtimeOptions.insert !== 'undefined'
                     ? typeof this.runtimeOptions.insert === 'function'
                       ? `(${this.runtimeOptions.insert.toString()})(linkTag)`
@@ -963,7 +994,7 @@ class MiniCssExtractPlugin {
                   'resolve, reject',
                   [
                     `var href = ${RuntimeGlobals.require}.miniCssF(chunkId);`,
-                    `var fullhref = ${RuntimeGlobals.publicPath} + href;`,
+                    `var fullhref = ${attributes.href};`,
                     'if(findStylesheet(href, fullhref)) return resolve();',
                     'createStylesheet(chunkId, fullhref, resolve, reject);',
                   ]
@@ -1034,7 +1065,7 @@ class MiniCssExtractPlugin {
                           'chunkId',
                           [
                             `var href = ${RuntimeGlobals.require}.miniCssF(chunkId);`,
-                            `var fullhref = ${RuntimeGlobals.publicPath} + href;`,
+                            `var fullhref = ${attributes.href};`,
                             'var oldTag = findStylesheet(href, fullhref);',
                             'if(!oldTag) return;',
                             `promises.push(new Promise(${runtimeTemplate.basicFunction(
