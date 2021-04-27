@@ -107,9 +107,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bClass", function() { return bClass; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cClass", function() { return cClass; });
 // extracted by mini-css-extract-plugin
-const aClass = "foo__style__a-class";
-const bClass = "foo__style__b__class";
-const cClass = "foo__style__cClass";
+var aClass = "foo__style__a-class";
+var bClass = "foo__style__b__class";
+var cClass = "foo__style__cClass";
 
 /***/ })
 /******/ ]);

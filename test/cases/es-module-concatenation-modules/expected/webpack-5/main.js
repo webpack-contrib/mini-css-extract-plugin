@@ -69,13 +69,13 @@ __webpack_require__.d(index_namespaceObject, {
 
 ;// CONCATENATED MODULE: ./a.css
 // extracted by mini-css-extract-plugin
-const a = "foo__a";
+var a = "foo__a";
 ;// CONCATENATED MODULE: ./b.css
 // extracted by mini-css-extract-plugin
-const b = "foo__b";
+var b = "foo__b";
 ;// CONCATENATED MODULE: ./c.css
 // extracted by mini-css-extract-plugin
-const c = "foo__c";
+var c = "foo__c";
 ;// CONCATENATED MODULE: ./index.js
 /* eslint-disable import/no-namespace */
 
