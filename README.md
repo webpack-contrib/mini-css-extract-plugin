@@ -120,7 +120,7 @@ Default: `document.head.appendChild(linkTag);`
 
 By default, the `mini-css-extract-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
 
-However in some circumstances it might be necessary to have finer control over the append target or even delay `link` elements instertion.
+However in some circumstances it might be necessary to have finer control over the append target or even delay `link` elements insertion.
 For example this is the case when you asynchronously load styles for an application that runs inside of an iframe.
 In such cases `insert` can be configured to be a function or a custom selector.
 
