@@ -155,7 +155,7 @@ export function pitch(request) {
       ? namedExport
         ? Object.keys(locals)
             .map(
-              (key) => `\nexport const ${key} = ${JSON.stringify(locals[key])};`
+              (key) => `\nexport var ${key} = ${JSON.stringify(locals[key])};`
             )
             .join('')
         : `\n${
