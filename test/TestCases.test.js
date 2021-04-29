@@ -106,6 +106,7 @@ describe('TestCases', () => {
           directoryForCase,
           'webpack.config.js'
         ));
+        const { context } = webpackConfig;
 
         for (const config of [].concat(webpackConfig)) {
           Object.assign(
@@ -132,7 +133,8 @@ describe('TestCases', () => {
                   }
                   return p;
                 }),
-            }
+            },
+            context ? { context } : {}
           );
         }
 

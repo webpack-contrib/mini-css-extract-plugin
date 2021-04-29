@@ -230,6 +230,18 @@ export function pitch(request) {
     outputOptions
   );
 
+  // The templates are compiled and executed by NodeJS - similar to server side rendering
+  // Unfortunately this causes issues as some loaders require an absolute URL to support ES Modules
+  // The following config enables relative URL support for the child compiler
+  childCompiler.options.module = { ...childCompiler.options.module };
+  childCompiler.options.module.parser = {
+    ...childCompiler.options.module.parser,
+  };
+  childCompiler.options.module.parser.javascript = {
+    ...childCompiler.options.module.parser.javascript,
+    url: 'relative',
+  };
+
   const { NodeTemplatePlugin } = webpack.node;
   const NodeTargetPlugin = webpack.node.NodeTargetPlugin
     ? webpack.node.NodeTargetPlugin
