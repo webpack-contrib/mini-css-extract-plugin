@@ -196,6 +196,7 @@ export function pitch(request) {
       );
       return;
     }
+
     this.importModule(
       `${this.resourcePath}.webpack[javascript/auto]!=!${request}`,
       {
