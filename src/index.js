@@ -619,7 +619,7 @@ class MiniCssExtractPlugin {
         }
       });
 
-      const { Template } = webpack;
+      const Template = webpack.Template || webpack.webpack.Template;
       const { mainTemplate } = compilation;
 
       if (isWebpack4) {
