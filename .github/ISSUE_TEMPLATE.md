@@ -6,7 +6,7 @@
 
   You arrived at this template because you felt none of the other options
   matched the kind of issue you'd like to report. Please use this opportunity to
-  tell us about your particular type of issue so we can try to accomodate
+  tell us about your particular type of issue so we can try to accommodate
   similar issues in the future.
 
   PLEASE do note, if you're using this to report an issue already covered by the
