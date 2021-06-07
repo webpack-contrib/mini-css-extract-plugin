@@ -58,7 +58,7 @@ const makeButton = (className, fn, shouldDisable = true) => {
   });
 };
 
-makeButton('.lazy-button', () => import('./lazy.js'));
+makeButton('.lazy-button', () => import('./lazy'));
 makeButton('.lazy-button2', () => import('./lazy2.css'));
 makeButton('.lazy-module-button', () =>
   import('./lazy.module.css').then((module) => {
@@ -77,7 +77,7 @@ makeButton('.preloaded-button2', () =>
   import(/* webpackChunkName: "preloaded2" */ './preloaded2')
 );
 
-makeButton('.lazy-failure-button', () => import('./lazy-failure.js'), false);
+makeButton('.lazy-failure-button', () => import('./lazy-failure'), false);
 
 makeButton('.crossorigin', () => {
   const originalPublicPath = __webpack_public_path__;
