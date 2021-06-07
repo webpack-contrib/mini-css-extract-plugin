@@ -1,6 +1,6 @@
 /* global document */
 
-const Self = require('../../../src/cjs.js');
+const Self = require('../../../src/cjs');
 
 module.exports = {
   module: {

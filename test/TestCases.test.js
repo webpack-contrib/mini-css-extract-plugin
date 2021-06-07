@@ -128,8 +128,8 @@ describe('TestCases', () => {
                 config.plugins.map((p) => {
                   if (p.constructor === Self) {
                     const { options } = p;
-                    options.experimentalUseImportModule = !!process.env
-                      .EXPERIMENTAL_USE_IMPORT_MODULE;
+                    options.experimentalUseImportModule =
+                      !!process.env.EXPERIMENTAL_USE_IMPORT_MODULE;
                   }
                   return p;
                 }),
