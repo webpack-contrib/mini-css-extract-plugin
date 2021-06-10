@@ -349,20 +349,20 @@ export function pitch(request) {
   }
 
   childCompiler.runAsChild((error, entries, compilation) => {
-    const assets = Object.create(null);
-    const assetsInfo = new Map();
-
-    for (const asset of compilation.getAssets()) {
-      assets[asset.name] = asset.source;
-      assetsInfo.set(asset.name, asset.info);
-    }
-
     if (error) {
       return callback(error);
     }
 
     if (compilation.errors.length > 0) {
       return callback(compilation.errors[0]);
+    }
+
+    const assets = Object.create(null);
+    const assetsInfo = new Map();
+
+    for (const asset of compilation.getAssets()) {
+      assets[asset.name] = asset.source;
+      assetsInfo.set(asset.name, asset.info);
     }
 
     compilation.fileDependencies.forEach((dep) => {
