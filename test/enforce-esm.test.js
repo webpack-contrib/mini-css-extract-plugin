@@ -4,7 +4,9 @@ import { getCompiler, source, compile } from './helpers';
 
 const isWebpack4 = webpack.version[0] === '4';
 
-it('should enforce esm for empty module without options.esModule', async (done) => {
+it('should enforce esm for empty module without options.esModule', async () => {
+  expect.assertions(3);
+
   const compiler = getCompiler(
     './esm.js',
     {},
@@ -23,10 +25,11 @@ it('should enforce esm for empty module without options.esModule', async (done) 
     "// extracted by mini-css-extract-plugin
     export {};"
   `);
-  done();
 });
 
-it('should enforce esm for empty module with options.esModule', async (done) => {
+it('should enforce esm for empty module with options.esModule', async () => {
+  expect.assertions(3);
+
   const compiler = getCompiler(
     './esm.js',
     { esModule: true },
@@ -45,10 +48,11 @@ it('should enforce esm for empty module with options.esModule', async (done) => 
     "// extracted by mini-css-extract-plugin
     export {};"
   `);
-  done();
 });
 
-it('should keep empty module when options.esModule is equal "false"', async (done) => {
+it('should keep empty module when options.esModule is equal "false"', async () => {
+  expect.assertions(3);
+
   const compiler = getCompiler(
     './esm.js',
     { esModule: false },
@@ -66,5 +70,4 @@ it('should keep empty module when options.esModule is equal "false"', async (don
   expect(source('./simple.css', stats)).toMatchInlineSnapshot(
     `"// extracted by mini-css-extract-plugin"`
   );
-  done();
 });
