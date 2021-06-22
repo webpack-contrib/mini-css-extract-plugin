@@ -32,29 +32,13 @@ export default (fixture, loaderOptions = {}, config = {}) => {
             },
           ],
         },
-      ].concat(
-        webpack.version[0] !== '4'
-          ? {
-              test: /\.svg$/,
-              type: 'asset/resource',
-              generator: {
-                filename: '[name][ext]',
-              },
-            }
-          : [
-              {
-                test: /\.svg$/i,
-                rules: [
-                  {
-                    loader: 'file-loader',
-                    options: {
-                      name: '[name].[ext]',
-                    },
-                  },
-                ],
-              },
-            ]
-      ),
+      ].concat({
+        test: /\.svg$/,
+        type: 'asset/resource',
+        generator: {
+          filename: '[name][ext]',
+        },
+      }),
     },
     plugins: [
       new MiniCssExtractPlugin({
@@ -70,11 +54,7 @@ export default (fixture, loaderOptions = {}, config = {}) => {
   const compiler = webpack(fullConfig);
 
   if (!outputFileSystem) {
-    const outputFS = createFsFromVolume(new Volume());
-    // Todo remove when we drop webpack@4 support
-    outputFS.join = path.join.bind(path);
-
-    compiler.outputFileSystem = outputFS;
+    compiler.outputFileSystem = createFsFromVolume(new Volume());
   } else {
     compiler.outputFileSystem = outputFileSystem;
   }
