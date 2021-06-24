@@ -1,6 +1,7 @@
 import NativeModule from 'module';
 
 const MODULE_TYPE = 'css/mini-extract';
+const AUTO_PUBLIC_PATH = '__MINI_CSS_EXTRACT_PLUGIN_PUBLIC_PATH__';
 
 function findModuleById(compilation, id) {
   const { modules, chunkGraph } = compilation;
@@ -51,6 +52,7 @@ function compareModulesByIdentifier(a, b) {
 
 export {
   MODULE_TYPE,
+  AUTO_PUBLIC_PATH,
   findModuleById,
   evalModuleCode,
   compareModulesByIdentifier,

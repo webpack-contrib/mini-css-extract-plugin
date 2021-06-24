@@ -3,7 +3,7 @@ import path from 'path';
 import loaderUtils from 'loader-utils';
 import { validate } from 'schema-utils';
 
-import { findModuleById, evalModuleCode } from './utils';
+import { findModuleById, evalModuleCode, AUTO_PUBLIC_PATH } from './utils';
 import schema from './loader-options.json';
 
 import MiniCssExtractPlugin, { pluginName, pluginSymbol } from './index';
@@ -176,15 +176,16 @@ export function pitch(request) {
 
   const publicPath =
     typeof options.publicPath === 'string'
-      ? options.publicPath === 'auto'
-        ? ''
-        : options.publicPath === '' || options.publicPath.endsWith('/')
+      ? options.publicPath === 'auto' || options.publicPath === ''
+        ? AUTO_PUBLIC_PATH
+        : options.publicPath.endsWith('/')
         ? options.publicPath
         : `${options.publicPath}/`
       : typeof options.publicPath === 'function'
       ? options.publicPath(this.resourcePath, this.rootContext)
-      : this._compilation.outputOptions.publicPath === 'auto'
-      ? ''
+      : this._compilation.outputOptions.publicPath === 'auto' ||
+        this._compilation.outputOptions.publicPath === ''
+      ? AUTO_PUBLIC_PATH
       : this._compilation.outputOptions.publicPath;
 
   if (optionsFromPlugin.experimentalUseImportModule) {
@@ -299,8 +300,6 @@ export function pitch(request) {
       source =
         compilation.assets[childFilename] &&
         compilation.assets[childFilename].source();
-
-      // console.log(source);
 
       // Remove all chunk assets
       compilation.chunks.forEach((chunk) => {
