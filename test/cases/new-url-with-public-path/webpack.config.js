@@ -13,7 +13,7 @@ module.exports = {
           {
             loader: Self.loader,
             options: {
-              publicPath: 'public',
+              publicPath: 'public/',
             },
           },
           './mockLoader',

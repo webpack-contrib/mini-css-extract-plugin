@@ -174,19 +174,18 @@ export function pitch(request) {
     return callback(null, resultSource);
   };
 
-  const publicPath =
-    typeof options.publicPath === 'string'
-      ? options.publicPath === 'auto' || options.publicPath === ''
-        ? AUTO_PUBLIC_PATH
-        : options.publicPath.endsWith('/')
-        ? options.publicPath
-        : `${options.publicPath}/`
-      : typeof options.publicPath === 'function'
-      ? options.publicPath(this.resourcePath, this.rootContext)
-      : this._compilation.outputOptions.publicPath === 'auto' ||
-        this._compilation.outputOptions.publicPath === ''
-      ? AUTO_PUBLIC_PATH
-      : this._compilation.outputOptions.publicPath;
+  let { publicPath } = this._compilation.outputOptions;
+
+  if (typeof options.publicPath === 'string') {
+    // eslint-disable-next-line prefer-destructuring
+    publicPath = options.publicPath;
+  } else if (typeof options.publicPath === 'function') {
+    publicPath = options.publicPath(this.resourcePath, this.rootContext);
+  }
+
+  if (publicPath === 'auto') {
+    publicPath = AUTO_PUBLIC_PATH;
+  }
 
   if (optionsFromPlugin.experimentalUseImportModule) {
     if (!this.importModule) {
