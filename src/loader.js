@@ -3,7 +3,7 @@ import path from 'path';
 import loaderUtils from 'loader-utils';
 import { validate } from 'schema-utils';
 
-import { findModuleById, evalModuleCode } from './utils';
+import { findModuleById, evalModuleCode, AUTO_PUBLIC_PATH } from './utils';
 import schema from './loader-options.json';
 
 import MiniCssExtractPlugin, { pluginName, pluginSymbol } from './index';
@@ -50,9 +50,7 @@ export function pitch(request) {
     return;
   }
 
-  // TODO simplify after drop  webpack v4
-  // eslint-disable-next-line global-require
-  const webpack = this._compiler.webpack || require('webpack');
+  const { webpack } = this._compiler;
 
   const handleExports = (originalExports, compilation, assets, assetsInfo) => {
     let locals;
@@ -176,18 +174,18 @@ export function pitch(request) {
     return callback(null, resultSource);
   };
 
-  const publicPath =
-    typeof options.publicPath === 'string'
-      ? options.publicPath === 'auto'
-        ? ''
-        : options.publicPath === '' || options.publicPath.endsWith('/')
-        ? options.publicPath
-        : `${options.publicPath}/`
-      : typeof options.publicPath === 'function'
-      ? options.publicPath(this.resourcePath, this.rootContext)
-      : this._compilation.outputOptions.publicPath === 'auto'
-      ? ''
-      : this._compilation.outputOptions.publicPath;
+  let { publicPath } = this._compilation.outputOptions;
+
+  if (typeof options.publicPath === 'string') {
+    // eslint-disable-next-line prefer-destructuring
+    publicPath = options.publicPath;
+  } else if (typeof options.publicPath === 'function') {
+    publicPath = options.publicPath(this.resourcePath, this.rootContext);
+  }
+
+  if (publicPath === 'auto') {
+    publicPath = AUTO_PUBLIC_PATH;
+  }
 
   if (optionsFromPlugin.experimentalUseImportModule) {
     if (!this.importModule) {
@@ -246,56 +244,38 @@ export function pitch(request) {
   };
 
   const { NodeTemplatePlugin } = webpack.node;
-  const NodeTargetPlugin = webpack.node.NodeTargetPlugin
-    ? webpack.node.NodeTargetPlugin
-    : // eslint-disable-next-line global-require
-      require('webpack/lib/node/NodeTargetPlugin');
+  const { NodeTargetPlugin } = webpack.node;
 
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
 
   const { EntryOptionPlugin } = webpack;
 
-  if (EntryOptionPlugin) {
-    const {
-      library: { EnableLibraryPlugin },
-    } = webpack;
+  const {
+    library: { EnableLibraryPlugin },
+  } = webpack;
 
-    new EnableLibraryPlugin('commonjs2').apply(childCompiler);
+  new EnableLibraryPlugin('commonjs2').apply(childCompiler);
 
-    EntryOptionPlugin.applyEntryOption(childCompiler, this.context, {
-      child: {
-        library: {
-          type: 'commonjs2',
-        },
-        import: [`!!${request}`],
+  EntryOptionPlugin.applyEntryOption(childCompiler, this.context, {
+    child: {
+      library: {
+        type: 'commonjs2',
       },
-    });
-  } else {
-    const { LibraryTemplatePlugin, SingleEntryPlugin } = webpack;
-
-    new LibraryTemplatePlugin(null, 'commonjs2').apply(childCompiler);
-    new SingleEntryPlugin(this.context, `!!${request}`, pluginName).apply(
-      childCompiler
-    );
-  }
-
+      import: [`!!${request}`],
+    },
+  });
   const { LimitChunkCountPlugin } = webpack.optimize;
 
   new LimitChunkCountPlugin({ maxChunks: 1 }).apply(childCompiler);
 
-  const NormalModule = webpack.NormalModule
-    ? webpack.NormalModule
-    : // eslint-disable-next-line global-require
-      require('webpack/lib/NormalModule');
+  const { NormalModule } = webpack;
 
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
     (compilation) => {
       const normalModuleHook =
-        typeof NormalModule.getCompilationHooks !== 'undefined'
-          ? NormalModule.getCompilationHooks(compilation).loader
-          : compilation.hooks.normalModuleLoader;
+        NormalModule.getCompilationHooks(compilation).loader;
 
       normalModuleHook.tap(`${pluginName} loader`, (loaderContext, module) => {
         if (module.request === request) {
@@ -314,12 +294,8 @@ export function pitch(request) {
 
   let source;
 
-  const isWebpack4 = childCompiler.webpack
-    ? false
-    : typeof childCompiler.resolvers !== 'undefined';
-
-  if (isWebpack4) {
-    childCompiler.hooks.afterCompile.tap(pluginName, (compilation) => {
+  childCompiler.hooks.compilation.tap(pluginName, (compilation) => {
+    compilation.hooks.processAssets.tap(pluginName, () => {
       source =
         compilation.assets[childFilename] &&
         compilation.assets[childFilename].source();
@@ -327,28 +303,11 @@ export function pitch(request) {
       // Remove all chunk assets
       compilation.chunks.forEach((chunk) => {
         chunk.files.forEach((file) => {
-          delete compilation.assets[file]; // eslint-disable-line no-param-reassign
+          compilation.deleteAsset(file);
         });
       });
     });
-  } else {
-    childCompiler.hooks.compilation.tap(pluginName, (compilation) => {
-      compilation.hooks.processAssets.tap(pluginName, () => {
-        source =
-          compilation.assets[childFilename] &&
-          compilation.assets[childFilename].source();
-
-        // console.log(source);
-
-        // Remove all chunk assets
-        compilation.chunks.forEach((chunk) => {
-          chunk.files.forEach((file) => {
-            compilation.deleteAsset(file);
-          });
-        });
-      });
-    });
-  }
+  });
 
   childCompiler.runAsChild((error, entries, compilation) => {
     if (error) {

@@ -20,11 +20,8 @@ describe('TestMemoryFS', () => {
       context: directoryForCase,
       cache: false,
     });
-    const outputFileSystem = createFsFromVolume(new Volume());
-    // Todo remove when we drop webpack@4 support
-    outputFileSystem.join = path.join.bind(path);
 
-    compiler.outputFileSystem = outputFileSystem;
+    compiler.outputFileSystem = createFsFromVolume(new Volume());
 
     compiler.run((err1, stats1) => {
       if (err1) {
