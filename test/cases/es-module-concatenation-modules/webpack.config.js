@@ -14,9 +14,6 @@ module.exports = {
             loader: Self.loader,
             options: {
               esModule: true,
-              modules: {
-                namedExport: true,
-              },
             },
           },
           {

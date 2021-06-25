@@ -56,12 +56,10 @@ export function pitch(request) {
 
   const handleExports = (originalExports, compilation, assets, assetsInfo) => {
     let locals;
+    let namedExport;
 
     const esModule =
       typeof options.esModule !== 'undefined' ? options.esModule : true;
-    const namedExport =
-      esModule && options.modules && options.modules.namedExport;
-
     const addDependencies = (dependencies) => {
       if (!Array.isArray(dependencies) && dependencies != null) {
         throw new Error(
@@ -101,6 +99,10 @@ export function pitch(request) {
       const exports = originalExports.__esModule
         ? originalExports.default
         : originalExports;
+
+      namedExport =
+        // eslint-disable-next-line no-underscore-dangle
+        originalExports.__esModule && !('locals' in originalExports.default);
 
       if (namedExport) {
         Object.keys(originalExports).forEach((key) => {

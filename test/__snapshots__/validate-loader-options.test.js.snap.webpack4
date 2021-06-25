@@ -5,18 +5,6 @@ exports[`validate options should throw an error on the "esModule" option with "1
  - options.esModule should be a boolean."
 `;
 
-exports[`validate options should throw an error on the "modules" option with "{"namedExport":"false"}" value 1`] = `
-"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
- - options.modules.namedExport should be a boolean.
-   -> Enables/disables ES modules named export for locals (https://webpack.js.org/plugins/mini-css-extract-plugin/#namedexport)."
-`;
-
-exports[`validate options should throw an error on the "modules" option with "true" value 1`] = `
-"Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
- - options.modules should be an object:
-   object { namedExport? }"
-`;
-
 exports[`validate options should throw an error on the "publicPath" option with "true" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options.publicPath should be one of these:
@@ -29,47 +17,47 @@ exports[`validate options should throw an error on the "publicPath" option with 
 exports[`validate options should throw an error on the "unknown" option with "/test/" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, emit?, esModule?, layer?, modules? }"
+   object { publicPath?, emit?, esModule?, layer? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "[]" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, emit?, esModule?, layer?, modules? }"
+   object { publicPath?, emit?, esModule?, layer? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "{"foo":"bar"}" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, emit?, esModule?, layer?, modules? }"
+   object { publicPath?, emit?, esModule?, layer? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "{}" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, emit?, esModule?, layer?, modules? }"
+   object { publicPath?, emit?, esModule?, layer? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "1" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, emit?, esModule?, layer?, modules? }"
+   object { publicPath?, emit?, esModule?, layer? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "false" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, emit?, esModule?, layer?, modules? }"
+   object { publicPath?, emit?, esModule?, layer? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "test" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, emit?, esModule?, layer?, modules? }"
+   object { publicPath?, emit?, esModule?, layer? }"
 `;
 
 exports[`validate options should throw an error on the "unknown" option with "true" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin Loader has been initialized using an options object that does not match the API schema.
  - options has an unknown property 'unknown'. These properties are valid:
-   object { publicPath?, emit?, esModule?, layer?, modules? }"
+   object { publicPath?, emit?, esModule?, layer? }"
 `;
