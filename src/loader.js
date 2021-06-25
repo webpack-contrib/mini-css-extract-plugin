@@ -1,7 +1,6 @@
 import path from 'path';
 
 import loaderUtils from 'loader-utils';
-import { validate } from 'schema-utils';
 
 import { findModuleById, evalModuleCode, AUTO_PUBLIC_PATH } from './utils';
 import schema from './loader-options.json';
@@ -30,16 +29,10 @@ function hotLoader(content, context) {
 }
 
 export function pitch(request) {
-  const options = loaderUtils.getOptions(this) || {};
-
-  validate(schema, options, {
-    name: 'Mini CSS Extract Plugin Loader',
-    baseDataPath: 'options',
-  });
-
+  const options = this.getOptions(schema);
   const callback = this.async();
-
   const optionsFromPlugin = this[pluginSymbol];
+
   if (!optionsFromPlugin) {
     callback(
       new Error(

@@ -325,7 +325,6 @@ class MiniCssExtractPlugin {
 
   constructor(options = {}) {
     validate(schema, options, {
-      name: 'Mini CSS Extract Plugin',
       baseDataPath: 'options',
     });
 
