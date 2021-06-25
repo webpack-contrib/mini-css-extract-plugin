@@ -2,8 +2,14 @@
 
 import { validate } from 'schema-utils';
 
+import { getUndoPath } from 'webpack/lib/util/identifier';
+
 import schema from './plugin-options.json';
-import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
+import {
+  MODULE_TYPE,
+  AUTO_PUBLIC_PATH,
+  compareModulesByIdentifier,
+} from './utils';
 
 export const pluginName = 'mini-css-extract-plugin';
 export const pluginSymbol = Symbol(pluginName);
@@ -433,7 +439,12 @@ class MiniCssExtractPlugin {
                 compilation,
                 chunk,
                 renderedModules,
-                compilation.runtimeTemplate.requestShortener
+                compilation.runtimeTemplate.requestShortener,
+                filenameTemplate,
+                {
+                  contentHashType: MODULE_TYPE,
+                  chunk,
+                }
               ),
             filenameTemplate,
             pathOptions: {
@@ -915,7 +926,15 @@ class MiniCssExtractPlugin {
     return usedModules;
   }
 
-  renderContentAsset(compiler, compilation, chunk, modules, requestShortener) {
+  renderContentAsset(
+    compiler,
+    compilation,
+    chunk,
+    modules,
+    requestShortener,
+    filenameTemplate,
+    pathData
+  ) {
     const usedModules = this.sortModules(
       compilation,
       chunk,
@@ -947,6 +966,15 @@ class MiniCssExtractPlugin {
         if (m.media) {
           source.add(`@media ${m.media} {\n`);
         }
+
+        const { path: filename } = compilation.getPathWithInfo(
+          filenameTemplate,
+          pathData
+        );
+
+        const undoPath = getUndoPath(filename, compiler.outputPath, false);
+
+        content = content.replace(new RegExp(AUTO_PUBLIC_PATH, 'g'), undoPath);
 
         if (m.sourceMap) {
           source.add(
