@@ -392,14 +392,12 @@ class MiniCssExtractPlugin {
 
     // TODO bug in webpack, remove it after it will be fixed
     // webpack tries to `require` loader firstly when serializer doesn't found
-    if (
-        !registered.has(webpack)
-    ) {
+    if (!registered.has(webpack)) {
       registered.add(webpack);
 
       webpack.util.serialization.registerLoader(
-          /^mini-css-extract-plugin\//,
-          trueFn
+        /^mini-css-extract-plugin\//,
+        trueFn
       );
     }
 
