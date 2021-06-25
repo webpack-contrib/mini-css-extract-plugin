@@ -98,7 +98,7 @@ export function pitch(request) {
 
     try {
       // eslint-disable-next-line no-underscore-dangle
-      exports = originalExports.__esModule
+      const exports = originalExports.__esModule
         ? originalExports.default
         : originalExports;
 
