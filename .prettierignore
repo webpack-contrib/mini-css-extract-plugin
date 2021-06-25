@@ -2,6 +2,7 @@
 /dist
 /node_modules
 /test/fixtures
+/test/manual/dist
 /test/cases/*/expected
 /test/js
 CHANGELOG.md
