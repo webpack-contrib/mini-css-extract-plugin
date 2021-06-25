@@ -3,7 +3,7 @@
 import { validate } from 'schema-utils';
 
 import schema from './plugin-options.json';
-import { MODULE_TYPE, compareModulesByIdentifier } from './utils';
+import { trueFn, MODULE_TYPE, compareModulesByIdentifier } from './utils';
 
 export const pluginName = 'mini-css-extract-plugin';
 export const pluginSymbol = Symbol(pluginName);
@@ -27,6 +27,8 @@ const cssModuleCache = new WeakMap();
  * @type WeakMap<webpack, CssDependency>
  */
 const cssDependencyCache = new WeakMap();
+
+const registered = new WeakSet();
 
 class MiniCssExtractPlugin {
   static getCssModule(webpack) {
@@ -376,11 +378,14 @@ class MiniCssExtractPlugin {
     if (
       webpack.util &&
       webpack.util.serialization &&
-      webpack.util.serialization.registerLoader
+      webpack.util.serialization.registerLoader &&
+      !registered.has(webpack)
     ) {
+      registered.add(webpack);
+
       webpack.util.serialization.registerLoader(
         /^mini-css-extract-plugin\//,
-        () => true
+        trueFn
       );
     }
 

@@ -1,6 +1,8 @@
 import NativeModule from 'module';
 
-const MODULE_TYPE = 'css/mini-extract';
+function trueFn() {
+  return true;
+}
 
 function findModuleById(compilation, id) {
   const { modules, chunkGraph } = compilation;
@@ -49,9 +51,12 @@ function compareModulesByIdentifier(a, b) {
   return compareIds(a.identifier(), b.identifier());
 }
 
+const MODULE_TYPE = 'css/mini-extract';
+
 export {
-  MODULE_TYPE,
+  trueFn,
   findModuleById,
   evalModuleCode,
   compareModulesByIdentifier,
+  MODULE_TYPE,
 };
