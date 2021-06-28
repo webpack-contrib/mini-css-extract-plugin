@@ -58,10 +58,9 @@ class MiniCssExtractPlugin {
         this.content = content;
         this.media = media;
         this.sourceMap = sourceMap;
-        this.buildInfo = {
-          assets,
-          assetsInfo,
-        };
+        this.assets = assets;
+        this.assetsInfo = assetsInfo;
+        this._needBuild = true;
         this.buildMeta = {};
       }
 
@@ -103,34 +102,60 @@ class MiniCssExtractPlugin {
       }
 
       updateCacheModule(module) {
-        this.content = module.content;
-        this.media = module.media;
-        this.sourceMap = module.sourceMap;
+        if (
+          this.content !== module.content ||
+          this.media !== module.media ||
+          this.sourceMap !== module.sourceMap ||
+          this.assets !== module.assets ||
+          this.assetsInfo !== module.assetsInfo
+        ) {
+          this._needBuild = true;
+
+          this.content = module.content;
+          this.media = module.media;
+          this.sourceMap = module.sourceMap;
+          this.assets = module.assets;
+          this.assetsInfo = module.assetsInfo;
+        }
       }
 
       // eslint-disable-next-line class-methods-use-this
       needRebuild() {
-        return true;
+        return this._needBuild;
       }
 
       // eslint-disable-next-line class-methods-use-this
       needBuild(context, callback) {
-        callback(null, false);
+        callback(null, this._needBuild);
       }
 
       build(options, compilation, resolver, fileSystem, callback) {
-        this.buildInfo = {};
+        this.buildInfo = {
+          assets: this.assets,
+          assetsInfo: this.assetsInfo,
+          cacheable: true,
+          hash: this._computeHash(compilation.outputOptions.hashFunction),
+        };
         this.buildMeta = {};
+        this._needBuild = false;
 
         callback();
+      }
+
+      _computeHash(hashFunction) {
+        const hash = webpack.util.createHash(hashFunction);
+
+        hash.update(this.content);
+        hash.update(this.media || '');
+        hash.update(this.sourceMap || '');
+
+        return hash.digest('hex');
       }
 
       updateHash(hash, context) {
         super.updateHash(hash, context);
 
-        hash.update(this.content);
-        hash.update(this.media || '');
-        hash.update(this.sourceMap ? JSON.stringify(this.sourceMap) : '');
+        hash.update(this.buildInfo.hash);
       }
 
       serialize(context) {
@@ -142,12 +167,17 @@ class MiniCssExtractPlugin {
         write(this.content);
         write(this.media);
         write(this.sourceMap);
-        write(this.buildInfo);
+        write(this.assets);
+        write(this.assetsInfo);
+
+        write(this._needBuild);
 
         super.serialize(context);
       }
 
       deserialize(context) {
+        this._needBuild = context.read();
+
         super.deserialize(context);
       }
     }
@@ -176,7 +206,8 @@ class MiniCssExtractPlugin {
             const content = read();
             const media = read();
             const sourceMap = read();
-            const { assets, assetsInfo } = read();
+            const assets = read();
+            const assetsInfo = read();
 
             const dep = new CssModule({
               context: contextModule,
@@ -364,7 +395,7 @@ class MiniCssExtractPlugin {
     if (this.options.experimentalUseImportModule) {
       if (!compiler.options.experiments) {
         throw new Error(
-          'experimentalUseImportModule is only support for webpack >= 5.32.0'
+          'experimentalUseImportModule is only support for webpack >= 5.33.2'
         );
       }
       if (typeof compiler.options.experiments.executeModule === 'undefined') {
@@ -613,8 +644,14 @@ class MiniCssExtractPlugin {
             : webpack.util.createHash;
           const hash = createHash(hashFunction);
 
-          for (const m of modules) {
-            m.updateHash(hash, { chunkGraph });
+          if (isWebpack4) {
+            for (const m of modules) {
+              m.updateHash(hash);
+            }
+          } else {
+            for (const m of modules) {
+              hash.update(chunkGraph.getModuleHash(m, chunk.runtime));
+            }
           }
 
           // eslint-disable-next-line no-param-reassign
