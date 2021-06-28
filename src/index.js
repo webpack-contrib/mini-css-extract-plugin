@@ -833,10 +833,6 @@ class MiniCssExtractPlugin {
     }
 
     const modulesList = [...modules];
-    const moduleIndexFunctionName =
-      typeof compilation.chunkGraph !== 'undefined'
-        ? 'getModulePostOrderIndex'
-        : 'getModuleIndex2';
     // Store dependencies for modules
     const moduleDependencies = new Map(modulesList.map((m) => [m, new Set()]));
     const moduleDependenciesReasons = new Map(
@@ -845,34 +841,40 @@ class MiniCssExtractPlugin {
     // Get ordered list of modules per chunk group
     // This loop also gathers dependencies from the ordered lists
     // Lists are in reverse order to allow to use Array.pop()
-    const modulesByChunkGroup = Array.from(chunk.groupsIterable, (cg) => {
-      const sortedModules = modulesList
-        .map((m) => {
-          return {
-            module: m,
-            index: cg[moduleIndexFunctionName](m),
-          };
-        })
-        // eslint-disable-next-line no-undefined
-        .filter((item) => item.index !== undefined)
-        .sort((a, b) => b.index - a.index)
-        .map((item) => item.module);
+    const modulesByChunkGroup = Array.from(
+      chunk.groupsIterable,
+      (chunkGroup) => {
+        const sortedModules = modulesList
+          .map((module) => {
+            return {
+              module,
+              index: chunkGroup.getModulePostOrderIndex(module),
+            };
+          })
+          // eslint-disable-next-line no-undefined
+          .filter((item) => item.index !== undefined)
+          .sort((a, b) => b.index - a.index)
+          .map((item) => item.module);
 
-      for (let i = 0; i < sortedModules.length; i++) {
-        const set = moduleDependencies.get(sortedModules[i]);
-        const reasons = moduleDependenciesReasons.get(sortedModules[i]);
+        for (let i = 0; i < sortedModules.length; i++) {
+          const set = moduleDependencies.get(sortedModules[i]);
+          const reasons = moduleDependenciesReasons.get(sortedModules[i]);
 
-        for (let j = i + 1; j < sortedModules.length; j++) {
-          const module = sortedModules[j];
-          set.add(module);
-          const reason = reasons.get(module) || new Set();
-          reason.add(cg);
-          reasons.set(module, reason);
+          for (let j = i + 1; j < sortedModules.length; j++) {
+            const module = sortedModules[j];
+
+            set.add(module);
+
+            const reason = reasons.get(module) || new Set();
+
+            reason.add(chunkGroup);
+            reasons.set(module, reason);
+          }
         }
-      }
 
-      return sortedModules;
-    });
+        return sortedModules;
+      }
+    );
 
     // set with already included modules in correct order
     usedModules = new Set();
