@@ -130,7 +130,7 @@
 /******/ 		// This function allow to reference all chunks
 /******/ 		__webpack_require__.miniCssF = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + "main" + "." + "a7263f8f763dcf4051bc" + ".css";
+/******/ 			return "" + "main" + "." + "a45a4571ab5cece12cf0" + ".css";
 /******/ 		};
 /******/ 	})();
 /******/ 	
