@@ -61,7 +61,6 @@ class MiniCssExtractPlugin {
         this.assets = assets;
         this.assetsInfo = assetsInfo;
         this._needBuild = true;
-        this.buildMeta = {};
       }
 
       // no source() so webpack 4 doesn't do add stuff to the bundle
