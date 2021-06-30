@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.6.2...v2.0.0) (2021-06-30)
+
+### NOTES
+
+In the current release we have fixed many problems with `publicPath`, previously to generate relative URLs inside CSS files developers use different hacks: `publicPath: ''`, `publicPath: '../'`, using relative `../../` in the `outputPath` option for `file-loader` and etc. Now you don't need it anymore. Webpack v5 uses `publicPath: "auto"` by default, which means to always generate relative URLs, and now `mini-css-extract-plugin` does the same. 
+
+**We strongly recommend use `auto` value by default (except when using CDN).**
+
+**We also want to show you that the [`file-loader`](https://github.com/webpack-contrib/file-loader) and [`url-loader`](https://github.com/webpack-contrib/url-loader) are outdated, please migrate on [Asset Modules](https://webpack.js.org/guides/asset-modules/).**
+
+### ⚠ BREAKING CHANGES
+
+* minimum supported `Node.js` version is `12.13.0`
+* minimum supported `webpack` version is `5.0.0`
+* the `modules.namedExport` option was removed, you don't need it anymore, because we respect the `modules.namedExport` option from `css-loader`, just remove it
+* the `publicPath` option no longer automatically adds `/` (trailing slash), you need to specify, you need to specify it yourself if it is absent, i.e. if you have `publicPath: "/my/public/path"` replace it with `publicPath: "/my/public/path/"`
+
+### Bug Fixes
+
+* generating correct relative `url()` for assets inside CSS files when you use `publicPath: "auto"` (default value)
+
+
 ### [1.6.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v1.6.1...v1.6.2) (2021-06-28)
 
 ### Bug Fixes
