@@ -1,4 +1,5 @@
 {
+  "title": "Mini CSS Extract Plugin options",
   "type": "object",
   "additionalProperties": false,
   "properties": {

@@ -6,6 +6,7 @@ npm-debug.log*
 /dist
 /test/js
 /test/outputs
+/test/manual/dist
 /local
 /reports
 /node_modules

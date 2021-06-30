@@ -10,10 +10,6 @@ describe('validate options', () => {
       success: [true, false],
       failure: [1],
     },
-    modules: {
-      success: [{ namedExport: true }, { namedExport: false }],
-      failure: ['true', { namedExport: 'false' }],
-    },
     unknown: {
       success: [],
       failure: [1, true, false, 'test', /test/, [], {}, { foo: 'bar' }],

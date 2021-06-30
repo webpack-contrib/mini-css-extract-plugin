@@ -296,7 +296,6 @@ module.exports = {
 | **[`publicPath`](#publicPath)** | `{String\|Function}` | `webpackOptions.output.publicPath` | Specifies a custom public path for the external resources like images, files, etc |
 |       **[`emit`](#emit)**       |     `{Boolean}`      |               `true`               | If false, the plugin will extract the CSS but **will not** emit the file          |
 |   **[`esModule`](#esModule)**   |     `{Boolean}`      |               `true`               | Use ES modules syntax                                                             |
-|    **[`modules`](#modules)**    |      `{Object}`      |            `undefined`             | Configuration CSS Modules                                                         |
 
 #### `publicPath`
 
@@ -422,85 +421,6 @@ module.exports = {
 };
 ```
 
-#### `modules`
-
-Type: `Object`
-Default: `undefined`
-
-Configuration CSS Modules.
-
-##### `namedExport`
-
-Type: `Boolean`
-Default: `false`
-
-Enables/disables ES modules named export for locals.
-
-> ⚠ Names of locals are converted to `camelCase`.
-
-> ⚠ It is not allowed to use JavaScript reserved words in css class names.
-
-> ⚠ Options `esModule` and `modules.namedExport` in `css-loader` and `MiniCssExtractPlugin.loader` should be enabled.
-
-**styles.css**
-
-```css
-.foo-baz {
-  color: red;
-}
-.bar {
-  color: blue;
-}
-```
-
-**index.js**
-
-```js
-import { fooBaz, bar } from './styles.css';
-
-console.log(fooBaz, bar);
-```
-
-You can enable a ES module named export using:
-
-**webpack.config.js**
-
-```js
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-module.exports = {
-  plugins: [new MiniCssExtractPlugin()],
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              esModule: true,
-              modules: {
-                namedExport: true,
-              },
-            },
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              esModule: true,
-              modules: {
-                namedExport: true,
-                localIdentName: 'foo__[name]__[local]',
-              },
-            },
-          },
-        ],
-      },
-    ],
-  },
-};
-```
-
 ## Examples
 
 ### Recommend
@@ -566,6 +486,67 @@ module.exports = {
             },
           },
           'css-loader',
+        ],
+      },
+    ],
+  },
+};
+```
+
+### Named export for CSS Modules
+
+> ⚠ Names of locals are converted to `camelCase`.
+
+> ⚠ It is not allowed to use JavaScript reserved words in css class names.
+
+> ⚠ Options `esModule` and `modules.namedExport` in `css-loader` should be enabled.
+
+**styles.css**
+
+```css
+.foo-baz {
+  color: red;
+}
+.bar {
+  color: blue;
+}
+```
+
+**index.js**
+
+```js
+import { fooBaz, bar } from './styles.css';
+
+console.log(fooBaz, bar);
+```
+
+You can enable a ES module named export using:
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [new MiniCssExtractPlugin()],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              esModule: true,
+              modules: {
+                namedExport: true,
+                localIdentName: 'foo__[name]__[local]',
+              },
+            },
+          },
         ],
       },
     ],

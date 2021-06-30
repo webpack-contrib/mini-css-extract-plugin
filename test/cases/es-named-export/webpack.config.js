@@ -9,12 +9,6 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
-            options: {
-              esModule: true,
-              modules: {
-                namedExport: true,
-              },
-            },
           },
           {
             loader: 'css-loader',

@@ -1,5 +1,3 @@
-import webpack from 'webpack';
-
 import Self from '../../../src';
 
 module.exports = {
@@ -18,17 +16,11 @@ module.exports = {
   optimization: {
     splitChunks: {
       cacheGroups: {
-        styles:
-          webpack.version[0] === '4'
-            ? {
-                chunks: 'all',
-                enforce: true,
-              }
-            : {
-                type: 'css/mini-extract',
-                chunks: 'all',
-                enforce: true,
-              },
+        styles: {
+          type: 'css/mini-extract',
+          chunks: 'all',
+          enforce: true,
+        },
       },
     },
   },

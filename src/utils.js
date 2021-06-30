@@ -52,6 +52,7 @@ function compareModulesByIdentifier(a, b) {
 }
 
 const MODULE_TYPE = 'css/mini-extract';
+const AUTO_PUBLIC_PATH = '__MINI_CSS_EXTRACT_PLUGIN_PUBLIC_PATH__';
 
 export {
   trueFn,
@@ -59,4 +60,5 @@ export {
   evalModuleCode,
   compareModulesByIdentifier,
   MODULE_TYPE,
+  AUTO_PUBLIC_PATH,
 };
