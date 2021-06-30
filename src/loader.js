@@ -1,8 +1,11 @@
 import path from 'path';
 
-import loaderUtils from 'loader-utils';
-
-import { findModuleById, evalModuleCode, AUTO_PUBLIC_PATH } from './utils';
+import {
+  findModuleById,
+  evalModuleCode,
+  AUTO_PUBLIC_PATH,
+  stringifyRequest,
+} from './utils';
 import schema from './loader-options.json';
 
 import MiniCssExtractPlugin, { pluginName, pluginSymbol } from './index';
@@ -15,7 +18,7 @@ function hotLoader(content, context) {
   return `${content}
     if(module.hot) {
       // ${Date.now()}
-      var cssReload = require(${loaderUtils.stringifyRequest(
+      var cssReload = require(${stringifyRequest(
         context.context,
         path.join(__dirname, 'hmr/hotModuleReplacement.js')
       )})(module.id, ${JSON.stringify({
