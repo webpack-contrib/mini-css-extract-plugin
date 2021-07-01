@@ -1,5 +1,3 @@
-import { version as webpackVersion } from 'webpack';
-
 import Self from '../../../src';
 
 module.exports = {
@@ -15,10 +13,7 @@ module.exports = {
   plugins: [
     new Self({
       filename: '[name].css',
-      chunkFilename:
-        webpackVersion[0] === '4'
-          ? '[id].[name].css'
-          : ({ chunk }) => `${chunk.id}.${chunk.name}.css`,
+      chunkFilename: ({ chunk }) => `${chunk.id}.${chunk.name}.css`,
     }),
   ],
 };
