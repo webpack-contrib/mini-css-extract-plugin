@@ -1,13 +1,13 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = [1, 2].map((n) => {
   return {
-    entry: './index.js',
+    entry: "./index.js",
     module: {
       rules: [
         {
           test: /\.css$/,
-          use: [Self.loader, 'css-loader'],
+          use: [Self.loader, "css-loader"],
         },
       ],
     },
@@ -16,7 +16,7 @@ module.exports = [1, 2].map((n) => {
     },
     resolve: {
       alias: {
-        './style.css': `./style${n}.css`,
+        "./style.css": `./style${n}.css`,
       },
     },
     plugins: [

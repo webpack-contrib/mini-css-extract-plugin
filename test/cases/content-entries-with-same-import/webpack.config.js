@@ -1,21 +1,21 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
-  entry: './index.js',
+  entry: "./index.js",
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [Self.loader, 'css-loader'],
+        use: [Self.loader, "css-loader"],
       },
     ],
   },
   output: {
-    filename: '[name].[contenthash].js',
+    filename: "[name].[contenthash].js",
   },
   plugins: [
     new Self({
-      filename: '[name].[contenthash].css',
+      filename: "[name].[contenthash].css",
     }),
   ],
 };

@@ -1,3 +1,3 @@
 /* eslint-env browser */
 
-import './lazy-failure.css';
+import "./lazy-failure.css";

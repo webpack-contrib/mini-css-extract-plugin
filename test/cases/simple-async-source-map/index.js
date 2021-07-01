@@ -1,7 +1,7 @@
-import './main.css';
+import "./main.css";
 
 /* eslint-disable-next-line no-unused-expressions */
-import('./async');
+import("./async");
 
 /* eslint-disable-next-line no-unused-expressions */
-import('./async.css');
+import("./async.css");

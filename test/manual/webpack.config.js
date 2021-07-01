@@ -1,26 +1,26 @@
-const Self = require('../../');
+const Self = require("../../");
 
 const ENABLE_HMR =
-  typeof process.env.ENABLE_HMR !== 'undefined'
+  typeof process.env.ENABLE_HMR !== "undefined"
     ? Boolean(process.env.ENABLE_HMR)
     : true;
 
 const ENABLE_ES_MODULE =
-  typeof process.env.ES_MODULE !== 'undefined'
+  typeof process.env.ES_MODULE !== "undefined"
     ? Boolean(process.env.ES_MODULE)
     : true;
 
 const ENABLE_EXPERIMENTAL_USE_IMPORT_MODULE =
-  typeof process.env.EXPERIMENTAL_USE_IMPORT_MODULE !== 'undefined'
+  typeof process.env.EXPERIMENTAL_USE_IMPORT_MODULE !== "undefined"
     ? Boolean(process.env.EXPERIMENTAL_USE_IMPORT_MODULE)
     : true;
 
 module.exports = {
-  mode: 'development',
+  mode: "development",
   output: {
-    chunkFilename: '[name].chunk.js',
-    publicPath: '/dist/',
-    crossOriginLoading: 'anonymous',
+    chunkFilename: "[name].chunk.js",
+    publicPath: "/dist/",
+    crossOriginLoading: "anonymous",
   },
   module: {
     rules: [
@@ -32,7 +32,7 @@ module.exports = {
             loader: Self.loader,
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               esModule: ENABLE_ES_MODULE,
             },
@@ -49,7 +49,7 @@ module.exports = {
             },
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
               esModule: ENABLE_ES_MODULE,
@@ -61,8 +61,8 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: '[name].css',
-      chunkFilename: '[name].chunk.css',
+      filename: "[name].css",
+      chunkFilename: "[name].chunk.css",
       experimentalUseImportModule: ENABLE_EXPERIMENTAL_USE_IMPORT_MODULE,
     }),
   ],
@@ -70,7 +70,7 @@ module.exports = {
     hot: ENABLE_HMR,
     contentBase: __dirname,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      "Access-Control-Allow-Origin": "*",
     },
   },
 };

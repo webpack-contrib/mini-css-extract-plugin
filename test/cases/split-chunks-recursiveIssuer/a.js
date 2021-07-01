@@ -1,3 +1,3 @@
-import './a.css';
+import "./a.css";
 
-import(/* webpackChunkName: "comp1" */ './components/comp1');
+import(/* webpackChunkName: "comp1" */ "./components/comp1");

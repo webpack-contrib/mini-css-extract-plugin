@@ -30,7 +30,7 @@ const normalizeUrl = __webpack_require__(2);
 
 const srcByModuleId = Object.create(null);
 
-const noDocument = typeof document === 'undefined';
+const noDocument = typeof document === "undefined";
 
 const { forEach } = Array.prototype;
 
@@ -60,7 +60,7 @@ function getCurrentScriptUrl(moduleId) {
     if (document.currentScript) {
       ({ src } = document.currentScript);
     } else {
-      const scripts = document.getElementsByTagName('script');
+      const scripts = document.getElementsByTagName("script");
       const lastScriptTag = scripts[scripts.length - 1];
 
       if (lastScriptTag) {
@@ -80,15 +80,15 @@ function getCurrentScriptUrl(moduleId) {
     const filename = splitResult && splitResult[1];
 
     if (!filename) {
-      return [src.replace('.js', '.css')];
+      return [src.replace(".js", ".css")];
     }
 
     if (!fileMap) {
-      return [src.replace('.js', '.css')];
+      return [src.replace(".js", ".css")];
     }
 
-    return fileMap.split(',').map((mapRule) => {
-      const reg = new RegExp(`${filename}\\.js$`, 'g');
+    return fileMap.split(",").map((mapRule) => {
+      const reg = new RegExp(`${filename}\\.js$`, "g");
 
       return normalizeUrl(
         src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`)
@@ -104,7 +104,7 @@ function updateCss(el, url) {
     }
 
     // eslint-disable-next-line
-    url = el.href.split('?')[0];
+    url = el.href.split("?")[0];
   }
 
   if (!isUrlRequest(url)) {
@@ -117,7 +117,7 @@ function updateCss(el, url) {
     return;
   }
 
-  if (!url || !(url.indexOf('.css') > -1)) {
+  if (!url || !(url.indexOf(".css") > -1)) {
     return;
   }
 
@@ -128,7 +128,7 @@ function updateCss(el, url) {
 
   newEl.isLoaded = false;
 
-  newEl.addEventListener('load', () => {
+  newEl.addEventListener("load", () => {
     if (newEl.isLoaded) {
       return;
     }
@@ -137,7 +137,7 @@ function updateCss(el, url) {
     el.parentNode.removeChild(el);
   });
 
-  newEl.addEventListener('error', () => {
+  newEl.addEventListener("error", () => {
     if (newEl.isLoaded) {
       return;
     }
@@ -176,7 +176,7 @@ function reloadStyle(src) {
     return false;
   }
 
-  const elements = document.querySelectorAll('link');
+  const elements = document.querySelectorAll("link");
   let loaded = false;
 
   forEach.call(elements, (el) => {
@@ -205,7 +205,7 @@ function reloadStyle(src) {
 }
 
 function reloadAll() {
-  const elements = document.querySelectorAll('link');
+  const elements = document.querySelectorAll("link");
 
   forEach.call(elements, (el) => {
     if (el.visited === true) {
@@ -229,7 +229,7 @@ function isUrlRequest(url) {
 
 module.exports = function (moduleId, options) {
   if (noDocument) {
-    console.log('no window.document found, will not HMR CSS');
+    console.log("no window.document found, will not HMR CSS");
 
     return noop;
   }
@@ -241,7 +241,7 @@ module.exports = function (moduleId, options) {
     const reloaded = reloadStyle(src);
 
     if (options.locals) {
-      console.log('[HMR] Detected local css modules. Reload all css');
+      console.log("[HMR] Detected local css modules. Reload all css");
 
       reloadAll();
 
@@ -249,9 +249,9 @@ module.exports = function (moduleId, options) {
     }
 
     if (reloaded) {
-      console.log('[HMR] css reload %s', src.join(' '));
+      console.log("[HMR] css reload %s", src.join(" "));
     } else {
-      console.log('[HMR] Reload all css');
+      console.log("[HMR] Reload all css");
 
       reloadAll();
     }
@@ -271,10 +271,10 @@ function normalizeUrl(pathComponents) {
   return pathComponents
     .reduce(function (accumulator, item) {
       switch (item) {
-        case '..':
+        case "..":
           accumulator.pop();
           break;
-        case '.':
+        case ".":
           break;
         default:
           accumulator.push(item);
@@ -282,7 +282,7 @@ function normalizeUrl(pathComponents) {
 
       return accumulator;
     }, [])
-    .join('/');
+    .join("/");
 }
 
 module.exports = function (urlString) {
@@ -293,11 +293,11 @@ module.exports = function (urlString) {
   }
 
   var protocol =
-    urlString.indexOf('//') !== -1 ? urlString.split('//')[0] + '//' : '';
-  var components = urlString.replace(new RegExp(protocol, 'i'), '').split('/');
-  var host = components[0].toLowerCase().replace(/\.$/, '');
+    urlString.indexOf("//") !== -1 ? urlString.split("//")[0] + "//" : "";
+  var components = urlString.replace(new RegExp(protocol, "i"), "").split("/");
+  var host = components[0].toLowerCase().replace(/\.$/, "");
 
-  components[0] = '';
+  components[0] = "";
 
   var path = normalizeUrl(components);
 

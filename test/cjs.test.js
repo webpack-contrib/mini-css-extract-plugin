@@ -1,8 +1,8 @@
-import MiniCssExtractPlugin from '../src';
-import CJSMiniCssExtractPlugin from '../src/cjs';
+import MiniCssExtractPlugin from "../src";
+import CJSMiniCssExtractPlugin from "../src/cjs";
 
-describe('CJS', () => {
-  it('should exported plugin', () => {
+describe("CJS", () => {
+  it("should exported plugin", () => {
     expect(CJSMiniCssExtractPlugin).toEqual(MiniCssExtractPlugin);
   });
 });

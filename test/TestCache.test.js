@@ -2,31 +2,31 @@
  * @jest-environment node
  */
 
-import path from 'path';
+import path from "path";
 
-import webpack from 'webpack';
-import del from 'del';
+import webpack from "webpack";
+import del from "del";
 
-describe('TestCache', () => {
+describe("TestCache", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should work without cache', async () => {
-    const casesDirectory = path.resolve(__dirname, 'cases');
-    const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
+  it("should work without cache", async () => {
+    const casesDirectory = path.resolve(__dirname, "cases");
+    const directoryForCase = path.resolve(casesDirectory, "asset-modules");
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfig = require(path.resolve(
       directoryForCase,
-      'webpack.config.js'
+      "webpack.config.js"
     ));
-    const outputPath = path.resolve(__dirname, 'js/cache-false');
+    const outputPath = path.resolve(__dirname, "js/cache-false");
 
     await del([outputPath]);
 
     const compiler1 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: false,
       output: {
@@ -69,7 +69,7 @@ describe('TestCache', () => {
 
     const compiler2 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: false,
       output: {
@@ -107,23 +107,23 @@ describe('TestCache', () => {
   });
 
   it('should work with the "memory" cache', async () => {
-    const casesDirectory = path.resolve(__dirname, 'cases');
-    const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
+    const casesDirectory = path.resolve(__dirname, "cases");
+    const directoryForCase = path.resolve(casesDirectory, "asset-modules");
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfig = require(path.resolve(
       directoryForCase,
-      'webpack.config.js'
+      "webpack.config.js"
     ));
-    const outputPath = path.resolve(__dirname, 'js/cache-memory');
+    const outputPath = path.resolve(__dirname, "js/cache-memory");
 
     await del([outputPath]);
 
     const compiler1 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: {
-        type: 'memory',
+        type: "memory",
       },
       output: {
         path: outputPath,
@@ -165,10 +165,10 @@ describe('TestCache', () => {
 
     const compiler2 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: {
-        type: 'memory',
+        type: "memory",
       },
       output: {
         path: outputPath,
@@ -205,27 +205,27 @@ describe('TestCache', () => {
   });
 
   it('should work with the "filesystem" cache', async () => {
-    const casesDirectory = path.resolve(__dirname, 'cases');
-    const directoryForCase = path.resolve(casesDirectory, 'simple');
+    const casesDirectory = path.resolve(__dirname, "cases");
+    const directoryForCase = path.resolve(casesDirectory, "simple");
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfig = require(path.resolve(
       directoryForCase,
-      'webpack.config.js'
+      "webpack.config.js"
     ));
-    const outputPath = path.resolve(__dirname, 'js/cache-filesystem');
+    const outputPath = path.resolve(__dirname, "js/cache-filesystem");
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      './js/.cache/type-filesystem'
+      "./js/.cache/type-filesystem"
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
 
     const compiler1 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: {
-        type: 'filesystem',
+        type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
         idleTimeout: 0,
         idleTimeoutForInitialStore: 0,
@@ -268,10 +268,10 @@ describe('TestCache', () => {
 
     const compiler2 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: {
-        type: 'filesystem',
+        type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
         idleTimeout: 0,
         idleTimeoutForInitialStore: 0,
@@ -310,30 +310,30 @@ describe('TestCache', () => {
   });
 
   it('should work with the "filesystem" cache and asset modules', async () => {
-    const casesDirectory = path.resolve(__dirname, 'cases');
-    const directoryForCase = path.resolve(casesDirectory, 'asset-modules');
+    const casesDirectory = path.resolve(__dirname, "cases");
+    const directoryForCase = path.resolve(casesDirectory, "asset-modules");
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfig = require(path.resolve(
       directoryForCase,
-      'webpack.config.js'
+      "webpack.config.js"
     ));
     const outputPath = path.resolve(
       __dirname,
-      'js/cache-filesystem-asset-modules'
+      "js/cache-filesystem-asset-modules"
     );
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      './js/.cache/type-filesystem'
+      "./js/.cache/type-filesystem"
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
 
     const compiler1 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: {
-        type: 'filesystem',
+        type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
         idleTimeout: 0,
         idleTimeoutForInitialStore: 0,
@@ -378,10 +378,10 @@ describe('TestCache', () => {
 
     const compiler2 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: {
-        type: 'filesystem',
+        type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
         idleTimeout: 0,
         idleTimeoutForInitialStore: 0,
@@ -421,30 +421,30 @@ describe('TestCache', () => {
   });
 
   it('should work with the "filesystem" cache and file-loader', async () => {
-    const casesDirectory = path.resolve(__dirname, 'cases');
-    const directoryForCase = path.resolve(casesDirectory, 'file-loader');
+    const casesDirectory = path.resolve(__dirname, "cases");
+    const directoryForCase = path.resolve(casesDirectory, "file-loader");
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfig = require(path.resolve(
       directoryForCase,
-      'webpack.config.js'
+      "webpack.config.js"
     ));
     const outputPath = path.resolve(
       __dirname,
-      'js/cache-filesystem-file-loader'
+      "js/cache-filesystem-file-loader"
     );
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      './js/.cache/type-filesystem'
+      "./js/.cache/type-filesystem"
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
 
     const compiler1 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: {
-        type: 'filesystem',
+        type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
         idleTimeout: 0,
         idleTimeoutForInitialStore: 0,
@@ -489,10 +489,10 @@ describe('TestCache', () => {
 
     const compiler2 = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: {
-        type: 'filesystem',
+        type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
         idleTimeout: 0,
         idleTimeoutForInitialStore: 0,

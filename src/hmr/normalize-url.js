@@ -4,10 +4,10 @@ function normalizeUrl(pathComponents) {
   return pathComponents
     .reduce(function (accumulator, item) {
       switch (item) {
-        case '..':
+        case "..":
           accumulator.pop();
           break;
-        case '.':
+        case ".":
           break;
         default:
           accumulator.push(item);
@@ -15,7 +15,7 @@ function normalizeUrl(pathComponents) {
 
       return accumulator;
     }, [])
-    .join('/');
+    .join("/");
 }
 
 module.exports = function (urlString) {
@@ -26,11 +26,11 @@ module.exports = function (urlString) {
   }
 
   var protocol =
-    urlString.indexOf('//') !== -1 ? urlString.split('//')[0] + '//' : '';
-  var components = urlString.replace(new RegExp(protocol, 'i'), '').split('/');
-  var host = components[0].toLowerCase().replace(/\.$/, '');
+    urlString.indexOf("//") !== -1 ? urlString.split("//")[0] + "//" : "";
+  var components = urlString.replace(new RegExp(protocol, "i"), "").split("/");
+  var host = components[0].toLowerCase().replace(/\.$/, "");
 
-  components[0] = '';
+  components[0] = "";
 
   var path = normalizeUrl(components);
 

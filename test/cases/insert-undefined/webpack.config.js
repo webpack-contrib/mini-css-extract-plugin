@@ -1,6 +1,6 @@
 /* global document */
 
-const Self = require('../../../src/cjs');
+const Self = require("../../../src/cjs");
 
 module.exports = {
   module: {
@@ -12,7 +12,7 @@ module.exports = {
             loader: Self.loader,
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
           },
         ],
       },
@@ -20,8 +20,8 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: '[name].css',
-      chunkFilename: '[id].css',
+      filename: "[name].css",
+      chunkFilename: "[id].css",
     }),
   ],
 };

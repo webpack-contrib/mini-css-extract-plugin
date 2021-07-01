@@ -157,7 +157,7 @@ jobs:
       - name: Run tests for webpack version latest with experimentalUseImportModule
         run: npm run test:coverage -- --ci
         env:
-          EXPERIMENTAL_USE_IMPORT_MODULE: 'true'
+          EXPERIMENTAL_USE_IMPORT_MODULE: "true"
 
       - name: Submit coverage data to codecov
         uses: codecov/codecov-action@v1

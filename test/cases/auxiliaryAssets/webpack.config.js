@@ -1,9 +1,9 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 class AssetsPlugin {
   // eslint-disable-next-line class-methods-use-this
   apply(compiler) {
-    compiler.hooks.emit.tapAsync('AssetsPlugin', (compilation, cb) => {
+    compiler.hooks.emit.tapAsync("AssetsPlugin", (compilation, cb) => {
       const stats = compilation.getStats().toJson({
         all: true,
       });
@@ -21,10 +21,10 @@ class AssetsPlugin {
 }
 
 module.exports = {
-  entry: './index.js',
-  mode: 'development',
+  entry: "./index.js",
+  mode: "development",
   output: {
-    publicPath: '/',
+    publicPath: "/",
   },
   optimization: {
     sideEffects: true,
@@ -33,7 +33,7 @@ module.exports = {
     rules: [
       {
         test: /\.(woff2?|ttf|eot|otf|png|jpe?g|gif|ico|svg|webp)$/,
-        type: 'asset',
+        type: "asset",
       },
       {
         test: /\.css$/,
@@ -45,7 +45,7 @@ module.exports = {
             },
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               esModule: true,
             },
@@ -56,8 +56,8 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: '[name].css',
-      chunkFilename: '[id].[name].css',
+      filename: "[name].css",
+      chunkFilename: "[id].[name].css",
     }),
     new AssetsPlugin(),
   ],

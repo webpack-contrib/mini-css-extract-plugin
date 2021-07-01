@@ -1,15 +1,15 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
   entry: {
-    entry1: './index.js',
-    entry2: './index2.js',
+    entry1: "./index.js",
+    entry2: "./index2.js",
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [Self.loader, 'css-loader'],
+        use: [Self.loader, "css-loader"],
       },
     ],
   },
@@ -17,8 +17,8 @@ module.exports = {
     splitChunks: {
       cacheGroups: {
         styles: {
-          name: 'styles',
-          chunks: 'all',
+          name: "styles",
+          chunks: "all",
           test: /\.css$/,
           enforce: true,
         },

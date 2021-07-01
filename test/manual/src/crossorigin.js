@@ -1,1 +1,1 @@
-import './crossorigin.css';
+import "./crossorigin.css";
