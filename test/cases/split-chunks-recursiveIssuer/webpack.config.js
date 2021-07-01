@@ -1,18 +1,13 @@
-import { version as webpackVersion } from 'webpack';
-
 import Self from '../../../src';
 
 function recursiveIssuer(m, c) {
-  const issuer =
-    webpackVersion[0] === '4' ? m.issuer : c.moduleGraph.getIssuer(m);
+  const issuer = c.moduleGraph.getIssuer(m);
 
   if (issuer) {
     return recursiveIssuer(issuer, c);
   }
 
-  const chunks =
-    // eslint-disable-next-line no-underscore-dangle
-    webpackVersion[0] === '4' ? m._chunks : c.chunkGraph.getModuleChunks(m);
+  const chunks = c.chunkGraph.getModuleChunks(m);
 
   for (const chunk of chunks) {
     return chunk.name;
