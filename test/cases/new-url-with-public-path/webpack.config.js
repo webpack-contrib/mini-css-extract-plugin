@@ -1,10 +1,10 @@
-import path from 'path';
+import path from "path";
 
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
-  entry: './index.js',
-  context: path.resolve(__dirname, 'app'),
+  entry: "./index.js",
+  context: path.resolve(__dirname, "app"),
   module: {
     rules: [
       {
@@ -13,24 +13,24 @@ module.exports = {
           {
             loader: Self.loader,
             options: {
-              publicPath: 'public/',
+              publicPath: "public/",
             },
           },
-          './mockLoader',
+          "./mockLoader",
         ],
       },
       {
         test: /\.png$/,
-        type: 'asset/resource',
+        type: "asset/resource",
         generator: {
-          filename: '[path][name][ext]',
+          filename: "[path][name][ext]",
         },
       },
     ],
   },
   plugins: [
     new Self({
-      filename: '[name].css',
+      filename: "[name].css",
     }),
   ],
 };

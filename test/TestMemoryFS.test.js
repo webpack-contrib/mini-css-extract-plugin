@@ -1,22 +1,22 @@
-import path from 'path';
+import path from "path";
 
-import { createFsFromVolume, Volume } from 'memfs';
-import webpack from 'webpack';
+import { createFsFromVolume, Volume } from "memfs";
+import webpack from "webpack";
 
 const assetsNames = (assets) => assets.map((asset) => asset.name);
 
-describe('TestMemoryFS', () => {
-  it('should preserve asset even if not emitted', (done) => {
-    const casesDirectory = path.resolve(__dirname, 'cases');
-    const directoryForCase = path.resolve(casesDirectory, 'simple-publicpath');
+describe("TestMemoryFS", () => {
+  it("should preserve asset even if not emitted", (done) => {
+    const casesDirectory = path.resolve(__dirname, "cases");
+    const directoryForCase = path.resolve(casesDirectory, "simple-publicpath");
     // eslint-disable-next-line import/no-dynamic-require, global-require
     const webpackConfig = require(path.resolve(
       directoryForCase,
-      'webpack.config.js'
+      "webpack.config.js"
     ));
     const compiler = webpack({
       ...webpackConfig,
-      mode: 'development',
+      mode: "development",
       context: directoryForCase,
       cache: false,
     });

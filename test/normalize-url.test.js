@@ -1,8 +1,8 @@
-import normalizeUrl from '../src/hmr/normalize-url';
+import normalizeUrl from "../src/hmr/normalize-url";
 
-import dataUrls from './fixtures/json/data-urls.json';
+import dataUrls from "./fixtures/json/data-urls.json";
 
-describe('normalize-url', () => {
+describe("normalize-url", () => {
   dataUrls.main.forEach((entry) => {
     const [url, expected] = entry;
 

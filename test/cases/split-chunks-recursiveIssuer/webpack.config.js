@@ -1,4 +1,4 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 function recursiveIssuer(m, c) {
   const issuer = c.moduleGraph.getIssuer(m);
@@ -18,14 +18,14 @@ function recursiveIssuer(m, c) {
 
 module.exports = {
   entry: {
-    a: './a.js',
-    b: './b.js',
+    a: "./a.js",
+    b: "./b.js",
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [Self.loader, 'css-loader'],
+        use: [Self.loader, "css-loader"],
       },
     ],
   },
@@ -33,19 +33,19 @@ module.exports = {
     splitChunks: {
       cacheGroups: {
         aStyles: {
-          name: 'styles_a',
-          test: (m, c, entry = 'a') =>
-            m.constructor.name === 'CssModule' &&
+          name: "styles_a",
+          test: (m, c, entry = "a") =>
+            m.constructor.name === "CssModule" &&
             recursiveIssuer(m, c) === entry,
-          chunks: 'all',
+          chunks: "all",
           enforce: true,
         },
         bStyles: {
-          name: 'styles_b',
-          test: (m, c, entry = 'b') =>
-            m.constructor.name === 'CssModule' &&
+          name: "styles_b",
+          test: (m, c, entry = "b") =>
+            m.constructor.name === "CssModule" &&
             recursiveIssuer(m, c) === entry,
-          chunks: 'all',
+          chunks: "all",
           enforce: true,
         },
       },

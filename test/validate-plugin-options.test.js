@@ -1,16 +1,16 @@
-import MiniCssExtractPlugin from '../src';
+import MiniCssExtractPlugin from "../src";
 
-describe('validate options', () => {
+describe("validate options", () => {
   const tests = {
     filename: {
       success: [
-        '[name].css',
-        ({ name }) => `${name.replace('/js/', '/css/')}.css`,
+        "[name].css",
+        ({ name }) => `${name.replace("/js/", "/css/")}.css`,
       ],
       failure: [true],
     },
     chunkFilename: {
-      success: ['[id].css', ({ chunk }) => `${chunk.id}.${chunk.name}.css`],
+      success: ["[id].css", ({ chunk }) => `${chunk.id}.${chunk.name}.css`],
       failure: [true],
     },
     ignoreOrder: {
@@ -18,27 +18,27 @@ describe('validate options', () => {
       failure: [1],
     },
     insert: {
-      success: ['#existing-style', function insert() {}],
+      success: ["#existing-style", function insert() {}],
       failure: [1, true, {}],
     },
     attributes: {
-      success: [{}, { id: 'id' }],
+      success: [{}, { id: "id" }],
       failure: [true],
     },
     linkType: {
-      success: [true, false, 'text/css'],
-      failure: [1, {}, [], 'invalid/type'],
+      success: [true, false, "text/css"],
+      failure: [1, {}, [], "invalid/type"],
     },
     unknown: {
       success: [],
-      failure: [1, true, false, 'test', /test/, [], {}, { foo: 'bar' }],
+      failure: [1, true, false, "test", /test/, [], {}, { foo: "bar" }],
     },
   };
 
   function stringifyValue(value) {
     if (
       Array.isArray(value) ||
-      (value && typeof value === 'object' && value.constructor === Object)
+      (value && typeof value === "object" && value.constructor === Object)
     ) {
       return JSON.stringify(value);
     }
@@ -48,7 +48,7 @@ describe('validate options', () => {
 
   async function createTestCase(key, value, type) {
     it(`should ${
-      type === 'success' ? 'successfully validate' : 'throw an error on'
+      type === "success" ? "successfully validate" : "throw an error on"
     } the "${key}" option with "${stringifyValue(value)}" value`, async () => {
       let error;
 
@@ -56,15 +56,15 @@ describe('validate options', () => {
         // eslint-disable-next-line no-new
         new MiniCssExtractPlugin({ [key]: value });
       } catch (errorFromPlugin) {
-        if (errorFromPlugin.name !== 'ValidationError') {
+        if (errorFromPlugin.name !== "ValidationError") {
           throw errorFromPlugin;
         }
 
         error = errorFromPlugin;
       } finally {
-        if (type === 'success') {
+        if (type === "success") {
           expect(error).toBeUndefined();
-        } else if (type === 'failure') {
+        } else if (type === "failure") {
           expect(() => {
             throw error;
           }).toThrowErrorMatchingSnapshot();

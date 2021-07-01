@@ -1,25 +1,25 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
   entry: {
-    main: './index.js',
+    main: "./index.js",
   },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [Self.loader, 'css-loader'],
+        use: [Self.loader, "css-loader"],
       },
     ],
   },
   output: {
-    filename: '[name].js',
+    filename: "[name].js",
   },
   plugins: [
     (() => {
-      const self = new Self({ filename: 'constructed.css' });
+      const self = new Self({ filename: "constructed.css" });
 
-      self.options.filename = 'mutated.css';
+      self.options.filename = "mutated.css";
 
       return self;
     })(),

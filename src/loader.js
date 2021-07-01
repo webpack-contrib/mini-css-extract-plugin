@@ -1,26 +1,26 @@
-import path from 'path';
+import path from "path";
 
 import {
   findModuleById,
   evalModuleCode,
   AUTO_PUBLIC_PATH,
   stringifyRequest,
-} from './utils';
-import schema from './loader-options.json';
+} from "./utils";
+import schema from "./loader-options.json";
 
-import MiniCssExtractPlugin, { pluginName, pluginSymbol } from './index';
+import MiniCssExtractPlugin, { pluginName, pluginSymbol } from "./index";
 
 function hotLoader(content, context) {
   const accept = context.locals
-    ? ''
-    : 'module.hot.accept(undefined, cssReload);';
+    ? ""
+    : "module.hot.accept(undefined, cssReload);";
 
   return `${content}
     if(module.hot) {
       // ${Date.now()}
       var cssReload = require(${stringifyRequest(
         context.context,
-        path.join(__dirname, 'hmr/hotModuleReplacement.js')
+        path.join(__dirname, "hmr/hotModuleReplacement.js")
       )})(module.id, ${JSON.stringify({
     ...context.options,
     locals: !!context.locals,
@@ -53,7 +53,7 @@ export function pitch(request) {
     let namedExport;
 
     const esModule =
-      typeof options.esModule !== 'undefined' ? options.esModule : true;
+      typeof options.esModule !== "undefined" ? options.esModule : true;
     const addDependencies = (dependencies) => {
       if (!Array.isArray(dependencies) && dependencies != null) {
         throw new Error(
@@ -64,7 +64,7 @@ export function pitch(request) {
       }
 
       const identifierCountMap = new Map();
-      const emit = typeof options.emit !== 'undefined' ? options.emit : true;
+      const emit = typeof options.emit !== "undefined" ? options.emit : true;
       let lastDep;
 
       for (const dependency of dependencies) {
@@ -96,11 +96,11 @@ export function pitch(request) {
 
       namedExport =
         // eslint-disable-next-line no-underscore-dangle
-        originalExports.__esModule && !('locals' in originalExports.default);
+        originalExports.__esModule && !("locals" in originalExports.default);
 
       if (namedExport) {
         Object.keys(originalExports).forEach((key) => {
-          if (key !== 'default') {
+          if (key !== "default") {
             if (!locals) {
               locals = {};
             }
@@ -153,13 +153,13 @@ export function pitch(request) {
             .map(
               (key) => `\nexport var ${key} = ${JSON.stringify(locals[key])};`
             )
-            .join('')
+            .join("")
         : `\n${
-            esModule ? 'export default' : 'module.exports ='
+            esModule ? "export default" : "module.exports ="
           } ${JSON.stringify(locals)};`
       : esModule
       ? `\nexport {};`
-      : '';
+      : "";
 
     let resultSource = `// extracted by ${pluginName}`;
 
@@ -172,14 +172,14 @@ export function pitch(request) {
 
   let { publicPath } = this._compilation.outputOptions;
 
-  if (typeof options.publicPath === 'string') {
+  if (typeof options.publicPath === "string") {
     // eslint-disable-next-line prefer-destructuring
     publicPath = options.publicPath;
-  } else if (typeof options.publicPath === 'function') {
+  } else if (typeof options.publicPath === "function") {
     publicPath = options.publicPath(this.resourcePath, this.rootContext);
   }
 
-  if (publicPath === 'auto') {
+  if (publicPath === "auto") {
     publicPath = AUTO_PUBLIC_PATH;
   }
 
@@ -215,7 +215,7 @@ export function pitch(request) {
 
   this.addDependency(this.resourcePath);
 
-  const childFilename = '*';
+  const childFilename = "*";
 
   const outputOptions = {
     filename: childFilename,
@@ -236,7 +236,7 @@ export function pitch(request) {
   };
   childCompiler.options.module.parser.javascript = {
     ...childCompiler.options.module.parser.javascript,
-    url: 'relative',
+    url: "relative",
   };
 
   const { NodeTemplatePlugin } = webpack.node;
@@ -251,12 +251,12 @@ export function pitch(request) {
     library: { EnableLibraryPlugin },
   } = webpack;
 
-  new EnableLibraryPlugin('commonjs2').apply(childCompiler);
+  new EnableLibraryPlugin("commonjs2").apply(childCompiler);
 
   EntryOptionPlugin.applyEntryOption(childCompiler, this.context, {
     child: {
       library: {
-        type: 'commonjs2',
+        type: "commonjs2",
       },
       import: [`!!${request}`],
     },

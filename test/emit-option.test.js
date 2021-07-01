@@ -1,11 +1,11 @@
 /* eslint-env browser */
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-import webpack from 'webpack';
-import del from 'del';
+import webpack from "webpack";
+import del from "del";
 
-import MiniCssExtractPlugin from '../src';
+import MiniCssExtractPlugin from "../src";
 
 import {
   compile,
@@ -13,24 +13,24 @@ import {
   getErrors,
   getWarnings,
   runInJsDom,
-} from './helpers/index';
+} from "./helpers/index";
 
-describe('emit option', () => {
+describe("emit option", () => {
   it(`should work without emit option`, async () => {
     const compiler = getCompiler(
-      'style-url.js',
+      "style-url.js",
       {},
       {
-        mode: 'none',
+        mode: "none",
         output: {
-          publicPath: '',
-          path: path.resolve(__dirname, '../outputs'),
-          filename: '[name].bundle.js',
+          publicPath: "",
+          path: path.resolve(__dirname, "../outputs"),
+          filename: "[name].bundle.js",
         },
 
         plugins: [
           new MiniCssExtractPlugin({
-            filename: '[name].css',
+            filename: "[name].css",
           }),
         ],
       }
@@ -38,28 +38,28 @@ describe('emit option', () => {
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      'assets'
+      "assets"
     );
-    expect(getWarnings(stats)).toMatchSnapshot('warnings');
-    expect(getErrors(stats)).toMatchSnapshot('errors');
+    expect(getWarnings(stats)).toMatchSnapshot("warnings");
+    expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
   it(`should work when emit option is "true"`, async () => {
     const compiler = getCompiler(
-      'style-url.js',
+      "style-url.js",
       {
         emit: true,
       },
       {
-        mode: 'none',
+        mode: "none",
         output: {
-          publicPath: '',
-          path: path.resolve(__dirname, '../outputs'),
+          publicPath: "",
+          path: path.resolve(__dirname, "../outputs"),
         },
 
         plugins: [
           new MiniCssExtractPlugin({
-            filename: '[name].css',
+            filename: "[name].css",
           }),
         ],
       }
@@ -67,27 +67,27 @@ describe('emit option', () => {
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      'assets'
+      "assets"
     );
-    expect(getWarnings(stats)).toMatchSnapshot('warnings');
-    expect(getErrors(stats)).toMatchSnapshot('errors');
+    expect(getWarnings(stats)).toMatchSnapshot("warnings");
+    expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
   it(`should work when emit option is "false"`, async () => {
     const compiler = getCompiler(
-      'style-url.js',
+      "style-url.js",
       {
         emit: false,
       },
       {
-        mode: 'none',
+        mode: "none",
         output: {
-          publicPath: '',
-          path: path.resolve(__dirname, '../outputs'),
+          publicPath: "",
+          path: path.resolve(__dirname, "../outputs"),
         },
         plugins: [
           new MiniCssExtractPlugin({
-            filename: '[name].css',
+            filename: "[name].css",
           }),
         ],
       }
@@ -95,21 +95,21 @@ describe('emit option', () => {
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      'assets'
+      "assets"
     );
-    expect(getWarnings(stats)).toMatchSnapshot('warnings');
-    expect(getErrors(stats)).toMatchSnapshot('errors');
+    expect(getWarnings(stats)).toMatchSnapshot("warnings");
+    expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
   it(`should work with locals when emit option is "false"`, async () => {
     const compiler = getCompiler(
-      'locals.js',
+      "locals.js",
       {},
       {
         output: {
-          publicPath: '',
-          path: path.resolve(__dirname, '../outputs'),
-          filename: '[name].bundle.js',
+          publicPath: "",
+          path: path.resolve(__dirname, "../outputs"),
+          filename: "[name].bundle.js",
         },
         module: {
           rules: [
@@ -123,7 +123,7 @@ describe('emit option', () => {
                   },
                 },
                 {
-                  loader: 'css-loader',
+                  loader: "css-loader",
                   options: {
                     modules: true,
                   },
@@ -134,22 +134,22 @@ describe('emit option', () => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-            filename: '[name].css',
+            filename: "[name].css",
           }),
         ],
       }
     );
     const stats = await compile(compiler);
 
-    runInJsDom('main.bundle.js', compiler, stats, (dom) => {
-      expect(dom.serialize()).toMatchSnapshot('DOM');
+    runInJsDom("main.bundle.js", compiler, stats, (dom) => {
+      expect(dom.serialize()).toMatchSnapshot("DOM");
     });
-    expect(getWarnings(stats)).toMatchSnapshot('warnings');
-    expect(getErrors(stats)).toMatchSnapshot('errors');
+    expect(getWarnings(stats)).toMatchSnapshot("warnings");
+    expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
   it(`should work with locals and invalidate cache when emit option is "false"`, async () => {
-    const modifyAsset = path.resolve(__dirname, 'fixtures', 'locals/index.css');
+    const modifyAsset = path.resolve(__dirname, "fixtures", "locals/index.css");
     const modifyAssetContent = fs.readFileSync(modifyAsset);
 
     class AssetsModifyPlugin {
@@ -159,11 +159,11 @@ describe('emit option', () => {
 
       apply(compiler) {
         compiler.hooks.emit.tapAsync(
-          'AssetsModifyPlugin',
+          "AssetsModifyPlugin",
           (compilation, callback) => {
             const newContent = modifyAssetContent
               .toString()
-              .replace(/foo/i, 'foo-bar');
+              .replace(/foo/i, "foo-bar");
             fs.writeFileSync(this.options.file, newContent);
 
             callback();
@@ -172,16 +172,16 @@ describe('emit option', () => {
       }
     }
 
-    const outputPath = path.resolve(__dirname, './js/cache-memory');
+    const outputPath = path.resolve(__dirname, "./js/cache-memory");
     const webpackConfig = {
-      mode: 'development',
-      context: path.resolve(__dirname, './fixtures'),
+      mode: "development",
+      context: path.resolve(__dirname, "./fixtures"),
       cache: {
-        type: 'memory',
+        type: "memory",
       },
-      entry: './locals.js',
+      entry: "./locals.js",
       output: {
-        publicPath: '',
+        publicPath: "",
         path: outputPath,
       },
       module: {
@@ -196,7 +196,7 @@ describe('emit option', () => {
                 },
               },
               {
-                loader: 'css-loader',
+                loader: "css-loader",
                 options: {
                   modules: true,
                 },
@@ -207,7 +207,7 @@ describe('emit option', () => {
       },
       plugins: [
         new MiniCssExtractPlugin({
-          filename: '[name].css',
+          filename: "[name].css",
         }),
         new AssetsModifyPlugin({
           file: modifyAsset,
@@ -234,11 +234,11 @@ describe('emit option', () => {
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchSnapshot(`emittedAssets`);
-          runInJsDom('main.js', compiler1, stats, (dom) => {
-            expect(dom.serialize()).toMatchSnapshot('DOM');
+          runInJsDom("main.js", compiler1, stats, (dom) => {
+            expect(dom.serialize()).toMatchSnapshot("DOM");
           });
-          expect(getWarnings(stats)).toMatchSnapshot('warnings');
-          expect(getErrors(stats)).toMatchSnapshot('errors');
+          expect(getWarnings(stats)).toMatchSnapshot("warnings");
+          expect(getErrors(stats)).toMatchSnapshot("errors");
 
           resolve();
         });
@@ -262,11 +262,11 @@ describe('emit option', () => {
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchSnapshot(`emittedAssets`);
-          runInJsDom('main.js', compiler2, stats, (dom) => {
-            expect(dom.serialize()).toMatchSnapshot('DOM');
+          runInJsDom("main.js", compiler2, stats, (dom) => {
+            expect(dom.serialize()).toMatchSnapshot("DOM");
           });
-          expect(getWarnings(stats)).toMatchSnapshot('warnings');
-          expect(getErrors(stats)).toMatchSnapshot('errors');
+          expect(getWarnings(stats)).toMatchSnapshot("warnings");
+          expect(getErrors(stats)).toMatchSnapshot("errors");
 
           resolve();
         });
@@ -277,17 +277,17 @@ describe('emit option', () => {
   });
 
   it('should work with the "memory" cache and disabled "emit" option', async () => {
-    const outputPath = path.resolve(__dirname, './js/cache-memory');
+    const outputPath = path.resolve(__dirname, "./js/cache-memory");
     const webpackConfig = {
-      mode: 'development',
-      context: path.resolve(__dirname, 'fixtures'),
+      mode: "development",
+      context: path.resolve(__dirname, "fixtures"),
       cache: {
-        type: 'memory',
+        type: "memory",
       },
       output: {
         path: outputPath,
       },
-      entry: './style-url.js',
+      entry: "./style-url.js",
       module: {
         rules: [
           {
@@ -296,25 +296,25 @@ describe('emit option', () => {
               {
                 loader: MiniCssExtractPlugin.loader,
                 options: {
-                  publicPath: '',
+                  publicPath: "",
                   emit: false,
                 },
               },
-              'css-loader',
+              "css-loader",
             ],
           },
           {
             test: /\.svg$/,
-            type: 'asset/resource',
+            type: "asset/resource",
             generator: {
-              filename: 'static/[name][ext][query]',
+              filename: "static/[name][ext][query]",
             },
           },
         ],
       },
       plugins: [
         new MiniCssExtractPlugin({
-          filename: '[name].css',
+          filename: "[name].css",
         }),
       ],
     };
@@ -338,8 +338,8 @@ describe('emit option', () => {
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchSnapshot(`emittedAssets`);
-          expect(getWarnings(stats)).toMatchSnapshot('warnings');
-          expect(getErrors(stats)).toMatchSnapshot('errors');
+          expect(getWarnings(stats)).toMatchSnapshot("warnings");
+          expect(getErrors(stats)).toMatchSnapshot("errors");
 
           resolve();
         });
@@ -363,8 +363,8 @@ describe('emit option', () => {
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchSnapshot(`emittedAssets`);
-          expect(getWarnings(stats)).toMatchSnapshot('warnings');
-          expect(getErrors(stats)).toMatchSnapshot('errors');
+          expect(getWarnings(stats)).toMatchSnapshot("warnings");
+          expect(getErrors(stats)).toMatchSnapshot("errors");
 
           resolve();
         });
@@ -380,7 +380,7 @@ describe('emit option', () => {
 
       apply(compiler) {
         compiler.hooks.emit.tapAsync(
-          'AssetsModifyPlugin',
+          "AssetsModifyPlugin",
           (compilation, callback) => {
             fs.writeFileSync(this.options.file, `.a{color: red;}`);
 
@@ -390,19 +390,19 @@ describe('emit option', () => {
       }
     }
 
-    const outputPath = path.resolve(__dirname, './js/cache-memory');
-    const modifyAsset = path.resolve(__dirname, 'fixtures', 'style-url.css');
+    const outputPath = path.resolve(__dirname, "./js/cache-memory");
+    const modifyAsset = path.resolve(__dirname, "fixtures", "style-url.css");
     const modifyAssetContent = fs.readFileSync(modifyAsset);
     const webpackConfig = {
-      mode: 'development',
-      context: path.resolve(__dirname, 'fixtures'),
+      mode: "development",
+      context: path.resolve(__dirname, "fixtures"),
       cache: {
-        type: 'memory',
+        type: "memory",
       },
       output: {
         path: outputPath,
       },
-      entry: './style-url.js',
+      entry: "./style-url.js",
       module: {
         rules: [
           {
@@ -411,25 +411,25 @@ describe('emit option', () => {
               {
                 loader: MiniCssExtractPlugin.loader,
                 options: {
-                  publicPath: '',
+                  publicPath: "",
                   emit: false,
                 },
               },
-              'css-loader',
+              "css-loader",
             ],
           },
           {
             test: /\.svg$/,
-            type: 'asset/resource',
+            type: "asset/resource",
             generator: {
-              filename: 'static/[name][ext][query]',
+              filename: "static/[name][ext][query]",
             },
           },
         ],
       },
       plugins: [
         new MiniCssExtractPlugin({
-          filename: '[name].css',
+          filename: "[name].css",
         }),
         new AssetsModifyPlugin({
           file: modifyAsset,
@@ -456,8 +456,8 @@ describe('emit option', () => {
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchSnapshot(`emittedAssets`);
-          expect(getWarnings(stats)).toMatchSnapshot('warnings');
-          expect(getErrors(stats)).toMatchSnapshot('errors');
+          expect(getWarnings(stats)).toMatchSnapshot("warnings");
+          expect(getErrors(stats)).toMatchSnapshot("errors");
 
           resolve();
         });
@@ -481,8 +481,8 @@ describe('emit option', () => {
           expect(
             Array.from(stats.compilation.emittedAssets).sort()
           ).toMatchSnapshot(`emittedAssets`);
-          expect(getWarnings(stats)).toMatchSnapshot('warnings');
-          expect(getErrors(stats)).toMatchSnapshot('errors');
+          expect(getWarnings(stats)).toMatchSnapshot("warnings");
+          expect(getErrors(stats)).toMatchSnapshot("errors");
 
           resolve();
         });

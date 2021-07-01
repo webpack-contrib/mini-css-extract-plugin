@@ -1,41 +1,41 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = [
   {
-    entry: './index.js',
+    entry: "./index.js",
     output: {
-      filename: 'one-[name].js',
+      filename: "one-[name].js",
     },
     module: {
       rules: [
         {
           test: /\.css$/,
-          use: [Self.loader, 'css-loader'],
+          use: [Self.loader, "css-loader"],
         },
       ],
     },
     plugins: [
       new Self({
-        filename: 'one/[name].css',
+        filename: "one/[name].css",
       }),
     ],
   },
   {
-    entry: './index.js',
+    entry: "./index.js",
     output: {
-      filename: 'two-[name].js',
+      filename: "two-[name].js",
     },
     module: {
       rules: [
         {
           test: /\.css$/,
-          use: [Self.loader, 'css-loader'],
+          use: [Self.loader, "css-loader"],
         },
       ],
     },
     plugins: [
       new Self({
-        filename: 'two/[name].css',
+        filename: "two/[name].css",
       }),
     ],
   },

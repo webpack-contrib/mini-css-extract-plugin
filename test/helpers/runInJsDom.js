@@ -1,6 +1,6 @@
-import jsdom from 'jsdom';
+import jsdom from "jsdom";
 
-import { readAsset } from './index';
+import { readAsset } from "./index";
 
 function runInJsDom(assetName, compiler, stats, testFn) {
   const bundle = readAsset(assetName, compiler, stats);
@@ -24,8 +24,8 @@ function runInJsDom(assetName, compiler, stats, testFn) {
 </html>
 `,
       {
-        resources: 'usable',
-        runScripts: 'dangerously',
+        resources: "usable",
+        runScripts: "dangerously",
         virtualConsole,
       }
     );

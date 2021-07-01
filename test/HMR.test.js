@@ -4,31 +4,31 @@
 /* eslint-env browser */
 /* eslint-disable no-console */
 
-import hotModuleReplacement from '../src/hmr/hotModuleReplacement';
+import hotModuleReplacement from "../src/hmr/hotModuleReplacement";
 
 function getLoadEvent() {
-  const event = document.createEvent('Event');
+  const event = document.createEvent("Event");
 
-  event.initEvent('load', false, false);
+  event.initEvent("load", false, false);
 
   return event;
 }
 
 function getErrorEvent() {
-  const event = document.createEvent('Event');
+  const event = document.createEvent("Event");
 
-  event.initEvent('error', false, false);
+  event.initEvent("error", false, false);
 
   return event;
 }
 
-describe('HMR', () => {
+describe("HMR", () => {
   let consoleMock = null;
 
   beforeEach(() => {
-    consoleMock = jest.spyOn(console, 'log').mockImplementation(() => () => {});
+    consoleMock = jest.spyOn(console, "log").mockImplementation(() => () => {});
 
-    jest.spyOn(Date, 'now').mockImplementation(() => 1479427200000);
+    jest.spyOn(Date, "now").mockImplementation(() => 1479427200000);
 
     document.head.innerHTML = '<link rel="stylesheet" href="/dist/main.css" />';
     document.body.innerHTML = '<script src="/dist/main.js"></script>';
@@ -38,8 +38,8 @@ describe('HMR', () => {
     consoleMock.mockClear();
   });
 
-  it('should works', (done) => {
-    const update = hotModuleReplacement('./src/style.css', {});
+  it("should works", (done) => {
+    const update = hotModuleReplacement("./src/style.css", {});
 
     update();
 
@@ -47,7 +47,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -61,8 +61,8 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should works with multiple updates', (done) => {
-    const update = hotModuleReplacement('./src/style.css', {});
+  it("should works with multiple updates", (done) => {
+    const update = hotModuleReplacement("./src/style.css", {});
 
     update();
 
@@ -70,7 +70,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -80,15 +80,15 @@ describe('HMR', () => {
 
       expect(links[1].isLoaded).toBe(true);
 
-      jest.spyOn(Date, 'now').mockImplementation(() => 1479427200001);
+      jest.spyOn(Date, "now").mockImplementation(() => 1479427200001);
 
-      const update2 = hotModuleReplacement('./src/style.css', {});
+      const update2 = hotModuleReplacement("./src/style.css", {});
 
       update2();
 
       setTimeout(() => {
         const links2 = Array.prototype.slice.call(
-          document.querySelectorAll('link')
+          document.querySelectorAll("link")
         );
 
         expect(links2[0].visited).toBe(true);
@@ -104,9 +104,9 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should reloads with locals', (done) => {
-    const update = hotModuleReplacement('./src/style.css', {
-      locals: { foo: 'bar' },
+  it("should reloads with locals", (done) => {
+    const update = hotModuleReplacement("./src/style.css", {
+      locals: { foo: "bar" },
     });
 
     update();
@@ -115,7 +115,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -129,9 +129,9 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should work reload all css', (done) => {
-    const update = hotModuleReplacement('./src/style.css', {
-      filename: 'unreload_url',
+  it("should work reload all css", (done) => {
+    const update = hotModuleReplacement("./src/style.css", {
+      filename: "unreload_url",
     });
 
     update();
@@ -140,7 +140,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -154,11 +154,11 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should reloads with non http/https link href', (done) => {
+  it("should reloads with non http/https link href", (done) => {
     document.head.innerHTML =
       '<link rel="stylesheet" href="/dist/main.css" /><link rel="shortcut icon" href="data:;base64,=" />';
 
-    const update = hotModuleReplacement('./src/style.css', {});
+    const update = hotModuleReplacement("./src/style.css", {});
 
     update();
 
@@ -166,7 +166,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -181,11 +181,11 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should reloads with # link href', (done) => {
+  it("should reloads with # link href", (done) => {
     document.head.innerHTML =
       '<link rel="stylesheet" href="/dist/main.css" /><link rel="shortcut icon" href="#href" />';
 
-    const update = hotModuleReplacement('./src/style.css', {});
+    const update = hotModuleReplacement("./src/style.css", {});
 
     update();
 
@@ -193,7 +193,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -208,11 +208,11 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should reloads with link without href', (done) => {
+  it("should reloads with link without href", (done) => {
     document.head.innerHTML =
       '<link rel="stylesheet" href="/dist/main.css" /><link rel="shortcut icon" />';
 
-    const update = hotModuleReplacement('./src/style.css', {});
+    const update = hotModuleReplacement("./src/style.css", {});
 
     update();
 
@@ -220,7 +220,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -235,11 +235,11 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should reloads with absolute remove url', (done) => {
+  it("should reloads with absolute remove url", (done) => {
     document.head.innerHTML =
       '<link rel="stylesheet" href="/dist/main.css" /><link rel="stylesheet" href="http://dev.com/dist/main.css" />';
 
-    const update = hotModuleReplacement('./src/style.css', {});
+    const update = hotModuleReplacement("./src/style.css", {});
 
     update();
 
@@ -247,7 +247,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -262,10 +262,10 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should reloads with non-file script in the end of page', (done) => {
-    document.body.appendChild(document.createElement('script'));
+  it("should reloads with non-file script in the end of page", (done) => {
+    document.body.appendChild(document.createElement("script"));
 
-    const update = hotModuleReplacement('./src/non_file_styles.css', {});
+    const update = hotModuleReplacement("./src/non_file_styles.css", {});
 
     update();
 
@@ -273,7 +273,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -287,8 +287,8 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should handle error event', (done) => {
-    const update = hotModuleReplacement('./src/style.css', {});
+  it("should handle error event", (done) => {
+    const update = hotModuleReplacement("./src/style.css", {});
 
     update();
 
@@ -296,7 +296,7 @@ describe('HMR', () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       expect(links[0].visited).toBe(true);
@@ -310,20 +310,20 @@ describe('HMR', () => {
     }, 100);
   });
 
-  it('should not remove old link when new link is loaded twice', (done) => {
-    const link = document.createElement('link');
+  it("should not remove old link when new link is loaded twice", (done) => {
+    const link = document.createElement("link");
 
     link.innerHTML = '<link rel="preload stylesheet" href="./dist/main.css" />';
     document.head.appendChild(link);
     document.head.removeChild = jest.fn();
 
-    const update = hotModuleReplacement('./dist/main.css', {});
+    const update = hotModuleReplacement("./dist/main.css", {});
 
     update();
 
     setTimeout(() => {
       const links = Array.prototype.slice.call(
-        document.querySelectorAll('link')
+        document.querySelectorAll("link")
       );
 
       links[1].dispatchEvent(getLoadEvent());

@@ -1,7 +1,7 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
-  entry: './index.js',
+  entry: "./index.js",
   optimization: {
     concatenateModules: true,
   },
@@ -16,14 +16,14 @@ module.exports = {
               esModule: true,
             },
           },
-          'css-loader',
+          "css-loader",
         ],
       },
     ],
   },
   plugins: [
     new Self({
-      filename: '[name].css',
+      filename: "[name].css",
     }),
   ],
 };

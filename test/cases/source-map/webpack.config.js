@@ -1,8 +1,8 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
-  entry: './index.js',
-  devtool: 'source-map',
+  entry: "./index.js",
+  devtool: "source-map",
   module: {
     rules: [
       {
@@ -12,7 +12,7 @@ module.exports = {
             loader: Self.loader,
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true,
             },
@@ -23,7 +23,7 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: '[name].css',
+      filename: "[name].css",
     }),
   ],
 };

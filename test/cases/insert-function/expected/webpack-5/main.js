@@ -181,7 +181,7 @@
 /******/ 			linkTag.href = fullhref;
 /******/ 		
 /******/ 			(function (linkTag) {
-/******/ 			      const reference = document.querySelector('.hot-reload');
+/******/ 			      const reference = document.querySelector(".hot-reload");
 /******/ 		
 /******/ 			      if (reference) {
 /******/ 			        reference.parentNode.insertBefore(linkTag, reference);

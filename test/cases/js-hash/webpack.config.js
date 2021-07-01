@@ -1,8 +1,8 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = [1, 2].map((n) => {
   return {
-    entry: './index.js',
+    entry: "./index.js",
     module: {
       rules: [
         {
@@ -12,14 +12,14 @@ module.exports = [1, 2].map((n) => {
               loader: Self.loader,
             },
             {
-              loader: 'css-loader',
+              loader: "css-loader",
               options: {
                 modules: true,
               },
             },
             {
-              loader: './loader',
-              ident: 'my-loader',
+              loader: "./loader",
+              ident: "my-loader",
               options: {
                 number: n,
               },

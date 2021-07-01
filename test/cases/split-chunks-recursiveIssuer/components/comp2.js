@@ -1,1 +1,1 @@
-import './comp2.css';
+import "./comp2.css";

@@ -2,12 +2,12 @@
  * @jest-environment node
  */
 
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-import webpack from 'webpack';
+import webpack from "webpack";
 
-import Self from '../src/index';
+import Self from "../src/index";
 
 function clearDirectory(dirPath) {
   let files;
@@ -46,14 +46,14 @@ function compareDirectory(actual, expected) {
         path.resolve(expected, file)
       );
     } else if (stats.isFile()) {
-      const content = fs.readFileSync(path.resolve(expected, file), 'utf8');
+      const content = fs.readFileSync(path.resolve(expected, file), "utf8");
       let actualContent;
 
       if (/^MISSING/.test(content)) {
         expect(fs.existsSync(path.resolve(actual, file))).toBe(false);
       } else {
         try {
-          actualContent = fs.readFileSync(path.resolve(actual, file), 'utf8');
+          actualContent = fs.readFileSync(path.resolve(actual, file), "utf8");
         } catch (error) {
           // eslint-disable-next-line no-console
           console.log(error);
@@ -70,17 +70,17 @@ function compareDirectory(actual, expected) {
   }
 }
 
-describe('TestCases', () => {
-  const casesDirectory = path.resolve(__dirname, 'cases');
-  const outputDirectory = path.resolve(__dirname, 'js');
+describe("TestCases", () => {
+  const casesDirectory = path.resolve(__dirname, "cases");
+  const outputDirectory = path.resolve(__dirname, "js");
   const tests = fs.readdirSync(casesDirectory).filter((test) => {
     const testDirectory = path.join(casesDirectory, test);
-    const filterPath = path.join(testDirectory, 'test.filter.js');
+    const filterPath = path.join(testDirectory, "test.filter.js");
 
     // eslint-disable-next-line global-require, import/no-dynamic-require
     if (fs.existsSync(filterPath) && !require(filterPath)()) {
       describe.skip(test, () => {
-        it('filtered', () => {});
+        it("filtered", () => {});
       });
 
       return false;
@@ -95,8 +95,8 @@ describe('TestCases', () => {
     if (!/^(\.|_)/.test(directory)) {
       // eslint-disable-next-line no-loop-func
       it(`${directory} should compile to the expected result`, (done) => {
-        if (directory === 'serializingBigStrings') {
-          clearDirectory(path.resolve(__dirname, '../node_modules/.cache'));
+        if (directory === "serializingBigStrings") {
+          clearDirectory(path.resolve(__dirname, "../node_modules/.cache"));
         }
 
         const directoryForCase = path.resolve(casesDirectory, directory);
@@ -104,7 +104,7 @@ describe('TestCases', () => {
         // eslint-disable-next-line import/no-dynamic-require, global-require
         const webpackConfig = require(path.resolve(
           directoryForCase,
-          'webpack.config.js'
+          "webpack.config.js"
         ));
         const { context } = webpackConfig;
 
@@ -112,7 +112,7 @@ describe('TestCases', () => {
           Object.assign(
             config,
             {
-              mode: 'none',
+              mode: "none",
               context: directoryForCase,
             },
             config,
@@ -146,7 +146,7 @@ describe('TestCases', () => {
           }
 
           if (stats.hasErrors()) {
-            const errorsPath = path.join(directoryForCase, './errors.test.js');
+            const errorsPath = path.join(directoryForCase, "./errors.test.js");
 
             if (fs.existsSync(errorsPath)) {
               const { errors } = stats.compilation;
@@ -159,7 +159,7 @@ describe('TestCases', () => {
               );
 
               if (filteredErrors.length > 0) {
-                done(new Error(`Errors:\n${filteredErrors.join(',\n')}`));
+                done(new Error(`Errors:\n${filteredErrors.join(",\n")}`));
 
                 return;
               }
@@ -178,7 +178,7 @@ describe('TestCases', () => {
             done(
               new Error(
                 stats.toString({
-                  context: path.resolve(__dirname, '..'),
+                  context: path.resolve(__dirname, ".."),
                   errorDetails: true,
                   warnings: true,
                 })
@@ -188,23 +188,23 @@ describe('TestCases', () => {
             return;
           }
 
-          const expectedDirectory = path.resolve(directoryForCase, 'expected');
+          const expectedDirectory = path.resolve(directoryForCase, "expected");
           const expectedDirectoryByVersion = path.join(
             expectedDirectory,
             `webpack-${webpack.version[0]}${
-              process.env.EXPERIMENTAL_USE_IMPORT_MODULE ? '-importModule' : ''
+              process.env.EXPERIMENTAL_USE_IMPORT_MODULE ? "-importModule" : ""
             }`
           );
 
           if (/^hmr/.test(directory)) {
             let res = fs
-              .readFileSync(path.resolve(outputDirectoryForCase, 'main.js'))
+              .readFileSync(path.resolve(outputDirectoryForCase, "main.js"))
               .toString();
 
             const date = Date.now().toString().slice(0, 6);
-            const dateRegexp = new RegExp(`${date}\\d+`, 'gi');
+            const dateRegexp = new RegExp(`${date}\\d+`, "gi");
 
-            res = res.replace(dateRegexp, '');
+            res = res.replace(dateRegexp, "");
 
             const matchAll = res.match(
               /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i
@@ -214,11 +214,11 @@ describe('TestCases', () => {
 
             res = res.replace(
               /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i,
-              `__webpack_require__.h = () => ("${replacer.fill('x').join('')}")`
+              `__webpack_require__.h = () => ("${replacer.fill("x").join("")}")`
             );
 
             fs.writeFileSync(
-              path.resolve(outputDirectoryForCase, 'main.js'),
+              path.resolve(outputDirectoryForCase, "main.js"),
               res
             );
           }
@@ -232,7 +232,7 @@ describe('TestCases', () => {
             compareDirectory(outputDirectoryForCase, expectedDirectory);
           }
 
-          const warningsFile = path.resolve(directoryForCase, 'warnings.js');
+          const warningsFile = path.resolve(directoryForCase, "warnings.js");
 
           if (fs.existsSync(warningsFile)) {
             const actualWarnings = stats.toString({
@@ -245,11 +245,11 @@ describe('TestCases', () => {
             expect(
               actualWarnings
                 .trim()
-                .replace(/\*\scss\s(.*)?!/g, '* css /path/to/loader.js!')
+                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!")
             ).toBe(
               expectedWarnings
                 .trim()
-                .replace(/\*\scss\s(.*)?!/g, '* css /path/to/loader.js!')
+                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!")
             );
           }
 

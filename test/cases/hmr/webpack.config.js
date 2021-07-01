@@ -1,10 +1,10 @@
-import { HotModuleReplacementPlugin } from 'webpack';
+import { HotModuleReplacementPlugin } from "webpack";
 
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
-  entry: './index.css',
-  mode: 'development',
+  entry: "./index.css",
+  mode: "development",
   module: {
     rules: [
       {
@@ -13,7 +13,7 @@ module.exports = {
           {
             loader: Self.loader,
           },
-          'css-loader',
+          "css-loader",
         ],
       },
     ],
@@ -21,7 +21,7 @@ module.exports = {
   plugins: [
     new HotModuleReplacementPlugin(),
     new Self({
-      filename: '[name].css',
+      filename: "[name].css",
     }),
   ],
 };

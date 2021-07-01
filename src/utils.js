@@ -1,5 +1,5 @@
-import NativeModule from 'module';
-import path from 'path';
+import NativeModule from "module";
+import path from "path";
 
 function trueFn() {
   return true;
@@ -10,7 +10,7 @@ function findModuleById(compilation, id) {
 
   for (const module of modules) {
     const moduleId =
-      typeof chunkGraph !== 'undefined'
+      typeof chunkGraph !== "undefined"
         ? chunkGraph.getModuleId(module)
         : module.id;
 
@@ -52,8 +52,8 @@ function compareModulesByIdentifier(a, b) {
   return compareIds(a.identifier(), b.identifier());
 }
 
-const MODULE_TYPE = 'css/mini-extract';
-const AUTO_PUBLIC_PATH = '__MINI_CSS_EXTRACT_PLUGIN_PUBLIC_PATH__';
+const MODULE_TYPE = "css/mini-extract";
+const AUTO_PUBLIC_PATH = "__MINI_CSS_EXTRACT_PLUGIN_PUBLIC_PATH__";
 
 function isAbsolutePath(str) {
   return path.posix.isAbsolute(str) || path.win32.isAbsolute(str);
@@ -66,7 +66,7 @@ function isRelativePath(str) {
 }
 
 function stringifyRequest(loaderContext, request) {
-  const splitted = request.split('!');
+  const splitted = request.split("!");
   const { context } = loaderContext;
 
   return JSON.stringify(
@@ -74,7 +74,7 @@ function stringifyRequest(loaderContext, request) {
       .map((part) => {
         // First, separate singlePath from query, because the query might contain paths again
         const splittedPart = part.match(/^(.*?)(\?.*)/);
-        const query = splittedPart ? splittedPart[2] : '';
+        const query = splittedPart ? splittedPart[2] : "";
         let singlePath = splittedPart ? splittedPart[1] : part;
 
         if (isAbsolutePath(singlePath) && context) {
@@ -93,9 +93,9 @@ function stringifyRequest(loaderContext, request) {
           }
         }
 
-        return singlePath.replace(/\\/g, '/') + query;
+        return singlePath.replace(/\\/g, "/") + query;
       })
-      .join('!')
+      .join("!")
   );
 }
 

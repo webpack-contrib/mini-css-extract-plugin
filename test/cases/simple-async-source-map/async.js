@@ -1,1 +1,1 @@
-import './in-async.css';
+import "./in-async.css";

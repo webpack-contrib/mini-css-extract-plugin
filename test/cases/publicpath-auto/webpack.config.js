@@ -1,7 +1,7 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
-  entry: './index.js',
+  entry: "./index.js",
   module: {
     rules: [
       {
@@ -10,22 +10,22 @@ module.exports = {
           {
             loader: Self.loader,
             options: {
-              publicPath: 'auto',
+              publicPath: "auto",
             },
           },
-          'css-loader',
+          "css-loader",
         ],
       },
       {
         test: /\.(svg|png)$/,
-        type: 'asset/resource',
-        generator: { filename: 'assets/[name][ext]' },
+        type: "asset/resource",
+        generator: { filename: "assets/[name][ext]" },
       },
     ],
   },
   plugins: [
     new Self({
-      filename: 'styles/[contenthash]/[name].css',
+      filename: "styles/[contenthash]/[name].css",
     }),
   ],
 };

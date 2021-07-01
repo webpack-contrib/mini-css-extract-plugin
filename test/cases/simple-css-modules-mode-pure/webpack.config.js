@@ -1,7 +1,7 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
-  entry: './index.js',
+  entry: "./index.js",
   module: {
     rules: [
       {
@@ -9,11 +9,11 @@ module.exports = {
         use: [
           Self.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: {
-                mode: 'pure',
-                localIdentName: 'foo__[name]__[local]',
+                mode: "pure",
+                localIdentName: "foo__[name]__[local]",
               },
             },
           },
@@ -23,7 +23,7 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: '[name].css',
+      filename: "[name].css",
     }),
   ],
 };

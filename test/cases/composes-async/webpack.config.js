@@ -1,7 +1,7 @@
-import Self from '../../../src';
+import Self from "../../../src";
 
 module.exports = {
-  entry: './index.js',
+  entry: "./index.js",
   module: {
     rules: [
       {
@@ -9,10 +9,10 @@ module.exports = {
         use: [
           Self.loader,
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: {
-                localIdentName: '[local]',
+                localIdentName: "[local]",
               },
             },
           },
@@ -25,8 +25,8 @@ module.exports = {
       cacheGroups: {
         cssDedupe: {
           test: /\.css$/,
-          name: 'dedupe',
-          chunks: 'all',
+          name: "dedupe",
+          chunks: "all",
           minChunks: 2,
           enforce: true,
         },
@@ -35,7 +35,7 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: '[name].css',
+      filename: "[name].css",
     }),
   ],
 };
