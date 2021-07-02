@@ -1,4 +1,3 @@
-/* eslint-env browser */
 import path from "path";
 
 import MiniCssExtractPlugin from "../src/cjs";
