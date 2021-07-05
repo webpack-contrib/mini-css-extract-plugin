@@ -984,35 +984,36 @@ class MiniCssExtractPlugin {
       compiler.webpack.sources;
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
-    const includePathinfo = compilation.outputOptions.pathinfo;
 
-    for (const m of usedModules) {
-      let content = m.content.toString();
+    for (const module of usedModules) {
+      let content = module.content.toString();
 
-      if (includePathinfo) {
+      const readableIdentifier = module.readableIdentifier(requestShortener);
+
+      if (compilation.outputOptions.pathinfo) {
         // From https://github.com/webpack/webpack/blob/29eff8a74ecc2f87517b627dee451c2af9ed3f3f/lib/ModuleInfoHeaderPlugin.js#L191-L194
-        const req = m.readableIdentifier(requestShortener);
-        const reqStr = req.replace(/\*\//g, "*_/");
+        const reqStr = readableIdentifier.replace(/\*\//g, "*_/");
         const reqStrStar = "*".repeat(reqStr.length);
         const headerStr = `/*!****${reqStrStar}****!*\\\n  !*** ${reqStr} ***!\n  \\****${reqStrStar}****/\n`;
+
         content = headerStr + content;
       }
 
       if (/^@import url/.test(content)) {
         // HACK for IE
         // http://stackoverflow.com/a/14676665/1458162
-        if (m.media) {
+        if (module.media) {
           // insert media into the @import
           // this is rar
           // TODO improve this and parse the CSS to support multiple medias
-          content = content.replace(/;|\s*$/, m.media);
+          content = content.replace(/;|\s*$/, module.media);
         }
 
         externalsSource.add(content);
         externalsSource.add("\n");
       } else {
-        if (m.media) {
-          source.add(`@media ${m.media} {\n`);
+        if (module.media) {
+          source.add(`@media ${module.media} {\n`);
         }
 
         const { path: filename } = compilation.getPathWithInfo(
@@ -1024,22 +1025,21 @@ class MiniCssExtractPlugin {
 
         content = content.replace(new RegExp(AUTO_PUBLIC_PATH, "g"), undoPath);
 
-        if (m.sourceMap) {
+        if (module.sourceMap) {
           source.add(
             new SourceMapSource(
               content,
-              m.readableIdentifier(requestShortener),
-              m.sourceMap.toString()
+              readableIdentifier,
+              module.sourceMap.toString()
             )
           );
         } else {
-          source.add(
-            new RawSource(content, m.readableIdentifier(requestShortener))
-          );
+          source.add(new RawSource(content, readableIdentifier));
         }
+
         source.add("\n");
 
-        if (m.media) {
+        if (module.media) {
           source.add("}\n");
         }
       }
