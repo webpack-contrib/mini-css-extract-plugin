@@ -984,9 +984,19 @@ class MiniCssExtractPlugin {
       compiler.webpack.sources;
     const source = new ConcatSource();
     const externalsSource = new ConcatSource();
+    const includePathinfo = compilation.outputOptions.pathinfo;
 
     for (const m of usedModules) {
       let content = m.content.toString();
+
+      if (includePathinfo) {
+        // From https://github.com/webpack/webpack/blob/29eff8a74ecc2f87517b627dee451c2af9ed3f3f/lib/ModuleInfoHeaderPlugin.js#L191-L194
+        const req = m.readableIdentifier(requestShortener);
+        const reqStr = req.replace(/\*\//g, "*_/");
+        const reqStrStar = "*".repeat(reqStr.length);
+        const headerStr = `/*!****${reqStrStar}****!*\\\n  !*** ${reqStr} ***!\n  \\****${reqStrStar}****/\n`;
+        content = headerStr + content;
+      }
 
       if (/^@import url/.test(content)) {
         // HACK for IE
