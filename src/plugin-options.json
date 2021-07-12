@@ -13,7 +13,7 @@
         }
       ],
       "description": "This option determines the name of each output CSS file.",
-      "link": "https://webpack.js.org/plugins/mini-css-extract-plugin/#filename"
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#filename"
     },
     "chunkFilename": {
       "anyOf": [
@@ -25,21 +25,21 @@
         }
       ],
       "description": "This option determines the name of non-entry chunk files.",
-      "link": "https://webpack.js.org/plugins/mini-css-extract-plugin/#chunkfilename"
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#chunkfilename"
     },
     "experimentalUseImportModule": {
       "type": "boolean",
       "description": "Enable the experimental importModule approach instead of using child compilers. This uses less memory and is faster.",
-      "link": "https://webpack.js.org/plugins/mini-css-extract-plugin/#experimentaluseimportmodule"
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#experimentaluseimportmodule"
     },
     "ignoreOrder": {
       "type": "boolean",
       "description": "Remove Order Warnings.",
-      "link": "https://webpack.js.org/plugins/mini-css-extract-plugin/#ignoreorder"
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#ignoreorder"
     },
     "insert": {
       "description": "Inserts `<link>` at the given position.",
-      "link": "https://webpack.js.org/plugins/mini-css-extract-plugin/#insert",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#insert",
       "anyOf": [
         {
           "type": "string"
@@ -51,7 +51,7 @@
     },
     "attributes": {
       "description": "Adds custom attributes to tag.",
-      "link": "https://webpack.js.org/plugins/mini-css-extract-plugin/#attributes",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#attributes",
       "type": "object"
     },
     "linkType": {
@@ -64,7 +64,7 @@
         }
       ],
       "description": "This option allows loading asynchronous chunks with a custom link type",
-      "link": "https://webpack.js.org/plugins/mini-css-extract-plugin/#linktype"
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#linktype"
     }
   }
 }

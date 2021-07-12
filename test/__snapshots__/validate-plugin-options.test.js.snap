@@ -5,7 +5,7 @@ exports[`validate options should throw an error on the "attributes" option with 
  - options.attributes should be an object:
    object { … }
    -> Adds custom attributes to tag.
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#attributes"
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#attributes"
 `;
 
 exports[`validate options should throw an error on the "chunkFilename" option with "true" value 1`] = `
@@ -13,7 +13,7 @@ exports[`validate options should throw an error on the "chunkFilename" option wi
  - options.chunkFilename should be one of these:
    string | function
    -> This option determines the name of non-entry chunk files.
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#chunkfilename
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#chunkfilename
    Details:
     * options.chunkFilename should be a string.
     * options.chunkFilename should be an instance of function."
@@ -24,7 +24,7 @@ exports[`validate options should throw an error on the "filename" option with "t
  - options.filename should be one of these:
    string | function
    -> This option determines the name of each output CSS file.
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#filename
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#filename
    Details:
     * options.filename should be a string.
     * options.filename should be an instance of function."
@@ -34,7 +34,7 @@ exports[`validate options should throw an error on the "ignoreOrder" option with
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.ignoreOrder should be a boolean.
    -> Remove Order Warnings.
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#ignoreorder"
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#ignoreorder"
 `;
 
 exports[`validate options should throw an error on the "insert" option with "{}" value 1`] = `
@@ -42,7 +42,7 @@ exports[`validate options should throw an error on the "insert" option with "{}"
  - options.insert should be one of these:
    string | function
    -> Inserts \`<link>\` at the given position.
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#insert
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#insert
    Details:
     * options.insert should be a string.
     * options.insert should be an instance of function."
@@ -53,7 +53,7 @@ exports[`validate options should throw an error on the "insert" option with "1" 
  - options.insert should be one of these:
    string | function
    -> Inserts \`<link>\` at the given position.
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#insert
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#insert
    Details:
     * options.insert should be a string.
     * options.insert should be an instance of function."
@@ -64,7 +64,7 @@ exports[`validate options should throw an error on the "insert" option with "tru
  - options.insert should be one of these:
    string | function
    -> Inserts \`<link>\` at the given position.
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#insert
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#insert
    Details:
     * options.insert should be a string.
     * options.insert should be an instance of function."
@@ -75,7 +75,7 @@ exports[`validate options should throw an error on the "linkType" option with "[
  - options.linkType should be one of these:
    \\"text/css\\" | boolean
    -> This option allows loading asynchronous chunks with a custom link type
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#linktype
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#linktype
    Details:
     * options.linkType should be \\"text/css\\".
     * options.linkType should be a boolean."
@@ -86,7 +86,7 @@ exports[`validate options should throw an error on the "linkType" option with "{
  - options.linkType should be one of these:
    \\"text/css\\" | boolean
    -> This option allows loading asynchronous chunks with a custom link type
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#linktype
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#linktype
    Details:
     * options.linkType should be \\"text/css\\".
     * options.linkType should be a boolean."
@@ -97,7 +97,7 @@ exports[`validate options should throw an error on the "linkType" option with "1
  - options.linkType should be one of these:
    \\"text/css\\" | boolean
    -> This option allows loading asynchronous chunks with a custom link type
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#linktype
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#linktype
    Details:
     * options.linkType should be \\"text/css\\".
     * options.linkType should be a boolean."
@@ -108,7 +108,7 @@ exports[`validate options should throw an error on the "linkType" option with "i
  - options.linkType should be one of these:
    \\"text/css\\" | boolean
    -> This option allows loading asynchronous chunks with a custom link type
-   -> Read more at https://webpack.js.org/plugins/mini-css-extract-plugin/#linktype
+   -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#linktype
    Details:
     * options.linkType should be \\"text/css\\".
     * options.linkType should be a boolean."
