@@ -11,7 +11,9 @@
         {
           "instanceof": "Function"
         }
-      ]
+      ],
+      "description": "This option determines the name of each output CSS file.",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#filename"
     },
     "chunkFilename": {
       "anyOf": [
@@ -21,17 +23,23 @@
         {
           "instanceof": "Function"
         }
-      ]
+      ],
+      "description": "This option determines the name of non-entry chunk files.",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#chunkfilename"
     },
     "experimentalUseImportModule": {
+      "type": "boolean",
       "description": "Enable the experimental importModule approach instead of using child compilers. This uses less memory and is faster.",
-      "type": "boolean"
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#experimentaluseimportmodule"
     },
     "ignoreOrder": {
-      "type": "boolean"
+      "type": "boolean",
+      "description": "Remove Order Warnings.",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#ignoreorder"
     },
     "insert": {
-      "description": "Inserts `<link>` at the given position (https://github.com/webpack-contrib/mini-css-extract-plugin#insert).",
+      "description": "Inserts `<link>` at the given position.",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#insert",
       "anyOf": [
         {
           "type": "string"
@@ -42,7 +50,8 @@
       ]
     },
     "attributes": {
-      "description": "Adds custom attributes to tag (https://github.com/webpack-contrib/mini-css-extract-plugin#attributes).",
+      "description": "Adds custom attributes to tag.",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#attributes",
       "type": "object"
     },
     "linkType": {
@@ -53,7 +62,9 @@
         {
           "type": "boolean"
         }
-      ]
+      ],
+      "description": "This option allows loading asynchronous chunks with a custom link type",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#linktype"
     }
   }
 }
