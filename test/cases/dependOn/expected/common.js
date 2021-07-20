@@ -64,7 +64,8 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 				}
 /******/ 				if(fulfilled) {
 /******/ 					deferred.splice(i--, 1)
-/******/ 					result = fn();
+/******/ 					var r = fn();
+/******/ 					if (r !== undefined) result = r;
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
@@ -148,6 +149,6 @@ __webpack_require__.r(__webpack_exports__);
 
 })();
 
-__webpack_require__.O();
+__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ })()
 ;
