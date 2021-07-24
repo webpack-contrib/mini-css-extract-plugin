@@ -33,6 +33,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
       - name: Use latest NPM
         run: sudo npm i -g npm
@@ -71,6 +72,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
       - name: Use latest NPM on ubuntu/macos
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
@@ -79,18 +81,6 @@ jobs:
       - name: Use latest NPM on windows
         if: matrix.os == 'windows-latest'
         run: npm i -g npm
-
-      - name: Get npm cache directory
-        id: npm-cache
-        run: |
-          echo "::set-output name=dir::$(npm config get cache)"
-
-      - uses: actions/cache@v1
-        with:
-          path: ${{ steps.npm-cache.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm i
@@ -127,6 +117,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
       - name: Use latest NPM on ubuntu/macos
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
@@ -135,18 +126,6 @@ jobs:
       - name: Use latest NPM on windows
         if: matrix.os == 'windows-latest'
         run: npm i -g npm
-
-      - name: Get npm cache directory
-        id: npm-cache
-        run: |
-          echo "::set-output name=dir::$(npm config get cache)"
-
-      - uses: actions/cache@v1
-        with:
-          path: ${{ steps.npm-cache.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm i
