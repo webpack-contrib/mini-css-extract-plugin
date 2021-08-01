@@ -198,8 +198,8 @@ function reloadAll() {
 function isUrlRequest(url) {
   // An URL is not an request if
 
-  // It is not http or https
-  if (!/^https?:/i.test(url)) {
+  // It is not http or https or browser extension
+  if (!/^(https?|.*extension):/i.test(url)) {
     return false;
   }
 
