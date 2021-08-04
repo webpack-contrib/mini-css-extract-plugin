@@ -199,7 +199,7 @@ function isUrlRequest(url) {
   // An URL is not an request if
 
   // It is not http or https
-  if (!/^https?:/i.test(url)) {
+  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(url)) {
     return false;
   }
 

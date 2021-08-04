@@ -12,6 +12,10 @@ exports[`HMR should reloads with absolute remove url 1`] = `"[HMR] css reload %s
 
 exports[`HMR should reloads with absolute remove url 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\"><link rel=\\"stylesheet\\" href=\\"http://dev.com/dist/main.css\\">"`;
 
+exports[`HMR should reloads with browser extension protocol 1`] = `"[HMR] css reload %s"`;
+
+exports[`HMR should reloads with browser extension protocol 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\"><link rel=\\"stylesheet\\" href=\\"chrome-extension://main.css\\">"`;
+
 exports[`HMR should reloads with link without href 1`] = `"[HMR] css reload %s"`;
 
 exports[`HMR should reloads with link without href 2`] = `"<link rel=\\"stylesheet\\" href=\\"/dist/main.css\\"><link rel=\\"stylesheet\\" href=\\"http://localhost/dist/main.css?1479427200000\\"><link rel=\\"shortcut icon\\">"`;
