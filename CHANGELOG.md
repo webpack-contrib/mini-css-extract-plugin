@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.0.0...v2.2.0) (2021-08-04)
+
+
+### Features
+
+* add `link` and `description` for options ([#786](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/786)) ([3c5a5b7](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/3c5a5b7aba8ed855368a7e95d89420b97dcd1531))
+
+
+### Bug Fixes
+
+* hmr in browser extension ([3d09da1](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/3d09da1abb9250b39c6a15efd33950aa19efb0b3))
+
 ## [2.1.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.0.0...v2.1.0) (2021-07-05)
 
 
