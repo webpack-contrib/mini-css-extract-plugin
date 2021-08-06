@@ -139,6 +139,6 @@ jobs:
           EXPERIMENTAL_USE_IMPORT_MODULE: "true"
 
       - name: Submit coverage data to codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
