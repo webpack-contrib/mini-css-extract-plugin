@@ -71,6 +71,23 @@ module.exports = {
 };
 ```
 
+### ⚠ CSS is not loaded from initial chunks.
+
+Note that if you import CSS from your webpack entrypoint (in the initial chunk), `mini-css-extract-plugin` will not load this CSS into the page. `html-webpack-plugin` usually loads this CSS for you, but if you're not using that plugin, you'll need to use a dynamic `import()` to force the CSS to be split into a separate chunk. Either of the following would work:
+
+**component.js**
+
+```js
+import("./style.css");
+```
+
+**app.js**
+
+```js
+import("./component");
+```
+
+
 ## Options
 
 ### Plugin Options
