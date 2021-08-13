@@ -65,6 +65,11 @@
       ],
       "description": "This option allows loading asynchronous chunks with a custom link type",
       "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#linktype"
+    },
+    "skipRuntimeLoading": {
+      "type": "boolean",
+      "description": "An option to skip runtime loading asynchronous chunks by the current plugin, and developers can determine when to load by using other plugins.",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#experimentaluseimportmodule"
     }
   }
 }

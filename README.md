@@ -83,6 +83,7 @@ module.exports = {
 |                      **[`insert`](#insert)**                      | `{String\|Function}` | `document.head.appendChild(linkTag);` | Inserts `<link>` at the given position                                        |
 |                  **[`attributes`](#attributes)**                  |      `{Object}`      |                 `{}`                  | Adds custom attributes to tag                                                 |
 |                    **[`linkType`](#linkType)**                    | `{String\|Boolean}`  |              `text/css`               | Allows loading asynchronous chunks with a custom link type                    |
+|          **[`skipRuntimeLoading`](#skipruntimeloading)**          |     `{Boolean}`      |                `false`                | Whether skip runtime loading asynchronous chunks                              |
 | **[`experimentalUseImportModule`](#experimentalUseImportModule)** |     `{Boolean}`      |                `false`                | Use an experimental webpack API to execute modules instead of child compilers |
 
 #### `filename`
@@ -244,6 +245,36 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       linkType: false,
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
+    ],
+  },
+};
+```
+
+#### `skipRuntimeLoading`
+
+##### `Boolean`
+
+An option to skip runtime loading asynchronous chunks by the current plugin, and developers can determine when to load by using other plugins.
+
+`true` to skip.
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      skipRuntimeLoading: true,
     }),
   ],
   module: {

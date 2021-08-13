@@ -554,7 +554,7 @@ class MiniCssExtractPlugin {
         }
 
         generate() {
-          const { chunk, runtimeRequirements } = this;
+          const { chunk, runtimeRequirements, runtimeOptions } = this;
           const {
             runtimeTemplate,
             outputOptions: { crossOriginLoading },
@@ -568,7 +568,7 @@ class MiniCssExtractPlugin {
             RuntimeGlobals.hmrDownloadUpdateHandlers
           );
 
-          if (!withLoading && !withHmr) {
+          if (runtimeOptions.skipRuntimeLoading || (!withLoading && !withHmr)) {
             return null;
           }
 
@@ -577,9 +577,9 @@ class MiniCssExtractPlugin {
               "chunkId, fullhref, resolve, reject",
               [
                 'var linkTag = document.createElement("link");',
-                this.runtimeOptions.attributes
+                runtimeOptions.attributes
                   ? Template.asString(
-                      Object.entries(this.runtimeOptions.attributes).map(
+                      Object.entries(runtimeOptions.attributes).map(
                         (entry) => {
                           const [key, value] = entry;
 
@@ -591,9 +591,9 @@ class MiniCssExtractPlugin {
                     )
                   : "",
                 'linkTag.rel = "stylesheet";',
-                this.runtimeOptions.linkType
+                runtimeOptions.linkType
                   ? `linkTag.type = ${JSON.stringify(
-                      this.runtimeOptions.linkType
+                      runtimeOptions.linkType
                     )};`
                   : "",
                 `var onLinkComplete = ${runtimeTemplate.basicFunction("event", [
@@ -627,11 +627,11 @@ class MiniCssExtractPlugin {
                       "}",
                     ])
                   : "",
-                typeof this.runtimeOptions.insert !== "undefined"
-                  ? typeof this.runtimeOptions.insert === "function"
-                    ? `(${this.runtimeOptions.insert.toString()})(linkTag)`
+                typeof runtimeOptions.insert !== "undefined"
+                  ? typeof runtimeOptions.insert === "function"
+                    ? `(${runtimeOptions.insert.toString()})(linkTag)`
                     : Template.asString([
-                        `var target = document.querySelector("${this.runtimeOptions.insert}");`,
+                        `var target = document.querySelector("${runtimeOptions.insert}");`,
                         `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
                       ])
                   : Template.asString(["document.head.appendChild(linkTag);"]),
