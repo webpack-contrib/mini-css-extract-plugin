@@ -169,7 +169,7 @@ A new `<link>` element will be inserted before the element with id `some-element
 Type: `Object`
 Default: `{}`
 
-If defined, the `mini-css-extract-plugin` will attach given attributes with their values on <link> element.
+If defined, the `mini-css-extract-plugin` will attach given attributes with their values on `<link>` element.
 
 **webpack.config.js**
 
