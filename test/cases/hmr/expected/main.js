@@ -691,7 +691,11 @@ module.exports = function (urlString) {
 /******/ 				.then(__webpack_require__.hmrM)
 /******/ 				.then(function (update) {
 /******/ 					if (!update) {
-/******/ 						return setStatus(applyInvalidatedModules() ? "ready" : "idle");
+/******/ 						return setStatus(applyInvalidatedModules() ? "ready" : "idle").then(
+/******/ 							function () {
+/******/ 								return null;
+/******/ 							}
+/******/ 						);
 /******/ 					}
 /******/ 		
 /******/ 					return setStatus("prepare").then(function () {
