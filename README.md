@@ -203,7 +203,7 @@ Note: It's only applied to dynamically loaded css chunks, if you want to modify 
 Type: `String|Boolean`
 Default: `text/css`
 
-This option allows loading asynchronous chunks with a custom link type, such as <link type="text/css" ...>.
+This option allows loading asynchronous chunks with a custom link type, such as `<link type="text/css" ...>`.
 
 ##### `String`
 
