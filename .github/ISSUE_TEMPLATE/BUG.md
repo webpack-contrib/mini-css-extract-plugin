@@ -14,11 +14,7 @@ about: Something went awry and you'd like to tell us about it.
   Head to StackOverflow or https://gitter.im/webpack/webpack.
 -->
 
-- Operating System:
-- Node Version:
-- NPM Version:
-- webpack Version:
-- mini-css-extract-plugin Version:
+### Please paste the results of `npx webpack info` here, and mention other relevant information
 
 ### Expected Behavior
 
