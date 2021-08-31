@@ -1002,9 +1002,11 @@ class MiniCssExtractPlugin {
         header = new RawSource(headerStr);
       }
 
-      source.add(header);
-
       if (startsWithAtRuleImport) {
+        if (typeof header !== "undefined") {
+          externalsSource.add(header);
+        }
+
         // HACK for IE
         // http://stackoverflow.com/a/14676665/1458162
         if (module.media) {
@@ -1017,6 +1019,10 @@ class MiniCssExtractPlugin {
         externalsSource.add(content);
         externalsSource.add("\n");
       } else {
+        if (typeof header !== "undefined") {
+          source.add(header);
+        }
+
         if (module.media) {
           source.add(`@media ${module.media} {\n`);
         }
