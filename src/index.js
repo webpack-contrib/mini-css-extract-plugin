@@ -989,6 +989,7 @@ class MiniCssExtractPlugin {
       let content = module.content.toString();
 
       const readableIdentifier = module.readableIdentifier(requestShortener);
+      const startsWithAtRuleImport = /^@import url/.test(content);
 
       if (compilation.outputOptions.pathinfo) {
         // From https://github.com/webpack/webpack/blob/29eff8a74ecc2f87517b627dee451c2af9ed3f3f/lib/ModuleInfoHeaderPlugin.js#L191-L194
@@ -999,7 +1000,7 @@ class MiniCssExtractPlugin {
         content = headerStr + content;
       }
 
-      if (/^@import url/.test(content)) {
+      if (startsWithAtRuleImport) {
         // HACK for IE
         // http://stackoverflow.com/a/14676665/1458162
         if (module.media) {
