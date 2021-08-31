@@ -3,16 +3,8 @@ name: 📚 Documentation
 about: Are the docs lacking or missing something? Do they need some new 🔥 hotness? Tell us here.
 ---
 
-<!--
-  Issues are so 🔥
-
-  If you remove or skip this template, you'll make the 🐼 sad and the mighty god
-  of Github will appear and pile-drive the close button from a great height
-  while making animal noises.
-
-  👉🏽 Need support, advice, or help? Don't open an issue!
-  Head to StackOverflow or https://gitter.im/webpack/webpack.
--->
+<!-- Please don't delete this template otherwise your issue will be closed immediately -->
+<!-- Before creating an issue please make sure you are using the latest version of webpack. -->
 
 Documentation Is:
 
@@ -24,5 +16,11 @@ Documentation Is:
 - [ ] Not Sure?
 
 ### Please Explain in Detail...
+
+<!-- Please don't delete this template otherwise your issue will be closed immediately -->
+<!-- https://github.com/webpack/webpack/discussions -->
+<!-- https://stackoverflow.com/questions/ask?tags=webpack -->
+<!-- https://gitter.im/webpack/webpack -->
+<!-- Issues which contain questions or support requests will be closed. -->
 
 ### Your Proposal for Changes

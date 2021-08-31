@@ -3,25 +3,19 @@ name: 🔧 Modification Request
 about: Would you like something work differently? Have an alternative approach? This is the template for you.
 ---
 
-<!--
-  Issues are so 🔥
+<!-- Please don't delete this template otherwise your issue will be closed immediately -->
+<!-- Before creating an issue please make sure you are using the latest version of webpack. -->
 
-  If you remove or skip this template, you'll make the 🐼 sad and the mighty god
-  of Github will appear and pile-drive the close button from a great height
-  while making animal noises.
+### Modification Proposal
 
-  👉🏽 Need support, advice, or help? Don't open an issue!
-  Head to StackOverflow or https://gitter.im/webpack/webpack.
--->
-
-- Operating System:
-- Node Version:
-- NPM Version:
-- webpack Version:
-- mini-css-extract-plugin Version:
+<!-- Please ask questions on discussions, StackOverflow or the webpack Gitter. -->
+<!-- https://github.com/webpack/webpack/discussions -->
+<!-- https://stackoverflow.com/questions/ask?tags=webpack -->
+<!-- https://gitter.im/webpack/webpack -->
+<!-- Issues which contain questions or support requests will be closed. -->
 
 ### Expected Behavior / Situation
 
 ### Actual Behavior / Situation
 
-### Modification Proposal
+### Please paste the results of `npx webpack-cli info` here, and mention other relevant information
