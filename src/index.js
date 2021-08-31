@@ -991,14 +991,18 @@ class MiniCssExtractPlugin {
       const readableIdentifier = module.readableIdentifier(requestShortener);
       const startsWithAtRuleImport = /^@import url/.test(content);
 
+      let header;
+
       if (compilation.outputOptions.pathinfo) {
         // From https://github.com/webpack/webpack/blob/29eff8a74ecc2f87517b627dee451c2af9ed3f3f/lib/ModuleInfoHeaderPlugin.js#L191-L194
         const reqStr = readableIdentifier.replace(/\*\//g, "*_/");
         const reqStrStar = "*".repeat(reqStr.length);
         const headerStr = `/*!****${reqStrStar}****!*\\\n  !*** ${reqStr} ***!\n  \\****${reqStrStar}****/\n`;
 
-        content = headerStr + content;
+        header = new RawSource(headerStr);
       }
+
+      source.add(header);
 
       if (startsWithAtRuleImport) {
         // HACK for IE
