@@ -1,10 +1,10 @@
 body {
-    font-size: 24px;
+  font-size: 24px;
 }
 
 @media screen and (orientation: landscape) {
 body {
-    font-size: 32px;
+  font-size: 32px;
 }
 
 }
