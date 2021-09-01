@@ -23,7 +23,6 @@ describe("emit option", () => {
       {
         mode: "none",
         output: {
-          publicPath: "",
           path: path.resolve(__dirname, "../outputs"),
           filename: "[name].bundle.js",
         },
@@ -53,7 +52,6 @@ describe("emit option", () => {
       {
         mode: "none",
         output: {
-          publicPath: "",
           path: path.resolve(__dirname, "../outputs"),
         },
 
@@ -82,7 +80,6 @@ describe("emit option", () => {
       {
         mode: "none",
         output: {
-          publicPath: "",
           path: path.resolve(__dirname, "../outputs"),
         },
         plugins: [
@@ -107,7 +104,6 @@ describe("emit option", () => {
       {},
       {
         output: {
-          publicPath: "",
           path: path.resolve(__dirname, "../outputs"),
           filename: "[name].bundle.js",
         },
@@ -181,7 +177,6 @@ describe("emit option", () => {
       },
       entry: "./locals.js",
       output: {
-        publicPath: "",
         path: outputPath,
       },
       module: {
@@ -296,7 +291,6 @@ describe("emit option", () => {
               {
                 loader: MiniCssExtractPlugin.loader,
                 options: {
-                  publicPath: "",
                   emit: false,
                 },
               },
@@ -411,7 +405,6 @@ describe("emit option", () => {
               {
                 loader: MiniCssExtractPlugin.loader,
                 options: {
-                  publicPath: "",
                   emit: false,
                 },
               },
