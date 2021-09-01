@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.2.1...v2.2.2) (2021-09-01)
+
+
+### Bug Fixes
+
+* `experimentalUseImportModule` works with `new URL(...)` syntax ([cf81c4b](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/cf81c4b9962e74d666f6bb7d6473a9b6c06936cd))
+
 ### [2.2.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.2.0...v2.2.1) (2021-08-31)
 
 
