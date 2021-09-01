@@ -55,7 +55,10 @@ function compareModulesByIdentifier(a, b) {
 const MODULE_TYPE = "css/mini-extract";
 const AUTO_PUBLIC_PATH = "__mini_css_extract_plugin_public_path_auto__";
 const ABSOLUTE_PUBLIC_PATH = "webpack:///mini-css-extract-plugin/";
-const DOTS_IN_PUBLIC_PATH = "__mini_css_extract_plugin_dots_in_public_path__";
+const SINGLE_DOT_PATH_SEGMENT =
+  "__mini_css_extract_plugin_single_dot_path_segment__";
+const DOUBLE_DOT_PATH_SEGMENT =
+  "__mini_css_extract_plugin_double_dot_path_segment__";
 
 function isAbsolutePath(str) {
   return path.posix.isAbsolute(str) || path.win32.isAbsolute(str);
@@ -109,6 +112,7 @@ export {
   MODULE_TYPE,
   AUTO_PUBLIC_PATH,
   ABSOLUTE_PUBLIC_PATH,
-  DOTS_IN_PUBLIC_PATH,
+  SINGLE_DOT_PATH_SEGMENT,
+  DOUBLE_DOT_PATH_SEGMENT,
   stringifyRequest,
 };

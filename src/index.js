@@ -10,7 +10,8 @@ import {
   MODULE_TYPE,
   AUTO_PUBLIC_PATH,
   ABSOLUTE_PUBLIC_PATH,
-  DOTS_IN_PUBLIC_PATH,
+  SINGLE_DOT_PATH_SEGMENT,
+  DOUBLE_DOT_PATH_SEGMENT,
   compareModulesByIdentifier,
 } from "./utils";
 
@@ -1037,7 +1038,14 @@ class MiniCssExtractPlugin {
         const undoPath = getUndoPath(filename, compiler.outputPath, false);
 
         content = content.replace(new RegExp(ABSOLUTE_PUBLIC_PATH, "g"), "");
-        content = content.replace(new RegExp(DOTS_IN_PUBLIC_PATH, "g"), "..");
+        content = content.replace(
+          new RegExp(SINGLE_DOT_PATH_SEGMENT, "g"),
+          "."
+        );
+        content = content.replace(
+          new RegExp(DOUBLE_DOT_PATH_SEGMENT, "g"),
+          ".."
+        );
         content = content.replace(new RegExp(AUTO_PUBLIC_PATH, "g"), undoPath);
 
         if (module.sourceMap) {
