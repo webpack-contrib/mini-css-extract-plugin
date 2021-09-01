@@ -196,9 +196,12 @@ export function pitch(request) {
       return;
     }
 
-    const publicPathForExtract = `${ABSOLUTE_PUBLIC_PATH}${publicPath
-      .replace(/\./g, SINGLE_DOT_PATH_SEGMENT)
-      .replace(/\.\./g, DOUBLE_DOT_PATH_SEGMENT)}`;
+    const isAbsolutePublicPath = /^[a-zA-Z][a-zA-Z\d+\-.]*?:/.test(publicPath);
+    const publicPathForExtract = isAbsolutePublicPath
+      ? publicPath
+      : `${ABSOLUTE_PUBLIC_PATH}${publicPath
+          .replace(/\./g, SINGLE_DOT_PATH_SEGMENT)
+          .replace(/\.\./g, DOUBLE_DOT_PATH_SEGMENT)}`;
 
     this.importModule(
       `${this.resourcePath}.webpack[javascript/auto]!=!${request}`,
