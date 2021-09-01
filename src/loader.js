@@ -4,6 +4,8 @@ import {
   findModuleById,
   evalModuleCode,
   AUTO_PUBLIC_PATH,
+  ABSOLUTE_PUBLIC_PATH,
+  DOTS_IN_PUBLIC_PATH,
   stringifyRequest,
 } from "./utils";
 import schema from "./loader-options.json";
@@ -193,11 +195,16 @@ export function pitch(request) {
       return;
     }
 
+    const publicPathForExtract = `${ABSOLUTE_PUBLIC_PATH}${publicPath.replace(
+      /\.\./g,
+      DOTS_IN_PUBLIC_PATH
+    )}`;
+
     this.importModule(
       `${this.resourcePath}.webpack[javascript/auto]!=!${request}`,
       {
         layer: options.layer,
-        publicPath,
+        publicPath: publicPathForExtract,
       },
       (err, exports) => {
         if (err) {

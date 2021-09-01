@@ -9,9 +9,6 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
-            options: {
-              publicPath: "",
-            },
           },
           "css-loader",
         ],
