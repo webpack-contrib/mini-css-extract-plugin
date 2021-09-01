@@ -10,21 +10,10 @@ module.exports = {
           {
             loader: Self.loader,
             options: {
-              publicPath: "/static/img",
+              publicPath: "/static/img/",
             },
           },
           "css-loader",
-        ],
-      },
-      {
-        test: /\.(svg|png)$/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              filename: "[name].[ext]",
-            },
-          },
         ],
       },
     ],
