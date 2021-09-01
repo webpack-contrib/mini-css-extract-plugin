@@ -9,15 +9,18 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
+          },
+          {
+            loader: "css-loader",
             options: {
-              publicPath: "",
+              esModule: false,
             },
           },
-          "css-loader",
         ],
       },
       {
         test: /\.svg$/,
+        type: "javascript/auto",
         use: [
           {
             loader: "file-loader",

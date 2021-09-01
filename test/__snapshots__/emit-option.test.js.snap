@@ -59,9 +59,9 @@ exports[`emit option should work with locals and invalidate cache when emit opti
   <style id=\\"existing-style\\">.existing { color: yellow }</style>
 </head>
 <body>
-css.foo: _1F17fUrdX_cbcyDHpFqmAD
-css.bar: _3TZVxmkrZR2cTfifKhDoZn
-css.baz: M-pzkE59YBii7EXzFyxE6
+css.foo: J2lpabaeIrMw_95s_HME
+css.bar: V4_dkftIz80Idb9RVpj3
+css.baz: BhqK6bijhySVfFKg1Jj5
 </body></html>"
 `;
 
@@ -71,9 +71,9 @@ exports[`emit option should work with locals and invalidate cache when emit opti
   <style id=\\"existing-style\\">.existing { color: yellow }</style>
 </head>
 <body>
-css.foo-bar: VWLDg_rByGM4Rdhz5T3Ns
-css.bar: _3TZVxmkrZR2cTfifKhDoZn
-css.baz: M-pzkE59YBii7EXzFyxE6
+css.foo-bar: XDzcxRg1NQGrYrn90Pnq
+css.bar: V4_dkftIz80Idb9RVpj3
+css.baz: BhqK6bijhySVfFKg1Jj5
 </body></html>"
 `;
 
@@ -115,9 +115,9 @@ exports[`emit option should work with locals when emit option is "false": DOM 1`
   <style id=\\"existing-style\\">.existing { color: yellow }</style>
 </head>
 <body>
-css.foo: _1F17fUrdX_cbcyDHpFqmAD
-css.bar: _3TZVxmkrZR2cTfifKhDoZn
-css.baz: M-pzkE59YBii7EXzFyxE6
+css.foo: J2lpabaeIrMw_95s_HME
+css.bar: V4_dkftIz80Idb9RVpj3
+css.baz: BhqK6bijhySVfFKg1Jj5
 </body></html>"
 `;
 
