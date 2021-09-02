@@ -753,8 +753,6 @@ module.exports = {
         styles: {
           name: "styles",
           type: "css/mini-extract",
-          // For webpack@4
-          // test: /\.css$/,
           chunks: "all",
           enforce: true,
         },
@@ -789,24 +787,6 @@ This also prevents the CSS duplication issue one had with the ExtractTextPlugin.
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-function recursiveIssuer(m, c) {
-  const issuer = c.moduleGraph.getIssuer(m);
-  // For webpack@4 issuer = m.issuer
-
-  if (issuer) {
-    return recursiveIssuer(issuer, c);
-  }
-
-  const chunks = c.chunkGraph.getModuleChunks(m);
-  // For webpack@4 chunks = m._chunks
-
-  for (const chunk of chunks) {
-    return chunk.name;
-  }
-
-  return false;
-}
-
 module.exports = {
   entry: {
     foo: path.resolve(__dirname, "src/foo"),
@@ -816,19 +796,19 @@ module.exports = {
     splitChunks: {
       cacheGroups: {
         fooStyles: {
+          type: "css/mini-extract",
           name: "styles_foo",
-          test: (m, c, entry = "foo") =>
-            m.constructor.name === "CssModule" &&
-            recursiveIssuer(m, c) === entry,
-          chunks: "all",
+          chunks: (chunk) => {
+            return chunk.name === "foo";
+          },
           enforce: true,
         },
         barStyles: {
+          type: "css/mini-extract",
           name: "styles_bar",
-          test: (m, c, entry = "bar") =>
-            m.constructor.name === "CssModule" &&
-            recursiveIssuer(m, c) === entry,
-          chunks: "all",
+          chunks: (chunk) => {
+            return chunk.name === "bar";
+          },
           enforce: true,
         },
       },
