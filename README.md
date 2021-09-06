@@ -911,6 +911,134 @@ module.exports = {
 };
 ```
 
+### Multiple Themes
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+  entry: {
+    "light-theme": {
+      import: ["./src/index.js", "./src/style.scss"],
+    },
+    "dark-theme": {
+      import: ["./src/index.js", "./src/style.scss?dark"],
+    },
+  },
+  // For better runtime code caching
+  optimization: {
+    runtimeChunk: {
+      name: "runtime",
+    },
+  },
+  module: {
+    rules: [
+      {
+        test: /\.s[ac]ss$/i,
+        oneOf: [
+          {
+            resourceQuery: "?dark",
+            use: [
+              Self.loader,
+              "css-loader",
+              {
+                loader: "sass-loader",
+                options: {
+                  additionalData: `@use 'dark-theme/vars' as vars;`,
+                },
+              },
+            ],
+          },
+          {
+            use: [
+              Self.loader,
+              "css-loader",
+              {
+                loader: "sass-loader",
+                options: {
+                  additionalData: `@use 'light-theme/vars' as vars;`,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+    }),
+  ],
+};
+```
+
+**src/index.js**
+
+```js
+let theme = "light";
+
+document.onclick = () => {
+  console.log("CHANGING THEME...");
+
+  if (theme === "light") {
+    theme = "dark";
+  } else {
+    theme = "light";
+  }
+
+  const themeElement = document.querySelector("#theme");
+
+  if (themeElement) {
+    themeElement.remove();
+  }
+
+  const linkElement = document.createElement("link");
+
+  linkElement.type = "text/css";
+  linkElement.rel = "stylesheet";
+  linkElement.href = `${theme}-theme.css`;
+
+  document.getElementsByTagName("head")[0].appendChild(linkElement);
+
+  console.log("THEME WAS CHANGED");
+};
+```
+
+**src/dark-theme/\_vars**
+
+```scss
+$background: black;
+```
+
+**src/light-theme/\_vars**
+
+```scss
+$background: white;
+```
+
+**public/index.html**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Multiple Themes</title>
+    <!-- Do not forget to add `id="theme"` -->
+    <link id="theme" rel="stylesheet" href="./light-theme.css" />
+  </head>
+  <body>
+    <script src="./runtime.js"></script>
+    <script src="./light-theme.js"></script>
+  </body>
+</html>
+```
+
 ### Media Query Plugin
 
 If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop or tablet specific CSS anymore) you should use one of the following plugins:
