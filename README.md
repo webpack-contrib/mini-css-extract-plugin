@@ -73,6 +73,8 @@ module.exports = {
 
 > ⚠️ Note that if you import CSS from your webpack entrypoint or import styles in the [initial](https://webpack.js.org/concepts/under-the-hood/#chunks) chunk, `mini-css-extract-plugin` will not load this CSS into the page. Please use [`html-webpack-plugin`](https://github.com/jantimon/html-webpack-plugin) for automatic generation `link` tags or create `index.html` file with `link` tag.
 
+> ⚠️ Source maps works only for `source-map`/`nosources-source-map`/`hidden-nosources-source-map`/`hidden-source-map` values because CSS only supports source maps with the `sourceMappingURL` comment (i.e. `//# sourceMappingURL=style.css.map`). If you need set `devtool` to another value you can enable source maps generation for extracted CSS using [`sourceMap: true`](https://github.com/webpack-contrib/css-loader#sourcemap) for `css-loader`.
+
 ## Options
 
 ### Plugin Options
