@@ -38,7 +38,7 @@
       "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#ignoreorder"
     },
     "insert": {
-      "description": "Inserts `<link>` at the given position.",
+      "description": "Inserts the `link` tag at the given position for non-initial (async) (https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks.",
       "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#insert",
       "anyOf": [
         {
@@ -50,7 +50,7 @@
       ]
     },
     "attributes": {
-      "description": "Adds custom attributes to tag.",
+      "description": "Adds custom attributes to the `link` tag for non-initial (async) (https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks.",
       "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#attributes",
       "type": "object"
     },

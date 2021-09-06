@@ -4,7 +4,7 @@ exports[`validate options should throw an error on the "attributes" option with 
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.attributes should be an object:
    object { … }
-   -> Adds custom attributes to tag.
+   -> Adds custom attributes to the \`link\` tag for non-initial (async) (https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks.
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#attributes"
 `;
 
@@ -41,7 +41,7 @@ exports[`validate options should throw an error on the "insert" option with "{}"
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.insert should be one of these:
    string | function
-   -> Inserts \`<link>\` at the given position.
+   -> Inserts the \`link\` tag at the given position for non-initial (async) (https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks.
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#insert
    Details:
     * options.insert should be a string.
@@ -52,7 +52,7 @@ exports[`validate options should throw an error on the "insert" option with "1" 
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.insert should be one of these:
    string | function
-   -> Inserts \`<link>\` at the given position.
+   -> Inserts the \`link\` tag at the given position for non-initial (async) (https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks.
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#insert
    Details:
     * options.insert should be a string.
@@ -63,7 +63,7 @@ exports[`validate options should throw an error on the "insert" option with "tru
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.insert should be one of these:
    string | function
-   -> Inserts \`<link>\` at the given position.
+   -> Inserts the \`link\` tag at the given position for non-initial (async) (https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks.
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#insert
    Details:
     * options.insert should be a string.
