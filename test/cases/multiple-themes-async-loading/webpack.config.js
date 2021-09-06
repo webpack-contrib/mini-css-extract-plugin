@@ -1,6 +1,4 @@
-// import Self from "../../../src";
-
-const Self = require("../../../dist/cjs");
+import Self from "../../../src";
 
 module.exports = {
   entry: "./src/index.js",
