@@ -71,19 +71,21 @@ module.exports = {
 };
 ```
 
+> ⚠️ Note that if you import CSS from your webpack entrypoint or import styles in the [initial](https://webpack.js.org/concepts/under-the-hood/#chunks) chunk, `mini-css-extract-plugin` will not load this CSS into the page. Please use [`html-webpack-plugin`](https://github.com/jantimon/html-webpack-plugin) for automatic generation `link` tags or create `index.html` file with `link` tag.
+
 ## Options
 
 ### Plugin Options
 
-|                               Name                                |         Type         |                Default                | Description                                                                   |
-| :---------------------------------------------------------------: | :------------------: | :-----------------------------------: | :---------------------------------------------------------------------------- |
-|                    **[`filename`](#filename)**                    | `{String\|Function}` |             `[name].css`              | This option determines the name of each output CSS file                       |
-|               **[`chunkFilename`](#chunkFilename)**               | `{String\|Function}` |          `based on filename`          | This option determines the name of non-entry chunk files                      |
-|                 **[`ignoreOrder`](#ignoreOrder)**                 |     `{Boolean}`      |                `false`                | Remove Order Warnings                                                         |
-|                      **[`insert`](#insert)**                      | `{String\|Function}` | `document.head.appendChild(linkTag);` | Inserts `<link>` at the given position                                        |
-|                  **[`attributes`](#attributes)**                  |      `{Object}`      |                 `{}`                  | Adds custom attributes to tag                                                 |
-|                    **[`linkType`](#linkType)**                    | `{String\|Boolean}`  |              `text/css`               | Allows loading asynchronous chunks with a custom link type                    |
-| **[`experimentalUseImportModule`](#experimentalUseImportModule)** |     `{Boolean}`      |                `false`                | Use an experimental webpack API to execute modules instead of child compilers |
+|                               Name                                |         Type         |                Default                | Description                                                                                                                               |
+| :---------------------------------------------------------------: | :------------------: | :-----------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------- |
+|                    **[`filename`](#filename)**                    | `{String\|Function}` |             `[name].css`              | This option determines the name of each output CSS file                                                                                   |
+|               **[`chunkFilename`](#chunkFilename)**               | `{String\|Function}` |          `based on filename`          | This option determines the name of non-entry chunk files                                                                                  |
+|                 **[`ignoreOrder`](#ignoreOrder)**                 |     `{Boolean}`      |                `false`                | Remove Order Warnings                                                                                                                     |
+|                      **[`insert`](#insert)**                      | `{String\|Function}` | `document.head.appendChild(linkTag);` | Inserts the `link` tag at the given position for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks |
+|                  **[`attributes`](#attributes)**                  |      `{Object}`      |                 `{}`                  | Adds custom attributes to the `link` tag for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks     |
+|                    **[`linkType`](#linkType)**                    | `{String\|Boolean}`  |              `text/css`               | Allows loading asynchronous chunks with a custom link type                                                                                |
+| **[`experimentalUseImportModule`](#experimentalUseImportModule)** |     `{Boolean}`      |                `false`                | Use an experimental webpack API to execute modules instead of child compilers                                                             |
 
 #### `filename`
 
@@ -117,6 +119,8 @@ See [examples](#remove-order-warnings) below for details.
 
 Type: `String|Function`
 Default: `document.head.appendChild(linkTag);`
+
+> ⚠️ Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
 
 By default, the `mini-css-extract-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
 
@@ -168,6 +172,8 @@ A new `<link>` element will be inserted before the element with id `some-element
 
 Type: `Object`
 Default: `{}`
+
+> ⚠️ Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
 
 If defined, the `mini-css-extract-plugin` will attach given attributes with their values on `<link>` element.
 
