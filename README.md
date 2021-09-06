@@ -1018,16 +1018,24 @@ document.onclick = () => {
 };
 ```
 
-**src/dark-theme/\_vars**
+**src/dark-theme/\_vars.scss**
 
 ```scss
 $background: black;
 ```
 
-**src/light-theme/\_vars**
+**src/light-theme/\_vars.scss**
 
 ```scss
 $background: white;
+```
+
+**src/styles.scss**
+
+```scss
+body {
+  background-color: vars.$background;
+}
 ```
 
 **public/index.html**
