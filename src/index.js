@@ -11,7 +11,6 @@ import {
   AUTO_PUBLIC_PATH,
   ABSOLUTE_PUBLIC_PATH,
   SINGLE_DOT_PATH_SEGMENT,
-  DOUBLE_DOT_PATH_SEGMENT,
   compareModulesByIdentifier,
 } from "./utils";
 
@@ -1041,10 +1040,6 @@ class MiniCssExtractPlugin {
         content = content.replace(
           new RegExp(SINGLE_DOT_PATH_SEGMENT, "g"),
           "."
-        );
-        content = content.replace(
-          new RegExp(DOUBLE_DOT_PATH_SEGMENT, "g"),
-          ".."
         );
         content = content.replace(new RegExp(AUTO_PUBLIC_PATH, "g"), undoPath);
 
