@@ -911,6 +911,150 @@ module.exports = {
 };
 ```
 
+### Multiple Themes
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+module.exports = {
+  entry: "./src/index.js",
+  module: {
+    rules: [
+      {
+        test: /\.s[ac]ss$/i,
+        oneOf: [
+          {
+            resourceQuery: "?dark",
+            use: [
+              Self.loader,
+              "css-loader",
+              {
+                loader: "sass-loader",
+                options: {
+                  additionalData: `@use 'dark-theme/vars' as vars;`,
+                },
+              },
+            ],
+          },
+          {
+            use: [
+              Self.loader,
+              "css-loader",
+              {
+                loader: "sass-loader",
+                options: {
+                  additionalData: `@use 'light-theme/vars' as vars;`,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  plugins: [
+    new Self({
+      filename: "[name].css",
+      attributes: {
+        id: "theme",
+      },
+    }),
+  ],
+};
+```
+
+**src/index.js**
+
+```js
+import "./style.scss";
+
+let theme = "light";
+const themes = {};
+
+themes[theme] = document.querySelector("#theme");
+
+async function loadTheme(newTheme) {
+  // eslint-disable-next-line no-console
+  console.log(`CHANGE THEME - ${newTheme}`);
+
+  const themeElement = document.querySelector("#theme");
+
+  if (themeElement) {
+    themeElement.remove();
+  }
+
+  if (themes[newTheme]) {
+    // eslint-disable-next-line no-console
+    console.log(`THEME ALREADY LOADED - ${newTheme}`);
+
+    document.head.appendChild(themes[newTheme]);
+
+    return;
+  }
+
+  if (newTheme === "dark") {
+    // eslint-disable-next-line no-console
+    console.log(`LOADING THEME - ${newTheme}`);
+
+    import(/* webpackChunkName: "dark" */ "./style.scss?dark").then(() => {
+      themes[newTheme] = document.querySelector("#theme");
+
+      // eslint-disable-next-line no-console
+      console.log(`LOADED - ${newTheme}`);
+    });
+  }
+}
+
+document.onclick = () => {
+  if (theme === "light") {
+    theme = "dark";
+  } else {
+    theme = "light";
+  }
+
+  loadTheme(theme);
+};
+```
+
+**src/dark-theme/\_vars.scss**
+
+```scss
+$background: black;
+```
+
+**src/light-theme/\_vars.scss**
+
+```scss
+$background: white;
+```
+
+**src/styles.scss**
+
+```scss
+body {
+  background-color: vars.$background;
+}
+```
+
+**public/index.html**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Document</title>
+    <link id="theme" rel="stylesheet" type="text/css" href="./main.css" />
+  </head>
+  <body>
+    <script src="./main.js"></script>
+  </body>
+</html>
+```
+
 ### Media Query Plugin
 
 If you'd like to extract the media queries from the extracted CSS (so mobile users don't need to load desktop or tablet specific CSS anymore) you should use one of the following plugins:
