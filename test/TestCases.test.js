@@ -9,6 +9,8 @@ import webpack from "webpack";
 
 import Self from "../src/index";
 
+import yn from "./helpers/yn";
+
 function clearDirectory(dirPath) {
   let files;
 
@@ -128,9 +130,12 @@ describe("TestCases", () => {
                 config.plugins.map((p) => {
                   if (p.constructor === Self) {
                     const { options } = p;
-                    options.experimentalUseImportModule =
-                      !!process.env.EXPERIMENTAL_USE_IMPORT_MODULE;
+
+                    options.experimentalUseImportModule = yn(
+                      process.env.EXPERIMENTAL_USE_IMPORT_MODULE
+                    );
                   }
+
                   return p;
                 }),
             },
@@ -192,7 +197,9 @@ describe("TestCases", () => {
           const expectedDirectoryByVersion = path.join(
             expectedDirectory,
             `webpack-${webpack.version[0]}${
-              process.env.EXPERIMENTAL_USE_IMPORT_MODULE ? "-importModule" : ""
+              yn(process.env.EXPERIMENTAL_USE_IMPORT_MODULE)
+                ? "-importModule"
+                : ""
             }`
           );
 

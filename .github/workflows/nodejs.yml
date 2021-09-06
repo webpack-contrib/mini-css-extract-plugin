@@ -90,13 +90,15 @@ jobs:
 
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
         run: npm run test:coverage -- --ci
+        env:
+          EXPERIMENTAL_USE_IMPORT_MODULE: "false"
 
       - name: Submit coverage data to codecov
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  test2:
+  test-new-api:
     name: Test - ${{ matrix.os }} - Node v${{ matrix.node-version }}, Webpack latest, experimentalUseImportModule
 
     strategy:
