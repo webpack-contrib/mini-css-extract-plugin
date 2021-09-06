@@ -1,20 +1,7 @@
 import Self from "../../../src";
 
 module.exports = {
-  entry: {
-    "light-theme": {
-      import: ["./src/index.js", "./src/style.scss"],
-    },
-    "dark-theme": {
-      import: ["./src/index.js", "./src/style.scss?dark"],
-    },
-  },
-  // For better runtime code caching
-  optimization: {
-    runtimeChunk: {
-      name: "runtime",
-    },
-  },
+  entry: "./src/index.js",
   module: {
     rules: [
       {
@@ -52,6 +39,9 @@ module.exports = {
   plugins: [
     new Self({
       filename: "[name].css",
+      attributes: {
+        id: "theme",
+      },
     }),
   ],
 };

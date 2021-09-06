@@ -919,20 +919,7 @@ module.exports = {
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  entry: {
-    "light-theme": {
-      import: ["./src/index.js", "./src/style.scss"],
-    },
-    "dark-theme": {
-      import: ["./src/index.js", "./src/style.scss?dark"],
-    },
-  },
-  // For better runtime code caching
-  optimization: {
-    runtimeChunk: {
-      name: "runtime",
-    },
-  },
+  entry: "./src/index.js",
   module: {
     rules: [
       {
@@ -968,8 +955,11 @@ module.exports = {
     ],
   },
   plugins: [
-    new MiniCssExtractPlugin({
+    new Self({
       filename: "[name].css",
+      attributes: {
+        id: "theme",
+      },
     }),
   ],
 };
@@ -978,16 +968,16 @@ module.exports = {
 **src/index.js**
 
 ```js
+import "./style.scss";
+
 let theme = "light";
+const themes = {};
 
-document.onclick = () => {
-  console.log("CHANGING THEME...");
+themes[theme] = document.querySelector("#theme");
 
-  if (theme === "light") {
-    theme = "dark";
-  } else {
-    theme = "light";
-  }
+async function loadTheme(newTheme) {
+  // eslint-disable-next-line no-console
+  console.log(`CHANGE THEME - ${newTheme}`);
 
   const themeElement = document.querySelector("#theme");
 
@@ -995,15 +985,36 @@ document.onclick = () => {
     themeElement.remove();
   }
 
-  const linkElement = document.createElement("link");
+  if (themes[newTheme]) {
+    // eslint-disable-next-line no-console
+    console.log(`THEME ALREADY LOADED - ${newTheme}`);
 
-  linkElement.type = "text/css";
-  linkElement.rel = "stylesheet";
-  linkElement.href = `${theme}-theme.css`;
+    document.head.appendChild(themes[newTheme]);
 
-  document.getElementsByTagName("head")[0].appendChild(linkElement);
+    return;
+  }
 
-  console.log("THEME WAS CHANGED");
+  if (newTheme === "dark") {
+    // eslint-disable-next-line no-console
+    console.log(`LOADING THEME - ${newTheme}`);
+
+    import(/* webpackChunkName: "dark" */ "./style.scss?dark").then(() => {
+      themes[newTheme] = document.querySelector("#theme");
+
+      // eslint-disable-next-line no-console
+      console.log(`LOADED - ${newTheme}`);
+    });
+  }
+}
+
+document.onclick = () => {
+  if (theme === "light") {
+    theme = "dark";
+  } else {
+    theme = "light";
+  }
+
+  loadTheme(theme);
 };
 ```
 
@@ -1027,14 +1038,11 @@ $background: white;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Multiple Themes</title>
-    <!-- Do not forget to add `id="theme"` -->
-    <link id="theme" rel="stylesheet" href="./light-theme.css" />
+    <title>Document</title>
+    <link id="theme" rel="stylesheet" type="text/css" href="./main.css" />
   </head>
   <body>
-    <script src="./runtime.js"></script>
-    <script src="./light-theme.js"></script>
+    <script src="./main.js"></script>
   </body>
 </html>
 ```
