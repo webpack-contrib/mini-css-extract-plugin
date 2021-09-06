@@ -99,7 +99,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   test-new-api:
-    name: Test - ${{ matrix.os }} - Node v${{ matrix.node-version }}, Webpack latest, `loaderContext.importModule(...)` API
+    name: Test - ${{ matrix.os }} - Node v${{ matrix.node-version }}, Webpack latest, experimentalUseImportModule
 
     strategy:
       matrix:
