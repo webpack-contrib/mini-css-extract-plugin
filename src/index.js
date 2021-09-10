@@ -337,6 +337,7 @@ class MiniCssExtractPlugin {
         filename: DEFAULT_FILENAME,
         ignoreOrder: false,
         experimentalUseImportModule: false,
+        noRuntime: false,
       },
       options
     );
@@ -519,6 +520,10 @@ class MiniCssExtractPlugin {
             .substring(0, hashDigestLength);
         }
       });
+
+      // All the code below is dedicated to the runtime and
+      // can be skipped in a noRuntime context
+      if (this.options.noRuntime) return;
 
       const { Template } = webpack;
 

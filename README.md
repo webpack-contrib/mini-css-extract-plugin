@@ -87,6 +87,7 @@ module.exports = {
 |                      **[`insert`](#insert)**                      | `{String\|Function}` | `document.head.appendChild(linkTag);` | Inserts the `link` tag at the given position for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks |
 |                  **[`attributes`](#attributes)**                  |      `{Object}`      |                 `{}`                  | Adds custom attributes to the `link` tag for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks     |
 |                    **[`linkType`](#linkType)**                    | `{String\|Boolean}`  |              `text/css`               | Allows loading asynchronous chunks with a custom link type                                                                                |
+|                   **[`noRuntime`](#linkType)**                    |     `{Boolean}`      |                `false`                | Skips the runtime generation                                                                                                              |
 | **[`experimentalUseImportModule`](#experimentalUseImportModule)** |     `{Boolean}`      |                `false`                | Use an experimental webpack API to execute modules instead of child compilers                                                             |
 
 #### `filename`
@@ -252,6 +253,35 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       linkType: false,
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
+    ],
+  },
+};
+```
+
+#### `noRuntime`
+
+##### `Boolean`
+
+An option to avoid the runtime generation. Assets are still extracted and can be used for a custom loading methods. For example, you can use [assets-webpack-plugin](https://github.com/ztoben/assets-webpack-plugin) to retreive them then use your own runtime code to download assets when needed.
+
+`true` to skip.
+
+**webpack.config.js**
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      skipRuntimeLoading: true,
     }),
   ],
   module: {
