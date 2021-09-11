@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.2.2...v2.3.0) (2021-09-11)
+
+
+### Features
+
+* added the `runtime` option ([#831](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/831)) ([5cc73e6](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/5cc73e6b590632263fc6ea0a830df1322520c2f4))
+
+
+### Bug Fixes
+
+* better description for async chunk options ([34b65ac](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/34b65ac4daea5a977a75846b159becbc2ebb0632))
+
 ### [2.2.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.2.1...v2.2.2) (2021-09-01)
 
 
