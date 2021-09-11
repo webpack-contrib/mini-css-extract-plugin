@@ -65,6 +65,11 @@
       ],
       "description": "This option allows loading asynchronous chunks with a custom link type",
       "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#linktype"
+    },
+    "noRuntime": {
+      "type": "boolean",
+      "description": "An option to avoid the runtime generation. Assets are still extracted and can be used for a custom loading methods.",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#noRuntime"
     }
   }
 }
