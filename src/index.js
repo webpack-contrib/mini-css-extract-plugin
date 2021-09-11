@@ -337,7 +337,7 @@ class MiniCssExtractPlugin {
         filename: DEFAULT_FILENAME,
         ignoreOrder: false,
         experimentalUseImportModule: false,
-        noRuntime: false,
+        runtime: true,
       },
       options
     );
@@ -521,13 +521,12 @@ class MiniCssExtractPlugin {
         }
       });
 
-      // All the code below is dedicated to the runtime and
-      // can be skipped in a noRuntime context
-      if (this.options.noRuntime) return;
+      // All the code below is dedicated to the runtime and can be skipped when the `runtime` option is `false`
+      if (!this.options.runtime) {
+        return;
+      }
 
-      const { Template } = webpack;
-
-      const { RuntimeGlobals, runtime } = webpack;
+      const { Template, RuntimeGlobals, RuntimeModule, runtime } = webpack;
 
       // eslint-disable-next-line no-shadow
       const getCssChunkObject = (mainChunk, compilation) => {
@@ -549,8 +548,6 @@ class MiniCssExtractPlugin {
 
         return obj;
       };
-
-      const { RuntimeModule } = webpack;
 
       class CssLoadingRuntimeModule extends RuntimeModule {
         constructor(runtimeRequirements, runtimeOptions) {
