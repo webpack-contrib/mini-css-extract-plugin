@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* added the `runtime` option ([#831](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/831)) ([5cc73e6](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/5cc73e6b590632263fc6ea0a830df1322520c2f4))
+* added the `noRuntime` option ([#831](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/831)) ([5cc73e6](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/5cc73e6b590632263fc6ea0a830df1322520c2f4))
 
 
 ### Bug Fixes
