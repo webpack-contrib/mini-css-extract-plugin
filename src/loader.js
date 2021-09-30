@@ -26,6 +26,7 @@ function hotLoader(content, context) {
       )})(module.id, ${JSON.stringify({
     ...context.options,
     locals: !!context.locals,
+    logLevel: context.logLevel,
   })});
       module.hot.dispose(cssReload);
       ${accept}
@@ -165,8 +166,10 @@ export function pitch(request) {
 
     let resultSource = `// extracted by ${pluginName}`;
 
+    const logLevel = this._compilation.options.devServer?.client?.logging;
+
     resultSource += this.hot
-      ? hotLoader(result, { context: this.context, options, locals })
+      ? hotLoader(result, { context: this.context, options, locals, logLevel })
       : result;
 
     return callback(null, resultSource);

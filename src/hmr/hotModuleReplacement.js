@@ -11,6 +11,17 @@ const srcByModuleId = Object.create(null);
 
 const noDocument = typeof document === "undefined";
 
+const logLevels = {
+  none: 6,
+  false: 6,
+  error: 5,
+  warn: 4,
+  info: 3,
+  log: 2,
+  true: 2,
+  verbose: 1,
+};
+
 const { forEach } = Array.prototype;
 
 function debounce(fn, time) {
@@ -207,8 +218,12 @@ function isUrlRequest(url) {
 }
 
 module.exports = function (moduleId, options) {
+  const logLevel = logLevels[options.logLevel] || logLevels.info;
+
   if (noDocument) {
-    console.log("no window.document found, will not HMR CSS");
+    if (logLevel <= logLevels.warn) {
+      console.warn("no window.document found, will not HMR CSS");
+    }
 
     return noop;
   }
@@ -220,7 +235,9 @@ module.exports = function (moduleId, options) {
     const reloaded = reloadStyle(src);
 
     if (options.locals) {
-      console.log("[HMR] Detected local css modules. Reload all css");
+      if (logLevel <= logLevels.info) {
+        console.log("[HMR] Detected local css modules. Reload all css");
+      }
 
       reloadAll();
 
@@ -228,9 +245,13 @@ module.exports = function (moduleId, options) {
     }
 
     if (reloaded) {
-      console.log("[HMR] css reload %s", src.join(" "));
+      if (logLevel <= logLevels.info) {
+        console.log("[HMR] css reload %s", src.join(" "));
+      }
     } else {
-      console.log("[HMR] Reload all css");
+      if (logLevel <= logLevels.info) {
+        console.log("[HMR] Reload all css");
+      }
 
       reloadAll();
     }
