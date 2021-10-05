@@ -98,7 +98,8 @@ export function pitch(request) {
 
       namedExport =
         // eslint-disable-next-line no-underscore-dangle
-        originalExports.__esModule && !("locals" in originalExports.default);
+        originalExports.__esModule &&
+        (!originalExports.default || !("locals" in originalExports.default));
 
       if (namedExport) {
         Object.keys(originalExports).forEach((key) => {
