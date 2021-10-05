@@ -185,11 +185,15 @@ export function pitch(request) {
     publicPath = AUTO_PUBLIC_PATH;
   }
 
-  if (optionsFromPlugin.experimentalUseImportModule) {
+  if (
+    (typeof optionsFromPlugin.experimentalUseImportModule === "undefined" &&
+      typeof this.importModule === "function") ||
+    optionsFromPlugin.experimentalUseImportModule
+  ) {
     if (!this.importModule) {
       callback(
         new Error(
-          "You are using experimentalUseImportModule but 'this.importModule' is not available in loader context. You need to have at least webpack 5.33.2."
+          "You are using 'experimentalUseImportModule' but 'this.importModule' is not available in loader context. You need to have at least webpack 5.33.2."
         )
       );
       return;

@@ -131,9 +131,11 @@ describe("TestCases", () => {
                   if (p.constructor === Self) {
                     const { options } = p;
 
-                    options.experimentalUseImportModule = yn(
-                      process.env.EXPERIMENTAL_USE_IMPORT_MODULE
-                    );
+                    const useImportModule = yn(process.env.OLD_API);
+
+                    if (useImportModule === true) {
+                      options.experimentalUseImportModule = false;
+                    }
                   }
 
                   return p;
@@ -197,9 +199,7 @@ describe("TestCases", () => {
           const expectedDirectoryByVersion = path.join(
             expectedDirectory,
             `webpack-${webpack.version[0]}${
-              yn(process.env.EXPERIMENTAL_USE_IMPORT_MODULE)
-                ? "-importModule"
-                : ""
+              yn(process.env.OLD_API) ? "" : "-importModule"
             }`
           );
 
