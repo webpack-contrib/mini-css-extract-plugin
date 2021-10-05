@@ -383,6 +383,13 @@ class MiniCssExtractPlugin {
   apply(compiler) {
     const { webpack } = compiler;
 
+    if (this.options.experimentalUseImportModule) {
+      if (typeof compiler.options.experiments.executeModule === "undefined") {
+        // eslint-disable-next-line no-param-reassign
+        compiler.options.experiments.executeModule = true;
+      }
+    }
+
     // TODO bug in webpack, remove it after it will be fixed
     // webpack tries to `require` loader firstly when serializer doesn't found
     if (!registered.has(webpack)) {

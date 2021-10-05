@@ -304,13 +304,13 @@ module.exports = {
 Type: `Boolean`
 Default: `undefined`
 
-Enabled by default unless explicitly set (i.e. `true` and `false` allow you to explicitly control this option) and new API is available.
+Enabled by default if not explicitly enabled (i.e. `true` and `false` allow you to explicitly control this option) and new API is available (at least webpack `5.52.0` is required).
+Boolean values are available since version `5.33.2`, but you need to enable `experiments.executeModule` (not required from webpack `5.52.0`).
 
 Use a new webpack API to execute modules instead of child compilers.
-This improves performance and memory usage a lot, but isn't as stable as the normal approach.
-When combined with `experiments.layers`, this adds a `layer` option to the loader options to specify the layer of the css execution.
+This improves performance and memory usage a lot.
 
-> i You need to have at least webpack 5.33.2.
+When combined with `experiments.layers`, this adds a `layer` option to the loader options to specify the layer of the css execution.
 
 **webpack.config.js**
 
@@ -320,6 +320,9 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
+      // You don't need this for `>= 5.52.0` due to the fact that this is enabled by default
+      // Required only for `>= 5.33.2 & <= 5.52.0`
+      // Not avaliable/unsafe for `<= 5.33.2`
       experimentalUseImportModule: true,
     }),
   ],
