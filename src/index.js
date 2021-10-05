@@ -2,8 +2,6 @@
 
 import { validate } from "schema-utils";
 
-import { getUndoPath } from "webpack/lib/util/identifier";
-
 import schema from "./plugin-options.json";
 import {
   trueFn,
@@ -12,6 +10,7 @@ import {
   ABSOLUTE_PUBLIC_PATH,
   SINGLE_DOT_PATH_SEGMENT,
   compareModulesByIdentifier,
+  getUndoPath,
 } from "./utils";
 
 export const pluginName = "mini-css-extract-plugin";
