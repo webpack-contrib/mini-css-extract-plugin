@@ -49,6 +49,8 @@ class MiniCssExtractPlugin {
         identifier,
         identifierIndex,
         content,
+        layer,
+        supports,
         media,
         sourceMap,
         assets,
@@ -61,6 +63,8 @@ class MiniCssExtractPlugin {
         this._identifier = identifier;
         this._identifierIndex = identifierIndex;
         this.content = content;
+        this.layer = layer;
+        this.supports = supports;
         this.media = media;
         this.sourceMap = sourceMap;
         this.assets = assets;
@@ -108,6 +112,8 @@ class MiniCssExtractPlugin {
       updateCacheModule(module) {
         if (
           this.content !== module.content ||
+          this.layer !== module.layer ||
+          this.supports !== module.supports ||
           this.media !== module.media ||
           this.sourceMap !== module.sourceMap ||
           this.assets !== module.assets ||
@@ -116,6 +122,8 @@ class MiniCssExtractPlugin {
           this._needBuild = true;
 
           this.content = module.content;
+          this.layer = module.layer;
+          this.supports = module.supports;
           this.media = module.media;
           this.sourceMap = module.sourceMap;
           this.assets = module.assets;
@@ -150,6 +158,12 @@ class MiniCssExtractPlugin {
         const hash = webpack.util.createHash(hashFunction);
 
         hash.update(this.content);
+
+        if (this.layer) {
+          hash.update(this.layer);
+        }
+
+        hash.update(this.supports || "");
         hash.update(this.media || "");
         hash.update(this.sourceMap || "");
 
@@ -169,6 +183,8 @@ class MiniCssExtractPlugin {
         write(this._identifier);
         write(this._identifierIndex);
         write(this.content);
+        write(this.layer);
+        write(this.supports);
         write(this.media);
         write(this.sourceMap);
         write(this.assets);
@@ -203,16 +219,19 @@ class MiniCssExtractPlugin {
           const identifier = read();
           const identifierIndex = read();
           const content = read();
+          const layer = read();
+          const supports = read();
           const media = read();
           const sourceMap = read();
           const assets = read();
           const assetsInfo = read();
-
           const dep = new CssModule({
             context: contextModule,
             identifier,
             identifierIndex,
             content,
+            layer,
+            supports,
             media,
             sourceMap,
             assets,
@@ -239,7 +258,7 @@ class MiniCssExtractPlugin {
     // eslint-disable-next-line no-shadow
     class CssDependency extends webpack.Dependency {
       constructor(
-        { identifier, content, media, sourceMap },
+        { identifier, content, layer, supports, media, sourceMap },
         context,
         identifierIndex
       ) {
@@ -248,6 +267,8 @@ class MiniCssExtractPlugin {
         this.identifier = identifier;
         this.identifierIndex = identifierIndex;
         this.content = content;
+        this.layer = layer;
+        this.supports = supports;
         this.media = media;
         this.sourceMap = sourceMap;
         this.context = context;
@@ -271,6 +292,8 @@ class MiniCssExtractPlugin {
 
         write(this.identifier);
         write(this.content);
+        write(this.layer);
+        write(this.supports);
         write(this.media);
         write(this.sourceMap);
         write(this.context);
@@ -302,6 +325,8 @@ class MiniCssExtractPlugin {
             {
               identifier: read(),
               content: read(),
+              layer: read(),
+              supports: read(),
               media: read(),
               sourceMap: read(),
             },
@@ -1024,8 +1049,20 @@ class MiniCssExtractPlugin {
           source.add(header);
         }
 
+        if (module.supports) {
+          source.add(`@supports (${module.supports}) {\n`);
+        }
+
         if (module.media) {
           source.add(`@media ${module.media} {\n`);
+        }
+
+        const needLayer = typeof module.layer !== "undefined";
+
+        if (needLayer) {
+          source.add(
+            `@layer${module.layer.length > 0 ? ` ${module.layer}` : ""} {\n`
+          );
         }
 
         const { path: filename } = compilation.getPathWithInfo(
@@ -1056,7 +1093,15 @@ class MiniCssExtractPlugin {
 
         source.add("\n");
 
+        if (needLayer) {
+          source.add("}\n");
+        }
+
         if (module.media) {
+          source.add("}\n");
+        }
+
+        if (module.supports) {
           source.add("}\n");
         }
       }
