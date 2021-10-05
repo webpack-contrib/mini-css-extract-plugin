@@ -88,7 +88,7 @@ module.exports = {
 |                  **[`attributes`](#attributes)**                  |      `{Object}`      |                 `{}`                  | Adds custom attributes to the `link` tag for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks     |
 |                    **[`linkType`](#linkType)**                    | `{String\|Boolean}`  |              `text/css`               | Allows loading asynchronous chunks with a custom link type                                                                                |
 |                     **[`runtime`](#runtime)**                     |     `{Boolean}`      |                `true`                 | Allows to enable/disable the runtime generation                                                                                           |
-| **[`experimentalUseImportModule`](#experimentalUseImportModule)** |     `{Boolean}`      |                `false`                | Use an experimental webpack API to execute modules instead of child compilers                                                             |
+| **[`experimentalUseImportModule`](#experimentalUseImportModule)** |     `{Boolean}`      |              `undefined`              | Use an experimental webpack API to execute modules instead of child compilers                                                             |
 
 #### `filename`
 
@@ -301,13 +301,16 @@ module.exports = {
 
 #### `experimentalUseImportModule`
 
-Use an experimental webpack API to execute modules instead of child compilers.
+Type: `Boolean`
+Default: `undefined`
 
+Enabled by default unless explicitly set (i.e. `true` and `false` allow you to explicitly control this option) and new API is available.
+
+Use a new webpack API to execute modules instead of child compilers.
 This improves performance and memory usage a lot, but isn't as stable as the normal approach.
-
 When combined with `experiments.layers`, this adds a `layer` option to the loader options to specify the layer of the css execution.
 
-You need to have at least webpack 5.33.2.
+> i You need to have at least webpack 5.33.2.
 
 **webpack.config.js**
 
