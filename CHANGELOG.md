@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.3.0...v2.4.0) (2021-10-05)
+
+### Performance
+
+* migrate on new API, this improves performance and memory usage a lot, you need to have at least webpack `5.52.0` (recommended latest stable), for older versions the old API will be used (except explicit enabling of the `experimentalUseImportModule` option)
+
+
+### Features
+
+* added support for `supports()` and `layer()` in `@import` at-rule ([#843](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/843)) ([e751080](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/e751080ad6a81f196d5c26fb79b3c69b9429a634))
+
+
+### Bug Fixes
+
+* crash with the `exportLocalsConvention` option ([#844](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/844)) ([0f8d501](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/0f8d5015c95724b537ddc627758f67020d01ae0b))
+
 ## [2.3.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.2.2...v2.3.0) (2021-09-11)
 
 
