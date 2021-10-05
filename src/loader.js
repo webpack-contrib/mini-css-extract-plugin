@@ -119,29 +119,33 @@ export function pitch(request) {
       if (!Array.isArray(exports)) {
         dependencies = [[null, exports]];
       } else {
-        dependencies = exports.map(([id, content, media, sourceMap]) => {
-          let identifier = id;
-          let context;
-          if (compilation) {
-            const module = findModuleById(compilation, id);
-            identifier = module.identifier();
-            ({ context } = module);
-          } else {
-            // TODO check if this context is used somewhere
-            context = this.rootContext;
-          }
+        dependencies = exports.map(
+          ([id, content, media, sourceMap, supports, layer]) => {
+            let identifier = id;
+            let context;
+            if (compilation) {
+              const module = findModuleById(compilation, id);
+              identifier = module.identifier();
+              ({ context } = module);
+            } else {
+              // TODO check if this context is used somewhere
+              context = this.rootContext;
+            }
 
-          return {
-            identifier,
-            context,
-            content: Buffer.from(content),
-            media,
-            sourceMap: sourceMap
-              ? Buffer.from(JSON.stringify(sourceMap))
-              : // eslint-disable-next-line no-undefined
-                undefined,
-          };
-        });
+            return {
+              identifier,
+              context,
+              content: Buffer.from(content),
+              media,
+              supports,
+              layer,
+              sourceMap: sourceMap
+                ? Buffer.from(JSON.stringify(sourceMap))
+                : // eslint-disable-next-line no-undefined
+                  undefined,
+            };
+          }
+        );
       }
 
       addDependencies(dependencies);
