@@ -213,7 +213,7 @@ export function pitch(request) {
         )}`;
 
     this.importModule(
-      `${this.resourcePath}.webpack[javascript/auto]!=!${request}`,
+      `${this.resourcePath}.webpack[javascript/auto]!=!!!${request}`,
       {
         layer: options.layer,
         publicPath: publicPathForExtract,
@@ -366,4 +366,6 @@ export function pitch(request) {
 }
 
 // eslint-disable-next-line func-names
-export default function () {}
+export default function (content) {
+  console.log(content);
+}
