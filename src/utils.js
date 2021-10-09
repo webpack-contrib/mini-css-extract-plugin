@@ -53,7 +53,7 @@ function compareModulesByIdentifier(a, b) {
 }
 
 const MODULE_TYPE = "css/mini-extract";
-const AUTO_PUBLIC_PATH = "__mini_css_extract_plugin_public_path_auto__";
+const AUTO_PUBLIC_PATH = "#";
 const ABSOLUTE_PUBLIC_PATH = "webpack:///mini-css-extract-plugin/";
 const SINGLE_DOT_PATH_SEGMENT =
   "__mini_css_extract_plugin_single_dot_path_segment__";
