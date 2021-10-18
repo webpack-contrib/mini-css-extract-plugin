@@ -10,7 +10,7 @@ module.exports = (api) => {
         "@babel/preset-env",
         {
           targets: {
-            node: "10.13.0",
+            node: "12.13.0",
           },
         },
       ],
