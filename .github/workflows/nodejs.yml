@@ -56,7 +56,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [12.x, 14.x, 16.x, 17.x]
         webpack-version: [latest]
 
     runs-on: ${{ matrix.os }}
