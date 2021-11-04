@@ -75,7 +75,10 @@ function stringifyRequest(loaderContext, request) {
     typeof loaderContext.utils.contextify === "function"
   ) {
     return JSON.stringify(
-      loaderContext.utils.contextify(loaderContext.context, request)
+      loaderContext.utils.contextify(
+        loaderContext.context || loaderContext.rootContext,
+        request
+      )
     );
   }
 
