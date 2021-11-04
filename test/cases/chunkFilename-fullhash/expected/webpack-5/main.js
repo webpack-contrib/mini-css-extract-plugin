@@ -64,10 +64,8 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /******/ 	/* webpack/runtime/get mini-css chunk filename */
 /******/ 	(() => {
-/******/ 		// This function allow to reference all chunks
+/******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = (chunkId) => {
-/******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === 1) return "" + __webpack_require__.h() + ".css";
 /******/ 			// return url for filenames based on template
 /******/ 			return "" + chunkId + "." + __webpack_require__.h() + ".css";
 /******/ 		};
@@ -75,7 +73,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("4119f46f7fa72336b928")
+/******/ 		__webpack_require__.h = () => ("845a2495b51038b0d047")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
