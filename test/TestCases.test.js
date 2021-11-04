@@ -114,7 +114,7 @@ describe("TestCases", () => {
           Object.assign(
             config,
             {
-              mode: "none",
+              mode: config.mode || "none",
               context: directoryForCase,
             },
             config,

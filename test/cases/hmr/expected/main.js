@@ -1,22 +1,10 @@
 /******/ (() => { // webpackBootstrap
-/******/ 	var __webpack_modules__ = ([
-/* 0 */
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
+/******/ 	var __webpack_modules__ = ({
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-    if(true) {
-      // 
-      var cssReload = __webpack_require__(1)(module.id, {"locals":false});
-      module.hot.dispose(cssReload);
-      module.hot.accept(undefined, cssReload);
-    }
-  
-
-/***/ }),
-/* 1 */
+/***/ "../../../src/hmr/hotModuleReplacement.js":
+/*!************************************************!*\
+  !*** ../../../src/hmr/hotModuleReplacement.js ***!
+  \************************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /* eslint-env browser */
@@ -26,7 +14,7 @@ __webpack_require__.r(__webpack_exports__);
   func-names
 */
 
-const normalizeUrl = __webpack_require__(2);
+const normalizeUrl = __webpack_require__(/*! ./normalize-url */ "../../../src/hmr/normalize-url.js");
 
 const srcByModuleId = Object.create(null);
 
@@ -262,7 +250,11 @@ module.exports = function (moduleId, options) {
 
 
 /***/ }),
-/* 2 */
+
+/***/ "../../../src/hmr/normalize-url.js":
+/*!*****************************************!*\
+  !*** ../../../src/hmr/normalize-url.js ***!
+  \*****************************************/
 /***/ ((module) => {
 
 /* eslint-disable */
@@ -305,8 +297,29 @@ module.exports = function (urlString) {
 };
 
 
+/***/ }),
+
+/***/ "./index.css":
+/*!*******************!*\
+  !*** ./index.css ***!
+  \*******************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+    if(true) {
+      // 
+      var cssReload = __webpack_require__(/*! ../../../src/hmr/hotModuleReplacement.js */ "../../../src/hmr/hotModuleReplacement.js")(module.id, {"locals":false});
+      module.hot.dispose(cssReload);
+      module.hot.accept(undefined, cssReload);
+    }
+  
+
 /***/ })
-/******/ 	]);
+
+/******/ 	});
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
@@ -362,10 +375,10 @@ module.exports = function (urlString) {
 /******/ 	
 /******/ 	/* webpack/runtime/get mini-css chunk filename */
 /******/ 	(() => {
-/******/ 		// This function allow to reference all chunks
+/******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + "main" + ".css";
+/******/ 			return undefined;
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -947,7 +960,7 @@ module.exports = function (urlString) {
 /******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = __webpack_require__.hmrS_jsonp = __webpack_require__.hmrS_jsonp || {
-/******/ 			0: 0
+/******/ 			"main": 0
 /******/ 		};
 /******/ 		
 /******/ 		// no chunk on demand loading
@@ -1457,7 +1470,7 @@ module.exports = function (urlString) {
 /******/ 	// module cache are used so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	var __webpack_exports__ = __webpack_require__(0);
+/******/ 	var __webpack_exports__ = __webpack_require__("./index.css");
 /******/ 	
 /******/ })()
 ;
