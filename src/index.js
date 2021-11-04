@@ -821,8 +821,7 @@ class MiniCssExtractPlugin {
               return referencedChunk.canBeInitial()
                 ? this.options.filename
                 : this.options.chunkFilename;
-            },
-            true
+            }
           )
         );
 
