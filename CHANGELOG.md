@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.4](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.4.3...v2.4.4) (2021-11-04)
+
+
+### Bug Fixes
+
+* crash with `[contenthash]` ([#869](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/869)) ([57ad127](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/57ad1274328512aebb20fa3b2c27fb9321f835a7))
+* runtime path in modules without context ([#866](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/866)) ([e2e30b2](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/e2e30b280d51f313e3ac566af3b839e580b22ef5))
+
 ### [2.4.3](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.4.2...v2.4.3) (2021-10-21)
 
 
