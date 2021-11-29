@@ -188,6 +188,11 @@ export function pitch(request) {
 
   if (publicPath === "auto") {
     publicPath = AUTO_PUBLIC_PATH;
+  } else if (typeof publicPath === "function") {
+    // `hash` property is not available in this context, Webpack itself just set `hash` with
+    // an arbitrary value.
+    // See: https://github.com/webpack/webpack/blob/main/lib/runtime/PublicPathRuntimeModule.js#L19-L27
+    publicPath = publicPath({ hash: "XXXX" });
   }
 
   if (
