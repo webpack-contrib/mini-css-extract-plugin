@@ -8,6 +8,11 @@ exports[`validate options should throw an error on the "attributes" option with 
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#attributes"
 `;
 
+exports[`validate options should throw an error on the "chunkFilename" option with "" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.chunkFilename should be a non-empty string."
+`;
+
 exports[`validate options should throw an error on the "chunkFilename" option with "/styles/[id].css" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.chunkFilename: A relative path is expected. However, the provided value \\"/styles/[id].css\\" is an absolute path!"
@@ -22,6 +27,11 @@ exports[`validate options should throw an error on the "chunkFilename" option wi
    Details:
     * options.chunkFilename should be a non-empty string.
     * options.chunkFilename should be an instance of function."
+`;
+
+exports[`validate options should throw an error on the "filename" option with "" value 1`] = `
+"Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
+ - options.filename should be a non-empty string."
 `;
 
 exports[`validate options should throw an error on the "filename" option with "/styles/[name].css" value 1`] = `

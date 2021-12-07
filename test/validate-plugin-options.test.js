@@ -7,11 +7,11 @@ describe("validate options", () => {
         "[name].css",
         ({ name }) => `${name.replace("/js/", "/css/")}.css`,
       ],
-      failure: [true, "/styles/[name].css"],
+      failure: [true, "/styles/[name].css", ""],
     },
     chunkFilename: {
       success: ["[id].css", ({ chunk }) => `${chunk.id}.${chunk.name}.css`],
-      failure: [true, "/styles/[id].css"],
+      failure: [true, "/styles/[id].css", ""],
     },
     ignoreOrder: {
       success: [true, false],
