@@ -7,7 +7,7 @@ describe("validate options", () => {
         "[name].css",
         ({ name }) => `${name.replace("/js/", "/css/")}.css`,
       ],
-      failure: [true],
+      failure: [true, "/styles/[name].css"],
     },
     chunkFilename: {
       success: ["[id].css", ({ chunk }) => `${chunk.id}.${chunk.name}.css`],

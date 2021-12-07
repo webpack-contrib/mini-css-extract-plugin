@@ -6,7 +6,9 @@
     "filename": {
       "anyOf": [
         {
-          "type": "string"
+          "type": "string",
+          "absolutePath": false,
+          "minLength": 1
         },
         {
           "instanceof": "Function"
