@@ -11,7 +11,7 @@ describe("validate options", () => {
     },
     chunkFilename: {
       success: ["[id].css", ({ chunk }) => `${chunk.id}.${chunk.name}.css`],
-      failure: [true],
+      failure: [true, "/styles/[id].css"],
     },
     ignoreOrder: {
       success: [true, false],
