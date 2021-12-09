@@ -1,4 +1,4 @@
 module.exports = {
-  "*.js": ["eslint --fix", "prettier --write"],
-  "*.{json,md,yml,css,ts}": ["prettier --write"],
+  "*": ["prettier --write --ignore-unknown"],
+  "*.{js,ts}": ["eslint --cache --fix"],
 };
