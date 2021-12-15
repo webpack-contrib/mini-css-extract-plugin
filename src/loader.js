@@ -204,13 +204,22 @@ export function pitch(request) {
       return;
     }
 
-    const isAbsolutePublicPath = /^[a-zA-Z][a-zA-Z\d+\-.]*?:/.test(publicPath);
-    const publicPathForExtract = isAbsolutePublicPath
-      ? publicPath
-      : `${ABSOLUTE_PUBLIC_PATH}${publicPath.replace(
-          /\./g,
-          SINGLE_DOT_PATH_SEGMENT
-        )}`;
+    let publicPathForExtract;
+
+    if (typeof publicPath === "string") {
+      const isAbsolutePublicPath = /^[a-zA-Z][a-zA-Z\d+\-.]*?:/.test(
+        publicPath
+      );
+
+      publicPathForExtract = isAbsolutePublicPath
+        ? publicPath
+        : `${ABSOLUTE_PUBLIC_PATH}${publicPath.replace(
+            /\./g,
+            SINGLE_DOT_PATH_SEGMENT
+          )}`;
+    } else {
+      publicPathForExtract = publicPath;
+    }
 
     this.importModule(
       `${this.resourcePath}.webpack[javascript/auto]!=!!!${request}`,
