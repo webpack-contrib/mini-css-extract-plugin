@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.6](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.4.5...v2.4.6) (2022-01-06)
+
+
+### Bug Fixes
+
+* crash when `publicPath` is function ([#881](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/881)) ([41bd828](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/41bd828ba11baf2c1349b3a8103072e2d82fd4c2))
+* do not allow absolute path in the `chunkFilename` option ([#879](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/879)) ([36e04ab](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/36e04ab8b5e55d429ce361841e77f6ddba934ee1))
+* do not allow absolute path in the `filename` option ([#878](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/878)) ([76361df](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/76361df4220f62c18b3660af76ab8b28c56d0471))
+
 ### [2.4.5](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.4.4...v2.4.5) (2021-11-17)
 
 ### Chore
