@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 
+import path from "path";
 import { validate } from "schema-utils";
 
 import schema from "./plugin-options.json";
@@ -205,7 +206,7 @@ class MiniCssExtractPlugin {
 
     webpack.util.serialization.register(
       CssModule,
-      "mini-css-extract-plugin/dist/CssModule",
+      path.resolve(__dirname, "CssModule"),
       null,
       {
         serialize(instance, context) {
@@ -312,7 +313,7 @@ class MiniCssExtractPlugin {
 
     webpack.util.serialization.register(
       CssDependency,
-      "mini-css-extract-plugin/dist/CssDependency",
+      path.resolve(__dirname, "CssDependency"),
       null,
       {
         serialize(instance, context) {
