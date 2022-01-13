@@ -1,6 +1,6 @@
 {
   "name": "mini-css-extract-plugin",
-  "version": "2.4.6",
+  "version": "2.4.7",
   "description": "extracts CSS into separate files",
   "license": "MIT",
   "repository": "webpack-contrib/mini-css-extract-plugin",

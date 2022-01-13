@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.7](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.4.6...v2.4.7) (2022-01-13)
+
+
+### Bug Fixes
+
+* multiple serializer registrations ([#894](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/894)) ([c784204](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/c784204772538ab8984e1c25e4501a7602b41ad1))
+
 ### [2.4.6](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.4.5...v2.4.6) (2022-01-06)
 
 
