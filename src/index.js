@@ -20,6 +20,7 @@ import {
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").ChunkGraph} ChunkGraph */
 /** @typedef {import("webpack").Chunk} Chunk */
+/** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
 /** @typedef {import("webpack").sources.Source} Source */
 /** @typedef {import("webpack").Configuration} Configuration */
@@ -1064,7 +1065,7 @@ class MiniCssExtractPlugin {
         (new Set()),
       ])
     );
-    /** @type {Map<Module, Map<Module, Set<string>>>} */
+    /** @type {Map<Module, Map<Module, Set<ChunkGroup>>>} */
     const moduleDependenciesReasons = new Map(
       modulesList.map((m) => [m, new Map()])
     );
@@ -1089,7 +1090,10 @@ class MiniCssExtractPlugin {
 
         for (let i = 0; i < sortedModules.length; i++) {
           const set = moduleDependencies.get(sortedModules[i]);
-          const reasons = moduleDependenciesReasons.get(sortedModules[i]);
+
+          const reasons =
+            /** @type {Map<Module, Set<ChunkGroup>>} */
+            (moduleDependenciesReasons.get(sortedModules[i]));
 
           for (let j = i + 1; j < sortedModules.length; j++) {
             const module = sortedModules[j];
@@ -1098,12 +1102,10 @@ class MiniCssExtractPlugin {
             (set).add(module);
 
             const reason =
-              // @ts-ignore
-              reasons.get(module) || /** @type {Set<Module>} */ (new Set());
+              reasons.get(module) || /** @type {Set<ChunkGroup>} */ (new Set());
 
-            // @ts-ignore
             reason.add(chunkGroup);
-            // @ts-ignore
+
             reasons.set(module, reason);
           }
         }
@@ -1185,16 +1187,20 @@ class MiniCssExtractPlugin {
                   .../** @type {Module[]} */ (bestMatchDeps).map((m) => {
                     const goodReasonsMap = moduleDependenciesReasons.get(m);
                     const goodReasons =
-                      // @ts-ignore
-                      goodReasonsMap && goodReasonsMap.get(fallbackModule);
+                      goodReasonsMap &&
+                      goodReasonsMap.get(
+                        /** @type {Module} */ (fallbackModule)
+                      );
                     const failedChunkGroups = Array.from(
-                      // @ts-ignore
-                      /** @type {Map<Module, Set<Chunk>>} */ (reasons).get(m),
+                      /** @type {Set<ChunkGroup>} */
+                      (
+                        /** @type {Map<Module, Set<ChunkGroup>>} */
+                        (reasons).get(m)
+                      ),
                       (cg) => cg.name
                     ).join(", ");
                     const goodChunkGroups =
                       goodReasons &&
-                      // @ts-ignore
                       Array.from(goodReasons, (cg) => cg.name).join(", ");
                     return [
                       ` * ${m.readableIdentifier(requestShortener)}`,
