@@ -1,10 +1,22 @@
 import NativeModule from "module";
 import path from "path";
 
+/** @typedef {import("webpack").Compilation} Compilation */
+/** @typedef {import("webpack").Module} Module */
+/** @typedef {import("webpack").LoaderContext<any>} LoaderContext */
+
+/**
+ * @returns {boolean}
+ */
 function trueFn() {
   return true;
 }
 
+/**
+ * @param {Compilation} compilation
+ * @param {string | number} id
+ * @returns {null | Module}
+ */
 function findModuleById(compilation, id) {
   const { modules, chunkGraph } = compilation;
 
@@ -22,16 +34,30 @@ function findModuleById(compilation, id) {
   return null;
 }
 
+/**
+ * @param {LoaderContext} loaderContext
+ * @param {string | Buffer} code
+ * @param {string} filename
+ * @returns {object}
+ */
 function evalModuleCode(loaderContext, code, filename) {
+  // @ts-ignore
   const module = new NativeModule(filename, loaderContext);
 
+  // @ts-ignore
   module.paths = NativeModule._nodeModulePaths(loaderContext.context); // eslint-disable-line no-underscore-dangle
   module.filename = filename;
+  // @ts-ignore
   module._compile(code, filename); // eslint-disable-line no-underscore-dangle
 
   return module.exports;
 }
 
+/**
+ * @param {string} a
+ * @param {string} b
+ * @returns {number}
+ */
 function compareIds(a, b) {
   if (typeof a !== typeof b) {
     return typeof a < typeof b ? -1 : 1;
@@ -48,6 +74,11 @@ function compareIds(a, b) {
   return 0;
 }
 
+/**
+ * @param {Module} a
+ * @param {Module} b
+ * @returns {number}
+ */
 function compareModulesByIdentifier(a, b) {
   return compareIds(a.identifier(), b.identifier());
 }
@@ -58,17 +89,30 @@ const ABSOLUTE_PUBLIC_PATH = "webpack:///mini-css-extract-plugin/";
 const SINGLE_DOT_PATH_SEGMENT =
   "__mini_css_extract_plugin_single_dot_path_segment__";
 
+/**
+ * @param {string} str
+ * @returns {boolean}
+ */
 function isAbsolutePath(str) {
   return path.posix.isAbsolute(str) || path.win32.isAbsolute(str);
 }
 
 const RELATIVE_PATH_REGEXP = /^\.\.?[/\\]/;
 
+/**
+ * @param {string} str
+ * @returns {boolean}
+ */
 function isRelativePath(str) {
   return RELATIVE_PATH_REGEXP.test(str);
 }
 
 // TODO simplify for the next major release
+/**
+ * @param {LoaderContext} loaderContext
+ * @param {string} request
+ * @returns {string}
+ */
 function stringifyRequest(loaderContext, request) {
   if (
     typeof loaderContext.utils !== "undefined" &&
@@ -115,6 +159,12 @@ function stringifyRequest(loaderContext, request) {
   );
 }
 
+/**
+ * @param {string} filename
+ * @param {string} outputPath
+ * @param {boolean} enforceRelative
+ * @returns {string}
+ */
 function getUndoPath(filename, outputPath, enforceRelative) {
   let depth = -1;
   let append = "";

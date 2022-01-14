@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
 import path from "path";
+
 import { validate } from "schema-utils";
 
 import schema from "./plugin-options.json";
@@ -14,6 +15,18 @@ import {
   getUndoPath,
 } from "./utils";
 
+/** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
+/** @typedef {import("webpack").Compiler} Compiler */
+/** @typedef {import("webpack").Compilation} Compilation */
+
+/**
+ * @typedef {Object} LoaderOptions
+ * @property {string | ((resourcePath: string, rootContext: string) => string)} [publicPath]
+ * @property {boolean} [emit]
+ * @property {boolean} [esModule]
+ * @property {string} [layer]
+ */
+
 export const pluginName = "mini-css-extract-plugin";
 export const pluginSymbol = Symbol(pluginName);
 
@@ -25,17 +38,22 @@ const CODE_GENERATION_RESULT = {
 };
 
 /**
- * @type WeakMap<webpack, CssModule>
+ * @type WeakMap<Compiler["webpack"], CssModule>
  */
 const cssModuleCache = new WeakMap();
+
 /**
- * @type WeakMap<webpack, CssDependency>
+ * @type WeakMap<Compiler["webpack"], CssDependency>
  */
 const cssDependencyCache = new WeakMap();
 
 const registered = new WeakSet();
 
 class MiniCssExtractPlugin {
+  /**
+   * @param {Compiler["webpack"]} webpack
+   * @returns {CssModule}
+   */
   static getCssModule(webpack) {
     /**
      * Prevent creation of multiple CssModule classes to allow other integrations to get the current CssModule.
@@ -43,6 +61,7 @@ class MiniCssExtractPlugin {
     if (cssModuleCache.has(webpack)) {
       return cssModuleCache.get(webpack);
     }
+
     class CssModule extends webpack.Module {
       constructor({
         context,
@@ -137,6 +156,11 @@ class MiniCssExtractPlugin {
       }
 
       // eslint-disable-next-line class-methods-use-this
+      /**
+       * @param {NeedBuildContext} context context info
+       * @param {function(WebpackError=, boolean=): void} callback callback function, returns true, if the module needs a rebuild
+       * @returns {void}
+       */
       needBuild(context, callback) {
         callback(null, this._needBuild);
       }
@@ -248,6 +272,10 @@ class MiniCssExtractPlugin {
     return CssModule;
   }
 
+  /**
+   * @param {Compiler["webpack"]} webpack
+   * @returns {CssDependency}
+   */
   static getCssDependency(webpack) {
     /**
      * Prevent creation of multiple CssDependency classes to allow other integrations to get the current CssDependency.
@@ -255,6 +283,7 @@ class MiniCssExtractPlugin {
     if (cssDependencyCache.has(webpack)) {
       return cssDependencyCache.get(webpack);
     }
+
     // eslint-disable-next-line no-shadow
     class CssDependency extends webpack.Dependency {
       constructor(
@@ -278,6 +307,9 @@ class MiniCssExtractPlugin {
         this.assetsInfo = undefined;
       }
 
+      /**
+       * @returns {string}
+       */
       getResourceIdentifier() {
         return `css-module-${this.identifier}-${this.identifierIndex}`;
       }
@@ -351,7 +383,7 @@ class MiniCssExtractPlugin {
   }
 
   constructor(options = {}) {
-    validate(schema, options, {
+    validate(/** @type {Schema} */ (schema), options, {
       baseDataPath: "options",
     });
 
@@ -404,12 +436,16 @@ class MiniCssExtractPlugin {
     }
   }
 
-  /** @param {import("webpack").Compiler} compiler */
+  /**
+   * @param {Compiler} compiler
+   */
   apply(compiler) {
     const { webpack } = compiler;
 
     if (this.options.experimentalUseImportModule) {
+      // @ts-ignore
       if (typeof compiler.options.experiments.executeModule === "undefined") {
+        // @ts-ignore
         // eslint-disable-next-line no-param-reassign
         compiler.options.experiments.executeModule = true;
       }
@@ -429,8 +465,11 @@ class MiniCssExtractPlugin {
     const { splitChunks } = compiler.options.optimization;
 
     if (splitChunks) {
-      if (splitChunks.defaultSizeTypes.includes("...")) {
-        splitChunks.defaultSizeTypes.push(MODULE_TYPE);
+      if (
+        /** @type {string[]} */ (splitChunks.defaultSizeTypes).includes("...")
+      ) {
+        /** @type {string[]} */
+        (splitChunks.defaultSizeTypes).push(MODULE_TYPE);
       }
     }
 
@@ -530,7 +569,7 @@ class MiniCssExtractPlugin {
         if (modules) {
           const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
           const { createHash } = compiler.webpack.util;
-          const hash = createHash(hashFunction);
+          const hash = createHash(/** @type {string} */ (hashFunction));
 
           for (const m of modules) {
             hash.update(chunkGraph.getModuleHash(m, chunk.runtime));

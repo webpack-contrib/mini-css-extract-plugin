@@ -204,6 +204,10 @@ function reloadAll() {
   });
 }
 
+/**
+ * @param {string} url
+ * @returns {boolean}
+ */
 function isUrlRequest(url) {
   // An URL is not an request if
 
@@ -259,6 +263,10 @@ module.exports = function (moduleId, options) {
 
 /* eslint-disable */
 
+/**
+ * @param {string[]} pathComponents
+ * @returns {string}
+ */
 function normalizeUrl(pathComponents) {
   return pathComponents
     .reduce(function (accumulator, item) {
@@ -273,10 +281,14 @@ function normalizeUrl(pathComponents) {
       }
 
       return accumulator;
-    }, [])
+    }, /** @type {string[]} */ ([]))
     .join("/");
 }
 
+/**
+ * @param {string} urlString
+ * @returns {string}
+ */
 module.exports = function (urlString) {
   urlString = urlString.trim();
 

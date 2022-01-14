@@ -195,6 +195,10 @@ function reloadAll() {
   });
 }
 
+/**
+ * @param {string} url
+ * @returns {boolean}
+ */
 function isUrlRequest(url) {
   // An URL is not an request if
 

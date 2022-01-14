@@ -12,6 +12,34 @@ import schema from "./loader-options.json";
 
 import MiniCssExtractPlugin, { pluginName, pluginSymbol } from "./index";
 
+/** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
+/** @typedef {import("webpack").Compiler} Compiler */
+/** @typedef {import("webpack").Compilation} Compilation */
+/** @typedef {import("webpack").Chunk} Chunk */
+/** @typedef {import("webpack").Module} Module */
+/** @typedef {import("webpack").sources.Source} Source */
+/** @typedef {import("webpack").AssetInfo} AssetInfo */
+/** @typedef {import("webpack").NormalModule} NormalModule */
+/** @typedef {import("./index.js").LoaderOptions} LoaderOptions */
+
+/** @typedef {any} TODO */
+
+/**
+ * @typedef {Object} Dependency
+ * @property {string} identifier
+ * @property {string | null} context
+ * @property {Buffer} content
+ * @property {string} media
+ * @property {string} [supports]
+ * @property {string} [supports]
+ * @property {Buffer} [sourceMap]
+ */
+
+/**
+ * @param {string} content
+ * @param {TODO} context
+ * @returns {string}
+ */
 function hotLoader(content, context) {
   const accept = context.locals
     ? ""
@@ -33,10 +61,15 @@ function hotLoader(content, context) {
   `;
 }
 
+/**
+ * @this {import("webpack").LoaderContext<LoaderOptions>}
+ * @param {string} request
+ */
 export function pitch(request) {
-  const options = this.getOptions(schema);
+  // @ts-ignore
+  const options = this.getOptions(/** @type {Schema} */ (schema));
   const callback = this.async();
-  const optionsFromPlugin = this[pluginSymbol];
+  const optionsFromPlugin = /** @type {TODO} */ (this)[pluginSymbol];
 
   if (!optionsFromPlugin) {
     callback(
@@ -48,14 +81,26 @@ export function pitch(request) {
     return;
   }
 
-  const { webpack } = this._compiler;
+  const { webpack } = /** @type {Compiler} */ (this._compiler);
 
+  /**
+   * @param {TODO} originalExports
+   * @param {Compilation} [compilation]
+   * @param {{ [name: string]: Source }} [assets]
+   * @param {Map<string, AssetInfo>} [assetsInfo]
+   * @returns {void}
+   */
   const handleExports = (originalExports, compilation, assets, assetsInfo) => {
+    /** @type {{[key: string]: string } | undefined} */
     let locals;
     let namedExport;
 
     const esModule =
       typeof options.esModule !== "undefined" ? options.esModule : true;
+
+    /**
+     * @param {Dependency[] | [null, object][]} dependencies
+     */
     const addDependencies = (dependencies) => {
       if (!Array.isArray(dependencies) && dependencies != null) {
         throw new Error(
@@ -70,18 +115,32 @@ export function pitch(request) {
       let lastDep;
 
       for (const dependency of dependencies) {
-        if (!dependency.identifier || !emit) {
+        if (!(/** @type {Dependency} */ (dependency).identifier) || !emit) {
           // eslint-disable-next-line no-continue
           continue;
         }
 
-        const count = identifierCountMap.get(dependency.identifier) || 0;
+        const count =
+          identifierCountMap.get(
+            /** @type {Dependency} */ (dependency).identifier
+          ) || 0;
         const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
-        this._module.addDependency(
-          (lastDep = new CssDependency(dependency, dependency.context, count))
+        /** @type {NormalModule} */
+        (this._module).addDependency(
+          // @ts-ignore
+          (lastDep = new CssDependency(
+            dependency,
+            /** @type {Dependency} */
+            (dependency).context,
+            count
+          ))
         );
-        identifierCountMap.set(dependency.identifier, count + 1);
+        identifierCountMap.set(
+          /** @type {Dependency} */
+          (dependency).identifier,
+          count + 1
+        );
       }
 
       if (lastDep && assets) {
@@ -115,6 +174,7 @@ export function pitch(request) {
         locals = exports && exports.locals;
       }
 
+      /** @type {Dependency[] | [null, object][]} */
       let dependencies;
 
       if (!Array.isArray(exports)) {
@@ -124,8 +184,12 @@ export function pitch(request) {
           ([id, content, media, sourceMap, supports, layer]) => {
             let identifier = id;
             let context;
+
             if (compilation) {
-              const module = findModuleById(compilation, id);
+              const module =
+                /** @type {Module} */
+                (findModuleById(compilation, id));
+
               identifier = module.identifier();
               ({ context } = module);
             } else {
@@ -151,14 +215,20 @@ export function pitch(request) {
 
       addDependencies(dependencies);
     } catch (e) {
-      return callback(e);
+      callback(/** @type {Error} */ (e));
+
+      return;
     }
 
     const result = locals
       ? namedExport
         ? Object.keys(locals)
             .map(
-              (key) => `\nexport var ${key} = ${JSON.stringify(locals[key])};`
+              (key) =>
+                `\nexport var ${key} = ${JSON.stringify(
+                  /** @type {{[key: string]: string }} */
+                  (locals)[key]
+                )};`
             )
             .join("")
         : `\n${
@@ -174,10 +244,12 @@ export function pitch(request) {
       ? hotLoader(result, { context: this.context, options, locals })
       : result;
 
-    return callback(null, resultSource);
+    callback(null, resultSource);
   };
 
-  let { publicPath } = this._compilation.outputOptions;
+  let { publicPath } =
+    /** @type {Compilation} */
+    (this._compilation).outputOptions;
 
   if (typeof options.publicPath === "string") {
     // eslint-disable-next-line prefer-destructuring
@@ -225,8 +297,12 @@ export function pitch(request) {
       `${this.resourcePath}.webpack[javascript/auto]!=!!!${request}`,
       {
         layer: options.layer,
-        publicPath: publicPathForExtract,
+        publicPath: /** @type {string} */ (publicPathForExtract),
       },
+      /**
+       * @param {Error | null | undefined} error
+       * @param {object} exports
+       */
       (error, exports) => {
         if (error) {
           callback(error);
@@ -251,10 +327,12 @@ export function pitch(request) {
     publicPath,
   };
 
-  const childCompiler = this._compilation.createChildCompiler(
-    `${pluginName} ${request}`,
-    outputOptions
-  );
+  const childCompiler =
+    /** @type {Compilation} */
+    (this._compilation).createChildCompiler(
+      `${pluginName} ${request}`,
+      outputOptions
+    );
 
   // The templates are compiled and executed by NodeJS - similar to server side rendering
   // Unfortunately this causes issues as some loaders require an absolute URL to support ES Modules
@@ -298,6 +376,9 @@ export function pitch(request) {
 
   childCompiler.hooks.thisCompilation.tap(
     `${pluginName} loader`,
+    /**
+     * @param {Compilation} compilation
+     */
     (compilation) => {
       const normalModuleHook =
         NormalModule.getCompilationHooks(compilation).loader;
@@ -307,6 +388,8 @@ export function pitch(request) {
           // eslint-disable-next-line no-param-reassign
           module.loaders = loaders.map((loader) => {
             return {
+              type: null,
+              // @ts-ignore
               loader: loader.path,
               options: loader.options,
               ident: loader.ident,
@@ -317,64 +400,81 @@ export function pitch(request) {
     }
   );
 
+  /** @type {string | Buffer} */
   let source;
 
-  childCompiler.hooks.compilation.tap(pluginName, (compilation) => {
-    compilation.hooks.processAssets.tap(pluginName, () => {
-      source =
-        compilation.assets[childFilename] &&
-        compilation.assets[childFilename].source();
+  childCompiler.hooks.compilation.tap(
+    pluginName,
+    /**
+     * @param {Compilation} compilation
+     */
+    (compilation) => {
+      compilation.hooks.processAssets.tap(pluginName, () => {
+        source =
+          compilation.assets[childFilename] &&
+          compilation.assets[childFilename].source();
 
-      // Remove all chunk assets
-      compilation.chunks.forEach((chunk) => {
-        chunk.files.forEach((file) => {
-          compilation.deleteAsset(file);
+        // Remove all chunk assets
+        compilation.chunks.forEach((chunk) => {
+          chunk.files.forEach((file) => {
+            compilation.deleteAsset(file);
+          });
         });
       });
-    });
-  });
+    }
+  );
 
   childCompiler.runAsChild((error, entries, compilation) => {
     if (error) {
-      return callback(error);
+      callback(error);
+
+      return;
     }
 
-    if (compilation.errors.length > 0) {
-      return callback(compilation.errors[0]);
+    if (/** @type {Compilation} */ (compilation).errors.length > 0) {
+      callback(/** @type {Compilation} */ (compilation).errors[0]);
+
+      return;
     }
 
+    /** @type {{ [name: string]: Source }} */
     const assets = Object.create(null);
+    /** @type {Map<string, AssetInfo>} */
     const assetsInfo = new Map();
 
-    for (const asset of compilation.getAssets()) {
+    for (const asset of /** @type {Compilation} */ (compilation).getAssets()) {
       assets[asset.name] = asset.source;
       assetsInfo.set(asset.name, asset.info);
     }
 
-    compilation.fileDependencies.forEach((dep) => {
+    /** @type {Compilation} */
+    (compilation).fileDependencies.forEach((dep) => {
       this.addDependency(dep);
     }, this);
 
-    compilation.contextDependencies.forEach((dep) => {
+    /** @type {Compilation} */
+    (compilation).contextDependencies.forEach((dep) => {
       this.addContextDependency(dep);
     }, this);
 
     if (!source) {
-      return callback(new Error("Didn't get a result from child compiler"));
+      callback(new Error("Didn't get a result from child compiler"));
+
+      return;
     }
 
     let originalExports;
     try {
       originalExports = evalModuleCode(this, source, request);
     } catch (e) {
-      return callback(e);
+      callback(/** @type {Error} */ (e));
+
+      return;
     }
 
-    return handleExports(originalExports, compilation, assets, assetsInfo);
+    handleExports(originalExports, compilation, assets, assetsInfo);
   });
 }
 
 // eslint-disable-next-line func-names
-export default function (content) {
-  console.log(content);
-}
+export default function () {}
