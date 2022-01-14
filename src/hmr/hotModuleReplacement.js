@@ -5,6 +5,8 @@
   func-names
 */
 
+/** @typedef {any} TODO */
+
 const normalizeUrl = require("./normalize-url");
 
 const srcByModuleId = Object.create(null);
@@ -13,10 +15,16 @@ const noDocument = typeof document === "undefined";
 
 const { forEach } = Array.prototype;
 
+/**
+ * @param {function} fn
+ * @param {number} time
+ * @returns {(function(): void)|*}
+ */
 function debounce(fn, time) {
   let timeout = 0;
 
   return function () {
+    // @ts-ignore
     const self = this;
     // eslint-disable-next-line prefer-rest-params
     const args = arguments;
@@ -26,18 +34,24 @@ function debounce(fn, time) {
     };
 
     clearTimeout(timeout);
+
+    // @ts-ignore
     timeout = setTimeout(functionCall, time);
   };
 }
 
 function noop() {}
 
+/**
+ * @param {TODO} moduleId
+ * @returns {TODO}
+ */
 function getCurrentScriptUrl(moduleId) {
   let src = srcByModuleId[moduleId];
 
   if (!src) {
     if (document.currentScript) {
-      ({ src } = document.currentScript);
+      ({ src } = /** @type {HTMLScriptElement} */ (document.currentScript));
     } else {
       const scripts = document.getElementsByTagName("script");
       const lastScriptTag = scripts[scripts.length - 1];
@@ -50,6 +64,10 @@ function getCurrentScriptUrl(moduleId) {
     srcByModuleId[moduleId] = src;
   }
 
+  /**
+   * @param {string} fileMap
+   * @returns {null | string[]}
+   */
   return function (fileMap) {
     if (!src) {
       return null;
@@ -76,6 +94,10 @@ function getCurrentScriptUrl(moduleId) {
   };
 }
 
+/**
+ * @param {TODO} el
+ * @param {string} [url]
+ */
 function updateCss(el, url) {
   if (!url) {
     if (!el.href) {
@@ -86,7 +108,7 @@ function updateCss(el, url) {
     url = el.href.split("?")[0];
   }
 
-  if (!isUrlRequest(url)) {
+  if (!isUrlRequest(/** @type {string} */ (url))) {
     return;
   }
 
@@ -134,22 +156,36 @@ function updateCss(el, url) {
   }
 }
 
+/**
+ * @param {string} href
+ * @param {TODO} src
+ * @returns {TODO}
+ */
 function getReloadUrl(href, src) {
   let ret;
 
   // eslint-disable-next-line no-param-reassign
-  href = normalizeUrl(href, { stripWWW: false });
+  href = normalizeUrl(href);
 
-  // eslint-disable-next-line array-callback-return
-  src.some((url) => {
-    if (href.indexOf(src) > -1) {
-      ret = url;
+  src.some(
+    /**
+     * @param {string} url
+     */
+    // eslint-disable-next-line array-callback-return
+    (url) => {
+      if (href.indexOf(src) > -1) {
+        ret = url;
+      }
     }
-  });
+  );
 
   return ret;
 }
 
+/**
+ * @param {string} [src]
+ * @returns {boolean}
+ */
 function reloadStyle(src) {
   if (!src) {
     return false;
@@ -210,6 +246,11 @@ function isUrlRequest(url) {
   return true;
 }
 
+/**
+ * @param {TODO} moduleId
+ * @param {TODO} options
+ * @returns {TODO}
+ */
 module.exports = function (moduleId, options) {
   if (noDocument) {
     console.log("no window.document found, will not HMR CSS");

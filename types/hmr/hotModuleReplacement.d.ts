@@ -1,2 +1,3 @@
-declare function _exports(moduleId: any, options: any): (...args: any[]) => void;
+declare function _exports(moduleId: TODO, options: TODO): TODO;
 export = _exports;
+export type TODO = any;

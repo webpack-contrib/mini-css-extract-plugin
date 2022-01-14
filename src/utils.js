@@ -56,7 +56,7 @@ function evalModuleCode(loaderContext, code, filename) {
 /**
  * @param {string} a
  * @param {string} b
- * @returns {number}
+ * @returns {0 | 1 | -1}
  */
 function compareIds(a, b) {
   if (typeof a !== typeof b) {
@@ -77,7 +77,7 @@ function compareIds(a, b) {
 /**
  * @param {Module} a
  * @param {Module} b
- * @returns {number}
+ * @returns {0 | 1 | -1}
  */
 function compareModulesByIdentifier(a, b) {
   return compareIds(a.identifier(), b.identifier());
