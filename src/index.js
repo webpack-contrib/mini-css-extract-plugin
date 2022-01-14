@@ -1044,7 +1044,7 @@ class MiniCssExtractPlugin {
    * @param {Chunk} chunk
    * @param {Iterable<Module>} modules
    * @param {Compilation["requestShortener"]} requestShortener
-   * @returns {Set<TODO>}
+   * @returns {Set<Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }>}
    */
   sortModules(compilation, chunk, modules, requestShortener) {
     let usedModules = this._sortedModulesCache.get(chunk);
@@ -1329,7 +1329,7 @@ class MiniCssExtractPlugin {
             )
           );
         } else {
-          source.add(new RawSource(content, readableIdentifier));
+          source.add(new RawSource(content));
         }
 
         source.add("\n");
