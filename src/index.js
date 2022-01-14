@@ -1356,7 +1356,6 @@ class MiniCssExtractPlugin {
   }
 }
 
-
 MiniCssExtractPlugin.loader = require.resolve("./loader");
 
 export default MiniCssExtractPlugin;
