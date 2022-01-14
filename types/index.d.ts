@@ -3,10 +3,13 @@
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").ChunkGraph} ChunkGraph */
 /** @typedef {import("webpack").Chunk} Chunk */
+/** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
+/** @typedef {import("webpack").Dependency} Dependency */
 /** @typedef {import("webpack").sources.Source} Source */
 /** @typedef {import("webpack").Configuration} Configuration */
 /** @typedef {import("webpack").WebpackError} WebpackError */
+/** @typedef {import("webpack").AssetInfo} AssetInfo */
 /**
  * @typedef {Object} LoaderOptions
  * @property {string | ((resourcePath: string, rootContext: string) => string)} [publicPath]
@@ -51,10 +54,13 @@ export type Compiler = import("webpack").Compiler;
 export type Compilation = import("webpack").Compilation;
 export type ChunkGraph = import("webpack").ChunkGraph;
 export type Chunk = import("webpack").Chunk;
+export type ChunkGroup = Parameters<import("webpack").Chunk["isInGroup"]>[0];
 export type Module = import("webpack").Module;
+export type Dependency = import("webpack").Dependency;
 export type Source = import("webpack").sources.Source;
 export type Configuration = import("webpack").Configuration;
 export type WebpackError = import("webpack").WebpackError;
+export type AssetInfo = import("webpack").AssetInfo;
 export type LoaderOptions = {
   publicPath?:
     | string

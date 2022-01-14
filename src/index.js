@@ -22,6 +22,7 @@ import {
 /** @typedef {import("webpack").Chunk} Chunk */
 /** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
+/** @typedef {import("webpack").Dependency} Dependency */
 /** @typedef {import("webpack").sources.Source} Source */
 /** @typedef {import("webpack").Configuration} Configuration */
 /** @typedef {import("webpack").WebpackError} WebpackError */
@@ -295,7 +296,6 @@ class MiniCssExtractPlugin {
        * @param {Parameters<Module["deserialize"]>[0]} context
        */
       deserialize(context) {
-        // @ts-ignore
         this._needBuild = context.read();
 
         super.deserialize(context);
@@ -393,20 +393,22 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @returns {string}
+       * @returns {ReturnType<Dependency["getResourceIdentifier"]>}
        */
       getResourceIdentifier() {
         return `css-module-${this.identifier}-${this.identifierIndex}`;
       }
 
-      // @ts-ignore
+      /**
+       * @returns {ReturnType<Dependency["getModuleEvaluationSideEffectsState"]>}
+       */
       // eslint-disable-next-line class-methods-use-this
       getModuleEvaluationSideEffectsState() {
         return webpack.ModuleGraphConnection.TRANSITIVE_ONLY;
       }
 
       /**
-       * @param {{ write: (arg0?: any) => void }} context
+       * @param {Parameters<Dependency["serialize"]>[0]} context
        */
       serialize(context) {
         const { write } = context;
@@ -426,7 +428,7 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {{ read: (arg0?: any) => void }} context
+       * @param {Parameters<Dependency["deserialize"]>[0]} context
        */
       deserialize(context) {
         super.deserialize(context);
@@ -646,9 +648,13 @@ class MiniCssExtractPlugin {
           this.getChunkModules(chunk, chunkGraph)
         ).filter((module) => module.type === MODULE_TYPE);
 
-        const filenameTemplate = chunk.canBeInitial()
-          ? this.options.filename
-          : this.options.chunkFilename;
+        const filenameTemplate =
+          /** @type {TODO} */
+          (
+            chunk.canBeInitial()
+              ? this.options.filename
+              : this.options.chunkFilename
+          );
 
         if (renderedModules.length > 0) {
           result.push({
@@ -659,14 +665,13 @@ class MiniCssExtractPlugin {
                 chunk,
                 renderedModules,
                 compilation.runtimeTemplate.requestShortener,
-                // @ts-ignore
+                /** @type {string} */
                 filenameTemplate,
                 {
                   contentHashType: MODULE_TYPE,
                   chunk,
                 }
               ),
-            // @ts-ignore
             filenameTemplate,
             pathOptions: {
               chunk,
