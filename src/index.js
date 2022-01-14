@@ -25,6 +25,7 @@ import {
 /** @typedef {import("webpack").sources.Source} Source */
 /** @typedef {import("webpack").Configuration} Configuration */
 /** @typedef {import("webpack").WebpackError} WebpackError */
+/** @typedef {import("webpack").AssetInfo} AssetInfo */
 
 /**
  * @typedef {Object} LoaderOptions
@@ -102,7 +103,7 @@ class MiniCssExtractPlugin {
     // @ts-ignore
     class CssModule extends webpack.Module {
       /**
-       * @param {{ context: TODO, identifier: string, identifierIndex: number, content: Buffer, layer?: string, supports?: string, media: string, sourceMap?: Buffer, assets: TODO, assetsInfo: TODO }} build
+       * @param {{ context: string, identifier: string, identifierIndex: number, content: Buffer, layer?: string, supports?: string, media: string, sourceMap?: Buffer, assets: { [key: string]: Source }, assetsInfo: { [key: string]: AssetInfo } }} build
        */
       constructor({
         context,
@@ -143,8 +144,8 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {Compilation["requestShortener"]} requestShortener
-       * @returns {string}
+       * @param {Parameters<Module["readableIdentifier"]>[0]} requestShortener
+       * @returns {ReturnType<Module["readableIdentifier"]>}
        */
       readableIdentifier(requestShortener) {
         return `css ${requestShortener.shorten(this._identifier)}${
@@ -163,9 +164,9 @@ class MiniCssExtractPlugin {
       }
 
       nameForCondition() {
-        const resource = /** @type {string} */ (
-          this._identifier.split("!").pop()
-        );
+        const resource =
+          /** @type {string} */
+          (this._identifier.split("!").pop());
         const idx = resource.indexOf("?");
 
         if (idx >= 0) {
@@ -176,7 +177,7 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {TODO} module
+       * @param {Module & CssModule} module
        */
       updateCacheModule(module) {
         if (
@@ -207,9 +208,8 @@ class MiniCssExtractPlugin {
 
       // eslint-disable-next-line class-methods-use-this
       /**
-       * @param {TODO} context context info
-       * @param {function(WebpackError=, boolean=): void} callback callback function, returns true, if the module needs a rebuild
-       * @returns {void}
+       * @param {Parameters<Module["needBuild"]>[0]} context context info
+       * @param {Parameters<Module["needBuild"]>[1]} callback callback function, returns true, if the module needs a rebuild
        */
       needBuild(context, callback) {
         // eslint-disable-next-line no-undefined
@@ -217,11 +217,11 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {TODO} options
-       * @param {Compilation} compilation
-       * @param {TODO} resolver
-       * @param {TODO} fileSystem
-       * @param {TODO} callback
+       * @param {Parameters<Module["build"]>[0]} options
+       * @param {Parameters<Module["build"]>[1]} compilation
+       * @param {Parameters<Module["build"]>[2]} resolver
+       * @param {Parameters<Module["build"]>[3]} fileSystem
+       * @param {Parameters<Module["build"]>[4]} callback
        */
       build(options, compilation, resolver, fileSystem, callback) {
         this.buildInfo = {
@@ -260,8 +260,8 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {TODO} hash
-       * @param {TODO} context
+       * @param {Parameters<Module["updateHash"]>[0]} hash
+       * @param {Parameters<Module["updateHash"]>[1]} context
        */
       updateHash(hash, context) {
         super.updateHash(hash, context);
@@ -270,7 +270,7 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {{ write: (arg0?: any) => void }} context
+       * @param {Parameters<Module["serialize"]>[0]} context
        */
       serialize(context) {
         const { write } = context;
@@ -292,7 +292,7 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {{ read: (arg0?: any) => void }} context
+       * @param {Parameters<Module["deserialize"]>[0]} context
        */
       deserialize(context) {
         // @ts-ignore
@@ -366,7 +366,7 @@ class MiniCssExtractPlugin {
     class CssDependency extends webpack.Dependency {
       /**
        * @param {{ identifier: string, content: Buffer, layer?: string, supports?: string, media: string, sourceMap?: Buffer }} build
-       * @param {TODO} context
+       * @param {string} context
        * @param {number} identifierIndex
        */
       constructor(
@@ -384,10 +384,10 @@ class MiniCssExtractPlugin {
         this.media = media;
         this.sourceMap = sourceMap;
         this.context = context;
-        /** @type {TODO} */
+        /** @type {{ [key: string]: Source } | undefined}} */
         // eslint-disable-next-line no-undefined
         this.assets = undefined;
-        /** @type {TODO} */
+        /** @type {{ [key: string]: AssetInfo } | undefined} */
         // eslint-disable-next-line no-undefined
         this.assetsInfo = undefined;
       }
@@ -604,8 +604,8 @@ class MiniCssExtractPlugin {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {
         /**
-         * @param {TODO} dependency
-         * @param {TODO} callback
+         * @param {{ dependencies: CssDependency[] }} dependencies
+         * @param {(err: Error| null, module: Module) => void} callback
          */
         // eslint-disable-next-line class-methods-use-this
         create({ dependencies: [dependency] }, callback) {
@@ -714,7 +714,7 @@ class MiniCssExtractPlugin {
       /**
        * @param {Chunk} mainChunk
        * @param {Compilation} compilation
-       * @returns {TODO}
+       * @returns {Record<string, number>}
        */
       // eslint-disable-next-line no-shadow
       const getCssChunkObject = (mainChunk, compilation) => {
@@ -743,7 +743,7 @@ class MiniCssExtractPlugin {
       class CssLoadingRuntimeModule extends RuntimeModule {
         /**
          * @param {Set<string>} runtimeRequirements
-         * @param {TODO} runtimeOptions
+         * @param {RuntimeOptions} runtimeOptions
          */
         constructor(runtimeRequirements, runtimeOptions) {
           super("css loading", 10);
@@ -994,7 +994,7 @@ class MiniCssExtractPlugin {
             `${RuntimeGlobals.require}.miniCssF`,
             /**
              * @param {Chunk} referencedChunk
-             * @returns {TODO}
+             * @returns {any}
              */
             (referencedChunk) => {
               if (!referencedChunk.contentHash[MODULE_TYPE]) {
