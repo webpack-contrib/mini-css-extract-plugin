@@ -79,10 +79,7 @@ const CODE_GENERATION_RESULT = {
   runtimeRequirements: new Set(),
 };
 
-/** @type WeakMap<Compiler["webpack"], TODO> */
 const cssModuleCache = new WeakMap();
-
-/** @type WeakMap<Compiler["webpack"], TODO> */
 const cssDependencyCache = new WeakMap();
 
 const registered = new WeakSet();
@@ -91,7 +88,7 @@ class MiniCssExtractPlugin {
   /**
    * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {CssModule}
+   * @returns {typeof CssModule}
    */
   static getCssModule(webpack) {
     /**
@@ -101,10 +98,9 @@ class MiniCssExtractPlugin {
       return cssModuleCache.get(webpack);
     }
 
-    // @ts-ignore
     class CssModule extends webpack.Module {
       /**
-       * @param {{ context: string, identifier: string, identifierIndex: number, content: Buffer, layer?: string, supports?: string, media: string, sourceMap?: Buffer, assets: { [key: string]: Source }, assetsInfo: { [key: string]: AssetInfo } }} build
+       * @param {{ context: string, identifier: string, identifierIndex: number, content: Buffer, layer: string | null, supports?: string, media: string, sourceMap?: Buffer, assets: { [key: string]: Source }, assetsInfo: Map<string, AssetInfo> }} build
        */
       constructor({
         context,
@@ -346,14 +342,13 @@ class MiniCssExtractPlugin {
       }
     );
 
-    // @ts-ignore
     return CssModule;
   }
 
   /**
    * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {CssDependency}
+   * @returns {typeof CssDependency}
    */
   static getCssDependency(webpack) {
     /**
@@ -366,7 +361,7 @@ class MiniCssExtractPlugin {
     class CssDependency extends webpack.Dependency {
       /**
        * @param {{ identifier: string, content: Buffer, layer?: string, supports?: string, media: string, sourceMap?: Buffer }} build
-       * @param {string} context
+       * @param {string | null} context
        * @param {number} identifierIndex
        */
       constructor(
@@ -387,7 +382,7 @@ class MiniCssExtractPlugin {
         /** @type {{ [key: string]: Source } | undefined}} */
         // eslint-disable-next-line no-undefined
         this.assets = undefined;
-        /** @type {{ [key: string]: AssetInfo } | undefined} */
+        /** @type {Map<string, AssetInfo> | undefined} */
         // eslint-disable-next-line no-undefined
         this.assetsInfo = undefined;
       }
@@ -474,7 +469,6 @@ class MiniCssExtractPlugin {
       }
     );
 
-    // @ts-ignore
     return CssDependency;
   }
 
@@ -617,8 +611,8 @@ class MiniCssExtractPlugin {
       }
 
       compilation.dependencyFactories.set(
-        // @ts-ignore
         CssDependency,
+        // @ts-ignore
         new CssModuleFactory()
       );
 
@@ -628,7 +622,6 @@ class MiniCssExtractPlugin {
       }
 
       compilation.dependencyTemplates.set(
-        // @ts-ignore
         CssDependency,
         new CssDependencyTemplate()
       );
@@ -1362,6 +1355,7 @@ class MiniCssExtractPlugin {
     return new ConcatSource(externalsSource, source);
   }
 }
+
 
 MiniCssExtractPlugin.loader = require.resolve("./loader");
 

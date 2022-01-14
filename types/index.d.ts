@@ -100,13 +100,13 @@ declare class MiniCssExtractPlugin {
   /**
    * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {CssModule}
+   * @returns {typeof CssModule}
    */
   private static getCssModule;
   /**
    * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {CssDependency}
+   * @returns {typeof CssDependency}
    */
   private static getCssDependency;
   /**

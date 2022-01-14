@@ -131,7 +131,8 @@ export function pitch(request) {
         (this._module).addDependency(
           // @ts-ignore
           (lastDep = new CssDependency(
-            dependency,
+            /** @type {Dependency} */
+            (dependency),
             /** @type {Dependency} */
             (dependency).context,
             count
