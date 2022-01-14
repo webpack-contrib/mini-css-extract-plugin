@@ -135,7 +135,7 @@ declare class MiniCssExtractPlugin {
    * @param {Chunk} chunk
    * @param {Iterable<Module>} modules
    * @param {Compilation["requestShortener"]} requestShortener
-   * @returns {Set<TODO>}
+   * @returns {Set<Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }>}
    */
   private sortModules;
   /**
@@ -146,7 +146,7 @@ declare class MiniCssExtractPlugin {
    * @param {Iterable<Module>} modules
    * @param {Compiler["requestShortener"]} requestShortener
    * @param {string} filenameTemplate
-   * @param {TODO} pathData
+   * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
    * @returns {Source}
    */
   private renderContentAsset;

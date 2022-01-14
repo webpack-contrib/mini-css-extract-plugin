@@ -1228,7 +1228,7 @@ class MiniCssExtractPlugin {
    * @param {Iterable<Module>} modules
    * @param {Compiler["requestShortener"]} requestShortener
    * @param {string} filenameTemplate
-   * @param {TODO} pathData
+   * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
    * @returns {Source}
    */
   renderContentAsset(
