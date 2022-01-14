@@ -1,8 +1,7 @@
-/* global document */
-
 import Self from "../../../src";
 
 module.exports = {
+  entry: "./index.js",
   module: {
     rules: [
       {
@@ -10,10 +9,11 @@ module.exports = {
         use: [
           {
             loader: Self.loader,
+            options: {
+              publicPath: "//cdn.example.com/assets/",
+            },
           },
-          {
-            loader: "css-loader",
-          },
+          "css-loader",
         ],
       },
     ],
@@ -21,7 +21,6 @@ module.exports = {
   plugins: [
     new Self({
       filename: "[name].css",
-      chunkFilename: "[id].css",
     }),
   ],
 };
