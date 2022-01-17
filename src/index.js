@@ -689,7 +689,7 @@ class MiniCssExtractPlugin {
           ).filter((module) => module.type === MODULE_TYPE);
 
           const filenameTemplate =
-            /** @type {TODO} */
+            /** @type {string} */
             (
               chunk.canBeInitial()
                 ? this.options.filename
