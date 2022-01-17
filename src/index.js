@@ -84,10 +84,18 @@ const CODE_GENERATION_RESULT = {
   sources: new Map(),
   runtimeRequirements: new Set(),
 };
-
+/**
+ *
+ * @type {WeakMap<Compiler["webpack"], any>}
+ */
 const cssModuleCache = new WeakMap();
+/**
+ * @type {WeakMap<Compiler["webpack"], any>}
+ */
 const cssDependencyCache = new WeakMap();
-
+/**
+ * @type {WeakSet<Compiler["webpack"]>}
+ */
 const registered = new WeakSet();
 
 class MiniCssExtractPlugin {
