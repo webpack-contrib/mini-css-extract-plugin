@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.5.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.5.0...v2.5.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* cjs export and types ([e836a00](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/e836a00cb164fecdb49e670e0552475477fa7994))
+
 ## [2.5.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.4.7...v2.5.0) (2022-01-14)
 
 
