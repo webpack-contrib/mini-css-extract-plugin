@@ -75,7 +75,6 @@ declare namespace MiniCssExtractPlugin {
     Compilation,
     ChunkGraph,
     Chunk,
-    LoaderContext,
     ChunkGroup,
     Module,
     Dependency,
@@ -119,7 +118,6 @@ type PluginOptions = {
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").ChunkGraph} ChunkGraph */
 /** @typedef {import("webpack").Chunk} Chunk */
-/** @typedef {import("webpack").LoaderContext<any>} LoaderContext */
 /** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
 /** @typedef {import("webpack").Dependency} Dependency */
@@ -171,7 +169,6 @@ type Schema = import("schema-utils/declarations/validate").Schema;
 type Compilation = import("webpack").Compilation;
 type ChunkGraph = import("webpack").ChunkGraph;
 type Chunk = import("webpack").Chunk;
-type LoaderContext = import("webpack").LoaderContext<any>;
 type ChunkGroup = Parameters<import("webpack").Chunk["isInGroup"]>[0];
 type Module = import("webpack").Module;
 type Dependency = import("webpack").Dependency;
