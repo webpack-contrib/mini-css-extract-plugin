@@ -14,6 +14,7 @@ export type Dependency = {
   content: Buffer;
   media: string;
   supports?: string | undefined;
+  layer?: string | undefined;
   sourceMap?: Buffer | undefined;
 };
 /**

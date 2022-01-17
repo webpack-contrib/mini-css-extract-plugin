@@ -31,13 +31,13 @@ const MiniCssExtractPlugin = require("./index");
  * @property {Buffer} content
  * @property {string} media
  * @property {string} [supports]
- * @property {string} [supports]
+ * @property {string} [layer]
  * @property {Buffer} [sourceMap]
  */
 
 /**
  * @param {string} content
- * @param {TODO} context
+ * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: {[key: string]: string } | undefined }} context
  * @returns {string}
  */
 function hotLoader(content, context) {
@@ -49,7 +49,7 @@ function hotLoader(content, context) {
     if(module.hot) {
       // ${Date.now()}
       var cssReload = require(${stringifyRequest(
-        context.context,
+        context.loaderContext,
         path.join(__dirname, "hmr/hotModuleReplacement.js")
       )})(module.id, ${JSON.stringify({
     ...context.options,
@@ -126,12 +126,10 @@ function pitch(request) {
           identifierCountMap.get(
             /** @type {Dependency} */ (dependency).identifier
           ) || 0;
-        // @ts-ignore
         const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
         /** @type {NormalModule} */
         (this._module).addDependency(
-          // @ts-ignore
           (lastDep = new CssDependency(
             /** @type {Dependency} */
             (dependency),
@@ -245,7 +243,7 @@ function pitch(request) {
     let resultSource = `// extracted by ${MiniCssExtractPlugin.pluginName}`;
 
     resultSource += this.hot
-      ? hotLoader(result, { context: this.context, options, locals })
+      ? hotLoader(result, { loaderContext: this, options, locals })
       : result;
 
     callback(null, resultSource);
@@ -395,7 +393,6 @@ function pitch(request) {
             module.loaders = loaders.map((loader) => {
               return {
                 type: null,
-                // @ts-ignore
                 loader: loader.path,
                 options: loader.options,
                 ident: loader.ident,

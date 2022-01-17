@@ -1,24 +1,24 @@
 export = MiniCssExtractPlugin;
 declare class MiniCssExtractPlugin {
   /**
-   * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssModule}
+   * @returns {CssModuleConstructor}
    */
-  private static getCssModule;
+  static getCssModule(webpack: Compiler["webpack"]): CssModuleConstructor;
   /**
-   * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssDependency}
+   * @returns {CssDependencyConstructor}
    */
-  private static getCssDependency;
+  static getCssDependency(
+    webpack: Compiler["webpack"]
+  ): CssDependencyConstructor;
   /**
    * @param {PluginOptions} [options]
    */
   constructor(options?: PluginOptions | undefined);
   /**
    * @private
-   * @type {WeakMap<Chunk, Set<TODO>>}
+   * @type {WeakMap<Chunk, Set<CssModule>>}
    * @private
    */
   private _sortedModulesCache;
@@ -47,9 +47,9 @@ declare class MiniCssExtractPlugin {
    * @private
    * @param {Compilation} compilation
    * @param {Chunk} chunk
-   * @param {Iterable<Module>} modules
+   * @param {CssModule[]} modules
    * @param {Compilation["requestShortener"]} requestShortener
-   * @returns {Set<Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }>}
+   * @returns {Set<CssModule>}
    */
   private sortModules;
   /**
@@ -57,7 +57,7 @@ declare class MiniCssExtractPlugin {
    * @param {Compiler} compiler
    * @param {Compilation} compilation
    * @param {Chunk} chunk
-   * @param {Iterable<Module>} modules
+   * @param {CssModule[]} modules
    * @param {Compiler["requestShortener"]} requestShortener
    * @param {string} filenameTemplate
    * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
@@ -75,6 +75,7 @@ declare namespace MiniCssExtractPlugin {
     Compilation,
     ChunkGraph,
     Chunk,
+    LoaderContext,
     ChunkGroup,
     Module,
     Dependency,
@@ -82,14 +83,27 @@ declare namespace MiniCssExtractPlugin {
     Configuration,
     WebpackError,
     AssetInfo,
+    LoaderDependency,
     LoaderOptions,
     PluginOptions,
     NormalizedPluginOptions,
     RuntimeOptions,
     TODO,
+    CssModule,
+    CssModuleDependency,
+    CssModuleConstructor,
+    CssDependency,
+    CssDependencyOptions,
+    CssDependencyConstructor,
   };
 }
 type Compiler = import("webpack").Compiler;
+type CssModuleConstructor = new (dependency: CssModuleDependency) => CssModule;
+type CssDependencyConstructor = new (
+  loaderDependency: CssDependencyOptions,
+  context: string | null,
+  identifierIndex: number
+) => CssDependency;
 type PluginOptions = {
   filename?: Required<Configuration>["output"]["filename"];
   chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
@@ -105,6 +119,7 @@ type PluginOptions = {
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").ChunkGraph} ChunkGraph */
 /** @typedef {import("webpack").Chunk} Chunk */
+/** @typedef {import("webpack").LoaderContext<any>} LoaderContext */
 /** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
 /** @typedef {import("webpack").Dependency} Dependency */
@@ -112,6 +127,7 @@ type PluginOptions = {
 /** @typedef {import("webpack").Configuration} Configuration */
 /** @typedef {import("webpack").WebpackError} WebpackError */
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
+/** @typedef {import("./loader.js").Dependency} LoaderDependency */
 /**
  * @typedef {Object} LoaderOptions
  * @property {string | ((resourcePath: string, rootContext: string) => string)} [publicPath]
@@ -155,6 +171,7 @@ type Schema = import("schema-utils/declarations/validate").Schema;
 type Compilation = import("webpack").Compilation;
 type ChunkGraph = import("webpack").ChunkGraph;
 type Chunk = import("webpack").Chunk;
+type LoaderContext = import("webpack").LoaderContext<any>;
 type ChunkGroup = Parameters<import("webpack").Chunk["isInGroup"]>[0];
 type Module = import("webpack").Module;
 type Dependency = import("webpack").Dependency;
@@ -162,6 +179,7 @@ type Source = import("webpack").sources.Source;
 type Configuration = import("webpack").Configuration;
 type WebpackError = import("webpack").WebpackError;
 type AssetInfo = import("webpack").AssetInfo;
+type LoaderDependency = import("./loader.js").Dependency;
 type LoaderOptions = {
   publicPath?:
     | string
@@ -187,3 +205,34 @@ type RuntimeOptions = {
   attributes: Record<string, string> | undefined;
 };
 type TODO = any;
+type CssModule = import("webpack").Module & {
+  content: Buffer;
+  media?: string | undefined;
+  sourceMap?: Buffer | undefined;
+  supports?: string | undefined;
+  layer?: string | undefined;
+  assets?:
+    | {
+        [key: string]: any;
+      }
+    | undefined;
+  assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
+};
+type CssModuleDependency = {
+  context: string | null;
+  identifier: string;
+  identifierIndex: number;
+  content: Buffer;
+  sourceMap?: Buffer | undefined;
+  media?: string | undefined;
+  supports?: string | undefined;
+  layer?: TODO;
+  assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
+  assets?:
+    | {
+        [key: string]: any;
+      }
+    | undefined;
+};
+type CssDependency = Dependency & CssModuleDependency;
+type CssDependencyOptions = Omit<LoaderDependency, "context">;

@@ -27,6 +27,7 @@ const {
 /** @typedef {import("webpack").Configuration} Configuration */
 /** @typedef {import("webpack").WebpackError} WebpackError */
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
+/** @typedef {import("./loader.js").Dependency} LoaderDependency */
 
 /**
  * @typedef {Object} LoaderOptions
@@ -73,34 +74,60 @@ const pluginName = "mini-css-extract-plugin";
 const pluginSymbol = Symbol(pluginName);
 
 const DEFAULT_FILENAME = "[name].css";
+/**
+ * @type {Set<string>}
+ */
 const TYPES = new Set([MODULE_TYPE]);
+/**
+ * @type {ReturnType<Module["codeGeneration"]>}
+ */
 const CODE_GENERATION_RESULT = {
   sources: new Map(),
   runtimeRequirements: new Set(),
 };
 
-const cssModuleCache = new WeakMap();
-const cssDependencyCache = new WeakMap();
+/** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string, assets?: { [key: string]: TODO }, assetsInfo?: Map<string, AssetInfo> }} CssModule */
 
+/** @typedef {{ context: string | null, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssModuleDependency */
+
+/** @typedef {{ new(dependency: CssModuleDependency): CssModule }} CssModuleConstructor */
+
+/** @typedef {Dependency & CssModuleDependency} CssDependency */
+
+/** @typedef {Omit<LoaderDependency, "context">} CssDependencyOptions */
+
+/** @typedef {{ new(loaderDependency: CssDependencyOptions, context: string | null, identifierIndex: number): CssDependency }} CssDependencyConstructor */
+
+/**
+ *
+ * @type {WeakMap<Compiler["webpack"], CssModuleConstructor>}
+ */
+const cssModuleCache = new WeakMap();
+/**
+ * @type {WeakMap<Compiler["webpack"], CssDependencyConstructor>}
+ */
+const cssDependencyCache = new WeakMap();
+/**
+ * @type {WeakSet<Compiler["webpack"]>}
+ */
 const registered = new WeakSet();
 
 class MiniCssExtractPlugin {
   /**
-   * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssModule}
+   * @returns {CssModuleConstructor}
    */
   static getCssModule(webpack) {
     /**
      * Prevent creation of multiple CssModule classes to allow other integrations to get the current CssModule.
      */
     if (cssModuleCache.has(webpack)) {
-      return cssModuleCache.get(webpack);
+      return /** @type {CssModuleConstructor} */ (cssModuleCache.get(webpack));
     }
 
     class CssModule extends webpack.Module {
       /**
-       * @param {{ context: string, identifier: string, identifierIndex: number, content: Buffer, layer: string | null, supports?: string, media: string, sourceMap?: Buffer, assets: { [key: string]: Source }, assetsInfo: Map<string, AssetInfo> }} build
+       * @param {CssModuleDependency} dependency
        */
       constructor({
         context,
@@ -114,7 +141,7 @@ class MiniCssExtractPlugin {
         assets,
         assetsInfo,
       }) {
-        super(MODULE_TYPE, context);
+        super(MODULE_TYPE, /** @type {string | undefined} */ (context));
 
         this.id = "";
         this._context = context;
@@ -174,27 +201,27 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {Module & CssModule} module
+       * @param {Module} module
        */
       updateCacheModule(module) {
         if (
-          this.content !== module.content ||
-          this.layer !== module.layer ||
-          this.supports !== module.supports ||
-          this.media !== module.media ||
-          this.sourceMap !== module.sourceMap ||
-          this.assets !== module.assets ||
-          this.assetsInfo !== module.assetsInfo
+          this.content !== /** @type {CssModule} */ (module).content ||
+          this.layer !== /** @type {CssModule} */ (module).layer ||
+          this.supports !== /** @type {CssModule} */ (module).supports ||
+          this.media !== /** @type {CssModule} */ (module).media ||
+          this.sourceMap !== /** @type {CssModule} */ (module).sourceMap ||
+          this.assets !== /** @type {CssModule} */ (module).assets ||
+          this.assetsInfo !== /** @type {CssModule} */ (module).assetsInfo
         ) {
           this._needBuild = true;
 
-          this.content = module.content;
-          this.layer = module.layer;
-          this.supports = module.supports;
-          this.media = module.media;
-          this.sourceMap = module.sourceMap;
-          this.assets = module.assets;
-          this.assetsInfo = module.assetsInfo;
+          this.content = /** @type {CssModule} */ (module).content;
+          this.layer = /** @type {CssModule} */ (module).layer;
+          this.supports = /** @type {CssModule} */ (module).supports;
+          this.media = /** @type {CssModule} */ (module).media;
+          this.sourceMap = /** @type {CssModule} */ (module).sourceMap;
+          this.assets = /** @type {CssModule} */ (module).assets;
+          this.assetsInfo = /** @type {CssModule} */ (module).assetsInfo;
         }
       }
 
@@ -346,21 +373,22 @@ class MiniCssExtractPlugin {
   }
 
   /**
-   * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssDependency}
+   * @returns {CssDependencyConstructor}
    */
   static getCssDependency(webpack) {
     /**
      * Prevent creation of multiple CssDependency classes to allow other integrations to get the current CssDependency.
      */
     if (cssDependencyCache.has(webpack)) {
-      return cssDependencyCache.get(webpack);
+      return /** @type {CssDependencyConstructor} */ (
+        cssDependencyCache.get(webpack)
+      );
     }
 
     class CssDependency extends webpack.Dependency {
       /**
-       * @param {{ identifier: string, content: Buffer, layer?: string, supports?: string, media: string, sourceMap?: Buffer }} build
+       * @param {CssDependencyOptions} loaderDependency
        * @param {string | null} context
        * @param {number} identifierIndex
        */
@@ -482,7 +510,7 @@ class MiniCssExtractPlugin {
 
     /**
      * @private
-     * @type {WeakMap<Chunk, Set<TODO>>}
+     * @type {WeakMap<Chunk, Set<CssModule>>}
      * @private
      */
     this._sortedModulesCache = new WeakMap();
@@ -511,8 +539,8 @@ class MiniCssExtractPlugin {
       insert: options.insert,
       linkType:
         // Todo in next major release set default to "false"
-        // @ts-ignore
-        (typeof options.linkType === "boolean" && options.linkType === true) ||
+        (typeof options.linkType === "boolean" &&
+          /** @type {boolean} */ (options.linkType) === true) ||
         typeof options.linkType === "undefined"
           ? "text/css"
           : options.linkType,
@@ -554,11 +582,15 @@ class MiniCssExtractPlugin {
     const { webpack } = compiler;
 
     if (this.options.experimentalUseImportModule) {
-      // @ts-ignore
-      if (typeof compiler.options.experiments.executeModule === "undefined") {
-        // @ts-ignore
+      if (
+        typeof (
+          /** @type {Compiler["options"]["experiments"] & { executeModule?: boolean }} */
+          (compiler.options.experiments).executeModule
+        ) === "undefined"
+      ) {
+        /** @type {Compiler["options"]["experiments"] & { executeModule?: boolean }} */
         // eslint-disable-next-line no-param-reassign
-        compiler.options.experiments.executeModule = true;
+        (compiler.options.experiments).executeModule = true;
       }
     }
 
@@ -593,31 +625,40 @@ class MiniCssExtractPlugin {
       const { loader: normalModuleHook } =
         NormalModule.getCompilationHooks(compilation);
 
-      normalModuleHook.tap(pluginName, (loaderContext) => {
-        // @ts-ignore
-        // eslint-disable-next-line no-param-reassign
-        loaderContext[pluginSymbol] = {
-          experimentalUseImportModule: this.options.experimentalUseImportModule,
-        };
-      });
+      normalModuleHook.tap(
+        pluginName,
+        /**
+         * @param {object} loaderContext
+         */
+        (loaderContext) => {
+          /** @type {object & { [pluginSymbol]: { experimentalUseImportModule: boolean | undefined } }} */
+          // eslint-disable-next-line no-param-reassign
+          (loaderContext)[pluginSymbol] = {
+            experimentalUseImportModule:
+              this.options.experimentalUseImportModule,
+          };
+        }
+      );
     });
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {
         /**
-         * @param {{ dependencies: CssDependency[] }} dependencies
-         * @param {(err: Error| null, module: Module) => void} callback
+         * @param {{ dependencies: Dependency[] }} dependencies
+         * @param {(arg0?: Error, arg1?: TODO) => void} callback
          */
         // eslint-disable-next-line class-methods-use-this
         create({ dependencies: [dependency] }, callback) {
-          // @ts-ignore
-          callback(null, new CssModule(dependency));
+          // eslint-disable-next-line no-undefined
+          callback(
+            undefined,
+            new CssModule(/** @type {CssDependency} */ (dependency))
+          );
         }
       }
 
       compilation.dependencyFactories.set(
         CssDependency,
-        // @ts-ignore
         new CssModuleFactory()
       );
 
@@ -631,62 +672,70 @@ class MiniCssExtractPlugin {
         new CssDependencyTemplate()
       );
 
-      // @ts-ignore
-      compilation.hooks.renderManifest.tap(pluginName, (result, { chunk }) => {
-        const { chunkGraph } = compilation;
-        const { HotUpdateChunk } = webpack;
+      compilation.hooks.renderManifest.tap(
+        pluginName,
+        /**
+         * @param {ReturnType<Compilation["getRenderManifest"]>} result
+         * @param {Parameters<Compilation["getRenderManifest"]>[0]} chunk
+         * @returns {TODO}
+         */
+        (result, { chunk }) => {
+          const { chunkGraph } = compilation;
+          const { HotUpdateChunk } = webpack;
 
-        // We don't need hot update chunks for css
-        // We will use the real asset instead to update
-        if (chunk instanceof HotUpdateChunk) {
-          return;
-        }
+          // We don't need hot update chunks for css
+          // We will use the real asset instead to update
+          if (chunk instanceof HotUpdateChunk) {
+            return;
+          }
 
-        const renderedModules = Array.from(
-          this.getChunkModules(chunk, chunkGraph)
-        ).filter((module) => module.type === MODULE_TYPE);
+          /** @type {CssModule[]} */
+          const renderedModules = Array.from(
+            /** @type {CssModule[]} */
+            (this.getChunkModules(chunk, chunkGraph))
+          ).filter((module) => module.type === MODULE_TYPE);
 
-        const filenameTemplate =
-          /** @type {TODO} */
-          (
-            chunk.canBeInitial()
-              ? this.options.filename
-              : this.options.chunkFilename
-          );
+          const filenameTemplate =
+            /** @type {string} */
+            (
+              chunk.canBeInitial()
+                ? this.options.filename
+                : this.options.chunkFilename
+            );
 
-        if (renderedModules.length > 0) {
-          result.push({
-            render: () =>
-              this.renderContentAsset(
-                compiler,
-                compilation,
-                chunk,
-                renderedModules,
-                compilation.runtimeTemplate.requestShortener,
-                /** @type {string} */
-                filenameTemplate,
-                {
-                  contentHashType: MODULE_TYPE,
+          if (renderedModules.length > 0) {
+            result.push({
+              render: () =>
+                this.renderContentAsset(
+                  compiler,
+                  compilation,
                   chunk,
-                }
-              ),
-            filenameTemplate,
-            pathOptions: {
-              chunk,
-              contentHashType: MODULE_TYPE,
-            },
-            identifier: `${pluginName}.${chunk.id}`,
-            hash: chunk.contentHash[MODULE_TYPE],
-          });
+                  renderedModules,
+                  compilation.runtimeTemplate.requestShortener,
+                  filenameTemplate,
+                  {
+                    contentHashType: MODULE_TYPE,
+                    chunk,
+                  }
+                ),
+              filenameTemplate,
+              pathOptions: {
+                chunk,
+                contentHashType: MODULE_TYPE,
+              },
+              identifier: `${pluginName}.${chunk.id}`,
+              hash: chunk.contentHash[MODULE_TYPE],
+            });
+          }
         }
-      });
+      );
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions, chunkGraph } = compilation;
         const modules = this.sortModules(
           compilation,
           chunk,
-          /** @type {Iterable<Module>} */
+          /** @type {CssModule[]} */
           (chunkGraph.getChunkModulesIterableBySourceType(chunk, MODULE_TYPE)),
           compilation.runtimeTemplate.requestShortener
         );
@@ -997,7 +1046,7 @@ class MiniCssExtractPlugin {
             `${RuntimeGlobals.require}.miniCssF`,
             /**
              * @param {Chunk} referencedChunk
-             * @returns {any}
+             * @returns {TODO}
              */
             (referencedChunk) => {
               if (!referencedChunk.contentHash[MODULE_TYPE]) {
@@ -1046,37 +1095,36 @@ class MiniCssExtractPlugin {
    * @private
    * @param {Compilation} compilation
    * @param {Chunk} chunk
-   * @param {Iterable<Module>} modules
+   * @param {CssModule[]} modules
    * @param {Compilation["requestShortener"]} requestShortener
-   * @returns {Set<Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }>}
+   * @returns {Set<CssModule>}
    */
   sortModules(compilation, chunk, modules, requestShortener) {
     let usedModules = this._sortedModulesCache.get(chunk);
 
     if (usedModules || !modules) {
-      // @ts-ignore
-      return usedModules;
+      return /** @type {Set<CssModule>} */ (usedModules);
     }
 
-    /** @type {Module[]} */
+    /** @type {CssModule[]} */
     const modulesList = [...modules];
     // Store dependencies for modules
-    /** @type {Map<Module, Set<Module>>} */
+    /** @type {Map<CssModule, Set<CssModule>>} */
     const moduleDependencies = new Map(
       modulesList.map((m) => [
         m,
-        /** @type {Set<Module>} */
+        /** @type {Set<CssModule>} */
         (new Set()),
       ])
     );
-    /** @type {Map<Module, Map<Module, Set<ChunkGroup>>>} */
+    /** @type {Map<CssModule, Map<CssModule, Set<ChunkGroup>>>} */
     const moduleDependenciesReasons = new Map(
       modulesList.map((m) => [m, new Map()])
     );
     // Get ordered list of modules per chunk group
     // This loop also gathers dependencies from the ordered lists
     // Lists are in reverse order to allow to use Array.pop()
-    /** @type {Module[][]} */
+    /** @type {CssModule[][]} */
     const modulesByChunkGroup = Array.from(
       chunk.groupsIterable,
       (chunkGroup) => {
@@ -1096,13 +1144,13 @@ class MiniCssExtractPlugin {
           const set = moduleDependencies.get(sortedModules[i]);
 
           const reasons =
-            /** @type {Map<Module, Set<ChunkGroup>>} */
+            /** @type {Map<CssModule, Set<ChunkGroup>>} */
             (moduleDependenciesReasons.get(sortedModules[i]));
 
           for (let j = i + 1; j < sortedModules.length; j++) {
             const module = sortedModules[j];
 
-            /** @type {Set<Module>} */
+            /** @type {Set<CssModule>} */
             (set).add(module);
 
             const reason =
@@ -1122,11 +1170,11 @@ class MiniCssExtractPlugin {
     usedModules = new Set();
 
     /**
-     * @param {Module} m
+     * @param {CssModule} m
      * @returns {boolean}
      */
     const unusedModulesFilter = (m) =>
-      !(/** @type {Set<Module>} */ (usedModules).has(m));
+      !(/** @type {Set<CssModule>} */ (usedModules).has(m));
 
     while (usedModules.size < modulesList.length) {
       let success = false;
@@ -1136,7 +1184,6 @@ class MiniCssExtractPlugin {
       // get first module where dependencies are fulfilled
       for (const list of modulesByChunkGroup) {
         // skip and remove already added modules
-        // @ts-ignore
         while (list.length > 0 && usedModules.has(list[list.length - 1])) {
           list.pop();
         }
@@ -1147,7 +1194,7 @@ class MiniCssExtractPlugin {
           const deps = moduleDependencies.get(module);
           // determine dependencies that are not yet included
           const failedDeps = Array.from(
-            /** @type {Set<Module>} */
+            /** @type {Set<CssModule>} */
             (deps)
           ).filter(unusedModulesFilter);
 
@@ -1159,11 +1206,7 @@ class MiniCssExtractPlugin {
 
           if (failedDeps.length === 0) {
             // use this module and remove it from list
-            usedModules.add(
-              /** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (
-                list.pop()
-              )
-            );
+            usedModules.add(/** @type {CssModule} */ (list.pop()));
             success = true;
             break;
           }
@@ -1174,11 +1217,11 @@ class MiniCssExtractPlugin {
         // no module found => there is a conflict
         // use list with fewest failed deps
         // and emit a warning
-        const fallbackModule = /** @type {Module[]} */ (bestMatch).pop();
+        const fallbackModule = /** @type {CssModule[]} */ (bestMatch).pop();
 
         if (!this.options.ignoreOrder) {
           const reasons = moduleDependenciesReasons.get(
-            /** @type {Module} */ (fallbackModule)
+            /** @type {CssModule} */ (fallbackModule)
           );
 
           compilation.warnings.push(
@@ -1189,22 +1232,22 @@ class MiniCssExtractPlugin {
                   `chunk ${chunk.name || chunk.id} [${pluginName}]`,
                   "Conflicting order. Following module has been added:",
                   ` * ${
-                    /** @type {Module} */ (fallbackModule).readableIdentifier(
-                      requestShortener
-                    )
+                    /** @type {CssModule} */ (
+                      fallbackModule
+                    ).readableIdentifier(requestShortener)
                   }`,
                   "despite it was not able to fulfill desired ordering with these modules:",
-                  .../** @type {Module[]} */ (bestMatchDeps).map((m) => {
+                  .../** @type {CssModule[]} */ (bestMatchDeps).map((m) => {
                     const goodReasonsMap = moduleDependenciesReasons.get(m);
                     const goodReasons =
                       goodReasonsMap &&
                       goodReasonsMap.get(
-                        /** @type {Module} */ (fallbackModule)
+                        /** @type {CssModule} */ (fallbackModule)
                       );
                     const failedChunkGroups = Array.from(
                       /** @type {Set<ChunkGroup>} */
                       (
-                        /** @type {Map<Module, Set<ChunkGroup>>} */
+                        /** @type {Map<CssModule, Set<ChunkGroup>>} */
                         (reasons).get(m)
                       ),
                       (cg) => cg.name
@@ -1227,11 +1270,7 @@ class MiniCssExtractPlugin {
           );
         }
 
-        usedModules.add(
-          /** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (
-            fallbackModule
-          )
-        );
+        usedModules.add(/** @type {CssModule} */ (fallbackModule));
       }
     }
 
@@ -1245,7 +1284,7 @@ class MiniCssExtractPlugin {
    * @param {Compiler} compiler
    * @param {Compilation} compilation
    * @param {Chunk} chunk
-   * @param {Iterable<Module>} modules
+   * @param {CssModule[]} modules
    * @param {Compiler["requestShortener"]} requestShortener
    * @param {string} filenameTemplate
    * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
