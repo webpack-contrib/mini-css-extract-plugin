@@ -1,13 +1,13 @@
 export = MiniCssExtractPlugin;
 declare class MiniCssExtractPlugin {
   /**
-   * @private
+   * @public
    * @param {Compiler["webpack"]} webpack
    * @returns {typeof CssModule}
    */
   private static getCssModule;
   /**
-   * @private
+   * @public
    * @param {Compiler["webpack"]} webpack
    * @returns {typeof CssDependency}
    */
