@@ -486,4 +486,4 @@ function pitch(request) {
   });
 }
 
-module.exports = { default: function loader() {}, pitch }
+module.exports = { default: function loader() {}, pitch };

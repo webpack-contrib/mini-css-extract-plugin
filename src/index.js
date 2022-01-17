@@ -1159,7 +1159,11 @@ class MiniCssExtractPlugin {
 
           if (failedDeps.length === 0) {
             // use this module and remove it from list
-            usedModules.add(/** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (list.pop()));
+            usedModules.add(
+              /** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (
+                list.pop()
+              )
+            );
             success = true;
             break;
           }
@@ -1223,12 +1227,16 @@ class MiniCssExtractPlugin {
           );
         }
 
-        usedModules.add(/** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (fallbackModule));
+        usedModules.add(
+          /** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (
+            fallbackModule
+          )
+        );
       }
     }
 
     this._sortedModulesCache.set(chunk, usedModules);
-    
+
     return usedModules;
   }
 
