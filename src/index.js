@@ -569,11 +569,15 @@ class MiniCssExtractPlugin {
     const { webpack } = compiler;
 
     if (this.options.experimentalUseImportModule) {
-      // @ts-ignore
-      if (typeof compiler.options.experiments.executeModule === "undefined") {
-        // @ts-ignore
+      if (
+        typeof (
+          /** @type {Compiler["options"]["experiments"] & { executeModule?: boolean }} */
+          (compiler.options.experiments).executeModule
+        ) === "undefined"
+      ) {
+        /** @type {Compiler["options"]["experiments"] & { executeModule?: boolean }} */
         // eslint-disable-next-line no-param-reassign
-        compiler.options.experiments.executeModule = true;
+        (compiler.options.experiments).executeModule = true;
       }
     }
 
@@ -653,55 +657,62 @@ class MiniCssExtractPlugin {
         new CssDependencyTemplate()
       );
 
-      // @ts-ignore
-      compilation.hooks.renderManifest.tap(pluginName, (result, { chunk }) => {
-        const { chunkGraph } = compilation;
-        const { HotUpdateChunk } = webpack;
+      compilation.hooks.renderManifest.tap(
+        pluginName,
+        /**
+         * @param {ReturnType<Compilation["getRenderManifest"]>} result
+         * @param {Parameters<Compilation["getRenderManifest"]>[0]} chunk
+         * @returns {TODO}
+         */
+        (result, { chunk }) => {
+          const { chunkGraph } = compilation;
+          const { HotUpdateChunk } = webpack;
 
-        // We don't need hot update chunks for css
-        // We will use the real asset instead to update
-        if (chunk instanceof HotUpdateChunk) {
-          return;
-        }
+          // We don't need hot update chunks for css
+          // We will use the real asset instead to update
+          if (chunk instanceof HotUpdateChunk) {
+            return;
+          }
 
-        const renderedModules = Array.from(
-          this.getChunkModules(chunk, chunkGraph)
-        ).filter((module) => module.type === MODULE_TYPE);
+          const renderedModules = Array.from(
+            this.getChunkModules(chunk, chunkGraph)
+          ).filter((module) => module.type === MODULE_TYPE);
 
-        const filenameTemplate =
-          /** @type {TODO} */
-          (
-            chunk.canBeInitial()
-              ? this.options.filename
-              : this.options.chunkFilename
-          );
+          const filenameTemplate =
+            /** @type {TODO} */
+            (
+              chunk.canBeInitial()
+                ? this.options.filename
+                : this.options.chunkFilename
+            );
 
-        if (renderedModules.length > 0) {
-          result.push({
-            render: () =>
-              this.renderContentAsset(
-                compiler,
-                compilation,
-                chunk,
-                renderedModules,
-                compilation.runtimeTemplate.requestShortener,
-                /** @type {string} */
-                filenameTemplate,
-                {
-                  contentHashType: MODULE_TYPE,
+          if (renderedModules.length > 0) {
+            result.push({
+              render: () =>
+                this.renderContentAsset(
+                  compiler,
+                  compilation,
                   chunk,
-                }
-              ),
-            filenameTemplate,
-            pathOptions: {
-              chunk,
-              contentHashType: MODULE_TYPE,
-            },
-            identifier: `${pluginName}.${chunk.id}`,
-            hash: chunk.contentHash[MODULE_TYPE],
-          });
+                  renderedModules,
+                  compilation.runtimeTemplate.requestShortener,
+                  /** @type {string} */
+                  filenameTemplate,
+                  {
+                    contentHashType: MODULE_TYPE,
+                    chunk,
+                  }
+                ),
+              filenameTemplate,
+              pathOptions: {
+                chunk,
+                contentHashType: MODULE_TYPE,
+              },
+              identifier: `${pluginName}.${chunk.id}`,
+              hash: chunk.contentHash[MODULE_TYPE],
+            });
+          }
         }
-      });
+      );
 
       compilation.hooks.contentHash.tap(pluginName, (chunk) => {
         const { outputOptions, chunkGraph } = compilation;
@@ -1076,8 +1087,9 @@ class MiniCssExtractPlugin {
     let usedModules = this._sortedModulesCache.get(chunk);
 
     if (usedModules || !modules) {
-      // @ts-ignore
-      return usedModules;
+      return /** @type {Set<Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }>} */ (
+        usedModules
+      );
     }
 
     /** @type {Module[]} */
@@ -1158,7 +1170,6 @@ class MiniCssExtractPlugin {
       // get first module where dependencies are fulfilled
       for (const list of modulesByChunkGroup) {
         // skip and remove already added modules
-        // @ts-ignore
         while (list.length > 0 && usedModules.has(list[list.length - 1])) {
           list.pop();
         }
