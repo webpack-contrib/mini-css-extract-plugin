@@ -1,9 +1,3 @@
-/**
- * @this {import("webpack").LoaderContext<LoaderOptions>}
- * @param {string} request
- */
-export function pitch(request: string): void;
-export default function _default(): void;
 export type Schema = import("schema-utils/declarations/validate").Schema;
 export type Compiler = import("webpack").Compiler;
 export type Compilation = import("webpack").Compilation;
@@ -22,3 +16,10 @@ export type Dependency = {
   supports?: string | undefined;
   sourceMap?: Buffer | undefined;
 };
+/**
+ * @this {import("webpack").LoaderContext<LoaderOptions>}
+ * @param {string} request
+ */
+export function pitch(request: string): void;
+declare function _default(): void;
+export { _default as default };

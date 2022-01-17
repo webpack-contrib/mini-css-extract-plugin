@@ -1,16 +1,16 @@
-import path from "path";
+const path = require("path");
 
-import {
+const {
   findModuleById,
   evalModuleCode,
   AUTO_PUBLIC_PATH,
   ABSOLUTE_PUBLIC_PATH,
   SINGLE_DOT_PATH_SEGMENT,
   stringifyRequest,
-} from "./utils";
-import schema from "./loader-options.json";
+} = require("./utils");
+const schema = require("./loader-options.json");
 
-import MiniCssExtractPlugin, { pluginName, pluginSymbol } from "./index";
+const MiniCssExtractPlugin = require("./index");
 
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
 /** @typedef {import("webpack").Compiler} Compiler */
@@ -65,11 +65,13 @@ function hotLoader(content, context) {
  * @this {import("webpack").LoaderContext<LoaderOptions>}
  * @param {string} request
  */
-export function pitch(request) {
+function pitch(request) {
   // @ts-ignore
   const options = this.getOptions(/** @type {Schema} */ (schema));
   const callback = this.async();
-  const optionsFromPlugin = /** @type {TODO} */ (this)[pluginSymbol];
+  const optionsFromPlugin = /** @type {TODO} */ (this)[
+    MiniCssExtractPlugin.pluginSymbol
+  ];
 
   if (!optionsFromPlugin) {
     callback(
@@ -240,7 +242,7 @@ export function pitch(request) {
       ? `\nexport {};`
       : "";
 
-    let resultSource = `// extracted by ${pluginName}`;
+    let resultSource = `// extracted by ${MiniCssExtractPlugin.pluginName}`;
 
     resultSource += this.hot
       ? hotLoader(result, { context: this.context, options, locals })
@@ -332,7 +334,7 @@ export function pitch(request) {
   const childCompiler =
     /** @type {Compilation} */
     (this._compilation).createChildCompiler(
-      `${pluginName} ${request}`,
+      `${MiniCssExtractPlugin.pluginName} ${request}`,
       outputOptions
     );
 
@@ -377,7 +379,7 @@ export function pitch(request) {
   const { NormalModule } = webpack;
 
   childCompiler.hooks.thisCompilation.tap(
-    `${pluginName} loader`,
+    `${MiniCssExtractPlugin.pluginName} loader`,
     /**
      * @param {Compilation} compilation
      */
@@ -385,20 +387,23 @@ export function pitch(request) {
       const normalModuleHook =
         NormalModule.getCompilationHooks(compilation).loader;
 
-      normalModuleHook.tap(`${pluginName} loader`, (loaderContext, module) => {
-        if (module.request === request) {
-          // eslint-disable-next-line no-param-reassign
-          module.loaders = loaders.map((loader) => {
-            return {
-              type: null,
-              // @ts-ignore
-              loader: loader.path,
-              options: loader.options,
-              ident: loader.ident,
-            };
-          });
+      normalModuleHook.tap(
+        `${MiniCssExtractPlugin.pluginName} loader`,
+        (loaderContext, module) => {
+          if (module.request === request) {
+            // eslint-disable-next-line no-param-reassign
+            module.loaders = loaders.map((loader) => {
+              return {
+                type: null,
+                // @ts-ignore
+                loader: loader.path,
+                options: loader.options,
+                ident: loader.ident,
+              };
+            });
+          }
         }
-      });
+      );
     }
   );
 
@@ -406,23 +411,26 @@ export function pitch(request) {
   let source;
 
   childCompiler.hooks.compilation.tap(
-    pluginName,
+    MiniCssExtractPlugin.pluginName,
     /**
      * @param {Compilation} compilation
      */
     (compilation) => {
-      compilation.hooks.processAssets.tap(pluginName, () => {
-        source =
-          compilation.assets[childFilename] &&
-          compilation.assets[childFilename].source();
+      compilation.hooks.processAssets.tap(
+        MiniCssExtractPlugin.pluginName,
+        () => {
+          source =
+            compilation.assets[childFilename] &&
+            compilation.assets[childFilename].source();
 
-        // Remove all chunk assets
-        compilation.chunks.forEach((chunk) => {
-          chunk.files.forEach((file) => {
-            compilation.deleteAsset(file);
+          // Remove all chunk assets
+          compilation.chunks.forEach((chunk) => {
+            chunk.files.forEach((file) => {
+              compilation.deleteAsset(file);
+            });
           });
-        });
-      });
+        }
+      );
     }
   );
 
@@ -478,5 +486,4 @@ export function pitch(request) {
   });
 }
 
-// eslint-disable-next-line func-names
-export default function () {}
+module.exports = { default: function loader() {}, pitch };
