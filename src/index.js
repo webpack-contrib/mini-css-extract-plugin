@@ -346,8 +346,7 @@ class MiniCssExtractPlugin {
           const sourceMap = read();
           const assets = read();
           const assetsInfo = read();
-          // @ts-ignore
-          const dep = new CssModule({
+          const dep = new /** @type {CssModuleConstructor} */ (CssModule)({
             context: contextModule,
             identifier,
             identifierIndex,
