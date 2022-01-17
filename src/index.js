@@ -86,11 +86,11 @@ const CODE_GENERATION_RESULT = {
 };
 /**
  *
- * @type {WeakMap<Compiler["webpack"], any>}
+ * @type {WeakMap<Compiler["webpack"], TODO>}
  */
 const cssModuleCache = new WeakMap();
 /**
- * @type {WeakMap<Compiler["webpack"], any>}
+ * @type {WeakMap<Compiler["webpack"], TODO>}
  */
 const cssDependencyCache = new WeakMap();
 /**
