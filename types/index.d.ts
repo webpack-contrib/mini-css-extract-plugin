@@ -205,15 +205,20 @@ type RuntimeOptions = {
   attributes: Record<string, string> | undefined;
 };
 type TODO = any;
-type CssModule = Module & {
+type CssModule = import("webpack").Module & {
   content: Buffer;
-  media?: string;
-  sourceMap?: Buffer;
-  supports?: string;
-  layer?: string;
+  media?: string | undefined;
+  sourceMap?: Buffer | undefined;
+  supports?: string | undefined;
+  layer?: string | undefined;
+  assets?:
+    | {
+        [key: string]: any;
+      }
+    | undefined;
+  assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
 };
-type CssModuleDependency = CssDependency;
-type CssDependency = import("webpack").Dependency & {
+type CssModuleDependency = {
   context: string | null;
   identifier: string;
   identifierIndex: number;
@@ -229,4 +234,5 @@ type CssDependency = import("webpack").Dependency & {
       }
     | undefined;
 };
+type CssDependency = Dependency & CssModuleDependency;
 type CssDependencyOptions = Omit<LoaderDependency, "context">;

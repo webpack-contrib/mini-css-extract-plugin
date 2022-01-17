@@ -87,13 +87,13 @@ const CODE_GENERATION_RESULT = {
   runtimeRequirements: new Set(),
 };
 
-/** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string }} CssModule */
+/** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string, assets?: { [key: string]: TODO }, assetsInfo?: Map<string, AssetInfo> }} CssModule */
 
-/** @typedef {CssDependency} CssModuleDependency */
+/** @typedef {{ context: string | null, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssModuleDependency */
 
 /** @typedef {{ new(dependency: CssModuleDependency): CssModule }} CssModuleConstructor */
 
-/** @typedef {Dependency & { context: string | null, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
+/** @typedef {Dependency & CssModuleDependency} CssDependency */
 
 /** @typedef {Omit<LoaderDependency, "context">} CssDependencyOptions */
 
@@ -350,20 +350,18 @@ class MiniCssExtractPlugin {
           const sourceMap = read();
           const assets = read();
           const assetsInfo = read();
-          const dep = new CssModule(
-            /** @type {TODO} */ ({
-              context: contextModule,
-              identifier,
-              identifierIndex,
-              content,
-              layer,
-              supports,
-              media,
-              sourceMap,
-              assets,
-              assetsInfo,
-            })
-          );
+          const dep = new CssModule({
+            context: contextModule,
+            identifier,
+            identifierIndex,
+            content,
+            layer,
+            supports,
+            media,
+            sourceMap,
+            assets,
+            assetsInfo,
+          });
 
           dep.deserialize(context);
 
@@ -653,7 +651,10 @@ class MiniCssExtractPlugin {
         // eslint-disable-next-line class-methods-use-this
         create({ dependencies: [dependency] }, callback) {
           // eslint-disable-next-line no-undefined
-          callback(undefined, new CssModule(/** @type {CssDependency} */ (dependency)));
+          callback(
+            undefined,
+            new CssModule(/** @type {CssDependency} */ (dependency))
+          );
         }
       }
 
