@@ -126,12 +126,11 @@ function pitch(request) {
           identifierCountMap.get(
             /** @type {Dependency} */ (dependency).identifier
           ) || 0;
-        // @ts-ignore
+
         const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
         /** @type {NormalModule} */
         (this._module).addDependency(
-          // @ts-ignore
           (lastDep = new CssDependency(
             /** @type {Dependency} */
             (dependency),

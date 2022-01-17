@@ -9,5 +9,5 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "public.d.ts"]
 }

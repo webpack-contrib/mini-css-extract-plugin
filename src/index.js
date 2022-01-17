@@ -88,7 +88,7 @@ class MiniCssExtractPlugin {
   /**
    * @public
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssModule}
+   * @returns {import("../public").CssModule}
    */
   static getCssModule(webpack) {
     /**
@@ -348,7 +348,7 @@ class MiniCssExtractPlugin {
   /**
    * @public
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssDependency}
+   * @returns {import("../public").CssDependency}
    */
   static getCssDependency(webpack) {
     /**

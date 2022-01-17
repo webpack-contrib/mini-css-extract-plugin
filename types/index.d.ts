@@ -3,15 +3,19 @@ declare class MiniCssExtractPlugin {
   /**
    * @public
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssModule}
+   * @returns {import("../public").CssModule}
    */
-  private static getCssModule;
+  public static getCssModule(
+    webpack: Compiler["webpack"]
+  ): import("../public").CssModule;
   /**
    * @public
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssDependency}
+   * @returns {import("../public").CssDependency}
    */
-  private static getCssDependency;
+  public static getCssDependency(
+    webpack: Compiler["webpack"]
+  ): import("../public").CssDependency;
   /**
    * @param {PluginOptions} [options]
    */
