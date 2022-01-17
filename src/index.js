@@ -20,7 +20,6 @@ const {
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").ChunkGraph} ChunkGraph */
 /** @typedef {import("webpack").Chunk} Chunk */
-/** @typedef {import("webpack").LoaderContext<any>} LoaderContext */
 /** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
 /** @typedef {import("webpack").Dependency} Dependency */
