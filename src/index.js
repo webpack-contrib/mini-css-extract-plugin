@@ -28,6 +28,7 @@ const {
 /** @typedef {import("webpack").Configuration} Configuration */
 /** @typedef {import("webpack").WebpackError} WebpackError */
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
+/** @typedef {import("./loader.js").Dependency} LoaderDependency */
 
 /**
  * @typedef {Object} LoaderOptions
@@ -86,17 +87,21 @@ const CODE_GENERATION_RESULT = {
   runtimeRequirements: new Set(),
 };
 
-/** @typedef {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} CssModule */
+/** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string }} CssModule */
 
-/** @typedef {Dependency & { assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
+/** @typedef {{ new(...args: any): TODO }} CssModuleConstructor */
+
+/** @typedef {Dependency & { context: string | undefined, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: string, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
+
+/** @typedef {{ new(...args: any): TODO }} CssDependencyConstructor */
 
 /**
  *
- * @type {WeakMap<Compiler["webpack"], TODO>}
+ * @type {WeakMap<Compiler["webpack"], CssModuleConstructor>}
  */
 const cssModuleCache = new WeakMap();
 /**
- * @type {WeakMap<Compiler["webpack"], TODO>}
+ * @type {WeakMap<Compiler["webpack"], CssDependencyConstructor>}
  */
 const cssDependencyCache = new WeakMap();
 /**
@@ -108,19 +113,21 @@ class MiniCssExtractPlugin {
   /**
    * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssModule}
+   * @returns {CssModuleConstructor}
    */
   static getCssModule(webpack) {
     /**
      * Prevent creation of multiple CssModule classes to allow other integrations to get the current CssModule.
      */
     if (cssModuleCache.has(webpack)) {
-      return cssModuleCache.get(webpack);
+      return /** @type {CssModuleConstructor} */ (cssModuleCache.get(webpack));
     }
 
+    // TODO bug with layer
+    // @ts-ignore
     class CssModule extends webpack.Module {
       /**
-       * @param {{ context: string, identifier: string, identifierIndex: number, content: Buffer, layer: string | null, supports?: string, media: string, sourceMap?: Buffer, assets: { [key: string]: Source }, assetsInfo: Map<string, AssetInfo> }} build
+       * @param {CssDependency} dependency
        */
       constructor({
         context,
@@ -194,27 +201,27 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {CssModule} module
+       * @param {Module} module
        */
       updateCacheModule(module) {
         if (
-          this.content !== module.content ||
-          this.layer !== module.layer ||
-          this.supports !== module.supports ||
-          this.media !== module.media ||
-          this.sourceMap !== module.sourceMap ||
-          this.assets !== module.assets ||
-          this.assetsInfo !== module.assetsInfo
+          this.content !== /** @type {CssModule} */ (module).content ||
+          this.layer !== /** @type {CssModule} */ (module).layer ||
+          this.supports !== /** @type {CssModule} */ (module).supports ||
+          this.media !== /** @type {CssModule} */ (module).media ||
+          this.sourceMap !== /** @type {CssModule} */ (module).sourceMap ||
+          this.assets !== /** @type {CssModule} */ (module).assets ||
+          this.assetsInfo !== /** @type {CssModule} */ (module).assetsInfo
         ) {
           this._needBuild = true;
 
-          this.content = module.content;
-          this.layer = module.layer;
-          this.supports = module.supports;
-          this.media = module.media;
-          this.sourceMap = module.sourceMap;
-          this.assets = module.assets;
-          this.assetsInfo = module.assetsInfo;
+          this.content = /** @type {CssModule} */ (module).content;
+          this.layer = /** @type {CssModule} */ (module).layer;
+          this.supports = /** @type {CssModule} */ (module).supports;
+          this.media = /** @type {CssModule} */ (module).media;
+          this.sourceMap = /** @type {CssModule} */ (module).sourceMap;
+          this.assets = /** @type {CssModule} */ (module).assets;
+          this.assetsInfo = /** @type {CssModule} */ (module).assetsInfo;
         }
       }
 
@@ -342,6 +349,7 @@ class MiniCssExtractPlugin {
           const sourceMap = read();
           const assets = read();
           const assetsInfo = read();
+          // @ts-ignore
           const dep = new CssModule({
             context: contextModule,
             identifier,
@@ -366,21 +374,20 @@ class MiniCssExtractPlugin {
   }
 
   /**
-   * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssDependency}
+   * @returns {CssDependencyConstructor}
    */
   static getCssDependency(webpack) {
     /**
      * Prevent creation of multiple CssDependency classes to allow other integrations to get the current CssDependency.
      */
     if (cssDependencyCache.has(webpack)) {
-      return cssDependencyCache.get(webpack);
+      return /** @type {CssDependencyConstructor} */ (cssDependencyCache.get(webpack));
     }
 
     class CssDependency extends webpack.Dependency {
       /**
-       * @param {{ identifier: string, content: Buffer, layer?: string, supports?: string, media: string, sourceMap?: Buffer }} build
+       * @param {Omit<LoaderDependency, "context">} loaderDependency
        * @param {string | null} context
        * @param {number} identifierIndex
        */
@@ -1220,9 +1227,9 @@ class MiniCssExtractPlugin {
                   `chunk ${chunk.name || chunk.id} [${pluginName}]`,
                   "Conflicting order. Following module has been added:",
                   ` * ${
-                    /** @type {CssModule} */ (fallbackModule).readableIdentifier(
-                      requestShortener
-                    )
+                    /** @type {CssModule} */ (
+                      fallbackModule
+                    ).readableIdentifier(requestShortener)
                   }`,
                   "despite it was not able to fulfill desired ordering with these modules:",
                   .../** @type {CssModule[]} */ (bestMatchDeps).map((m) => {

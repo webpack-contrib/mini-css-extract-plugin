@@ -3,15 +3,16 @@ declare class MiniCssExtractPlugin {
   /**
    * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssModule}
+   * @returns {CssModuleConstructor}
    */
   private static getCssModule;
   /**
-   * @private
    * @param {Compiler["webpack"]} webpack
-   * @returns {typeof CssDependency}
+   * @returns {CssDependencyConstructor}
    */
-  private static getCssDependency;
+  static getCssDependency(
+    webpack: Compiler["webpack"]
+  ): CssDependencyConstructor;
   /**
    * @param {PluginOptions} [options]
    */
@@ -83,16 +84,20 @@ declare namespace MiniCssExtractPlugin {
     Configuration,
     WebpackError,
     AssetInfo,
+    LoaderDependency,
     LoaderOptions,
     PluginOptions,
     NormalizedPluginOptions,
     RuntimeOptions,
     TODO,
     CssModule,
+    CssModuleConstructor,
     CssDependency,
+    CssDependencyConstructor,
   };
 }
 type Compiler = import("webpack").Compiler;
+type CssDependencyConstructor = new (...args: any) => TODO;
 type PluginOptions = {
   filename?: Required<Configuration>["output"]["filename"];
   chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
@@ -116,6 +121,7 @@ type PluginOptions = {
 /** @typedef {import("webpack").Configuration} Configuration */
 /** @typedef {import("webpack").WebpackError} WebpackError */
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
+/** @typedef {import("./loader.js").Dependency} LoaderDependency */
 /**
  * @typedef {Object} LoaderOptions
  * @property {string | ((resourcePath: string, rootContext: string) => string)} [publicPath]
@@ -167,6 +173,7 @@ type Source = import("webpack").sources.Source;
 type Configuration = import("webpack").Configuration;
 type WebpackError = import("webpack").WebpackError;
 type AssetInfo = import("webpack").AssetInfo;
+type LoaderDependency = import("./loader.js").Dependency;
 type LoaderOptions = {
   publicPath?:
     | string
@@ -194,12 +201,21 @@ type RuntimeOptions = {
 type TODO = any;
 type CssModule = Module & {
   content: Buffer;
-  media: string;
+  media?: string;
   sourceMap?: Buffer;
   supports?: string;
   layer?: string;
 };
+type CssModuleConstructor = new (...args: any) => TODO;
 type CssDependency = import("webpack").Dependency & {
+  context: string | undefined;
+  identifier: string;
+  identifierIndex: number;
+  content: Buffer;
+  sourceMap?: Buffer | undefined;
+  media?: string | undefined;
+  supports?: string | undefined;
+  layer?: string | undefined;
   assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
   assets?:
     | {

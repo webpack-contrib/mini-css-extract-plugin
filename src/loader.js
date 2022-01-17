@@ -31,7 +31,7 @@ const MiniCssExtractPlugin = require("./index");
  * @property {Buffer} content
  * @property {string} media
  * @property {string} [supports]
- * @property {string} [supports]
+ * @property {string} [layer]
  * @property {Buffer} [sourceMap]
  */
 
@@ -126,12 +126,10 @@ function pitch(request) {
           identifierCountMap.get(
             /** @type {Dependency} */ (dependency).identifier
           ) || 0;
-        // @ts-ignore
         const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
         /** @type {NormalModule} */
         (this._module).addDependency(
-          // @ts-ignore
           (lastDep = new CssDependency(
             /** @type {Dependency} */
             (dependency),
@@ -395,7 +393,6 @@ function pitch(request) {
             module.loaders = loaders.map((loader) => {
               return {
                 type: null,
-                // @ts-ignore
                 loader: loader.path,
                 options: loader.options,
                 ident: loader.ident,
