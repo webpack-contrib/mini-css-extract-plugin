@@ -37,14 +37,14 @@ const MiniCssExtractPlugin = require("./index");
 
 /**
  * @param {string} content
- * @param {TODO} context
+ * @param {{ context: TODO, options: LoaderOptions, locals: {[key: string]: string } | undefined }} context
  * @returns {string}
  */
 function hotLoader(content, context) {
   const accept = context.locals
     ? ""
     : "module.hot.accept(undefined, cssReload);";
-
+  
   return `${content}
     if(module.hot) {
       // ${Date.now()}

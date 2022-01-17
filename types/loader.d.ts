@@ -9,13 +9,13 @@ export type NormalModule = import("webpack").NormalModule;
 export type LoaderOptions = import("./index.js").LoaderOptions;
 export type TODO = any;
 export type Dependency = {
-  identifier: string;
-  context: string | null;
-  content: Buffer;
-  media: string;
-  supports?: string | undefined;
-  layer?: string | undefined;
-  sourceMap?: Buffer | undefined;
+    identifier: string;
+    context: string | null;
+    content: Buffer;
+    media: string;
+    supports?: string | undefined;
+    layer?: string | undefined;
+    sourceMap?: Buffer | undefined;
 };
 /**
  * @this {import("webpack").LoaderContext<LoaderOptions>}

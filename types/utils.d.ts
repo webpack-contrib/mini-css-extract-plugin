@@ -13,21 +13,14 @@ export function trueFn(): boolean;
  * @param {string | number} id
  * @returns {null | Module}
  */
-export function findModuleById(
-  compilation: Compilation,
-  id: string | number
-): null | Module;
+export function findModuleById(compilation: Compilation, id: string | number): null | Module;
 /**
  * @param {LoaderContext} loaderContext
  * @param {string | Buffer} code
  * @param {string} filename
  * @returns {object}
  */
-export function evalModuleCode(
-  loaderContext: LoaderContext,
-  code: string | Buffer,
-  filename: string
-): object;
+export function evalModuleCode(loaderContext: LoaderContext, code: string | Buffer, filename: string): object;
 /**
  * @param {Module} a
  * @param {Module} b
@@ -43,18 +36,11 @@ export const SINGLE_DOT_PATH_SEGMENT: "__mini_css_extract_plugin_single_dot_path
  * @param {string} request
  * @returns {string}
  */
-export function stringifyRequest(
-  loaderContext: LoaderContext,
-  request: string
-): string;
+export function stringifyRequest(loaderContext: LoaderContext, request: string): string;
 /**
  * @param {string} filename
  * @param {string} outputPath
  * @param {boolean} enforceRelative
  * @returns {string}
  */
-export function getUndoPath(
-  filename: string,
-  outputPath: string,
-  enforceRelative: boolean
-): string;
+export function getUndoPath(filename: string, outputPath: string, enforceRelative: boolean): string;
