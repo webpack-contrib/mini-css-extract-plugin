@@ -89,11 +89,15 @@ const CODE_GENERATION_RESULT = {
 
 /** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string }} CssModule */
 
-/** @typedef {{ new(...args: TODO): CssModule }} CssModuleConstructor */
+/** @typedef {CssDependency} CssModuleDependency */
 
-/** @typedef {Dependency & { context: string | undefined, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
+/** @typedef {{ new(dependency: CssModuleDependency): CssModule }} CssModuleConstructor */
 
-/** @typedef {{ new(...args: TODO): CssDependency }} CssDependencyConstructor */
+/** @typedef {Dependency & { context: string | null, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
+
+/** @typedef {Omit<LoaderDependency, "context">} CssDependencyOptions */
+
+/** @typedef {{ new(loaderDependency: CssDependencyOptions, context: string | null, identifierIndex: number): CssDependency }} CssDependencyConstructor */
 
 /**
  *
@@ -124,7 +128,7 @@ class MiniCssExtractPlugin {
 
     class CssModule extends webpack.Module {
       /**
-       * @param {CssDependency} dependency
+       * @param {CssModuleDependency} dependency
        */
       constructor({
         context,
@@ -138,7 +142,7 @@ class MiniCssExtractPlugin {
         assets,
         assetsInfo,
       }) {
-        super(MODULE_TYPE, context);
+        super(MODULE_TYPE, /** @type {string | undefined} */ (context));
 
         this.id = "";
         this._context = context;
@@ -346,18 +350,20 @@ class MiniCssExtractPlugin {
           const sourceMap = read();
           const assets = read();
           const assetsInfo = read();
-          const dep = new /** @type {CssModuleConstructor} */ (CssModule)({
-            context: contextModule,
-            identifier,
-            identifierIndex,
-            content,
-            layer,
-            supports,
-            media,
-            sourceMap,
-            assets,
-            assetsInfo,
-          });
+          const dep = new CssModule(
+            /** @type {TODO} */ ({
+              context: contextModule,
+              identifier,
+              identifierIndex,
+              content,
+              layer,
+              supports,
+              media,
+              sourceMap,
+              assets,
+              assetsInfo,
+            })
+          );
 
           dep.deserialize(context);
 
@@ -385,8 +391,8 @@ class MiniCssExtractPlugin {
 
     class CssDependency extends webpack.Dependency {
       /**
-       * @param {Omit<LoaderDependency, "context">} loaderDependency
-       * @param {string | undefined} context
+       * @param {CssDependencyOptions} loaderDependency
+       * @param {string | null} context
        * @param {number} identifierIndex
        */
       constructor(
@@ -641,12 +647,13 @@ class MiniCssExtractPlugin {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {
         /**
-         * @param {TODO} dependencies
-         * @param {TODO} callback
+         * @param {{ dependencies: Dependency[] }} dependencies
+         * @param {(arg0?: Error, arg1?: TODO) => void} callback
          */
         // eslint-disable-next-line class-methods-use-this
         create({ dependencies: [dependency] }, callback) {
-          callback(null, new CssModule(dependency));
+          // eslint-disable-next-line no-undefined
+          callback(undefined, new CssModule(/** @type {CssDependency} */ (dependency)));
         }
       }
 
@@ -1039,7 +1046,7 @@ class MiniCssExtractPlugin {
             `${RuntimeGlobals.require}.miniCssF`,
             /**
              * @param {Chunk} referencedChunk
-             * @returns {any}
+             * @returns {TODO}
              */
             (referencedChunk) => {
               if (!referencedChunk.contentHash[MODULE_TYPE]) {

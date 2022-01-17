@@ -90,14 +90,20 @@ declare namespace MiniCssExtractPlugin {
     RuntimeOptions,
     TODO,
     CssModule,
+    CssModuleDependency,
     CssModuleConstructor,
     CssDependency,
+    CssDependencyOptions,
     CssDependencyConstructor,
   };
 }
 type Compiler = import("webpack").Compiler;
-type CssModuleConstructor = new (...args: TODO) => CssModule;
-type CssDependencyConstructor = new (...args: TODO) => CssDependency;
+type CssModuleConstructor = new (dependency: CssModuleDependency) => CssModule;
+type CssDependencyConstructor = new (
+  loaderDependency: CssDependencyOptions,
+  context: string | null,
+  identifierIndex: number
+) => CssDependency;
 type PluginOptions = {
   filename?: Required<Configuration>["output"]["filename"];
   chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
@@ -206,8 +212,9 @@ type CssModule = Module & {
   supports?: string;
   layer?: string;
 };
+type CssModuleDependency = CssDependency;
 type CssDependency = import("webpack").Dependency & {
-  context: string | undefined;
+  context: string | null;
   identifier: string;
   identifierIndex: number;
   content: Buffer;
@@ -222,3 +229,4 @@ type CssDependency = import("webpack").Dependency & {
       }
     | undefined;
 };
+type CssDependencyOptions = Omit<LoaderDependency, "context">;
