@@ -631,19 +631,17 @@ class MiniCssExtractPlugin {
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
       class CssModuleFactory {
         /**
-         * @param {{ dependencies: CssDependency[] }} dependencies
-         * @param {(err: Error| null, module: Module) => void} callback
+         * @param {TODO} dependencies
+         * @param {TODO} callback
          */
         // eslint-disable-next-line class-methods-use-this
         create({ dependencies: [dependency] }, callback) {
-          // @ts-ignore
           callback(null, new CssModule(dependency));
         }
       }
 
       compilation.dependencyFactories.set(
         CssDependency,
-        // @ts-ignore
         new CssModuleFactory()
       );
 
