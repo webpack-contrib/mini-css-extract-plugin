@@ -96,8 +96,8 @@ declare namespace MiniCssExtractPlugin {
   };
 }
 type Compiler = import("webpack").Compiler;
-type CssModuleConstructor = new (...args: any) => any;
-type CssDependencyConstructor = new (...args: any) => CssDependency;
+type CssModuleConstructor = new (...args: TODO) => CssModule;
+type CssDependencyConstructor = new (...args: TODO) => CssDependency;
 type PluginOptions = {
   filename?: Required<Configuration>["output"]["filename"];
   chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
@@ -214,7 +214,7 @@ type CssDependency = import("webpack").Dependency & {
   sourceMap?: Buffer | undefined;
   media?: string | undefined;
   supports?: string | undefined;
-  layer?: string | undefined;
+  layer?: TODO;
   assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
   assets?:
     | {

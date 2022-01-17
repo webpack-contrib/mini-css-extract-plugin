@@ -89,9 +89,9 @@ const CODE_GENERATION_RESULT = {
 
 /** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string }} CssModule */
 
-/** @typedef {{ new(...args: TODO): TODO }} CssModuleConstructor */
+/** @typedef {{ new(...args: TODO): CssModule }} CssModuleConstructor */
 
-/** @typedef {Dependency & { context: string | undefined, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: string, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
+/** @typedef {Dependency & { context: string | undefined, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
 
 /** @typedef {{ new(...args: TODO): CssDependency }} CssDependencyConstructor */
 
@@ -122,8 +122,6 @@ class MiniCssExtractPlugin {
       return /** @type {CssModuleConstructor} */ (cssModuleCache.get(webpack));
     }
 
-    // TODO bug with layer
-    // @ts-ignore
     class CssModule extends webpack.Module {
       /**
        * @param {CssDependency} dependency
