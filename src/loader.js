@@ -37,7 +37,7 @@ const MiniCssExtractPlugin = require("./index");
 
 /**
  * @param {string} content
- * @param {{ context: TODO, options: LoaderOptions, locals: {[key: string]: string } | undefined }} context
+ * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: {[key: string]: string } | undefined }} context
  * @returns {string}
  */
 function hotLoader(content, context) {
@@ -49,7 +49,7 @@ function hotLoader(content, context) {
     if(module.hot) {
       // ${Date.now()}
       var cssReload = require(${stringifyRequest(
-        context.context,
+        context.loaderContext,
         path.join(__dirname, "hmr/hotModuleReplacement.js")
       )})(module.id, ${JSON.stringify({
     ...context.options,
@@ -243,7 +243,7 @@ function pitch(request) {
     let resultSource = `// extracted by ${MiniCssExtractPlugin.pluginName}`;
 
     resultSource += this.hot
-      ? hotLoader(result, { context: this.context, options, locals })
+      ? hotLoader(result, { loaderContext: this, options, locals })
       : result;
 
     callback(null, resultSource);

@@ -89,11 +89,11 @@ const CODE_GENERATION_RESULT = {
 
 /** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string }} CssModule */
 
-/** @typedef {{ new(...args: any): TODO }} CssModuleConstructor */
+/** @typedef {{ new(...args: TODO): TODO }} CssModuleConstructor */
 
 /** @typedef {Dependency & { context: string | undefined, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: string, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
 
-/** @typedef {{ new(...args: any): TODO }} CssDependencyConstructor */
+/** @typedef {{ new(...args: TODO): CssDependency }} CssDependencyConstructor */
 
 /**
  *
@@ -111,7 +111,6 @@ const registered = new WeakSet();
 
 class MiniCssExtractPlugin {
   /**
-   * @private
    * @param {Compiler["webpack"]} webpack
    * @returns {CssModuleConstructor}
    */
@@ -382,13 +381,15 @@ class MiniCssExtractPlugin {
      * Prevent creation of multiple CssDependency classes to allow other integrations to get the current CssDependency.
      */
     if (cssDependencyCache.has(webpack)) {
-      return /** @type {CssDependencyConstructor} */ (cssDependencyCache.get(webpack));
+      return /** @type {CssDependencyConstructor} */ (
+        cssDependencyCache.get(webpack)
+      );
     }
 
     class CssDependency extends webpack.Dependency {
       /**
        * @param {Omit<LoaderDependency, "context">} loaderDependency
-       * @param {string | null} context
+       * @param {string | undefined} context
        * @param {number} identifierIndex
        */
       constructor(
