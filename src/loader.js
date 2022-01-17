@@ -44,7 +44,7 @@ function hotLoader(content, context) {
   const accept = context.locals
     ? ""
     : "module.hot.accept(undefined, cssReload);";
-  
+
   return `${content}
     if(module.hot) {
       // ${Date.now()}
