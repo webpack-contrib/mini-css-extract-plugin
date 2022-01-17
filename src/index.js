@@ -526,8 +526,8 @@ class MiniCssExtractPlugin {
       insert: options.insert,
       linkType:
         // Todo in next major release set default to "false"
-        // @ts-ignore
-        (typeof options.linkType === "boolean" && options.linkType === true) ||
+        (typeof options.linkType === "boolean" &&
+          /** @type {boolean} */ (options.linkType) === true) ||
         typeof options.linkType === "undefined"
           ? "text/css"
           : options.linkType,
