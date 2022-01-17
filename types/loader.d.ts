@@ -21,3 +21,5 @@ export type Dependency = {
  * @param {string} request
  */
 export function pitch(request: string): void;
+declare function _default(): void;
+export { _default as default };
