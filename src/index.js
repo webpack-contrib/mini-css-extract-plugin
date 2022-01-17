@@ -1,11 +1,11 @@
 /* eslint-disable class-methods-use-this */
 
-import path from "path";
+const path = require("path");
 
-import { validate } from "schema-utils";
+const { validate } = require("schema-utils");
 
-import schema from "./plugin-options.json";
-import {
+const schema = require("./plugin-options.json");
+const {
   trueFn,
   MODULE_TYPE,
   AUTO_PUBLIC_PATH,
@@ -13,7 +13,7 @@ import {
   SINGLE_DOT_PATH_SEGMENT,
   compareModulesByIdentifier,
   getUndoPath,
-} from "./utils";
+} = require("./utils");
 
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
 /** @typedef {import("webpack").Compiler} Compiler */
@@ -69,8 +69,8 @@ import {
 
 /** @typedef {any} TODO */
 
-export const pluginName = "mini-css-extract-plugin";
-export const pluginSymbol = Symbol(pluginName);
+const pluginName = "mini-css-extract-plugin";
+const pluginSymbol = Symbol(pluginName);
 
 const DEFAULT_FILENAME = "[name].css";
 const TYPES = new Set([MODULE_TYPE]);
@@ -480,6 +480,11 @@ class MiniCssExtractPlugin {
       baseDataPath: "options",
     });
 
+    /**
+     * @private
+     * @type {WeakMap<Chunk, Set<TODO>>}
+     * @private
+     */
     this._sortedModulesCache = new WeakMap();
 
     /**
@@ -1049,6 +1054,7 @@ class MiniCssExtractPlugin {
     let usedModules = this._sortedModulesCache.get(chunk);
 
     if (usedModules || !modules) {
+      // @ts-ignore
       return usedModules;
     }
 
@@ -1119,7 +1125,8 @@ class MiniCssExtractPlugin {
      * @param {Module} m
      * @returns {boolean}
      */
-    const unusedModulesFilter = (m) => !usedModules.has(m);
+    const unusedModulesFilter = (m) =>
+      !(/** @type {Set<Module>} */ (usedModules).has(m));
 
     while (usedModules.size < modulesList.length) {
       let success = false;
@@ -1129,6 +1136,7 @@ class MiniCssExtractPlugin {
       // get first module where dependencies are fulfilled
       for (const list of modulesByChunkGroup) {
         // skip and remove already added modules
+        // @ts-ignore
         while (list.length > 0 && usedModules.has(list[list.length - 1])) {
           list.pop();
         }
@@ -1151,7 +1159,7 @@ class MiniCssExtractPlugin {
 
           if (failedDeps.length === 0) {
             // use this module and remove it from list
-            usedModules.add(list.pop());
+            usedModules.add(/** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (list.pop()));
             success = true;
             break;
           }
@@ -1215,12 +1223,12 @@ class MiniCssExtractPlugin {
           );
         }
 
-        usedModules.add(fallbackModule);
+        usedModules.add(/** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (fallbackModule));
       }
     }
 
     this._sortedModulesCache.set(chunk, usedModules);
-
+    
     return usedModules;
   }
 
@@ -1356,6 +1364,8 @@ class MiniCssExtractPlugin {
   }
 }
 
+MiniCssExtractPlugin.pluginName = pluginName;
+MiniCssExtractPlugin.pluginSymbol = pluginSymbol;
 MiniCssExtractPlugin.loader = require.resolve("./loader");
 
-export default MiniCssExtractPlugin;
+module.exports = MiniCssExtractPlugin;

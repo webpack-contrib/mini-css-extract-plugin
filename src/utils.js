@@ -1,5 +1,5 @@
-import NativeModule from "module";
-import path from "path";
+const NativeModule = require("module");
+const path = require("path");
 
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").Module} Module */
@@ -204,7 +204,7 @@ function getUndoPath(filename, outputPath, enforceRelative) {
     : append;
 }
 
-export {
+module.exports = {
   trueFn,
   findModuleById,
   evalModuleCode,
