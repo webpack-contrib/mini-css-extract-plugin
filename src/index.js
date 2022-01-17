@@ -73,7 +73,13 @@ const pluginName = "mini-css-extract-plugin";
 const pluginSymbol = Symbol(pluginName);
 
 const DEFAULT_FILENAME = "[name].css";
+/**
+ * @type {Set<string>}
+ */
 const TYPES = new Set([MODULE_TYPE]);
+/**
+ * @type {ReturnType<Module["codeGeneration"]>}
+ */
 const CODE_GENERATION_RESULT = {
   sources: new Map(),
   runtimeRequirements: new Set(),
