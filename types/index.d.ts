@@ -18,7 +18,7 @@ declare class MiniCssExtractPlugin {
   constructor(options?: PluginOptions | undefined);
   /**
    * @private
-   * @type {WeakMap<Chunk, Set<TODO>>}
+   * @type {WeakMap<Chunk, Set<CssModule>>}
    * @private
    */
   private _sortedModulesCache;
@@ -47,9 +47,9 @@ declare class MiniCssExtractPlugin {
    * @private
    * @param {Compilation} compilation
    * @param {Chunk} chunk
-   * @param {Iterable<Module>} modules
+   * @param {CssModule[]} modules
    * @param {Compilation["requestShortener"]} requestShortener
-   * @returns {Set<Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }>}
+   * @returns {Set<CssModule>}
    */
   private sortModules;
   /**
@@ -57,7 +57,7 @@ declare class MiniCssExtractPlugin {
    * @param {Compiler} compiler
    * @param {Compilation} compilation
    * @param {Chunk} chunk
-   * @param {Iterable<Module>} modules
+   * @param {CssModule[]} modules
    * @param {Compiler["requestShortener"]} requestShortener
    * @param {string} filenameTemplate
    * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
@@ -88,6 +88,8 @@ declare namespace MiniCssExtractPlugin {
     NormalizedPluginOptions,
     RuntimeOptions,
     TODO,
+    CssModule,
+    CssDependency,
   };
 }
 type Compiler = import("webpack").Compiler;
@@ -190,3 +192,18 @@ type RuntimeOptions = {
   attributes: Record<string, string> | undefined;
 };
 type TODO = any;
+type CssModule = Module & {
+  content: Buffer;
+  media: string;
+  sourceMap?: Buffer;
+  supports?: string;
+  layer?: string;
+};
+type CssDependency = import("webpack").Dependency & {
+  assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
+  assets?:
+    | {
+        [key: string]: any;
+      }
+    | undefined;
+};

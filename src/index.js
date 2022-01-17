@@ -85,6 +85,11 @@ const CODE_GENERATION_RESULT = {
   sources: new Map(),
   runtimeRequirements: new Set(),
 };
+
+/** @typedef {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} CssModule */
+
+/** @typedef {Dependency & { assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssDependency */
+
 /**
  *
  * @type {WeakMap<Compiler["webpack"], TODO>}
@@ -189,7 +194,7 @@ class MiniCssExtractPlugin {
       }
 
       /**
-       * @param {Module & CssModule} module
+       * @param {CssModule} module
        */
       updateCacheModule(module) {
         if (
@@ -497,7 +502,7 @@ class MiniCssExtractPlugin {
 
     /**
      * @private
-     * @type {WeakMap<Chunk, Set<TODO>>}
+     * @type {WeakMap<Chunk, Set<CssModule>>}
      * @private
      */
     this._sortedModulesCache = new WeakMap();
@@ -672,8 +677,10 @@ class MiniCssExtractPlugin {
             return;
           }
 
+          /** @type {CssModule[]} */
           const renderedModules = Array.from(
-            this.getChunkModules(chunk, chunkGraph)
+            /** @type {CssModule[]} */
+            (this.getChunkModules(chunk, chunkGraph))
           ).filter((module) => module.type === MODULE_TYPE);
 
           const filenameTemplate =
@@ -693,7 +700,6 @@ class MiniCssExtractPlugin {
                   chunk,
                   renderedModules,
                   compilation.runtimeTemplate.requestShortener,
-                  /** @type {string} */
                   filenameTemplate,
                   {
                     contentHashType: MODULE_TYPE,
@@ -717,7 +723,7 @@ class MiniCssExtractPlugin {
         const modules = this.sortModules(
           compilation,
           chunk,
-          /** @type {Iterable<Module>} */
+          /** @type {CssModule[]} */
           (chunkGraph.getChunkModulesIterableBySourceType(chunk, MODULE_TYPE)),
           compilation.runtimeTemplate.requestShortener
         );
@@ -1077,38 +1083,36 @@ class MiniCssExtractPlugin {
    * @private
    * @param {Compilation} compilation
    * @param {Chunk} chunk
-   * @param {Iterable<Module>} modules
+   * @param {CssModule[]} modules
    * @param {Compilation["requestShortener"]} requestShortener
-   * @returns {Set<Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }>}
+   * @returns {Set<CssModule>}
    */
   sortModules(compilation, chunk, modules, requestShortener) {
     let usedModules = this._sortedModulesCache.get(chunk);
 
     if (usedModules || !modules) {
-      return /** @type {Set<Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }>} */ (
-        usedModules
-      );
+      return /** @type {Set<CssModule>} */ (usedModules);
     }
 
-    /** @type {Module[]} */
+    /** @type {CssModule[]} */
     const modulesList = [...modules];
     // Store dependencies for modules
-    /** @type {Map<Module, Set<Module>>} */
+    /** @type {Map<CssModule, Set<CssModule>>} */
     const moduleDependencies = new Map(
       modulesList.map((m) => [
         m,
-        /** @type {Set<Module>} */
+        /** @type {Set<CssModule>} */
         (new Set()),
       ])
     );
-    /** @type {Map<Module, Map<Module, Set<ChunkGroup>>>} */
+    /** @type {Map<CssModule, Map<CssModule, Set<ChunkGroup>>>} */
     const moduleDependenciesReasons = new Map(
       modulesList.map((m) => [m, new Map()])
     );
     // Get ordered list of modules per chunk group
     // This loop also gathers dependencies from the ordered lists
     // Lists are in reverse order to allow to use Array.pop()
-    /** @type {Module[][]} */
+    /** @type {CssModule[][]} */
     const modulesByChunkGroup = Array.from(
       chunk.groupsIterable,
       (chunkGroup) => {
@@ -1128,13 +1132,13 @@ class MiniCssExtractPlugin {
           const set = moduleDependencies.get(sortedModules[i]);
 
           const reasons =
-            /** @type {Map<Module, Set<ChunkGroup>>} */
+            /** @type {Map<CssModule, Set<ChunkGroup>>} */
             (moduleDependenciesReasons.get(sortedModules[i]));
 
           for (let j = i + 1; j < sortedModules.length; j++) {
             const module = sortedModules[j];
 
-            /** @type {Set<Module>} */
+            /** @type {Set<CssModule>} */
             (set).add(module);
 
             const reason =
@@ -1154,11 +1158,11 @@ class MiniCssExtractPlugin {
     usedModules = new Set();
 
     /**
-     * @param {Module} m
+     * @param {CssModule} m
      * @returns {boolean}
      */
     const unusedModulesFilter = (m) =>
-      !(/** @type {Set<Module>} */ (usedModules).has(m));
+      !(/** @type {Set<CssModule>} */ (usedModules).has(m));
 
     while (usedModules.size < modulesList.length) {
       let success = false;
@@ -1178,7 +1182,7 @@ class MiniCssExtractPlugin {
           const deps = moduleDependencies.get(module);
           // determine dependencies that are not yet included
           const failedDeps = Array.from(
-            /** @type {Set<Module>} */
+            /** @type {Set<CssModule>} */
             (deps)
           ).filter(unusedModulesFilter);
 
@@ -1190,11 +1194,7 @@ class MiniCssExtractPlugin {
 
           if (failedDeps.length === 0) {
             // use this module and remove it from list
-            usedModules.add(
-              /** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (
-                list.pop()
-              )
-            );
+            usedModules.add(/** @type {CssModule} */ (list.pop()));
             success = true;
             break;
           }
@@ -1205,11 +1205,11 @@ class MiniCssExtractPlugin {
         // no module found => there is a conflict
         // use list with fewest failed deps
         // and emit a warning
-        const fallbackModule = /** @type {Module[]} */ (bestMatch).pop();
+        const fallbackModule = /** @type {CssModule[]} */ (bestMatch).pop();
 
         if (!this.options.ignoreOrder) {
           const reasons = moduleDependenciesReasons.get(
-            /** @type {Module} */ (fallbackModule)
+            /** @type {CssModule} */ (fallbackModule)
           );
 
           compilation.warnings.push(
@@ -1220,22 +1220,22 @@ class MiniCssExtractPlugin {
                   `chunk ${chunk.name || chunk.id} [${pluginName}]`,
                   "Conflicting order. Following module has been added:",
                   ` * ${
-                    /** @type {Module} */ (fallbackModule).readableIdentifier(
+                    /** @type {CssModule} */ (fallbackModule).readableIdentifier(
                       requestShortener
                     )
                   }`,
                   "despite it was not able to fulfill desired ordering with these modules:",
-                  .../** @type {Module[]} */ (bestMatchDeps).map((m) => {
+                  .../** @type {CssModule[]} */ (bestMatchDeps).map((m) => {
                     const goodReasonsMap = moduleDependenciesReasons.get(m);
                     const goodReasons =
                       goodReasonsMap &&
                       goodReasonsMap.get(
-                        /** @type {Module} */ (fallbackModule)
+                        /** @type {CssModule} */ (fallbackModule)
                       );
                     const failedChunkGroups = Array.from(
                       /** @type {Set<ChunkGroup>} */
                       (
-                        /** @type {Map<Module, Set<ChunkGroup>>} */
+                        /** @type {Map<CssModule, Set<ChunkGroup>>} */
                         (reasons).get(m)
                       ),
                       (cg) => cg.name
@@ -1258,11 +1258,7 @@ class MiniCssExtractPlugin {
           );
         }
 
-        usedModules.add(
-          /** @type {Module & { content: Buffer, media: string, sourceMap?: Buffer, supports?: string, layer?: string }} */ (
-            fallbackModule
-          )
-        );
+        usedModules.add(/** @type {CssModule} */ (fallbackModule));
       }
     }
 
@@ -1276,7 +1272,7 @@ class MiniCssExtractPlugin {
    * @param {Compiler} compiler
    * @param {Compilation} compilation
    * @param {Chunk} chunk
-   * @param {Iterable<Module>} modules
+   * @param {CssModule[]} modules
    * @param {Compiler["requestShortener"]} requestShortener
    * @param {string} filenameTemplate
    * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
