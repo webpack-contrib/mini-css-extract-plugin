@@ -20,6 +20,7 @@ const {
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").ChunkGraph} ChunkGraph */
 /** @typedef {import("webpack").Chunk} Chunk */
+/** @typedef {import("webpack").LoaderContext<any>} LoaderContext */
 /** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
 /** @typedef {import("webpack").Dependency} Dependency */
@@ -607,13 +608,20 @@ class MiniCssExtractPlugin {
       const { loader: normalModuleHook } =
         NormalModule.getCompilationHooks(compilation);
 
-      normalModuleHook.tap(pluginName, (loaderContext) => {
-        // @ts-ignore
-        // eslint-disable-next-line no-param-reassign
-        loaderContext[pluginSymbol] = {
-          experimentalUseImportModule: this.options.experimentalUseImportModule,
-        };
-      });
+      normalModuleHook.tap(
+        pluginName,
+        /**
+         * @param {object} loaderContext
+         */
+        (loaderContext) => {
+          /** @type {object & { [pluginSymbol]: { experimentalUseImportModule: boolean | undefined } }} */
+          // eslint-disable-next-line no-param-reassign
+          (loaderContext)[pluginSymbol] = {
+            experimentalUseImportModule:
+              this.options.experimentalUseImportModule,
+          };
+        }
+      );
     });
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
