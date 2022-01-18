@@ -5,3 +5,4 @@
 /test/cases/*/expected
 /test/js
 /test/manual/dist
+/types/**/*
