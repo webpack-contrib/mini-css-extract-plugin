@@ -41,6 +41,12 @@ or
 yarn add -D mini-css-extract-plugin
 ```
 
+or
+
+```console
+pnpm add -D mini-css-extract-plugin
+```
+
 It's recommended to combine `mini-css-extract-plugin` with the [`css-loader`](https://github.com/webpack-contrib/css-loader)
 
 Then add the loader and the plugin to your `webpack` config. For example:
