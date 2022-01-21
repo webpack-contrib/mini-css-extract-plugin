@@ -107,7 +107,7 @@ type PluginOptions = {
   filename?: Required<Configuration>["output"]["filename"];
   chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
   ignoreOrder?: boolean | undefined;
-  insert?: string | ((linkTag: any) => void) | undefined;
+  insert?: string | ((linkTag: HTMLLinkElement) => void) | undefined;
   attributes?: Record<string, string> | undefined;
   linkType?: string | false | undefined;
   runtime?: boolean | undefined;
@@ -138,7 +138,7 @@ type PluginOptions = {
  * @property {Required<Configuration>['output']['filename']} [filename]
  * @property {Required<Configuration>['output']['chunkFilename']} [chunkFilename]
  * @property {boolean} [ignoreOrder]
- * @property {string | ((linkTag: any) => void)} [insert]
+ * @property {string | ((linkTag: HTMLLinkElement) => void)} [insert]
  * @property {Record<string, string>} [attributes]
  * @property {string | false | 'text/css'} [linkType]
  * @property {boolean} [runtime]
@@ -149,7 +149,7 @@ type PluginOptions = {
  * @property {Required<Configuration>['output']['filename']} filename
  * @property {Required<Configuration>['output']['chunkFilename']} [chunkFilename]
  * @property {boolean} ignoreOrder
- * @property {string | ((linkTag: any) => void)} [insert]
+ * @property {string | ((linkTag: HTMLLinkElement) => void)} [insert]
  * @property {Record<string, string>} [attributes]
  * @property {string | false | 'text/css'} [linkType]
  * @property {boolean} runtime
@@ -157,7 +157,7 @@ type PluginOptions = {
  */
 /**
  * @typedef {Object} RuntimeOptions
- * @property {string | ((linkTag: any) => void) | undefined} insert
+ * @property {string | ((linkTag: HTMLLinkElement) => void) | undefined} insert
  * @property {string | false | 'text/css'} linkType
  * @property {Record<string, string> | undefined} attributes
  */
@@ -190,14 +190,14 @@ type NormalizedPluginOptions = {
   filename: Required<Configuration>["output"]["filename"];
   chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
   ignoreOrder: boolean;
-  insert?: string | ((linkTag: any) => void) | undefined;
+  insert?: string | ((linkTag: HTMLLinkElement) => void) | undefined;
   attributes?: Record<string, string> | undefined;
   linkType?: string | false | undefined;
   runtime: boolean;
   experimentalUseImportModule?: boolean | undefined;
 };
 type RuntimeOptions = {
-  insert: string | ((linkTag: any) => void) | undefined;
+  insert: string | ((linkTag: HTMLLinkElement) => void) | undefined;
   linkType: string | false | "text/css";
   attributes: Record<string, string> | undefined;
 };

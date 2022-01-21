@@ -151,6 +151,8 @@ type insert = string | ((linkTag: any) => void);
 
 Default: `document.head.appendChild(linkTag);`
 
+Inserts the `link` tag at the given position for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks
+
 > ⚠️ Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
 
 By default, the `mini-css-extract-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
@@ -204,7 +206,7 @@ A new `<link>` element will be inserted before the element with id `some-element
 Type:
 
 ```ts
-type attributes = object;
+type attributes = Record<string, string>};
 ```
 
 Default: `{}`
