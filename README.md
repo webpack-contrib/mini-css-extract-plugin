@@ -146,7 +146,7 @@ See [examples](#remove-order-warnings) below for details.
 Type:
 
 ```ts
-type insert = string | ((linkTag: any) => void);
+type insert = string | ((linkTag: HTMLLinkElement) => void);
 ```
 
 Default: `document.head.appendChild(linkTag);`
