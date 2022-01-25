@@ -31,8 +31,20 @@ Compared to the extract-text-webpack-plugin:
 
 To begin, you'll need to install `mini-css-extract-plugin`:
 
-```bash
+```console
 npm install --save-dev mini-css-extract-plugin
+```
+
+or
+
+```console
+yarn add -D mini-css-extract-plugin
+```
+
+or
+
+```console
+pnpm add -D mini-css-extract-plugin
 ```
 
 It's recommended to combine `mini-css-extract-plugin` with the [`css-loader`](https://github.com/webpack-contrib/css-loader)
@@ -79,20 +91,25 @@ module.exports = {
 
 ### Plugin Options
 
-|                               Name                                |         Type         |                Default                | Description                                                                                                                               |
-| :---------------------------------------------------------------: | :------------------: | :-----------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------- |
-|                    **[`filename`](#filename)**                    | `{String\|Function}` |             `[name].css`              | This option determines the name of each output CSS file                                                                                   |
-|               **[`chunkFilename`](#chunkFilename)**               | `{String\|Function}` |          `based on filename`          | This option determines the name of non-entry chunk files                                                                                  |
-|                 **[`ignoreOrder`](#ignoreOrder)**                 |     `{Boolean}`      |                `false`                | Remove Order Warnings                                                                                                                     |
-|                      **[`insert`](#insert)**                      | `{String\|Function}` | `document.head.appendChild(linkTag);` | Inserts the `link` tag at the given position for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks |
-|                  **[`attributes`](#attributes)**                  |      `{Object}`      |                 `{}`                  | Adds custom attributes to the `link` tag for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks     |
-|                    **[`linkType`](#linkType)**                    | `{String\|Boolean}`  |              `text/css`               | Allows loading asynchronous chunks with a custom link type                                                                                |
-|                     **[`runtime`](#runtime)**                     |     `{Boolean}`      |                `true`                 | Allows to enable/disable the runtime generation                                                                                           |
-| **[`experimentalUseImportModule`](#experimentalUseImportModule)** |     `{Boolean}`      |              `undefined`              | Use an experimental webpack API to execute modules instead of child compilers                                                             |
+- **[`filename`](#filename)**
+- **[`chunkFilename`](#chunkFilename)**
+- **[`ignoreOrder`](#ignoreOrder)**
+- **[`insert`](#insert)**
+- **[`attributes`](#attributes)**
+- **[`linkType`](#linkType)**
+- **[`runtime`](#runtime)**
+- **[`experimentalUseImportModule`](#experimentalUseImportModule)**
 
 #### `filename`
 
-Type: `String|Function`
+Type:
+
+```ts
+type filename =
+  | string
+  | ((pathData: PathData, assetInfo?: AssetInfo) => string);
+```
+
 Default: `[name].css`
 
 This option determines the name of each output CSS file.
@@ -101,10 +118,17 @@ Works like [`output.filename`](https://webpack.js.org/configuration/output/#outp
 
 #### `chunkFilename`
 
-Type: `String|Function`
+Type:
+
+```ts
+type chunkFilename =
+  | string
+  | ((pathData: PathData, assetInfo?: AssetInfo) => string);
+```
+
 Default: `based on filename`
 
-> i Specifying `chunkFilename` as a `function` is only available in webpack@5
+> Specifying `chunkFilename` as a `function` is only available in webpack@5
 
 This option determines the name of non-entry chunk files.
 
@@ -112,7 +136,12 @@ Works like [`output.chunkFilename`](https://webpack.js.org/configuration/output/
 
 #### `ignoreOrder`
 
-Type: `Boolean`
+Type:
+
+```ts
+type ignoreOrder = boolean;
+```
+
 Default: `false`
 
 Remove Order Warnings.
@@ -120,8 +149,15 @@ See [examples](#remove-order-warnings) below for details.
 
 #### `insert`
 
-Type: `String|Function`
+Type:
+
+```ts
+type insert = string | ((linkTag: HTMLLinkElement) => void);
+```
+
 Default: `document.head.appendChild(linkTag);`
+
+Inserts the `link` tag at the given position for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks
 
 > ⚠️ Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
 
@@ -133,7 +169,7 @@ In such cases `insert` can be configured to be a function or a custom selector.
 
 If you target an [iframe](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement) make sure that the parent document has sufficient access rights to reach into the frame document and append elements to it.
 
-##### `String`
+##### `string`
 
 Allows to setup custom [query selector](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector).
 A new `<link>` element will be inserted after the found item.
@@ -148,7 +184,7 @@ new MiniCssExtractPlugin({
 
 A new `<link>` element will be inserted after the element with id `some-element`.
 
-##### `Function`
+##### `function`
 
 Allows to override default behavior and insert styles at any position.
 
@@ -173,7 +209,12 @@ A new `<link>` element will be inserted before the element with id `some-element
 
 #### `attributes`
 
-Type: `Object`
+Type:
+
+```ts
+type attributes = Record<string, string>};
+```
+
 Default: `{}`
 
 > ⚠️ Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
@@ -209,12 +250,17 @@ Note: It's only applied to dynamically loaded css chunks, if you want to modify 
 
 #### `linkType`
 
-Type: `String|Boolean`
+Type:
+
+```ts
+type linkType = string | boolean;
+```
+
 Default: `text/css`
 
 This option allows loading asynchronous chunks with a custom link type, such as `<link type="text/css" ...>`.
 
-##### `String`
+##### `string`
 
 Possible values: `text/css`
 
@@ -240,7 +286,7 @@ module.exports = {
 };
 ```
 
-##### `Boolean`
+##### `boolean`
 
 `false` disables the link `type` attribute
 
@@ -268,12 +314,17 @@ module.exports = {
 
 #### `runtime`
 
-Type: `Boolean`
+Type:
+
+```ts
+type runtime = boolean;
+```
+
 Default: `true`
 
 Allows to enable/disable the runtime generation.
 CSS will be still extracted and can be used for a custom loading methods.
-For example, you can use [assets-webpack-plugin](https://github.com/ztoben/assets-webpack-plugin) to retreive them then use your own runtime code to download assets when needed.
+For example, you can use [assets-webpack-plugin](https://github.com/ztoben/assets-webpack-plugin) to retrieve them then use your own runtime code to download assets when needed.
 
 `true` to skip.
 
@@ -301,7 +352,12 @@ module.exports = {
 
 #### `experimentalUseImportModule`
 
-Type: `Boolean`
+Type:
+
+```ts
+type experimentalUseImportModule = boolean;
+```
+
 Default: `undefined`
 
 Enabled by default if not explicitly enabled (i.e. `true` and `false` allow you to explicitly control this option) and new API is available (at least webpack `5.52.0` is required).
@@ -322,7 +378,7 @@ module.exports = {
     new MiniCssExtractPlugin({
       // You don't need this for `>= 5.52.0` due to the fact that this is enabled by default
       // Required only for `>= 5.33.2 & <= 5.52.0`
-      // Not avaliable/unsafe for `<= 5.33.2`
+      // Not available/unsafe for `<= 5.33.2`
       experimentalUseImportModule: true,
     }),
   ],
@@ -339,21 +395,26 @@ module.exports = {
 
 ### Loader Options
 
-|              Name               |         Type         |              Default               | Description                                                                       |
-| :-----------------------------: | :------------------: | :--------------------------------: | :-------------------------------------------------------------------------------- |
-| **[`publicPath`](#publicPath)** | `{String\|Function}` | `webpackOptions.output.publicPath` | Specifies a custom public path for the external resources like images, files, etc |
-|       **[`emit`](#emit)**       |     `{Boolean}`      |               `true`               | If false, the plugin will extract the CSS but **will not** emit the file          |
-|   **[`esModule`](#esModule)**   |     `{Boolean}`      |               `true`               | Use ES modules syntax                                                             |
+- **[`publicPath`](#publicPath)**
+- **[`emit`](#emit)**
+- **[`esModule`](#esModule)**
 
 #### `publicPath`
 
-Type: `String|Function`
+Type:
+
+```ts
+type publicPath =
+  | string
+  | ((resourcePath: string, rootContext: string) => string);
+```
+
 Default: the `publicPath` in `webpackOptions.output`
 
 Specifies a custom public path for the external resources like images, files, etc inside `CSS`.
 Works like [`output.publicPath`](https://webpack.js.org/configuration/output/#outputpublicpath)
 
-##### `String`
+##### `string`
 
 **webpack.config.js**
 
@@ -388,7 +449,7 @@ module.exports = {
 };
 ```
 
-##### `Function`
+##### `function`
 
 **webpack.config.js**
 
@@ -427,7 +488,12 @@ module.exports = {
 
 #### `emit`
 
-Type: `Boolean`
+Type:
+
+```ts
+type emit = boolean;
+```
+
 Default: `true`
 
 If true, emits a file (writes a file to the filesystem). If false, the plugin will extract the CSS but **will not** emit the file.
@@ -435,7 +501,12 @@ It is often useful to disable this option for server-side packages.
 
 #### `esModule`
 
-Type: `Boolean`
+Type:
+
+```ts
+type esModule = boolean;
+```
+
 Default: `true`
 
 By default, `mini-css-extract-plugin` generates JS modules that use the ES modules syntax.
@@ -471,13 +542,13 @@ module.exports = {
 
 ## Examples
 
-### Recommend
+### Recommended
 
 For `production` builds it's recommended to extract the CSS from your bundle being able to use parallel loading of CSS/JS resources later on.
 This can be achieved by using the `mini-css-extract-plugin`, because it creates separate css files.
 For `development` mode (including `webpack-dev-server`) you can use [style-loader](https://github.com/webpack-contrib/style-loader), because it injects CSS into the DOM using multiple <style></style> and works faster.
 
-> i Do not use together `style-loader` and `mini-css-extract-plugin`.
+> Do not use `style-loader` and `mini-css-extract-plugin` together.
 
 **webpack.config.js**
 

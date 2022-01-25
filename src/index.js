@@ -42,7 +42,7 @@ const {
  * @property {Required<Configuration>['output']['filename']} [filename]
  * @property {Required<Configuration>['output']['chunkFilename']} [chunkFilename]
  * @property {boolean} [ignoreOrder]
- * @property {string | ((linkTag: any) => void)} [insert]
+ * @property {string | ((linkTag: HTMLLinkElement) => void)} [insert]
  * @property {Record<string, string>} [attributes]
  * @property {string | false | 'text/css'} [linkType]
  * @property {boolean} [runtime]
@@ -54,7 +54,7 @@ const {
  * @property {Required<Configuration>['output']['filename']} filename
  * @property {Required<Configuration>['output']['chunkFilename']} [chunkFilename]
  * @property {boolean} ignoreOrder
- * @property {string | ((linkTag: any) => void)} [insert]
+ * @property {string | ((linkTag: HTMLLinkElement) => void)} [insert]
  * @property {Record<string, string>} [attributes]
  * @property {string | false | 'text/css'} [linkType]
  * @property {boolean} runtime
@@ -63,7 +63,7 @@ const {
 
 /**
  * @typedef {Object} RuntimeOptions
- * @property {string | ((linkTag: any) => void) | undefined} insert
+ * @property {string | ((linkTag: HTMLLinkElement) => void) | undefined} insert
  * @property {string | false | 'text/css'} linkType
  * @property {Record<string, string> | undefined} attributes
  */
