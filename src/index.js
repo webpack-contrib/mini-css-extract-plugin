@@ -205,11 +205,12 @@ class MiniCssExtractPlugin {
        */
       updateCacheModule(module) {
         if (
-          this.content !== /** @type {CssModule} */ (module).content ||
+          !this.content.equals(module.content) ||
           this.layer !== /** @type {CssModule} */ (module).layer ||
           this.supports !== /** @type {CssModule} */ (module).supports ||
           this.media !== /** @type {CssModule} */ (module).media ||
-          this.sourceMap !== /** @type {CssModule} */ (module).sourceMap ||
+          (Buffer.isBuffer(this.sourceMap) && Buffer.isBuffer(module.sourceMap) && !this.sourceMap.equals(module.sourceMap)) ||
+          this.sourceMap !== /** @type {CssModule} */ module.sourceMap ||
           this.assets !== /** @type {CssModule} */ (module).assets ||
           this.assetsInfo !== /** @type {CssModule} */ (module).assetsInfo
         ) {
