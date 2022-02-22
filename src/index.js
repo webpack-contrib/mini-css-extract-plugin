@@ -13,6 +13,7 @@ const {
   SINGLE_DOT_PATH_SEGMENT,
   compareModulesByIdentifier,
   getUndoPath,
+  BASE_URI,
 } = require("./utils");
 
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
@@ -1372,12 +1373,21 @@ class MiniCssExtractPlugin {
 
         const undoPath = getUndoPath(filename, compiler.outputPath, false);
 
+        // replacements
         content = content.replace(new RegExp(ABSOLUTE_PUBLIC_PATH, "g"), "");
         content = content.replace(
           new RegExp(SINGLE_DOT_PATH_SEGMENT, "g"),
           "."
         );
         content = content.replace(new RegExp(AUTO_PUBLIC_PATH, "g"), undoPath);
+
+        const entryOptions = chunk.getEntryOptions();
+        const baseUriReplacement =
+          (entryOptions && entryOptions.baseUri) || undoPath;
+        content = content.replace(
+          new RegExp(BASE_URI, "g"),
+          baseUriReplacement
+        );
 
         if (module.sourceMap) {
           source.add(
