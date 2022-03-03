@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.5.3...v2.6.0) (2022-03-03)
+
+
+### Features
+
+* added `baseUri` option support (from entry options) ([#915](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/915)) ([6004d95](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/6004d95cad2d18d9d080d913db7dc48f16bf888c))
+
 ### [2.5.3](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.5.2...v2.5.3) (2022-01-25)
 
 
