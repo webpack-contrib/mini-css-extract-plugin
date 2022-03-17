@@ -10,7 +10,7 @@ export default (asset, compiler, stats) => {
   const queryStringIdx = targetFile.indexOf("?");
 
   if (queryStringIdx >= 0) {
-    targetFile = targetFile.substr(0, queryStringIdx);
+    targetFile = targetFile.slice(0, queryStringIdx);
   }
 
   try {
