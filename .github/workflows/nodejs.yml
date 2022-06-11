@@ -119,6 +119,7 @@ jobs:
         run: npm i
 
       - name: Install webpack latest
+        if: matrix.webpack-version != 'latest'
         run: npm i webpack@latest
 
       - name: Run tests for webpack version latest with experimentalUseImportModule
