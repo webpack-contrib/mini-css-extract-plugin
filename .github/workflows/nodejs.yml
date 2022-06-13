@@ -81,6 +81,7 @@ jobs:
         run: npm i
 
       - name: Install webpack ${{ matrix.webpack-version }}
+        if: matrix.webpack-version != 'latest'
         run: npm i webpack@${{ matrix.webpack-version }}
 
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
@@ -116,9 +117,6 @@ jobs:
 
       - name: Install dependencies
         run: npm i
-
-      - name: Install webpack latest
-        run: npm i webpack@latest
 
       - name: Run tests for webpack version latest with experimentalUseImportModule
         run: npm run test:coverage -- --ci
