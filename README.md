@@ -8,7 +8,6 @@
 
 [![npm][npm]][npm-url]
 [![node][node]][node-url]
-[![deps][deps]][deps-url]
 [![tests][tests]][tests-url]
 [![coverage][cover]][cover-url]
 [![chat][chat]][chat-url]
@@ -1195,8 +1194,6 @@ Please take a moment to read our contributing guidelines if you haven't yet done
 [npm-url]: https://npmjs.com/package/mini-css-extract-plugin
 [node]: https://img.shields.io/node/v/mini-css-extract-plugin.svg
 [node-url]: https://nodejs.org
-[deps]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin.svg
-[deps-url]: https://david-dm.org/webpack-contrib/mini-css-extract-plugin
 [tests]: https://github.com/webpack-contrib/mini-css-extract-plugin/workflows/mini-css-extract-plugin/badge.svg
 [tests-url]: https://github.com/webpack-contrib/mini-css-extract-plugin/actions
 [cover]: https://codecov.io/gh/webpack-contrib/mini-css-extract-plugin/branch/master/graph/badge.svg
