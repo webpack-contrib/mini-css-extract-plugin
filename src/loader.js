@@ -69,6 +69,7 @@ function hotLoader(content, context) {
 function pitch(request) {
   // @ts-ignore
   const options = this.getOptions(/** @type {Schema} */ (schema));
+  const emit = typeof options.emit !== "undefined" ? options.emit : true;
   const callback = this.async();
   const optionsFromPlugin = /** @type {TODO} */ (this)[
     MiniCssExtractPlugin.pluginSymbol
@@ -114,7 +115,6 @@ function pitch(request) {
       }
 
       const identifierCountMap = new Map();
-      const emit = typeof options.emit !== "undefined" ? options.emit : true;
       let lastDep;
 
       for (const dependency of dependencies) {
@@ -243,9 +243,11 @@ function pitch(request) {
 
     let resultSource = `// extracted by ${MiniCssExtractPlugin.pluginName}`;
 
-    resultSource += this.hot
-      ? hotLoader(result, { loaderContext: this, options, locals })
-      : result;
+    // only attempt hotreloading if the css is actually used for something other than hash values
+    resultSource +=
+      this.hot && emit
+        ? hotLoader(result, { loaderContext: this, options, locals })
+        : result;
 
     callback(null, resultSource);
   };
