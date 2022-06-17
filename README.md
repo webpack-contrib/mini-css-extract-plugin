@@ -82,9 +82,13 @@ module.exports = {
 };
 ```
 
-> ⚠️ Note that if you import CSS from your webpack entrypoint or import styles in the [initial](https://webpack.js.org/concepts/under-the-hood/#chunks) chunk, `mini-css-extract-plugin` will not load this CSS into the page. Please use [`html-webpack-plugin`](https://github.com/jantimon/html-webpack-plugin) for automatic generation `link` tags or create `index.html` file with `link` tag.
+> **Warning**
+>
+> Note that if you import CSS from your webpack entrypoint or import styles in the [initial](https://webpack.js.org/concepts/under-the-hood/#chunks) chunk, `mini-css-extract-plugin` will not load this CSS into the page. Please use [`html-webpack-plugin`](https://github.com/jantimon/html-webpack-plugin) for automatic generation `link` tags or create `index.html` file with `link` tag.
 
-> ⚠️ Source maps works only for `source-map`/`nosources-source-map`/`hidden-nosources-source-map`/`hidden-source-map` values because CSS only supports source maps with the `sourceMappingURL` comment (i.e. `//# sourceMappingURL=style.css.map`). If you need set `devtool` to another value you can enable source maps generation for extracted CSS using [`sourceMap: true`](https://github.com/webpack-contrib/css-loader#sourcemap) for `css-loader`.
+> **Warning**
+>
+> Source maps works only for `source-map`/`nosources-source-map`/`hidden-nosources-source-map`/`hidden-source-map` values because CSS only supports source maps with the `sourceMappingURL` comment (i.e. `//# sourceMappingURL=style.css.map`). If you need set `devtool` to another value you can enable source maps generation for extracted CSS using [`sourceMap: true`](https://github.com/webpack-contrib/css-loader#sourcemap) for `css-loader`.
 
 ## Options
 
@@ -158,7 +162,9 @@ Default: `document.head.appendChild(linkTag);`
 
 Inserts the `link` tag at the given position for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) CSS chunks
 
-> ⚠️ Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
+> **Warning**
+>
+> Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
 
 By default, the `mini-css-extract-plugin` appends styles (`<link>` elements) to `document.head` of the current `window`.
 
@@ -216,7 +222,9 @@ type attributes = Record<string, string>};
 
 Default: `{}`
 
-> ⚠️ Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
+> **Warning**
+>
+> Only for [non-initial (async)](https://webpack.js.org/concepts/under-the-hood/#chunks) chunks.
 
 If defined, the `mini-css-extract-plugin` will attach given attributes with their values on `<link>` element.
 
@@ -245,7 +253,9 @@ module.exports = {
 };
 ```
 
-Note: It's only applied to dynamically loaded css chunks, if you want to modify link attributes inside html file, please using [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin)
+> **Note**
+>
+> It's only applied to dynamically loaded css chunks, if you want to modify link attributes inside html file, please using [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin)
 
 #### `linkType`
 
@@ -763,7 +773,9 @@ module.exports = {
 
 ### Hot Module Reloading (HMR)
 
-Note: HMR is automatically supported in webpack 5. No need to configure it. Skip the following:
+> **Note**
+>
+> HMR is automatically supported in webpack 5. No need to configure it. Skip the following:
 
 The `mini-css-extract-plugin` supports hot reloading of actual css files in development.
 Some options are provided to enable HMR of both standard stylesheets and locally scoped CSS or CSS modules.
