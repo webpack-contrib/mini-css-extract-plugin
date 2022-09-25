@@ -1058,7 +1058,7 @@ module.exports = {
           {
             resourceQuery: "?dark",
             use: [
-              Self.loader,
+              MiniCssExtractPlugin.loader,
               "css-loader",
               {
                 loader: "sass-loader",
@@ -1070,7 +1070,7 @@ module.exports = {
           },
           {
             use: [
-              Self.loader,
+              MiniCssExtractPlugin.loader,
               "css-loader",
               {
                 loader: "sass-loader",
