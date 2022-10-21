@@ -1017,7 +1017,7 @@ module.exports = {
 
 ### Remove Order Warnings
 
-For projects where css ordering has been mitigated through consistent use of scoping or naming conventions, the css order warnings can be disabled by setting the ignoreOrder flag to true for the plugin.
+For projects where css ordering has been mitigated through consistent use of scoping or naming conventions, such as [CSS Modules](https://github.com/css-modules/css-modules), the css order warnings can be disabled by setting the ignoreOrder flag to true for the plugin.
 
 **webpack.config.js**
 
