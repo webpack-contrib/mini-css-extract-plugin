@@ -69,7 +69,13 @@ module.exports = {
   ],
   devServer: {
     hot: ENABLE_HMR,
-    static: __dirname,
+    static: {
+      directory: __dirname,
+      watch: {
+        // prevent page reload on source change so that we can test HMR
+        ignored: /src/,
+      },
+    },
     headers: {
       "Access-Control-Allow-Origin": "*",
     },
