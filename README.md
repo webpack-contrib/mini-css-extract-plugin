@@ -1085,7 +1085,7 @@ module.exports = {
     ],
   },
   plugins: [
-    new Self({
+    new MiniCssExtractPlugin({
       filename: "[name].css",
       attributes: {
         id: "theme",
