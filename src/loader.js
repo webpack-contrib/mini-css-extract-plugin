@@ -23,7 +23,7 @@ const MiniCssExtractPlugin = require("./index");
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
 /** @typedef {import("webpack").NormalModule} NormalModule */
 /** @typedef {import("./index.js").LoaderOptions} LoaderOptions */
-/** @typedef {{ [key: string]: string | function } | function} Locals */
+/** @typedef {{ [key: string]: string | function }} Locals */
 
 /** @typedef {any} TODO */
 
@@ -172,8 +172,7 @@ function pitch(request) {
               locals = {};
             }
 
-            /** @type {{ [key: string]: string }} */ (locals)[key] =
-              originalExports[key];
+            /** @type {Locals} */ (locals)[key] = originalExports[key];
           }
         });
       } else {
@@ -232,15 +231,13 @@ function pitch(request) {
             .map(
               (key) =>
                 `\nexport var ${key} = ${stringifyLocal(
-                  /** @type {{ [key: string]: string | function }} */ (locals)[
-                    key
-                  ]
+                  /** @type {Locals} */ (locals)[key]
                 )};`
             )
             .join("")
         : `\n${
             esModule ? "export default" : "module.exports ="
-          } ${stringifyLocal(/** @type {function} */ (locals))};`
+          } ${JSON.stringify(locals)};`
       : esModule
       ? `\nexport {};`
       : "";

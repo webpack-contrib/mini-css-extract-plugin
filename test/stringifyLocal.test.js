@@ -1,16 +1,6 @@
 import { stringifyLocal } from "../src/utils";
 
 describe("stringifyLocal", () => {
-  it(`object`, async () => {
-    const testObj = { classNameA: "classA", classNameB: "classB" };
-    const actual = stringifyLocal(testObj);
-
-    expect(
-      actual === '{"classNameA":"classA","classNameB":"classB"}' ||
-        actual === '{"classNameB":"classB","classNameA":"classA"}'
-    ).toBe(true);
-  });
-
   it(`primitive`, async () => {
     const testObj = "classA";
 
