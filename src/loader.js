@@ -8,6 +8,7 @@ const {
   BASE_URI,
   SINGLE_DOT_PATH_SEGMENT,
   stringifyRequest,
+  stringifyLocal,
 } = require("./utils");
 const schema = require("./loader-options.json");
 
@@ -22,6 +23,7 @@ const MiniCssExtractPlugin = require("./index");
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
 /** @typedef {import("webpack").NormalModule} NormalModule */
 /** @typedef {import("./index.js").LoaderOptions} LoaderOptions */
+/** @typedef {{ [key: string]: string | function }} Locals */
 
 /** @typedef {any} TODO */
 
@@ -38,7 +40,7 @@ const MiniCssExtractPlugin = require("./index");
 
 /**
  * @param {string} content
- * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: {[key: string]: string } | undefined }} context
+ * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: Locals | undefined }} context
  * @returns {string}
  */
 function hotLoader(content, context) {
@@ -69,6 +71,7 @@ function hotLoader(content, context) {
 function pitch(request) {
   // @ts-ignore
   const options = this.getOptions(/** @type {Schema} */ (schema));
+  const emit = typeof options.emit !== "undefined" ? options.emit : true;
   const callback = this.async();
   const optionsFromPlugin = /** @type {TODO} */ (this)[
     MiniCssExtractPlugin.pluginSymbol
@@ -94,7 +97,7 @@ function pitch(request) {
    * @returns {void}
    */
   const handleExports = (originalExports, compilation, assets, assetsInfo) => {
-    /** @type {{[key: string]: string } | undefined} */
+    /** @type {Locals | undefined} */
     let locals;
     let namedExport;
 
@@ -114,7 +117,6 @@ function pitch(request) {
       }
 
       const identifierCountMap = new Map();
-      const emit = typeof options.emit !== "undefined" ? options.emit : true;
       let lastDep;
 
       for (const dependency of dependencies) {
@@ -170,7 +172,7 @@ function pitch(request) {
               locals = {};
             }
 
-            locals[key] = originalExports[key];
+            /** @type {Locals} */ (locals)[key] = originalExports[key];
           }
         });
       } else {
@@ -228,9 +230,8 @@ function pitch(request) {
         ? Object.keys(locals)
             .map(
               (key) =>
-                `\nexport var ${key} = ${JSON.stringify(
-                  /** @type {{[key: string]: string }} */
-                  (locals)[key]
+                `\nexport var ${key} = ${stringifyLocal(
+                  /** @type {Locals} */ (locals)[key]
                 )};`
             )
             .join("")
@@ -243,9 +244,11 @@ function pitch(request) {
 
     let resultSource = `// extracted by ${MiniCssExtractPlugin.pluginName}`;
 
-    resultSource += this.hot
-      ? hotLoader(result, { loaderContext: this, options, locals })
-      : result;
+    // only attempt hotreloading if the css is actually used for something other than hash values
+    resultSource +=
+      this.hot && emit
+        ? hotLoader(result, { loaderContext: this, options, locals })
+        : result;
 
     callback(null, resultSource);
   };

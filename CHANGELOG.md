@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.6.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.6.0...v2.6.1) (2022-06-15)
+
+
+### Bug Fixes
+
+* do not attempt hot reloading when emit is false ([#953](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/953)) ([b426f04](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/b426f04961846991e8ca671c6a4d48e6a83a46c2))
+
 ## [2.6.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.5.3...v2.6.0) (2022-03-03)
 
 
