@@ -49,6 +49,12 @@ export function stringifyRequest(
   request: string
 ): string;
 /**
+ *
+ * @param {string | function} value
+ * @returns {string}
+ */
+export function stringifyLocal(value: string | Function): string;
+/**
  * @param {string} filename
  * @param {string} outputPath
  * @param {boolean} enforceRelative
