@@ -205,6 +205,15 @@ function getUndoPath(filename, outputPath, enforceRelative) {
     : append;
 }
 
+/**
+ *
+ * @param {string | function} value
+ * @returns {string}
+ */
+function stringifyLocal(value) {
+  return typeof value === "function" ? value.toString() : JSON.stringify(value);
+}
+
 module.exports = {
   trueFn,
   findModuleById,
@@ -216,5 +225,6 @@ module.exports = {
   BASE_URI,
   SINGLE_DOT_PATH_SEGMENT,
   stringifyRequest,
+  stringifyLocal,
   getUndoPath,
 };
