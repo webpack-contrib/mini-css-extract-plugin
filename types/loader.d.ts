@@ -7,6 +7,9 @@ export type Source = import("webpack").sources.Source;
 export type AssetInfo = import("webpack").AssetInfo;
 export type NormalModule = import("webpack").NormalModule;
 export type LoaderOptions = import("./index.js").LoaderOptions;
+export type Locals = {
+  [key: string]: string | Function;
+};
 export type TODO = any;
 export type Dependency = {
   identifier: string;
