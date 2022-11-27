@@ -1,0 +1,46 @@
+{
+  "version": "0.2",
+  "language": "en,en-gb",
+  "words": [
+    "publicpath",
+    "memfs",
+    "crossorigin",
+    "Crossorigin",
+    "camelcase",
+    "unreload",
+    "cnfg",
+    "sorhus",
+    "sindre",
+    "staticc",
+    "deepc",
+    "pathinfo",
+    "iife",
+    "IIFE",
+    "fullhref",
+    "Unexception",
+    "fullhash",
+    "truetype",
+    "entrypoints",
+    "plusplus",
+    "hotreloading",
+    "chunkhash",
+    "concat",
+    "nosources",
+    "hspace",
+    "vspace",
+    "commitlint",
+    "unreload",
+    "cnfg"
+  ],
+
+  "ignorePaths": [
+    "CHANGELOG.md",
+    "package.json",
+    "dist/**",
+    "**/__snapshots__/**",
+    "package-lock.json",
+    "/test/js",
+    "/test/outputs",
+    "/test/manual/dist"
+  ]
+}
