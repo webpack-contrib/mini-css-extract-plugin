@@ -41,6 +41,8 @@
     "package-lock.json",
     "/test/js",
     "/test/outputs",
+    "/test/cases",
+    "/test/fixtures",
     "/test/manual/dist"
   ]
 }
