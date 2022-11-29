@@ -650,8 +650,8 @@ class MiniCssExtractPlugin {
          */
         // eslint-disable-next-line class-methods-use-this
         create({ dependencies: [dependency] }, callback) {
-          // eslint-disable-next-line no-undefined
           callback(
+            // eslint-disable-next-line no-undefined
             undefined,
             new CssModule(/** @type {CssDependency} */ (dependency))
           );

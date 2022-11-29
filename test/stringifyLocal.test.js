@@ -14,12 +14,12 @@ describe("stringifyLocal", () => {
   });
 
   it(`function`, async () => {
-    const testFn = function () {
+    const testFn = function testFn() {
       return "classA";
     };
 
     expect(stringifyLocal(testFn)).toBe(
-      'function () {\n      return "classA";\n    }'
+      'function testFn() {\n      return "classA";\n    }'
     );
   });
 });
