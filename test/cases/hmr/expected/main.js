@@ -934,7 +934,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /******/ 	/* webpack/runtime/css loading */
 /******/ 	(() => {
-/******/ 		var createStylesheet = (chunkId, fullhref, resolve, reject) => {
+/******/ 		var createStylesheet = (chunkId, fullhref, oldTag, resolve, reject) => {
 /******/ 			var linkTag = document.createElement("link");
 /******/ 		
 /******/ 			linkTag.rel = "stylesheet";
@@ -958,7 +958,11 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			linkTag.onerror = linkTag.onload = onLinkComplete;
 /******/ 			linkTag.href = fullhref;
 /******/ 		
-/******/ 			document.head.appendChild(linkTag);
+/******/ 			if (oldTag) {
+/******/ 				oldTag.after(linkTag);
+/******/ 			} else {
+/******/ 				document.head.appendChild(linkTag);
+/******/ 			}
 /******/ 			return linkTag;
 /******/ 		};
 /******/ 		var findStylesheet = (href, fullhref) => {
@@ -980,7 +984,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 				var href = __webpack_require__.miniCssF(chunkId);
 /******/ 				var fullhref = __webpack_require__.p + href;
 /******/ 				if(findStylesheet(href, fullhref)) return resolve();
-/******/ 				createStylesheet(chunkId, fullhref, resolve, reject);
+/******/ 				createStylesheet(chunkId, fullhref, null, resolve, reject);
 /******/ 			});
 /******/ 		}
 /******/ 		// no chunk loading
@@ -1007,7 +1011,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 				var oldTag = findStylesheet(href, fullhref);
 /******/ 				if(!oldTag) return;
 /******/ 				promises.push(new Promise((resolve, reject) => {
-/******/ 					var tag = createStylesheet(chunkId, fullhref, () => {
+/******/ 					var tag = createStylesheet(chunkId, fullhref, oldTag, () => {
 /******/ 						tag.as = "style";
 /******/ 						tag.rel = "preload";
 /******/ 						resolve();

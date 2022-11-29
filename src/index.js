@@ -826,7 +826,7 @@ class MiniCssExtractPlugin {
 
           return Template.asString([
             `var createStylesheet = ${runtimeTemplate.basicFunction(
-              "chunkId, fullhref, resolve, reject",
+              "chunkId, fullhref, oldTag, resolve, reject",
               [
                 'var linkTag = document.createElement("link");',
                 this.runtimeOptions.attributes
@@ -886,7 +886,13 @@ class MiniCssExtractPlugin {
                         `var target = document.querySelector("${this.runtimeOptions.insert}");`,
                         `target.parentNode.insertBefore(linkTag, target.nextSibling);`,
                       ])
-                  : Template.asString(["document.head.appendChild(linkTag);"]),
+                  : Template.asString([
+                      "if (oldTag) {",
+                      Template.indent(["oldTag.after(linkTag);"]),
+                      "} else {",
+                      Template.indent(["document.head.appendChild(linkTag);"]),
+                      "}",
+                    ]),
                 "return linkTag;",
               ]
             )};`,
@@ -919,7 +925,7 @@ class MiniCssExtractPlugin {
                   `var href = ${RuntimeGlobals.require}.miniCssF(chunkId);`,
                   `var fullhref = ${RuntimeGlobals.publicPath} + href;`,
                   "if(findStylesheet(href, fullhref)) return resolve();",
-                  "createStylesheet(chunkId, fullhref, resolve, reject);",
+                  "createStylesheet(chunkId, fullhref, null, resolve, reject);",
                 ]
               )});`
             )}`,
@@ -995,7 +1001,7 @@ class MiniCssExtractPlugin {
                           `promises.push(new Promise(${runtimeTemplate.basicFunction(
                             "resolve, reject",
                             [
-                              `var tag = createStylesheet(chunkId, fullhref, ${runtimeTemplate.basicFunction(
+                              `var tag = createStylesheet(chunkId, fullhref, oldTag, ${runtimeTemplate.basicFunction(
                                 "",
                                 [
                                   'tag.as = "style";',
