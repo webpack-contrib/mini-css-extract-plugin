@@ -959,7 +959,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			linkTag.href = fullhref;
 /******/ 		
 /******/ 			if (oldTag) {
-/******/ 				oldTag.after(linkTag);
+/******/ 				oldTag.parentNode.insertBefore(linkTag, oldTag.nextSibling);
 /******/ 			} else {
 /******/ 				document.head.appendChild(linkTag);
 /******/ 			}
