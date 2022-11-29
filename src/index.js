@@ -888,7 +888,9 @@ class MiniCssExtractPlugin {
                       ])
                   : Template.asString([
                       "if (oldTag) {",
-                      Template.indent(["oldTag.after(linkTag);"]),
+                      Template.indent([
+                        "oldTag.parentNode.insertBefore(linkTag, oldTag.nextSibling);",
+                      ]),
                       "} else {",
                       Template.indent(["document.head.appendChild(linkTag);"]),
                       "}",
