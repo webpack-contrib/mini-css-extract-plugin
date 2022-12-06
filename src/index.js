@@ -825,6 +825,7 @@ class MiniCssExtractPlugin {
           }
 
           return Template.asString([
+            'if (typeof document === "undefined") return;',
             `var createStylesheet = ${runtimeTemplate.basicFunction(
               "chunkId, fullhref, oldTag, resolve, reject",
               [

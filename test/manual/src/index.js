@@ -94,3 +94,11 @@ makeButton(".crossorigin", () => {
   __webpack_public_path__ = originalPublicPath;
   return promise;
 });
+
+const worker = new Worker(new URL("./worker.js", import.meta.url));
+
+worker.postMessage("test");
+
+worker.addEventListener("message", (event) => {
+  console.log(`Received message from worker: ${event.data}`);
+});

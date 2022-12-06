@@ -12,11 +12,15 @@ const ENABLE_ES_MODULE =
     : true;
 
 const OLD_API =
-  typeof process.env.OLD_API !== "undefined" ? yn(process.env.OLD_API) : true;
+  typeof process.env.OLD_API !== "undefined" ? yn(process.env.OLD_API) : false;
 
-console.log(OLD_API);
+console.log("OPTIONS:");
+console.log("ENABLE_HMR:", ENABLE_HMR);
+console.log("ENABLE_ES_MODULE:", ENABLE_ES_MODULE);
+console.log("OLD_API:", OLD_API);
 
 module.exports = {
+  devtool: false,
   mode: "development",
   output: {
     chunkFilename: "[name].chunk.js",
