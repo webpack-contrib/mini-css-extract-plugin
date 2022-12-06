@@ -155,6 +155,7 @@
 /******/ 	
 /******/ 	/* webpack/runtime/css loading */
 /******/ 	(() => {
+/******/ 		if (typeof document === "undefined") return;
 /******/ 		var createStylesheet = (chunkId, fullhref, oldTag, resolve, reject) => {
 /******/ 			var linkTag = document.createElement("link");
 /******/ 		
