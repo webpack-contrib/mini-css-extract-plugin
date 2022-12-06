@@ -20,6 +20,7 @@ console.log("ENABLE_ES_MODULE:", ENABLE_ES_MODULE);
 console.log("OLD_API:", OLD_API);
 
 module.exports = {
+  devtool: false,
   mode: "development",
   output: {
     chunkFilename: "[name].chunk.js",

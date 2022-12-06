@@ -1,10 +1,15 @@
-import * as worker from "./worker.css";
+import "./worker.css";
 
-console.log("WORKER");
-console.log(worker);
-
+// eslint-disable-next-line no-undef
 self.onmessage = (event) => {
   console.log(`Received message from application: ${event.data}`);
 
-  self.postMessage('I\'m alive!');
+  // eslint-disable-next-line no-undef
+  self.postMessage("I'm alive!");
 };
+
+async function load() {
+  return import("./simple.css");
+}
+
+load();

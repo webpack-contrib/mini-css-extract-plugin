@@ -99,7 +99,6 @@ const worker = new Worker(new URL("./worker.js", import.meta.url));
 
 worker.postMessage("test");
 
-worker.addEventListener('message', (event) => {
+worker.addEventListener("message", (event) => {
   console.log(`Received message from worker: ${event.data}`);
 });
-
