@@ -43,6 +43,9 @@
     "/test/outputs",
     "/test/cases",
     "/test/fixtures",
-    "/test/manual/dist"
+    "/test/manual/dist",
+    "node_modules",
+    "coverage",
+    "*.log"
   ]
 }
