@@ -27,6 +27,10 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
+    concurrency:
+      group: lint-${{ matrix.os }}-v${{ matrix.node-version }}-${{ github.ref }}
+      cancel-in-progress: true
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -66,6 +70,10 @@ jobs:
         webpack-version: [latest]
 
     runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: test-${{ matrix.os }}-v${{ matrix.node-version }}-${{ matrix.webpack-version }}-${{ github.ref }}
+      cancel-in-progress: true
 
     steps:
       - name: Setup Git
