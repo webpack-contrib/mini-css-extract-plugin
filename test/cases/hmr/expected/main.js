@@ -952,7 +952,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 					err.code = "CSS_CHUNK_LOAD_FAILED";
 /******/ 					err.type = errorType;
 /******/ 					err.request = realHref;
-/******/ 					linkTag.parentNode.removeChild(linkTag)
+/******/ 					if (linkTag.parentNode) linkTag.parentNode.removeChild(linkTag)
 /******/ 					reject(err);
 /******/ 				}
 /******/ 			}
