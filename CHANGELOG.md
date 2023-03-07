@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.3](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.2...v2.7.3) (2023-03-07)
+
+
+### Bug Fixes
+
+* avoid to throw error when link doesn't have parentNode ([#1016](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1016)) ([6292440](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/62924409895ff6e0e4e599f6734c109ec40e6eff))
+
 ### [2.7.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.1...v2.7.2) (2022-12-06)
 
 
