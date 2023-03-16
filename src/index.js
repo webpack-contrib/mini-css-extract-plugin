@@ -165,7 +165,9 @@ class MiniCssExtractPlugin {
       }
 
       identifier() {
-        return `css|${this._identifier}|${this._identifierIndex}|${this.layer}|${this.supports}|${this.media}}}`;
+        return `css|${this._identifier}|${this._identifierIndex}|${
+          this.layer || ""
+        }|${this.supports || ""}|${this.media}}}`;
       }
 
       /**
@@ -175,7 +177,9 @@ class MiniCssExtractPlugin {
       readableIdentifier(requestShortener) {
         return `css ${requestShortener.shorten(this._identifier)}${
           this._identifierIndex ? ` (${this._identifierIndex})` : ""
-        }`;
+        }${this.layer ? ` (layer ${this.layer})` : ""}${
+          this.supports ? ` (supports ${this.supports})` : ""
+        }${this.media ? ` (media ${this.media})` : ""}`;
       }
 
       // eslint-disable-next-line class-methods-use-this
