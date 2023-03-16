@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.5](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.4...v2.7.5) (2023-03-16)
+
+
+### Bug Fixes
+
+* don't invalidate cache after timeout refresh ([#1023](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1023)) ([38d8513](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/38d8513f97983698b3b4417abb8bacaee0ea68fb))
+* readable identifier ([#1024](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1024)) ([721bbf1](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/721bbf104030c96acff14ad2b7a23edc4f1e277d))
+
 ### [2.7.4](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.3...v2.7.4) (2023-03-16)
 
 
