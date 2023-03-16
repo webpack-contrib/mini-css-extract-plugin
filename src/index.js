@@ -165,7 +165,7 @@ class MiniCssExtractPlugin {
       }
 
       identifier() {
-        return `css|${this._identifier}|${this._identifierIndex}`;
+        return `css|${this._identifier}|${this._identifierIndex}|${this.layer}|${this.supports}|${this.media}}}`;
       }
 
       /**
