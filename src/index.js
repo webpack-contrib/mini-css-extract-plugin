@@ -212,7 +212,8 @@ class MiniCssExtractPlugin {
           this.media !== /** @type {CssModule} */ (module).media ||
           (this.sourceMap
             ? !this.sourceMap.equals(
-                /** @type {CssModule} */ (module).sourceMap
+                /** @type {Uint8Array} **/
+                (/** @type {CssModule} */ (module).sourceMap)
               )
             : false) ||
           this.assets !== /** @type {CssModule} */ (module).assets ||
