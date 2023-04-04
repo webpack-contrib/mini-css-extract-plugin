@@ -53,10 +53,10 @@ export default (fixture, loaderOptions = {}, config = {}) => {
 
   const compiler = webpack(fullConfig);
 
-  if (!outputFileSystem) {
-    compiler.outputFileSystem = createFsFromVolume(new Volume());
-  } else {
+  if (outputFileSystem) {
     compiler.outputFileSystem = outputFileSystem;
+  } else {
+    compiler.outputFileSystem = createFsFromVolume(new Volume());
   }
 
   return compiler;
