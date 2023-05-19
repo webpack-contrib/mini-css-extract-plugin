@@ -39,32 +39,32 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "a": () => (/* reexport */ a_namespaceObject),
-  "b": () => (/* reexport */ b_namespaceObject),
-  "c": () => (/* reexport */ c)
+  a: () => (/* reexport */ a_namespaceObject),
+  b: () => (/* reexport */ b_namespaceObject),
+  c: () => (/* reexport */ c)
 });
 
 // NAMESPACE OBJECT: ./a.css
 var a_namespaceObject = {};
 __webpack_require__.r(a_namespaceObject);
 __webpack_require__.d(a_namespaceObject, {
-  "a": () => (a)
+  a: () => (a)
 });
 
 // NAMESPACE OBJECT: ./b.css
 var b_namespaceObject = {};
 __webpack_require__.r(b_namespaceObject);
 __webpack_require__.d(b_namespaceObject, {
-  "b": () => (b)
+  b: () => (b)
 });
 
 // NAMESPACE OBJECT: ./index.js
 var index_namespaceObject = {};
 __webpack_require__.r(index_namespaceObject);
 __webpack_require__.d(index_namespaceObject, {
-  "a": () => (a_namespaceObject),
-  "b": () => (b_namespaceObject),
-  "c": () => (c)
+  a: () => (a_namespaceObject),
+  b: () => (b_namespaceObject),
+  c: () => (c)
 });
 
 ;// CONCATENATED MODULE: ./a.css
