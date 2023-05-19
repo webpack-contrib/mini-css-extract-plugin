@@ -5,9 +5,9 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "aClass": () => (/* binding */ aClass),
-/* harmony export */   "bClass": () => (/* binding */ bClass),
-/* harmony export */   "cClass": () => (/* binding */ cClass)
+/* harmony export */   aClass: () => (/* binding */ aClass),
+/* harmony export */   bClass: () => (/* binding */ bClass),
+/* harmony export */   cClass: () => (/* binding */ cClass)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
 var aClass = "foo__style__a-class";

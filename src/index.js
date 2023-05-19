@@ -142,6 +142,7 @@ class MiniCssExtractPlugin {
         assets,
         assetsInfo,
       }) {
+        // @ts-ignore
         super(MODULE_TYPE, /** @type {string | undefined} */ (context));
 
         this.id = "";
@@ -703,7 +704,11 @@ class MiniCssExtractPlugin {
           const renderedModules = Array.from(
             /** @type {CssModule[]} */
             (this.getChunkModules(chunk, chunkGraph))
-          ).filter((module) => module.type === MODULE_TYPE);
+          ).filter(
+            (module) =>
+              // @ts-ignore
+              module.type === MODULE_TYPE
+          );
 
           const filenameTemplate =
             /** @type {string} */
@@ -791,6 +796,7 @@ class MiniCssExtractPlugin {
           );
 
           for (const module of modules) {
+            // @ts-ignore
             if (module.type === MODULE_TYPE) {
               obj[/** @type {string} */ (chunk.id)] = 1;
 

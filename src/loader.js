@@ -69,6 +69,23 @@ function hotLoader(content, context) {
  * @param {string} request
  */
 function pitch(request) {
+  if (
+    this._compiler &&
+    this._compiler.options &&
+    this._compiler.options.experiments &&
+    this._compiler.options.experiments.css &&
+    this._module &&
+    this._module.type === "css"
+  ) {
+    this.emitWarning(
+      new Error(
+        'You can\'t use `experiments.css` (`experiments.futureDefaults` enable built-in CSS support by default) and `mini-css-extract-plugin` together, please set `experiments.css` to `false` or set `{ type: "javascript/auto" }` for rules with `mini-css-extract-plugin` in your webpack config (now `mini-css-extract-plugin` does nothing).'
+      )
+    );
+
+    return;
+  }
+
   // @ts-ignore
   const options = this.getOptions(/** @type {Schema} */ (schema));
   const emit = typeof options.emit !== "undefined" ? options.emit : true;
@@ -488,4 +505,23 @@ function pitch(request) {
   });
 }
 
-module.exports = { default: function loader() {}, pitch };
+/**
+ * @this {import("webpack").LoaderContext<LoaderOptions>}
+ * @param {string} content
+ */
+// eslint-disable-next-line consistent-return
+function loader(content) {
+  if (
+    this._compiler &&
+    this._compiler.options &&
+    this._compiler.options.experiments &&
+    this._compiler.options.experiments.css &&
+    this._module &&
+    this._module.type === "css"
+  ) {
+    return content;
+  }
+}
+
+module.exports = loader;
+module.exports.pitch = pitch;

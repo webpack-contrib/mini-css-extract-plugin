@@ -1,17 +1,52 @@
-export type Schema = import("schema-utils/declarations/validate").Schema;
-export type Compiler = import("webpack").Compiler;
-export type Compilation = import("webpack").Compilation;
-export type Chunk = import("webpack").Chunk;
-export type Module = import("webpack").Module;
-export type Source = import("webpack").sources.Source;
-export type AssetInfo = import("webpack").AssetInfo;
-export type NormalModule = import("webpack").NormalModule;
-export type LoaderOptions = import("./index.js").LoaderOptions;
-export type Locals = {
+export = loader;
+/**
+ * @this {import("webpack").LoaderContext<LoaderOptions>}
+ * @param {string} content
+ */
+declare function loader(
+  this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
+  content: string
+): string | undefined;
+declare namespace loader {
+  export {
+    pitch,
+    Schema,
+    Compiler,
+    Compilation,
+    Chunk,
+    Module,
+    Source,
+    AssetInfo,
+    NormalModule,
+    LoaderOptions,
+    Locals,
+    TODO,
+    Dependency,
+  };
+}
+import MiniCssExtractPlugin = require("./index");
+/**
+ * @this {import("webpack").LoaderContext<LoaderOptions>}
+ * @param {string} request
+ */
+declare function pitch(
+  this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
+  request: string
+): void;
+type Schema = import("schema-utils/declarations/validate").Schema;
+type Compiler = import("webpack").Compiler;
+type Compilation = import("webpack").Compilation;
+type Chunk = import("webpack").Chunk;
+type Module = import("webpack").Module;
+type Source = import("webpack").sources.Source;
+type AssetInfo = import("webpack").AssetInfo;
+type NormalModule = import("webpack").NormalModule;
+type LoaderOptions = import("./index.js").LoaderOptions;
+type Locals = {
   [key: string]: string | Function;
 };
-export type TODO = any;
-export type Dependency = {
+type TODO = any;
+type Dependency = {
   identifier: string;
   context: string | null;
   content: Buffer;
@@ -20,14 +55,3 @@ export type Dependency = {
   layer?: string | undefined;
   sourceMap?: Buffer | undefined;
 };
-/**
- * @this {import("webpack").LoaderContext<LoaderOptions>}
- * @param {string} request
- */
-export function pitch(
-  this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
-  request: string
-): void;
-import MiniCssExtractPlugin = require("./index");
-declare function _default(): void;
-export { _default as default };
