@@ -569,6 +569,8 @@ module.exports = {
   module: {
     rules: [
       {
+        // If you enable `experiments.css` or `experiments.futureDefaults`, please uncomment line below
+        // type: "javascript/auto",
         test: /\.(sa|sc|c)ss$/,
         use: [
           devMode ? "style-loader" : MiniCssExtractPlugin.loader,
