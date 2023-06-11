@@ -301,7 +301,7 @@ class MiniCssExtractPlugin {
       updateHash(hash, context) {
         super.updateHash(hash, context);
 
-        hash.update(this.buildInfo.hash);
+        hash.update(this.buildInfo && this.buildInfo.hash);
       }
 
       /**
@@ -825,8 +825,11 @@ class MiniCssExtractPlugin {
           const {
             runtimeTemplate,
             outputOptions: { crossOriginLoading },
-          } = this.compilation;
-          const chunkMap = getCssChunkObject(chunk, this.compilation);
+          } = /** @type {Compilation} */ (this.compilation);
+          const chunkMap = getCssChunkObject(
+            /** @type {Chunk} */ (chunk),
+            /** @type {Compilation} */ (this.compilation)
+          );
 
           const withLoading =
             runtimeRequirements.has(RuntimeGlobals.ensureChunkHandlers) &&
@@ -953,7 +956,7 @@ class MiniCssExtractPlugin {
                   "var installedCssChunks = {",
                   Template.indent(
                     /** @type {string[]} */
-                    (chunk.ids)
+                    (/** @type {Chunk} */ (chunk).ids)
                       .map((id) => `${JSON.stringify(id)}: 0`)
                       .join(",\n")
                   ),

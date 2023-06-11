@@ -349,6 +349,7 @@ function pitch(request) {
   const outputOptions = {
     filename: childFilename,
     publicPath,
+    asyncChunkLoading: false,
   };
 
   const childCompiler =
