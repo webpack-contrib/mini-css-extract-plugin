@@ -349,7 +349,6 @@ function pitch(request) {
   const outputOptions = {
     filename: childFilename,
     publicPath,
-    asyncChunkLoading: false,
   };
 
   const childCompiler =
@@ -374,7 +373,7 @@ function pitch(request) {
   const { NodeTemplatePlugin } = webpack.node;
   const { NodeTargetPlugin } = webpack.node;
 
-  new NodeTemplatePlugin(outputOptions).apply(childCompiler);
+  new NodeTemplatePlugin().apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
 
   const { EntryOptionPlugin } = webpack;
