@@ -1103,27 +1103,55 @@ class MiniCssExtractPlugin {
                     hasCssMatcher === true ? "true" : hasCssMatcher("chunkId")
                   }) {`,
                   Template.indent([
-                    "installedCssChunks[chunkId] = null;",
-                    linkPrefetch.call(
-                      Template.asString([
-                        "var link = document.createElement('link');",
-                        crossOriginLoading
-                          ? `link.crossOrigin = ${JSON.stringify(
-                              crossOriginLoading
-                            )};`
-                          : "",
-                        `if (${RuntimeGlobals.scriptNonce}) {`,
-                        Template.indent(
-                          `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
-                        ),
-                        "}",
-                        'link.rel = "prefetch";',
-                        'link.as = "style";',
-                        `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
+                    `var getLinkElements = function (rel, as) {`,
+                    Template.indent([
+                      `var links = document.getElementsByTagName("link");`,
+                      `var loadedLinks = [];`,
+                      `for (var i = 0; i < links.length; i++) {`,
+                      Template.indent([
+                        `if (`,
+                        Template.indent([
+                          `links[i].getAttribute("rel") === rel &&`,
+                          `links[i].getAttribute("as") === as`,
+                        ]),
+                        `) {`,
+                        Template.indent([
+                          `loadedLinks.push(links[i].getAttribute("href"));`,
+                        ]),
+                        `}`,
                       ]),
-                      chunk
-                    ),
-                    "document.head.appendChild(link);",
+                      `}`,
+                      `return loadedLinks;`,
+                    ]),
+                    `};`,
+                    "",
+                    `var loadedPreloadLinkElements = getLinkElements("preload", "style");`,
+                    `var chunkIdHref = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
+                    `if(!loadedPreloadLinkElements.includes(chunkIdHref)) {`,
+                    Template.indent([
+                      "installedCssChunks[chunkId] = null;",
+                      linkPrefetch.call(
+                        Template.asString([
+                          "var link = document.createElement('link');",
+                          crossOriginLoading
+                            ? `link.crossOrigin = ${JSON.stringify(
+                                crossOriginLoading
+                              )};`
+                            : "",
+                          `if (${RuntimeGlobals.scriptNonce}) {`,
+                          Template.indent(
+                            `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
+                          ),
+                          "}",
+                          'link.rel = "prefetch";',
+                          'link.as = "style";',
+                          `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
+                        ]),
+                        chunk
+                      ),
+                      "document.head.appendChild(link);",
+                    ]),
+                    `}`,
                   ]),
                   "}",
                 ])};`
