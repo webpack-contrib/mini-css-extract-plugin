@@ -4,6 +4,11 @@ const path = require("path");
 
 const { validate } = require("schema-utils");
 
+// @ts-ignore
+const JsonpChunkLoadingRuntimeModule = require("webpack/lib/web/JsonpChunkLoadingRuntimeModule");
+// @ts-ignore
+const compileBooleanMatcher = require("webpack/lib/util/compileBooleanMatcher");
+
 const schema = require("./plugin-options.json");
 const {
   trueFn,
@@ -807,6 +812,22 @@ class MiniCssExtractPlugin {
 
         return obj;
       };
+      // @ts-ignore
+      function chunkHasCss(chunk, chunkGraph) {
+        // this function replace:
+        // const chunkHasCss = require("webpack/lib/css/CssModulesPlugin").chunkHasCss;
+        return (
+          !!chunkGraph.getChunkModulesIterableBySourceType(chunk, "css") ||
+          !!chunkGraph.getChunkModulesIterableBySourceType(
+            chunk,
+            "css-import"
+          ) ||
+          !!chunkGraph.getChunkModulesIterableBySourceType(
+            chunk,
+            "css/mini-extract"
+          )
+        );
+      }
 
       class CssLoadingRuntimeModule extends RuntimeModule {
         /**
@@ -821,18 +842,28 @@ class MiniCssExtractPlugin {
         }
 
         generate() {
-          const { chunk, runtimeRequirements } = this;
+          const { chunkGraph, chunk, runtimeRequirements } = this;
           const {
             runtimeTemplate,
             outputOptions: { crossOriginLoading },
           } = this.compilation;
           const chunkMap = getCssChunkObject(chunk, this.compilation);
+          const { linkPrefetch } =
+            JsonpChunkLoadingRuntimeModule.getCompilationHooks(compilation);
+          const conditionMap = chunkGraph.getChunkConditionMap(
+            chunk,
+            chunkHasCss
+          );
+          const hasCssMatcher = compileBooleanMatcher(conditionMap);
 
           const withLoading =
             runtimeRequirements.has(RuntimeGlobals.ensureChunkHandlers) &&
             Object.keys(chunkMap).length > 0;
           const withHmr = runtimeRequirements.has(
             RuntimeGlobals.hmrDownloadUpdateHandlers
+          );
+          const withPrefetch = runtimeRequirements.has(
+            RuntimeGlobals.prefetchChunkHandlers
           );
 
           if (!withLoading && !withHmr) {
@@ -1037,6 +1068,42 @@ class MiniCssExtractPlugin {
                   )}`,
                 ])
               : "// no hmr",
+            "",
+            withPrefetch && hasCssMatcher !== false
+              ? `${
+                  RuntimeGlobals.prefetchChunkHandlers
+                }.miniCss = ${runtimeTemplate.basicFunction("chunkId", [
+                  `if((!${
+                    RuntimeGlobals.hasOwnProperty
+                  }(installedCssChunks, chunkId) || installedCssChunks[chunkId] === undefined) && ${
+                    hasCssMatcher === true ? "true" : hasCssMatcher("chunkId")
+                  }) {`,
+                  Template.indent([
+                    "installedCssChunks[chunkId] = null;",
+                    linkPrefetch.call(
+                      Template.asString([
+                        "var link = document.createElement('link');",
+                        crossOriginLoading
+                          ? `link.crossOrigin = ${JSON.stringify(
+                              crossOriginLoading
+                            )};`
+                          : "",
+                        `if (${RuntimeGlobals.scriptNonce}) {`,
+                        Template.indent(
+                          `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
+                        ),
+                        "}",
+                        'link.rel = "prefetch";',
+                        'link.as = "style";',
+                        `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
+                      ]),
+                      chunk
+                    ),
+                    "document.head.appendChild(link);",
+                  ]),
+                  "}",
+                ])};`
+              : "// no prefetching",
           ]);
         }
       }
