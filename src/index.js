@@ -848,7 +848,7 @@ class MiniCssExtractPlugin {
             outputOptions: { crossOriginLoading },
           } = this.compilation;
           const chunkMap = getCssChunkObject(chunk, this.compilation);
-          const { linkPrefetch } =
+          const { linkPreload, linkPrefetch } =
             JsonpChunkLoadingRuntimeModule.getCompilationHooks(compilation);
           const conditionMap = chunkGraph.getChunkConditionMap(
             chunk,
@@ -864,6 +864,9 @@ class MiniCssExtractPlugin {
           );
           const withPrefetch = runtimeRequirements.has(
             RuntimeGlobals.prefetchChunkHandlers
+          );
+          const withPreload = runtimeRequirements.has(
+            RuntimeGlobals.preloadChunkHandlers
           );
 
           if (!withLoading && !withHmr) {
@@ -1104,6 +1107,51 @@ class MiniCssExtractPlugin {
                   "}",
                 ])};`
               : "// no prefetching",
+            "",
+            withPreload && hasCssMatcher !== false
+              ? `${
+                  RuntimeGlobals.preloadChunkHandlers
+                }.miniCss = ${runtimeTemplate.basicFunction("chunkId", [
+                  `if((!${
+                    RuntimeGlobals.hasOwnProperty
+                  }(installedCssChunks, chunkId) || installedCssChunks[chunkId] === undefined) && ${
+                    hasCssMatcher === true ? "true" : hasCssMatcher("chunkId")
+                  }) {`,
+                  Template.indent([
+                    "installedCssChunks[chunkId] = null;",
+                    linkPreload.call(
+                      Template.asString([
+                        "var link = document.createElement('link');",
+                        "link.charset = 'utf-8';",
+                        `if (${RuntimeGlobals.scriptNonce}) {`,
+                        Template.indent(
+                          `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
+                        ),
+                        "}",
+                        'link.rel = "preload";',
+                        'link.as = "style";',
+                        `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
+                        crossOriginLoading
+                          ? crossOriginLoading === "use-credentials"
+                            ? 'link.crossOrigin = "use-credentials";'
+                            : Template.asString([
+                                "if (link.href.indexOf(window.location.origin + '/') !== 0) {",
+                                Template.indent(
+                                  `link.crossOrigin = ${JSON.stringify(
+                                    crossOriginLoading
+                                  )};`
+                                ),
+                                "}",
+                              ])
+                          : "",
+                      ]),
+                      chunk
+                    ),
+                    "document.head.appendChild(link);",
+                  ]),
+                  "}",
+                ])};`
+              : "// no preloaded",
           ]);
         }
       }
