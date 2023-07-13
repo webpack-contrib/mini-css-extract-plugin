@@ -845,9 +845,10 @@ class MiniCssExtractPlugin {
           const { chunkGraph, chunk, runtimeRequirements } = this;
           const {
             runtimeTemplate,
-            outputOptions: { crossOriginLoading },
+            outputOptions: { chunkLoadingGlobal, crossOriginLoading },
           } = this.compilation;
           const chunkMap = getCssChunkObject(chunk, this.compilation);
+          const globalObject = runtimeTemplate.globalObject;
           const { linkPreload, linkPrefetch } =
             JsonpChunkLoadingRuntimeModule.getCompilationHooks(compilation);
           const conditionMap = chunkGraph.getChunkConditionMap(
@@ -868,6 +869,9 @@ class MiniCssExtractPlugin {
           const withPreload = runtimeRequirements.has(
             RuntimeGlobals.preloadChunkHandlers
           );
+          const chunkLoadingGlobalExpr = `${globalObject}[${JSON.stringify(
+            chunkLoadingGlobal
+          )}]`;
 
           if (!withLoading && !withHmr) {
             return "";
@@ -992,6 +996,23 @@ class MiniCssExtractPlugin {
                       .join(",\n")
                   ),
                   "};",
+                  "",
+                  `var webpackJsonpCallback = ${runtimeTemplate.basicFunction(
+                    "parentChunkLoadingFunction, data",
+                    [
+                      runtimeTemplate.destructureArray(["chunkIds"], "data"),
+                      "for(var i=0;i < chunkIds.length; i++) {",
+                      Template.indent([
+                        "var chunkId = chunkIds[i];",
+                        "installedCssChunks[chunkId] = 0;",
+                      ]),
+                      "}",
+                    ]
+                  )}`,
+                  "",
+                  `var chunkLoadingGlobal = ${chunkLoadingGlobalExpr} = ${chunkLoadingGlobalExpr} || [];`,
+                  "chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));",
+                  "chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));",
                   "",
                   `${
                     RuntimeGlobals.ensureChunkHandlers
@@ -1212,6 +1233,12 @@ class MiniCssExtractPlugin {
         .tap(pluginName, handler);
       compilation.hooks.runtimeRequirementInTree
         .for(RuntimeGlobals.hmrDownloadUpdateHandlers)
+        .tap(pluginName, handler);
+      compilation.hooks.runtimeRequirementInTree
+        .for(RuntimeGlobals.prefetchChunkHandlers)
+        .tap(pluginName, handler);
+      compilation.hooks.runtimeRequirementInTree
+        .for(RuntimeGlobals.preloadChunkHandlers)
         .tap(pluginName, handler);
     });
   }
