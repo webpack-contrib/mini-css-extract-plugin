@@ -15,6 +15,7 @@ const {
   getUndoPath,
   BASE_URI,
 } = require("./utils");
+const { getCompilationHooks } = require("./hooks");
 
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
 /** @typedef {import("webpack").Compiler} Compiler */
@@ -514,6 +515,14 @@ class MiniCssExtractPlugin {
   }
 
   /**
+   * Returns all hooks for the given compilation
+   * @param {Compilation} compilation
+   */
+  static getCompilationHooks(compilation) {
+    return getCompilationHooks(compilation);
+  }
+
+  /**
    * @param {PluginOptions} [options]
    */
   constructor(options = {}) {
@@ -843,7 +852,6 @@ class MiniCssExtractPlugin {
           if (!withLoading && !withHmr) {
             return "";
           }
-
           return Template.asString([
             'if (typeof document === "undefined") return;',
             `var createStylesheet = ${runtimeTemplate.basicFunction(
@@ -902,6 +910,15 @@ class MiniCssExtractPlugin {
                       "}",
                     ])
                   : "",
+                MiniCssExtractPlugin.getCompilationHooks(
+                  compilation
+                ).beforeTagInsert.call("", {
+                  tag: "linkTag",
+                  chunkId: "chunkId",
+                  href: "fullhref",
+                  resolve: "resolve",
+                  reject: "reject",
+                }) || "",
                 typeof this.runtimeOptions.insert !== "undefined"
                   ? typeof this.runtimeOptions.insert === "function"
                     ? `(${this.runtimeOptions.insert.toString()})(linkTag)`
