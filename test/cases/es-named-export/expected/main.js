@@ -7,14 +7,16 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   aClass: () => (/* binding */ aClass),
-/* harmony export */   bClass: () => (/* binding */ bClass),
-/* harmony export */   cClass: () => (/* binding */ cClass)
+/* harmony export */   aClass: () => (/* binding */ _1),
+/* harmony export */   bClass: () => (/* binding */ _2),
+/* harmony export */   cClass: () => (/* binding */ _3)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
-var aClass = "foo__style__a-class";
-var bClass = "foo__style__b__class";
-var cClass = "foo__style__cClass";
+var _1 = "foo__style__a-class";
+var _2 = "foo__style__b__class";
+var _3 = "foo__style__cClass";;
+
+
 
 /***/ })
 /******/ 	]);

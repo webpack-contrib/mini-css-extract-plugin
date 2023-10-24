@@ -242,23 +242,39 @@ function pitch(request) {
       return;
     }
 
-    const result = locals
-      ? namedExport
-        ? Object.keys(locals)
+    const result = (function makeResult() {
+      // nb: `locals` is reassigned to const to improve TypeScript narrowing.
+      const scopeLocals = locals;
+      if (scopeLocals) {
+        if (namedExport) {
+          const identifiers = Array.from(
+            (function* generateIdentifiers() {
+              let identifierId = 0;
+              for (const key of Object.keys(scopeLocals)) {
+                identifierId += 1;
+                yield [`_${identifierId.toString(16)}`, key];
+              }
+            })()
+          );
+          const localsString = identifiers
             .map(
-              (key) =>
-                `\nexport var ${key} = ${stringifyLocal(
-                  /** @type {Locals} */ (locals)[key]
-                )};`
+              ([id, key]) =>
+                `\nvar ${id} = ${stringifyLocal(scopeLocals[key])};`
             )
-            .join("")
-        : `\n${
-            esModule ? "export default" : "module.exports ="
-          } ${JSON.stringify(locals)};`
-      : esModule
-      ? `\nexport {};`
-      : "";
-
+            .join("");
+          const exportsString = `export { ${identifiers
+            .map(([id, key]) => `${id} as ${JSON.stringify(key)}`)
+            .join(", ")} }`;
+          return `${localsString};\n${exportsString};\n`;
+        }
+        return `\n${
+          esModule ? "export default" : "module.exports = "
+        } ${JSON.stringify(locals)};`;
+      } else if (esModule) {
+        return "\nexport {};";
+      }
+      return "";
+    })();
     let resultSource = `// extracted by ${MiniCssExtractPlugin.pluginName}`;
 
     // only attempt hotreloading if the css is actually used for something other than hash values

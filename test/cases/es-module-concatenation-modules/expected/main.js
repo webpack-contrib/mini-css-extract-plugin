@@ -41,21 +41,21 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, {
   a: () => (/* reexport */ a_namespaceObject),
   b: () => (/* reexport */ b_namespaceObject),
-  c: () => (/* reexport */ c)
+  c: () => (/* reexport */ c_1)
 });
 
 // NAMESPACE OBJECT: ./a.css
 var a_namespaceObject = {};
 __webpack_require__.r(a_namespaceObject);
 __webpack_require__.d(a_namespaceObject, {
-  a: () => (a)
+  a: () => (_1)
 });
 
 // NAMESPACE OBJECT: ./b.css
 var b_namespaceObject = {};
 __webpack_require__.r(b_namespaceObject);
 __webpack_require__.d(b_namespaceObject, {
-  b: () => (b)
+  b: () => (b_1)
 });
 
 // NAMESPACE OBJECT: ./index.js
@@ -64,18 +64,24 @@ __webpack_require__.r(index_namespaceObject);
 __webpack_require__.d(index_namespaceObject, {
   a: () => (a_namespaceObject),
   b: () => (b_namespaceObject),
-  c: () => (c)
+  c: () => (c_1)
 });
 
 ;// CONCATENATED MODULE: ./a.css
 // extracted by mini-css-extract-plugin
-var a = "foo__a";
+var _1 = "foo__a";;
+
+
 ;// CONCATENATED MODULE: ./b.css
 // extracted by mini-css-extract-plugin
-var b = "foo__b";
+var b_1 = "foo__b";;
+
+
 ;// CONCATENATED MODULE: ./c.css
 // extracted by mini-css-extract-plugin
-var c = "foo__c";
+var c_1 = "foo__c";;
+
+
 ;// CONCATENATED MODULE: ./index.js
 /* eslint-disable import/no-namespace */
 
