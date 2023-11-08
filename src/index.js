@@ -650,6 +650,16 @@ class MiniCssExtractPlugin {
           };
         }
       );
+
+      class CssDependencyTemplate {
+        // eslint-disable-next-line class-methods-use-this
+        apply() {}
+      }
+
+      compilation.dependencyTemplates.set(
+        CssDependency,
+        new CssDependencyTemplate()
+      );
     });
 
     compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
@@ -671,16 +681,6 @@ class MiniCssExtractPlugin {
       compilation.dependencyFactories.set(
         CssDependency,
         new CssModuleFactory()
-      );
-
-      class CssDependencyTemplate {
-        // eslint-disable-next-line class-methods-use-this
-        apply() {}
-      }
-
-      compilation.dependencyTemplates.set(
-        CssDependency,
-        new CssDependencyTemplate()
       );
 
       compilation.hooks.renderManifest.tap(
