@@ -19,7 +19,7 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: "[name].css",
+      filename: "[name].extract.css",
     }),
   ],
 };
