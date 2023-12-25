@@ -75,7 +75,10 @@ function pitch(request) {
     this._compiler.options.experiments &&
     this._compiler.options.experiments.css &&
     this._module &&
-    this._module.type === "css"
+    (this._module.type === "css" ||
+      this._module.type === "css/auto" ||
+      this._module.type === "css/global" ||
+      this._module.type === "css/module")
   ) {
     this.emitWarning(
       new Error(
@@ -373,6 +376,7 @@ function pitch(request) {
   const { NodeTemplatePlugin } = webpack.node;
   const { NodeTargetPlugin } = webpack.node;
 
+  // @ts-ignore
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
 
@@ -517,7 +521,10 @@ function loader(content) {
     this._compiler.options.experiments &&
     this._compiler.options.experiments.css &&
     this._module &&
-    this._module.type === "css"
+    (this._module.type === "css" ||
+      this._module.type === "css/auto" ||
+      this._module.type === "css/global" ||
+      this._module.type === "css/module")
   ) {
     return content;
   }
