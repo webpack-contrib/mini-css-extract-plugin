@@ -3,6 +3,7 @@
  */
 
 import path from "path";
+import fs from "fs";
 
 import webpack from "webpack";
 import del from "del";
@@ -266,6 +267,9 @@ describe("TestCache", () => {
       });
     });
 
+    console.log(fs.readdirSync(fileSystemCacheDirectory));
+    console.log(fs.readdirSync(outputPath));
+
     const compiler2 = webpack({
       ...webpackConfig,
       mode: "development",
@@ -273,8 +277,6 @@ describe("TestCache", () => {
       cache: {
         type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
-        idleTimeout: 0,
-        idleTimeoutForInitialStore: 0,
       },
       output: {
         path: outputPath,
