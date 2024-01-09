@@ -3,7 +3,6 @@
  */
 
 import path from "path";
-import fs from "fs";
 
 import webpack from "webpack";
 import del from "del";
@@ -245,6 +244,8 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
+          // eslint-disable-next-line no-console
+          console.log(stats.toString());
           expect(Object.keys(stats.compilation.assets).sort())
             .toMatchInlineSnapshot(`
             Array [
@@ -266,9 +267,6 @@ describe("TestCache", () => {
         });
       });
     });
-
-    console.log(fs.readdirSync(fileSystemCacheDirectory));
-    console.log(fs.readdirSync(outputPath));
 
     const compiler2 = webpack({
       ...webpackConfig,
@@ -292,6 +290,9 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
+          // eslint-disable-next-line no-console
+          console.log(stats.toString());
+
           expect(Object.keys(stats.compilation.assets).sort())
             .toMatchInlineSnapshot(`
             Array [
