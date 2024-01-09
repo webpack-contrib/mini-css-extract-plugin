@@ -227,8 +227,6 @@ describe("TestCache", () => {
       cache: {
         type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
-        idleTimeout: 0,
-        idleTimeoutForInitialStore: 0,
       },
       output: {
         path: outputPath,
