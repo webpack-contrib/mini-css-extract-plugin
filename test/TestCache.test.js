@@ -428,7 +428,7 @@ describe("TestCache", () => {
     );
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      "./js/.cache/type-filesystem"
+      "./js/.cache/type-filesystem-asset-modules"
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
@@ -539,7 +539,7 @@ describe("TestCache", () => {
     );
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      "./js/.cache/type-filesystem"
+      "./js/.cache/type-filesystem-file-loader"
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
