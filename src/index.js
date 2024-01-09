@@ -1372,7 +1372,7 @@ class MiniCssExtractPlugin {
           // insert media into the @import
           // this is rar
           // TODO improve this and parse the CSS to support multiple medias
-          content = content.replace(/;|\s*$/, module.media);
+          content = content.replace(/;|\s*$/, `${module.media};`);
         }
 
         externalsSource.add(content);
