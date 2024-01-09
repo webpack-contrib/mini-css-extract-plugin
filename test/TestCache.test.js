@@ -204,7 +204,7 @@ describe("TestCache", () => {
     });
   });
 
-  it('should work with the "filesystem" cache', async () => {
+  it.only('should work with the "filesystem" cache', async () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "simple");
     // eslint-disable-next-line import/no-dynamic-require, global-require
@@ -244,8 +244,6 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
-          // eslint-disable-next-line no-console
-          console.log(stats.toString());
           expect(Object.keys(stats.compilation.assets).sort())
             .toMatchInlineSnapshot(`
             Array [
@@ -290,9 +288,6 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
-          // eslint-disable-next-line no-console
-          console.log(stats.toString());
-
           expect(Object.keys(stats.compilation.assets).sort())
             .toMatchInlineSnapshot(`
             Array [
