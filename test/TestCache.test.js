@@ -3,6 +3,7 @@
  */
 
 import path from "path";
+import fs from "fs";
 
 import webpack from "webpack";
 import del from "del";
@@ -242,6 +243,12 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
+          console.log(
+            `"${fs
+              .readFileSync(path.resolve(outputPath, "main.css"))
+              .toString()}"`
+          );
+
           expect(Object.keys(stats.compilation.assets).sort())
             .toMatchInlineSnapshot(`
             Array [
@@ -286,6 +293,12 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
+          console.log(
+            `"${fs
+              .readFileSync(path.resolve(outputPath, "main.css"))
+              .toString()}"`
+          );
+
           expect(Object.keys(stats.compilation.assets).sort())
             .toMatchInlineSnapshot(`
             Array [
