@@ -880,6 +880,7 @@ class MiniCssExtractPlugin {
                     "var realHref = event && event.target && event.target.href || fullhref;",
                     'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + errorType + ": " + realHref + ")");',
                     'err.name = "ChunkLoadError";',
+                    // TODO remove `code` in the future major release to align with webpack
                     'err.code = "CSS_CHUNK_LOAD_FAILED";',
                     "err.type = errorType;",
                     "err.request = realHref;",
