@@ -3,7 +3,6 @@
  */
 
 import path from "path";
-import fs from "fs";
 
 import webpack from "webpack";
 import del from "del";
@@ -219,11 +218,6 @@ describe("TestCache", () => {
       "./js/.cache/type-filesystem"
     );
 
-    let buf1;
-    let buf2;
-    let buf3;
-    let buf4;
-
     await del([outputPath, fileSystemCacheDirectory]);
 
     const compiler1 = webpack({
@@ -233,6 +227,8 @@ describe("TestCache", () => {
       cache: {
         type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
+        idleTimeout: 0,
+        idleTimeoutForInitialStore: 0,
       },
       output: {
         path: outputPath,
@@ -248,9 +244,6 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
-          buf1 = fs.readFileSync(path.resolve(outputPath, "main.js"));
-          buf2 = fs.readFileSync(path.resolve(outputPath, "main.css"));
-
           expect(Object.keys(stats.compilation.assets).sort())
             .toMatchInlineSnapshot(`
             Array [
@@ -280,6 +273,8 @@ describe("TestCache", () => {
       cache: {
         type: "filesystem",
         cacheDirectory: fileSystemCacheDirectory,
+        idleTimeout: 0,
+        idleTimeoutForInitialStore: 0,
       },
       output: {
         path: outputPath,
@@ -295,12 +290,6 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
-          buf3 = fs.readFileSync(path.resolve(outputPath, "main.js"));
-          buf4 = fs.readFileSync(path.resolve(outputPath, "main.css"));
-
-          console.log(buf1.equals(buf3));
-          console.log(buf2.equals(buf4));
-
           expect(Object.keys(stats.compilation.assets).sort())
             .toMatchInlineSnapshot(`
             Array [
