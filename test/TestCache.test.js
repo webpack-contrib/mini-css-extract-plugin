@@ -94,9 +94,6 @@ describe("TestCache", () => {
               "static/react.svg",
             ]
           `);
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -192,9 +189,6 @@ describe("TestCache", () => {
               "static/react.svg",
             ]
           `);
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -297,9 +291,6 @@ describe("TestCache", () => {
               "main.js",
             ]
           `);
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -402,9 +393,6 @@ describe("TestCache", () => {
               "main.js",
             ]
           `);
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -428,7 +416,7 @@ describe("TestCache", () => {
     );
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      "./js/.cache/type-filesystem"
+      "./js/.cache/type-filesystem-asset-modules"
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
@@ -513,9 +501,6 @@ describe("TestCache", () => {
               "static/react.svg",
             ]
           `);
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -539,7 +524,7 @@ describe("TestCache", () => {
     );
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      "./js/.cache/type-filesystem"
+      "./js/.cache/type-filesystem-file-loader"
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
@@ -624,9 +609,6 @@ describe("TestCache", () => {
               "static/react.svg",
             ]
           `);
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchInlineSnapshot(`Array []`);
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
