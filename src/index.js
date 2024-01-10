@@ -1368,11 +1368,32 @@ class MiniCssExtractPlugin {
 
         // HACK for IE
         // http://stackoverflow.com/a/14676665/1458162
-        if (module.media) {
+        if (
+          module.media ||
+          module.supports ||
+          typeof module.layer !== "undefined"
+        ) {
+          let atImportExtra = "";
+
+          const needLayer = typeof module.layer !== "undefined";
+
+          if (needLayer) {
+            atImportExtra +=
+              module.layer.length > 0 ? ` layer(${module.layer})` : " layer";
+          }
+
+          if (module.supports) {
+            atImportExtra += ` supports(${module.supports})`;
+          }
+
+          if (module.media) {
+            atImportExtra += ` ${module.media}`;
+          }
+
           // insert media into the @import
           // this is rar
           // TODO improve this and parse the CSS to support multiple medias
-          content = content.replace(/;|\s*$/, `${module.media};`);
+          content = content.replace(/;|\s*$/, `${atImportExtra};`);
         }
 
         externalsSource.add(content);
