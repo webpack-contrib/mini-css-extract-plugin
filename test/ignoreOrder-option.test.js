@@ -7,10 +7,9 @@ describe("IgnoreOrder", () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "ignoreOrderFalse");
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfig = require(path.resolve(
-      directoryForCase,
-      "webpack.config.js"
-    ));
+    const webpackConfig = require(
+      path.resolve(directoryForCase, "webpack.config.js"),
+    );
     const compiler = webpack({
       ...webpackConfig,
       mode: "development",
@@ -27,10 +26,9 @@ describe("IgnoreOrder", () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "ignoreOrder");
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfig = require(path.resolve(
-      directoryForCase,
-      "webpack.config.js"
-    ));
+    const webpackConfig = require(
+      path.resolve(directoryForCase, "webpack.config.js"),
+    );
     const compiler = webpack({
       ...webpackConfig,
       mode: "development",

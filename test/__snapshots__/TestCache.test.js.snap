@@ -1,0 +1,139 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TestCache should work with the "filesystem" cache #2 1`] = `
+[
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache #2 2`] = `
+[
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache #2 3`] = `
+[
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache 1`] = `
+[
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache 2`] = `
+[
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache 3`] = `
+[
+  "main.css",
+  "main.js",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and asset modules 1`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and asset modules 2`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and asset modules 3`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and file-loader 1`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and file-loader 2`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "filesystem" cache and file-loader 3`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "memory" cache 1`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "memory" cache 2`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work with the "memory" cache 3`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work without cache 1`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work without cache 2`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;
+
+exports[`TestCache should work without cache 3`] = `
+[
+  "main.css",
+  "main.js",
+  "static/react.svg",
+]
+`;

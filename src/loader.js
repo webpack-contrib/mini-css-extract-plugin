@@ -53,11 +53,11 @@ function hotLoader(content, context) {
       // ${Date.now()}
       var cssReload = require(${stringifyRequest(
         context.loaderContext,
-        path.join(__dirname, "hmr/hotModuleReplacement.js")
+        path.join(__dirname, "hmr/hotModuleReplacement.js"),
       )})(module.id, ${JSON.stringify({
-    ...context.options,
-    locals: !!context.locals,
-  })});
+        ...context.options,
+        locals: !!context.locals,
+      })});
       module.hot.dispose(cssReload);
       ${accept}
     }
@@ -82,8 +82,8 @@ function pitch(request) {
   ) {
     this.emitWarning(
       new Error(
-        'You can\'t use `experiments.css` (`experiments.futureDefaults` enable built-in CSS support by default) and `mini-css-extract-plugin` together, please set `experiments.css` to `false` or set `{ type: "javascript/auto" }` for rules with `mini-css-extract-plugin` in your webpack config (now `mini-css-extract-plugin` does nothing).'
-      )
+        'You can\'t use `experiments.css` (`experiments.futureDefaults` enable built-in CSS support by default) and `mini-css-extract-plugin` together, please set `experiments.css` to `false` or set `{ type: "javascript/auto" }` for rules with `mini-css-extract-plugin` in your webpack config (now `mini-css-extract-plugin` does nothing).',
+      ),
     );
 
     return;
@@ -100,8 +100,8 @@ function pitch(request) {
   if (!optionsFromPlugin) {
     callback(
       new Error(
-        "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
-      )
+        "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started",
+      ),
     );
 
     return;
@@ -131,8 +131,8 @@ function pitch(request) {
       if (!Array.isArray(dependencies) && dependencies != null) {
         throw new Error(
           `Exported value was not extracted as an array: ${JSON.stringify(
-            dependencies
-          )}`
+            dependencies,
+          )}`,
         );
       }
 
@@ -147,7 +147,7 @@ function pitch(request) {
 
         const count =
           identifierCountMap.get(
-            /** @type {Dependency} */ (dependency).identifier
+            /** @type {Dependency} */ (dependency).identifier,
           ) || 0;
         const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
@@ -158,13 +158,13 @@ function pitch(request) {
             (dependency),
             /** @type {Dependency} */
             (dependency).context,
-            count
-          ))
+            count,
+          )),
         );
         identifierCountMap.set(
           /** @type {Dependency} */
           (dependency).identifier,
-          count + 1
+          count + 1,
         );
       }
 
@@ -234,7 +234,7 @@ function pitch(request) {
                 : // eslint-disable-next-line no-undefined
                   undefined,
             };
-          }
+          },
         );
       }
 
@@ -251,16 +251,16 @@ function pitch(request) {
             .map(
               (key) =>
                 `\nexport var ${key} = ${stringifyLocal(
-                  /** @type {Locals} */ (locals)[key]
-                )};`
+                  /** @type {Locals} */ (locals)[key],
+                )};`,
             )
             .join("")
         : `\n${
             esModule ? "export default" : "module.exports ="
           } ${JSON.stringify(locals)};`
       : esModule
-      ? `\nexport {};`
-      : "";
+        ? `\nexport {};`
+        : "";
 
     let resultSource = `// extracted by ${MiniCssExtractPlugin.pluginName}`;
 
@@ -296,8 +296,8 @@ function pitch(request) {
     if (!this.importModule) {
       callback(
         new Error(
-          "You are using 'experimentalUseImportModule' but 'this.importModule' is not available in loader context. You need to have at least webpack 5.33.2."
-        )
+          "You are using 'experimentalUseImportModule' but 'this.importModule' is not available in loader context. You need to have at least webpack 5.33.2.",
+        ),
       );
       return;
     }
@@ -306,14 +306,14 @@ function pitch(request) {
 
     if (typeof publicPath === "string") {
       const isAbsolutePublicPath = /^[a-zA-Z][a-zA-Z\d+\-.]*?:/.test(
-        publicPath
+        publicPath,
       );
 
       publicPathForExtract = isAbsolutePublicPath
         ? publicPath
         : `${ABSOLUTE_PUBLIC_PATH}${publicPath.replace(
             /\./g,
-            SINGLE_DOT_PATH_SEGMENT
+            SINGLE_DOT_PATH_SEGMENT,
           )}`;
     } else {
       publicPathForExtract = publicPath;
@@ -338,7 +338,7 @@ function pitch(request) {
         }
 
         handleExports(exports);
-      }
+      },
     );
     return;
   }
@@ -358,7 +358,7 @@ function pitch(request) {
     /** @type {Compilation} */
     (this._compilation).createChildCompiler(
       `${MiniCssExtractPlugin.pluginName} ${request}`,
-      outputOptions
+      outputOptions,
     );
 
   // The templates are compiled and executed by NodeJS - similar to server side rendering
@@ -425,9 +425,9 @@ function pitch(request) {
               };
             });
           }
-        }
+        },
       );
-    }
+    },
   );
 
   /** @type {string | Buffer} */
@@ -452,9 +452,9 @@ function pitch(request) {
               compilation.deleteAsset(file);
             });
           });
-        }
+        },
       );
-    }
+    },
   );
 
   childCompiler.runAsChild((error, entries, compilation) => {

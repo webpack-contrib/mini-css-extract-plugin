@@ -32,12 +32,12 @@ describe("emit option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      "assets"
+      "assets",
     );
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
@@ -60,12 +60,12 @@ describe("emit option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      "assets"
+      "assets",
     );
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
@@ -87,12 +87,12 @@ describe("emit option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      "assets"
+      "assets",
     );
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
@@ -133,7 +133,7 @@ describe("emit option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -163,7 +163,7 @@ describe("emit option", () => {
             fs.writeFileSync(this.options.file, newContent);
 
             callback();
-          }
+          },
         );
       }
     }
@@ -224,10 +224,10 @@ describe("emit option", () => {
 
         compiler1.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            `assets`,
           );
           expect(
-            Array.from(stats.compilation.emittedAssets).sort()
+            Array.from(stats.compilation.emittedAssets).sort(),
           ).toMatchSnapshot(`emittedAssets`);
           runInJsDom("main.js", compiler1, stats, (dom) => {
             expect(dom.serialize()).toMatchSnapshot("DOM");
@@ -252,10 +252,10 @@ describe("emit option", () => {
 
         compiler2.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            `assets`,
           );
           expect(
-            Array.from(stats.compilation.emittedAssets).sort()
+            Array.from(stats.compilation.emittedAssets).sort(),
           ).toMatchSnapshot(`emittedAssets`);
           runInJsDom("main.js", compiler2, stats, (dom) => {
             expect(dom.serialize()).toMatchSnapshot("DOM");
@@ -327,10 +327,10 @@ describe("emit option", () => {
 
         compiler1.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            `assets`,
           );
           expect(
-            Array.from(stats.compilation.emittedAssets).sort()
+            Array.from(stats.compilation.emittedAssets).sort(),
           ).toMatchSnapshot(`emittedAssets`);
           expect(getWarnings(stats)).toMatchSnapshot("warnings");
           expect(getErrors(stats)).toMatchSnapshot("errors");
@@ -352,10 +352,10 @@ describe("emit option", () => {
 
         compiler2.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            `assets`,
           );
           expect(
-            Array.from(stats.compilation.emittedAssets).sort()
+            Array.from(stats.compilation.emittedAssets).sort(),
           ).toMatchSnapshot(`emittedAssets`);
           expect(getWarnings(stats)).toMatchSnapshot("warnings");
           expect(getErrors(stats)).toMatchSnapshot("errors");
@@ -379,7 +379,7 @@ describe("emit option", () => {
             fs.writeFileSync(this.options.file, `.a{color: red;}`);
 
             callback();
-          }
+          },
         );
       }
     }
@@ -444,10 +444,10 @@ describe("emit option", () => {
 
         compiler1.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            `assets`,
           );
           expect(
-            Array.from(stats.compilation.emittedAssets).sort()
+            Array.from(stats.compilation.emittedAssets).sort(),
           ).toMatchSnapshot(`emittedAssets`);
           expect(getWarnings(stats)).toMatchSnapshot("warnings");
           expect(getErrors(stats)).toMatchSnapshot("errors");
@@ -469,10 +469,10 @@ describe("emit option", () => {
 
         compiler2.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            `assets`,
           );
           expect(
-            Array.from(stats.compilation.emittedAssets).sort()
+            Array.from(stats.compilation.emittedAssets).sort(),
           ).toMatchSnapshot(`emittedAssets`);
           expect(getWarnings(stats)).toMatchSnapshot("warnings");
           expect(getErrors(stats)).toMatchSnapshot("errors");

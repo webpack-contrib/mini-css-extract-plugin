@@ -122,8 +122,8 @@ function stringifyRequest(loaderContext, request) {
     return JSON.stringify(
       loaderContext.utils.contextify(
         loaderContext.context || loaderContext.rootContext,
-        request
-      )
+        request,
+      ),
     );
   }
 
@@ -156,7 +156,7 @@ function stringifyRequest(loaderContext, request) {
 
         return singlePath.replace(/\\/g, "/") + query;
       })
-      .join("!")
+      .join("!"),
   );
 }
 
@@ -201,8 +201,8 @@ function getUndoPath(filename, outputPath, enforceRelative) {
   return depth > 0
     ? `${"../".repeat(depth)}${append}`
     : enforceRelative
-    ? `./${append}`
-    : append;
+      ? `./${append}`
+      : append;
 }
 
 /**

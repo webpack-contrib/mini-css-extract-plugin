@@ -5,7 +5,7 @@ export = loader;
  */
 declare function loader(
   this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
-  content: string
+  content: string,
 ): string | undefined;
 declare namespace loader {
   export {
@@ -31,7 +31,7 @@ import MiniCssExtractPlugin = require("./index");
  */
 declare function pitch(
   this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
-  request: string
+  request: string,
 ): void;
 type Schema = import("schema-utils/declarations/validate").Schema;
 type Compiler = import("webpack").Compiler;
