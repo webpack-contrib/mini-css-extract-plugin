@@ -45,7 +45,7 @@ function compareDirectory(actual, expected) {
     if (stats.isDirectory()) {
       compareDirectory(
         path.resolve(actual, file),
-        path.resolve(expected, file)
+        path.resolve(expected, file),
       );
     } else if (stats.isFile()) {
       const content = fs.readFileSync(path.resolve(expected, file), "utf8");
@@ -104,10 +104,9 @@ describe("TestCases", () => {
         const directoryForCase = path.resolve(casesDirectory, directory);
         const outputDirectoryForCase = path.resolve(outputDirectory, directory);
         // eslint-disable-next-line import/no-dynamic-require, global-require
-        const webpackConfig = require(path.resolve(
-          directoryForCase,
-          "webpack.config.js"
-        ));
+        const webpackConfig = require(
+          path.resolve(directoryForCase, "webpack.config.js"),
+        );
         const { context } = webpackConfig;
 
         for (const config of [].concat(webpackConfig)) {
@@ -123,7 +122,7 @@ describe("TestCases", () => {
                 {
                   path: outputDirectoryForCase,
                 },
-                config.output
+                config.output,
               ),
               plugins:
                 config.plugins &&
@@ -141,7 +140,7 @@ describe("TestCases", () => {
                   return p;
                 }),
             },
-            context ? { context } : {}
+            context ? { context } : {},
           );
         }
 
@@ -162,7 +161,7 @@ describe("TestCases", () => {
               const filteredErrors = errors.filter(
                 // eslint-disable-next-line no-shadow
                 (error) =>
-                  !errorFilters.some((errorFilter) => errorFilter.test(error))
+                  !errorFilters.some((errorFilter) => errorFilter.test(error)),
               );
 
               if (filteredErrors.length > 0) {
@@ -188,8 +187,8 @@ describe("TestCases", () => {
                   context: path.resolve(__dirname, ".."),
                   errorDetails: true,
                   warnings: true,
-                })
-              )
+                }),
+              ),
             );
 
             return;
@@ -200,7 +199,7 @@ describe("TestCases", () => {
             expectedDirectory,
             `webpack-${webpack.version[0]}${
               yn(process.env.OLD_API) ? "" : "-importModule"
-            }`
+            }`,
           );
 
           if (/^hmr/.test(directory)) {
@@ -214,26 +213,26 @@ describe("TestCases", () => {
             res = res.replace(dateRegexp, "");
 
             const matchAll = res.match(
-              /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i
+              /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i,
             );
 
             const replacer = new Array(matchAll[1].length);
 
             res = res.replace(
               /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i,
-              `__webpack_require__.h = () => ("${replacer.fill("x").join("")}")`
+              `__webpack_require__.h = () => ("${replacer.fill("x").join("")}")`,
             );
 
             fs.writeFileSync(
               path.resolve(outputDirectoryForCase, "main.js"),
-              res
+              res,
             );
           }
 
           if (fs.existsSync(expectedDirectoryByVersion)) {
             compareDirectory(
               outputDirectoryForCase,
-              expectedDirectoryByVersion
+              expectedDirectoryByVersion,
             );
           } else if (fs.existsSync(expectedDirectory)) {
             compareDirectory(outputDirectoryForCase, expectedDirectory);
@@ -252,11 +251,11 @@ describe("TestCases", () => {
             expect(
               actualWarnings
                 .trim()
-                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!")
+                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!"),
             ).toBe(
               expectedWarnings
                 .trim()
-                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!")
+                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!"),
             );
           }
 

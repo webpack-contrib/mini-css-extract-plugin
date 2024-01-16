@@ -28,7 +28,7 @@ describe("insert option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -57,7 +57,7 @@ describe("insert option", () => {
             insert: "#existing-style",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -92,7 +92,7 @@ describe("insert option", () => {
             },
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 

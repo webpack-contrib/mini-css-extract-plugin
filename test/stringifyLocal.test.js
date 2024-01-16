@@ -19,7 +19,7 @@ describe("stringifyLocal", () => {
     };
 
     expect(stringifyLocal(testFn)).toBe(
-      'function testFn() {\n      return "classA";\n    }'
+      'function testFn() {\n      return "classA";\n    }',
     );
   });
 });

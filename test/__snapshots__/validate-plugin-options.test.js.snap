@@ -15,7 +15,7 @@ exports[`validate options should throw an error on the "chunkFilename" option wi
 
 exports[`validate options should throw an error on the "chunkFilename" option with "/styles/[id].css" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
- - options.chunkFilename: A relative path is expected. However, the provided value \\"/styles/[id].css\\" is an absolute path!"
+ - options.chunkFilename: A relative path is expected. However, the provided value "/styles/[id].css" is an absolute path!"
 `;
 
 exports[`validate options should throw an error on the "chunkFilename" option with "true" value 1`] = `
@@ -36,7 +36,7 @@ exports[`validate options should throw an error on the "filename" option with ""
 
 exports[`validate options should throw an error on the "filename" option with "/styles/[name].css" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
- - options.filename: A relative path is expected. However, the provided value \\"/styles/[name].css\\" is an absolute path!"
+ - options.filename: A relative path is expected. However, the provided value "/styles/[name].css" is an absolute path!"
 `;
 
 exports[`validate options should throw an error on the "filename" option with "true" value 1`] = `
@@ -93,44 +93,44 @@ exports[`validate options should throw an error on the "insert" option with "tru
 exports[`validate options should throw an error on the "linkType" option with "[]" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.linkType should be one of these:
-   \\"text/css\\" | boolean
+   "text/css" | boolean
    -> This option allows loading asynchronous chunks with a custom link type
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#linktype
    Details:
-    * options.linkType should be \\"text/css\\".
+    * options.linkType should be "text/css".
     * options.linkType should be a boolean."
 `;
 
 exports[`validate options should throw an error on the "linkType" option with "{}" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.linkType should be one of these:
-   \\"text/css\\" | boolean
+   "text/css" | boolean
    -> This option allows loading asynchronous chunks with a custom link type
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#linktype
    Details:
-    * options.linkType should be \\"text/css\\".
+    * options.linkType should be "text/css".
     * options.linkType should be a boolean."
 `;
 
 exports[`validate options should throw an error on the "linkType" option with "1" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.linkType should be one of these:
-   \\"text/css\\" | boolean
+   "text/css" | boolean
    -> This option allows loading asynchronous chunks with a custom link type
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#linktype
    Details:
-    * options.linkType should be \\"text/css\\".
+    * options.linkType should be "text/css".
     * options.linkType should be a boolean."
 `;
 
 exports[`validate options should throw an error on the "linkType" option with "invalid/type" value 1`] = `
 "Invalid options object. Mini CSS Extract Plugin has been initialized using an options object that does not match the API schema.
  - options.linkType should be one of these:
-   \\"text/css\\" | boolean
+   "text/css" | boolean
    -> This option allows loading asynchronous chunks with a custom link type
    -> Read more at https://github.com/webpack-contrib/mini-css-extract-plugin#linktype
    Details:
-    * options.linkType should be \\"text/css\\".
+    * options.linkType should be "text/css".
     * options.linkType should be a boolean."
 `;
 

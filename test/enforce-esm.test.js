@@ -9,13 +9,13 @@ it("should enforce esm for empty module without options.esModule", async () => {
     {
       mode: "production",
       optimization: { minimize: false },
-    }
+    },
   );
   const stats = await compile(compiler);
   expect(stats.hasErrors()).toBe(false);
   const { modules } = stats.toJson({ all: false, modules: true });
   expect(
-    modules.filter((m) => m.moduleType !== "runtime" && !m.orphan).length
+    modules.filter((m) => m.moduleType !== "runtime" && !m.orphan).length,
   ).toBe(2);
   expect(source("./simple.css", stats)).toMatchInlineSnapshot(`
     "// extracted by mini-css-extract-plugin
@@ -32,13 +32,13 @@ it("should enforce esm for empty module with options.esModule", async () => {
     {
       mode: "production",
       optimization: { minimize: false },
-    }
+    },
   );
   const stats = await compile(compiler);
   expect(stats.hasErrors()).toBe(false);
   const { modules } = stats.toJson({ all: false, modules: true });
   expect(
-    modules.filter((m) => m.moduleType !== "runtime" && !m.orphan).length
+    modules.filter((m) => m.moduleType !== "runtime" && !m.orphan).length,
   ).toBe(2);
   expect(source("./simple.css", stats)).toMatchInlineSnapshot(`
     "// extracted by mini-css-extract-plugin
@@ -55,15 +55,15 @@ it('should keep empty module when options.esModule is equal "false"', async () =
     {
       mode: "production",
       optimization: { minimize: false },
-    }
+    },
   );
   const stats = await compile(compiler);
   expect(stats.hasErrors()).toBe(false);
   const { modules } = stats.toJson({ all: false, modules: true });
   expect(
-    modules.filter((m) => m.moduleType !== "runtime" && !m.orphan).length
+    modules.filter((m) => m.moduleType !== "runtime" && !m.orphan).length,
   ).toBe(2);
   expect(source("./simple.css", stats)).toMatchInlineSnapshot(
-    `"// extracted by mini-css-extract-plugin"`
+    `"// extracted by mini-css-extract-plugin"`,
   );
 });

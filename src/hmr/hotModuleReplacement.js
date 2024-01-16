@@ -88,7 +88,7 @@ function getCurrentScriptUrl(moduleId) {
       const reg = new RegExp(`${filename}\\.js$`, "g");
 
       return normalizeUrl(
-        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`)
+        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`),
       );
     });
   };
@@ -176,7 +176,7 @@ function getReloadUrl(href, src) {
       if (href.indexOf(src) > -1) {
         ret = url;
       }
-    }
+    },
   );
 
   return ret;

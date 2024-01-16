@@ -27,7 +27,7 @@ function runInJsDom(assetName, compiler, stats, testFn) {
         resources: "usable",
         runScripts: "dangerously",
         virtualConsole,
-      }
+      },
     );
 
     dom.window.eval(bundle);

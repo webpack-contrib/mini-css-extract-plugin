@@ -67,14 +67,16 @@ makeButton(".lazy-module-button", () =>
       .querySelector(".lazy-css-module")
       // eslint-disable-next-line no-underscore-dangle
       .classList.add(module.__esModule ? module.default.style : module.style);
-  })
+  }),
 );
 
-makeButton(".preloaded-button1", () =>
-  import(/* webpackChunkName: "preloaded1" */ "./preloaded1")
+makeButton(
+  ".preloaded-button1",
+  () => import(/* webpackChunkName: "preloaded1" */ "./preloaded1"),
 );
-makeButton(".preloaded-button2", () =>
-  import(/* webpackChunkName: "preloaded2" */ "./preloaded2")
+makeButton(
+  ".preloaded-button2",
+  () => import(/* webpackChunkName: "preloaded2" */ "./preloaded2"),
 );
 
 makeButton(".lazy-failure-button", () => import("./lazy-failure"), false);
@@ -85,7 +87,7 @@ makeButton(".crossorigin", () => {
   const promise = import("./crossorigin").then(() => {
     const lastTwoElements = Array.from(document.head.children).slice(-2);
     const hasCrossorigin = lastTwoElements.every(
-      (element) => element.crossOrigin === "anonymous"
+      (element) => element.crossOrigin === "anonymous",
     );
     if (!hasCrossorigin) {
       throw new Error('Chunks miss crossorigin="anonymous" attribute.');

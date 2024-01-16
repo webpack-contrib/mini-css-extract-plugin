@@ -47,7 +47,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -70,7 +70,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -88,7 +88,7 @@ describe("HMR", () => {
 
       setTimeout(() => {
         const links2 = Array.prototype.slice.call(
-          document.querySelectorAll("link")
+          document.querySelectorAll("link"),
         );
 
         expect(links2[0].visited).toBe(true);
@@ -115,7 +115,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -140,7 +140,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -166,7 +166,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -193,7 +193,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -220,7 +220,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -247,7 +247,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -274,7 +274,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -300,7 +300,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -323,7 +323,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -350,7 +350,7 @@ describe("HMR", () => {
 
     setTimeout(() => {
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       links[1].dispatchEvent(getLoadEvent());

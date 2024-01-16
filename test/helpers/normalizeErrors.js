@@ -14,5 +14,5 @@ function removeCWD(str) {
 
 export default (errors) =>
   errors.map((error) =>
-    removeCWD(error.toString().split("\n").slice(0, 2).join("\n"))
+    removeCWD(error.toString().split("\n").slice(0, 2).join("\n")),
   );

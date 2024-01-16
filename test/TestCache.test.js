@@ -16,10 +16,9 @@ describe("TestCache", () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "asset-modules");
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfig = require(path.resolve(
-      directoryForCase,
-      "webpack.config.js"
-    ));
+    const webpackConfig = require(
+      path.resolve(directoryForCase, "webpack.config.js"),
+    );
     const outputPath = path.resolve(__dirname, "js/cache-false");
 
     await del([outputPath]);
@@ -43,22 +42,12 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
-          expect(Array.from(stats.compilation.emittedAssets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -86,14 +75,9 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -107,10 +91,9 @@ describe("TestCache", () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "asset-modules");
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfig = require(path.resolve(
-      directoryForCase,
-      "webpack.config.js"
-    ));
+    const webpackConfig = require(
+      path.resolve(directoryForCase, "webpack.config.js"),
+    );
     const outputPath = path.resolve(__dirname, "js/cache-memory");
 
     await del([outputPath]);
@@ -136,22 +119,12 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
-          expect(Array.from(stats.compilation.emittedAssets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -181,14 +154,9 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -202,14 +170,13 @@ describe("TestCache", () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "simple");
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfig = require(path.resolve(
-      directoryForCase,
-      "webpack.config.js"
-    ));
+    const webpackConfig = require(
+      path.resolve(directoryForCase, "webpack.config.js"),
+    );
     const outputPath = path.resolve(__dirname, "js/cache-filesystem");
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      "./js/.cache/type-filesystem"
+      "./js/.cache/type-filesystem",
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
@@ -238,20 +205,12 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-            ]
-          `);
-          expect(Array.from(stats.compilation.emittedAssets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -284,13 +243,9 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -304,14 +259,13 @@ describe("TestCache", () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "at-import-layer");
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfig = require(path.resolve(
-      directoryForCase,
-      "webpack.config.js"
-    ));
+    const webpackConfig = require(
+      path.resolve(directoryForCase, "webpack.config.js"),
+    );
     const outputPath = path.resolve(__dirname, "js/cache-filesystem-1");
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      "./js/.cache/type-filesystem-1"
+      "./js/.cache/type-filesystem-1",
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
@@ -340,20 +294,12 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-            ]
-          `);
-          expect(Array.from(stats.compilation.emittedAssets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -386,13 +332,9 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -406,17 +348,16 @@ describe("TestCache", () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "asset-modules");
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfig = require(path.resolve(
-      directoryForCase,
-      "webpack.config.js"
-    ));
+    const webpackConfig = require(
+      path.resolve(directoryForCase, "webpack.config.js"),
+    );
     const outputPath = path.resolve(
       __dirname,
-      "js/cache-filesystem-asset-modules"
+      "js/cache-filesystem-asset-modules",
     );
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      "./js/.cache/type-filesystem-asset-modules"
+      "./js/.cache/type-filesystem-asset-modules",
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
@@ -445,22 +386,12 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
-          expect(Array.from(stats.compilation.emittedAssets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -493,14 +424,9 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -514,17 +440,16 @@ describe("TestCache", () => {
     const casesDirectory = path.resolve(__dirname, "cases");
     const directoryForCase = path.resolve(casesDirectory, "file-loader");
     // eslint-disable-next-line import/no-dynamic-require, global-require
-    const webpackConfig = require(path.resolve(
-      directoryForCase,
-      "webpack.config.js"
-    ));
+    const webpackConfig = require(
+      path.resolve(directoryForCase, "webpack.config.js"),
+    );
     const outputPath = path.resolve(
       __dirname,
-      "js/cache-filesystem-file-loader"
+      "js/cache-filesystem-file-loader",
     );
     const fileSystemCacheDirectory = path.resolve(
       __dirname,
-      "./js/.cache/type-filesystem-file-loader"
+      "./js/.cache/type-filesystem-file-loader",
     );
 
     await del([outputPath, fileSystemCacheDirectory]);
@@ -553,22 +478,12 @@ describe("TestCache", () => {
         }
 
         compiler1.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
-          expect(Array.from(stats.compilation.emittedAssets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
+          expect(
+            Array.from(stats.compilation.emittedAssets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 
@@ -601,14 +516,9 @@ describe("TestCache", () => {
         }
 
         compiler2.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort())
-            .toMatchInlineSnapshot(`
-            Array [
-              "main.css",
-              "main.js",
-              "static/react.svg",
-            ]
-          `);
+          expect(
+            Object.keys(stats.compilation.assets).sort(),
+          ).toMatchSnapshot();
           expect(stats.compilation.warnings).toHaveLength(0);
           expect(stats.compilation.errors).toHaveLength(0);
 

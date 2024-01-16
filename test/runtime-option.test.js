@@ -27,7 +27,7 @@ describe("noRuntime option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -57,7 +57,7 @@ describe("noRuntime option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -65,7 +65,7 @@ describe("noRuntime option", () => {
       expect(dom.serialize()).toMatchSnapshot("DOM");
       expect(bundle).not.toContain("webpack/runtime/css loading");
       expect(bundle).not.toContain(
-        "webpack/runtime/get mini-css chunk filename"
+        "webpack/runtime/get mini-css chunk filename",
       );
     });
 
@@ -89,7 +89,7 @@ describe("noRuntime option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
