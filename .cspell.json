@@ -30,7 +30,8 @@
     "vspace",
     "commitlint",
     "unreload",
-    "cnfg"
+    "cnfg",
+    "tapable"
   ],
 
   "ignorePaths": [

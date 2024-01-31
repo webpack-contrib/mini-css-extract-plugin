@@ -1194,6 +1194,27 @@ If you'd like to extract the media queries from the extracted CSS (so mobile use
 - [Media Query Plugin](https://github.com/SassNinja/media-query-plugin)
 - [Media Query Splitting Plugin](https://github.com/mike-diamond/media-query-splitting-plugin)
 
+## Hooks
+
+The mini-css-extract-plugin provides hooks to extend it to your needs.
+
+### beforeTagInsert
+
+`SyncWaterfallHook`
+
+Called before inject the insert code for link tag. Should return a string
+
+```javascript
+MiniCssExtractPlugin.getCompilationHooks(compilation).beforeTagInsert.tap(
+  "changeHref",
+  (source, varNames) =>
+    Template.asString([
+      source,
+      `${varNames.tag}.setAttribute("href", "https://github.com/webpack-contrib/mini-css-extract-plugin");`,
+    ])
+);
+```
+
 ## Contributing
 
 Please take a moment to read our contributing guidelines if you haven't yet done so.
