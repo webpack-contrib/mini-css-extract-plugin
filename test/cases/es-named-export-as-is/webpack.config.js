@@ -17,7 +17,6 @@ module.exports = {
               modules: {
                 namedExport: true,
                 exportLocalsConvention: "asIs",
-                localIdentName: "foo__[name]__[local]",
               },
             },
           },
