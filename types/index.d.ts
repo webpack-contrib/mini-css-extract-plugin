@@ -18,7 +18,7 @@ declare class MiniCssExtractPlugin {
    */
   static getCompilationHooks(
     compilation: Compilation
-  ): import("./hooks").MiniCssExtractPluginCompilationHooks;
+  ): MiniCssExtractPluginCompilationHooks;
   /**
    * @param {PluginOptions} [options]
    */
@@ -101,6 +101,8 @@ declare namespace MiniCssExtractPlugin {
     CssDependency,
     CssDependencyOptions,
     CssDependencyConstructor,
+    VarNames,
+    MiniCssExtractPluginCompilationHooks,
   };
 }
 type Compiler = import("webpack").Compiler;
@@ -111,6 +113,12 @@ type CssDependencyConstructor = new (
   identifierIndex: number
 ) => CssDependency;
 type Compilation = import("webpack").Compilation;
+type MiniCssExtractPluginCompilationHooks = {
+  beforeTagInsert: import("tapable").SyncWaterfallHook<
+    [string, VarNames],
+    string
+  >;
+};
 type PluginOptions = {
   filename?: Required<Configuration>["output"]["filename"];
   chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
@@ -240,3 +248,10 @@ type CssModuleDependency = {
 };
 type CssDependency = Dependency & CssModuleDependency;
 type CssDependencyOptions = Omit<LoaderDependency, "context">;
+type VarNames = {
+  tag: string;
+  chunkId: string;
+  href: string;
+  resolve: string;
+  reject: string;
+};
