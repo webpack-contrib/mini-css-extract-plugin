@@ -17,13 +17,18 @@ module.exports = {
               modules: {
                 namedExport: true,
                 exportLocalsConvention: "asIs",
-                localIdentName: "foo__[name]__[local]",
               },
             },
           },
         ],
       },
     ],
+  },
+  output: {
+    module: true,
+  },
+  experiments: {
+    outputModule: true,
   },
   plugins: [
     new Self({

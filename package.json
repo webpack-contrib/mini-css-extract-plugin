@@ -68,7 +68,7 @@
     "bootstrap": "^4.6.2",
     "cross-env": "^7.0.3",
     "cspell": "^6.31.1",
-    "css-loader": "^6.9.0",
+    "css-loader": "^6.10.0",
     "del": "^6.0.0",
     "del-cli": "^4.0.0",
     "es-check": "^7.1.0",
