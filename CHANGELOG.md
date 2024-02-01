@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.7...v2.8.0) (2024-02-01)
+
+
+### Features
+
+* added the `beforeTagInsert` hook ([#1054](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1054)) ([6313bf6](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/6313bf629c1c76ec7b07dc60fef06e39702a63d9))
+* support named exports with any characters ([b656c5c](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/b656c5c98dcffcae51f5208e961ce089be6607a8))
+
 ### [2.7.7](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.6...v2.7.7) (2024-01-10)
 
 
