@@ -3,6 +3,7 @@
 const path = require("path");
 
 const { validate } = require("schema-utils");
+const { SyncWaterfallHook } = require("tapable");
 
 const schema = require("./plugin-options.json");
 const {
@@ -15,7 +16,6 @@ const {
   getUndoPath,
   BASE_URI,
 } = require("./utils");
-const { getCompilationHooks } = require("./hooks");
 
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
 /** @typedef {import("webpack").Compiler} Compiler */
@@ -89,16 +89,23 @@ const CODE_GENERATION_RESULT = {
 };
 
 /** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string, assets?: { [key: string]: TODO }, assetsInfo?: Map<string, AssetInfo> }} CssModule */
-
 /** @typedef {{ context: string | null, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssModuleDependency */
-
 /** @typedef {{ new(dependency: CssModuleDependency): CssModule }} CssModuleConstructor */
-
 /** @typedef {Dependency & CssModuleDependency} CssDependency */
-
 /** @typedef {Omit<LoaderDependency, "context">} CssDependencyOptions */
-
 /** @typedef {{ new(loaderDependency: CssDependencyOptions, context: string | null, identifierIndex: number): CssDependency }} CssDependencyConstructor */
+/**
+ * @typedef {Object} VarNames
+ * @property {string} tag
+ * @property {string} chunkId
+ * @property {string} href
+ * @property {string} resolve
+ * @property {string} reject
+ */
+/**
+ * @typedef {Object} MiniCssExtractPluginCompilationHooks
+ * @property {import("tapable").SyncWaterfallHook<[string, VarNames], string>} beforeTagInsert
+ */
 
 /**
  *
@@ -113,6 +120,9 @@ const cssDependencyCache = new WeakMap();
  * @type {WeakSet<Compiler["webpack"]>}
  */
 const registered = new WeakSet();
+
+/** @type {WeakMap<Compilation, MiniCssExtractPluginCompilationHooks>} */
+const compilationHooksMap = new WeakMap();
 
 class MiniCssExtractPlugin {
   /**
@@ -519,7 +529,19 @@ class MiniCssExtractPlugin {
    * @param {Compilation} compilation
    */
   static getCompilationHooks(compilation) {
-    return getCompilationHooks(compilation);
+    let hooks = compilationHooksMap.get(compilation);
+
+    if (!hooks) {
+      hooks = {
+        beforeTagInsert: new SyncWaterfallHook(
+          ["source", "varNames"],
+          "string"
+        ),
+      };
+      compilationHooksMap.set(compilation, hooks);
+    }
+
+    return hooks;
   }
 
   /**
