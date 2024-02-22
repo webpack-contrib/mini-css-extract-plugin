@@ -899,6 +899,11 @@ class MiniCssExtractPlugin {
                       this.runtimeOptions.linkType
                     )};`
                   : "",
+                `if (${RuntimeGlobals.scriptNonce}) {`,
+                Template.indent(
+                  `linkTag.nonce = ${RuntimeGlobals.scriptNonce};`
+                ),
+                "}",
                 `var onLinkComplete = ${runtimeTemplate.basicFunction("event", [
                   "// avoid mem leaks.",
                   "linkTag.onerror = linkTag.onload = null;",
