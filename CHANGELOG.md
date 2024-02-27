@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.8.0...v2.8.1) (2024-02-27)
+
+
+### Bug Fixes
+
+* add `nonce` if `__webpack_nonce__` has been defined ([c7f0aee](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/c7f0aee5feaa1b8d047f575e94a91662eb8c314c))
+
 ## [2.8.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.7...v2.8.0) (2024-02-01)
 
 
