@@ -25,6 +25,11 @@
       "description": "Generates JS modules that use the ES modules syntax.",
       "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#esmodule"
     },
+    "defaultExport": {
+      "type": "boolean",
+      "description": "Generates JS modules with the default export syntax even for named exports.",
+      "link": "https://github.com/webpack-contrib/mini-css-extract-plugin#defaultexports"
+    },
     "layer": {
       "type": "string"
     }
