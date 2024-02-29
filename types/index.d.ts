@@ -147,7 +147,6 @@ type PluginOptions = {
  * @property {string | ((resourcePath: string, rootContext: string) => string)} [publicPath]
  * @property {boolean} [emit]
  * @property {boolean} [esModule]
- * @property {boolean} [defaultExport]
  * @property {string} [layer]
  */
 /**
@@ -200,7 +199,6 @@ type LoaderOptions = {
     | undefined;
   emit?: boolean | undefined;
   esModule?: boolean | undefined;
-  defaultExport?: boolean | undefined;
   layer?: string | undefined;
 };
 type NormalizedPluginOptions = {

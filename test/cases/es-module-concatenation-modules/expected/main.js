@@ -48,14 +48,16 @@ __webpack_require__.d(__webpack_exports__, {
 var a_namespaceObject = {};
 __webpack_require__.r(a_namespaceObject);
 __webpack_require__.d(a_namespaceObject, {
-  a: () => (_1)
+  a: () => (_1),
+  "default": () => (a)
 });
 
 // NAMESPACE OBJECT: ./b.css
 var b_namespaceObject = {};
 __webpack_require__.r(b_namespaceObject);
 __webpack_require__.d(b_namespaceObject, {
-  b: () => (b_1)
+  b: () => (b_1),
+  "default": () => (b)
 });
 
 // NAMESPACE OBJECT: ./index.js
@@ -71,16 +73,19 @@ __webpack_require__.d(index_namespaceObject, {
 // extracted by mini-css-extract-plugin
 var _1 = "foo__a";
 
+/* harmony default export */ const a = ({"a":"foo__a"});
 
 ;// CONCATENATED MODULE: ./b.css
 // extracted by mini-css-extract-plugin
 var b_1 = "foo__b";
 
+/* harmony default export */ const b = ({"b":"foo__b"});
 
 ;// CONCATENATED MODULE: ./c.css
 // extracted by mini-css-extract-plugin
 var c_1 = "foo__c";
 
+/* harmony default export */ const c = ({"c":"foo__c"});
 
 ;// CONCATENATED MODULE: ./index.js
 /* eslint-disable import/no-namespace */

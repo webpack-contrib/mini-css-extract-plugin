@@ -124,11 +124,6 @@ function pitch(request) {
     const esModule =
       typeof options.esModule !== "undefined" ? options.esModule : true;
 
-    const defaultExport =
-      typeof options.defaultExport !== "undefined"
-        ? options.defaultExport
-        : false;
-
     /**
      * @param {Dependency[] | [null, object][]} dependencies
      */
@@ -276,10 +271,10 @@ function pitch(request) {
           const exportsString = `export { ${identifiers
             .map(([id, key]) => `${id} as ${JSON.stringify(key)}`)
             .join(", ")} }`;
-          const exportDefaultString = defaultExport
-            ? `export default ${JSON.stringify(locals)}\n`
-            : "";
-          return `${localsString}\n${exportsString}\n${exportDefaultString}`;
+          const exportDefaultString = `export default ${JSON.stringify(
+            locals
+          )}`;
+          return `${localsString}\n${exportsString}\n${exportDefaultString}\n`;
         }
 
         return `\n${

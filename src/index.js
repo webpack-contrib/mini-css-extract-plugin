@@ -36,7 +36,6 @@ const {
  * @property {string | ((resourcePath: string, rootContext: string) => string)} [publicPath]
  * @property {boolean} [emit]
  * @property {boolean} [esModule]
- * @property {boolean} [defaultExport]
  * @property {string} [layer]
  */
 

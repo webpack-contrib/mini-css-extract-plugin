@@ -407,7 +407,6 @@ module.exports = {
 - **[`publicPath`](#publicPath)**
 - **[`emit`](#emit)**
 - **[`esModule`](#esModule)**
-- **[`defaultExport`](#defaultExport)**
 
 #### `publicPath`
 
@@ -540,47 +539,6 @@ module.exports = {
             loader: MiniCssExtractPlugin.loader,
             options: {
               esModule: false,
-            },
-          },
-          "css-loader",
-        ],
-      },
-    ],
-  },
-};
-```
-
-#### `defaultExport`
-
-Type:
-
-```ts
-type defaultExport = boolean;
-```
-
-Default: `false`
-
-By default, `mini-css-extract-plugin` generates JS modules with a default export.
-However for name exports, each local is exported as a named export.
-
-In case you need both default and named exports, you can enable this option:
-
-**webpack.config.js**
-
-```js
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-
-module.exports = {
-  plugins: [new MiniCssExtractPlugin()],
-  module: {
-    rules: [
-      {
-        test: /\.css$/i,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              defaultExport: true,
             },
           },
           "css-loader",
