@@ -17,7 +17,7 @@ var _1 = "Xh041yLR4iCP4RGjge50";
 var _2 = "NMuRsxoDwvW8BhSXhFAY";
 var _3 = "ayWIv09rPsAqE2JznIsI";
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"a-class":"Xh041yLR4iCP4RGjge50","b__class":"NMuRsxoDwvW8BhSXhFAY","cClass":"ayWIv09rPsAqE2JznIsI"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ "a-class": _1, "b__class": _2, "cClass": _3 });
 
 
 /***/ })

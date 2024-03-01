@@ -73,19 +73,19 @@ __webpack_require__.d(index_namespaceObject, {
 // extracted by mini-css-extract-plugin
 var _1 = "foo__a";
 
-/* harmony default export */ const a = ({"a":"foo__a"});
+/* harmony default export */ const a = ({ "a": _1 });
 
 ;// CONCATENATED MODULE: ./b.css
 // extracted by mini-css-extract-plugin
 var b_1 = "foo__b";
 
-/* harmony default export */ const b = ({"b":"foo__b"});
+/* harmony default export */ const b = ({ "b": b_1 });
 
 ;// CONCATENATED MODULE: ./c.css
 // extracted by mini-css-extract-plugin
 var c_1 = "foo__c";
 
-/* harmony default export */ const c = ({"c":"foo__c"});
+/* harmony default export */ const c = ({ "c": c_1 });
 
 ;// CONCATENATED MODULE: ./index.js
 /* eslint-disable import/no-namespace */

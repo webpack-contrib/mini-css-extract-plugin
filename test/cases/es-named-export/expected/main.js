@@ -17,7 +17,7 @@ var _1 = "foo__style__a-class";
 var _2 = "foo__style__b__class";
 var _3 = "foo__style__cClass";
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({"a-class":"foo__style__a-class","b__class":"foo__style__b__class","cClass":"foo__style__cClass"});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ "a-class": _1, "b__class": _2, "cClass": _3 });
 
 
 /***/ })

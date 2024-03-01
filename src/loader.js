@@ -271,9 +271,9 @@ function pitch(request) {
           const exportsString = `export { ${identifiers
             .map(([id, key]) => `${id} as ${JSON.stringify(key)}`)
             .join(", ")} }`;
-          const exportDefaultString = `export default ${JSON.stringify(
-            locals
-          )}`;
+          const exportDefaultString = `export default { ${identifiers
+            .map(([id, key]) => `${JSON.stringify(key)}: ${id}`)
+            .join(", ")} }`;
           return `${localsString}\n${exportsString}\n${exportDefaultString}\n`;
         }
 

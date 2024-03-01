@@ -15,7 +15,7 @@ __webpack_require__.r(__webpack_exports__);
 var _1 = () => "class-name-a";
 var _2 = () => "class-name-b";
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ "cnA": _1, "cnB": _2 });
 
 
 /***/ })
