@@ -845,7 +845,12 @@ class MiniCssExtractPlugin {
 
         return obj;
       };
-      // @ts-ignore
+
+      /**
+       * @param {Chunk} chunk chunk
+       * @param {ChunkGraph} chunkGraph chunk graph
+       * @returns {boolean} true, when the chunk has css
+       */
       function chunkHasCss(chunk, chunkGraph) {
         // this function replace:
         // const chunkHasCss = require("webpack/lib/css/CssModulesPlugin").chunkHasCss;
@@ -884,13 +889,12 @@ class MiniCssExtractPlugin {
             /** @type {Chunk} */ (chunk),
             /** @type {Compilation} */ (this.compilation)
           );
-          const globalObject = runtimeTemplate.globalObject;
+          const { globalObject } = runtimeTemplate;
           const { linkPreload, linkPrefetch } =
             JsonpChunkLoadingRuntimeModule.getCompilationHooks(compilation);
-          const conditionMap = chunkGraph.getChunkConditionMap(
-            chunk,
-            chunkHasCss
-          );
+          const conditionMap = /** @type {ChunkGraph} */ (
+            chunkGraph
+          ).getChunkConditionMap(/** @type {Chunk} */ (chunk), chunkHasCss);  
           const hasCssMatcher = compileBooleanMatcher(conditionMap);
 
           const withLoading =
