@@ -75,7 +75,10 @@ function pitch(request) {
     this._compiler.options.experiments &&
     this._compiler.options.experiments.css &&
     this._module &&
-    this._module.type === "css"
+    (this._module.type === "css" ||
+      this._module.type === "css/auto" ||
+      this._module.type === "css/global" ||
+      this._module.type === "css/module")
   ) {
     this.emitWarning(
       new Error(
@@ -242,22 +245,44 @@ function pitch(request) {
       return;
     }
 
-    const result = locals
-      ? namedExport
-        ? Object.keys(locals)
+    const result = (function makeResult() {
+      if (locals) {
+        if (namedExport) {
+          const identifiers = Array.from(
+            (function* generateIdentifiers() {
+              let identifierId = 0;
+
+              for (const key of Object.keys(locals)) {
+                identifierId += 1;
+
+                yield [`_${identifierId.toString(16)}`, key];
+              }
+            })()
+          );
+
+          const localsString = identifiers
             .map(
-              (key) =>
-                `\nexport var ${key} = ${stringifyLocal(
+              ([id, key]) =>
+                `\nvar ${id} = ${stringifyLocal(
                   /** @type {Locals} */ (locals)[key]
                 )};`
             )
-            .join("")
-        : `\n${
-            esModule ? "export default" : "module.exports ="
-          } ${JSON.stringify(locals)};`
-      : esModule
-      ? `\nexport {};`
-      : "";
+            .join("");
+          const exportsString = `export { ${identifiers
+            .map(([id, key]) => `${id} as ${JSON.stringify(key)}`)
+            .join(", ")} }`;
+
+          return `${localsString}\n${exportsString}\n`;
+        }
+
+        return `\n${
+          esModule ? "export default" : "module.exports = "
+        } ${JSON.stringify(locals)};`;
+      } else if (esModule) {
+        return "\nexport {};";
+      }
+      return "";
+    })();
 
     let resultSource = `// extracted by ${MiniCssExtractPlugin.pluginName}`;
 
@@ -373,6 +398,7 @@ function pitch(request) {
   const { NodeTemplatePlugin } = webpack.node;
   const { NodeTargetPlugin } = webpack.node;
 
+  // @ts-ignore
   new NodeTemplatePlugin(outputOptions).apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
 
@@ -517,7 +543,10 @@ function loader(content) {
     this._compiler.options.experiments &&
     this._compiler.options.experiments.css &&
     this._module &&
-    this._module.type === "css"
+    (this._module.type === "css" ||
+      this._module.type === "css/auto" ||
+      this._module.type === "css/global" ||
+      this._module.type === "css/module")
   ) {
     return content;
   }

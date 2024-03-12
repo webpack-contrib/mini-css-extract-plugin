@@ -2,13 +2,6 @@ import Self from "../../../src";
 
 module.exports = {
   entry: "./index.js",
-  output: {
-    clean: false,
-    cssFilename: "[name].css",
-  },
-  experiments: {
-    css: true,
-  },
   module: {
     rules: [
       {
@@ -19,7 +12,7 @@ module.exports = {
   },
   plugins: [
     new Self({
-      filename: "[name].extract.css",
+      filename: "[name].css",
     }),
   ],
 };

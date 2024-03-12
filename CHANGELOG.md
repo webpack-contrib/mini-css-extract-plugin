@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.8.0...v2.8.1) (2024-02-27)
+
+
+### Bug Fixes
+
+* add `nonce` if `__webpack_nonce__` has been defined ([c7f0aee](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/c7f0aee5feaa1b8d047f575e94a91662eb8c314c))
+
+## [2.8.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.7...v2.8.0) (2024-02-01)
+
+
+### Features
+
+* added the `beforeTagInsert` hook ([#1054](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1054)) ([6313bf6](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/6313bf629c1c76ec7b07dc60fef06e39702a63d9))
+* support named exports with any characters ([b656c5c](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/b656c5c98dcffcae51f5208e961ce089be6607a8))
+
+### [2.7.7](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.6...v2.7.7) (2024-01-10)
+
+
+### Bug Fixes
+
+* add ';' to import media queries ([#1051](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1051)) ([98acf2b](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/98acf2bbd08ba0988318c6d364b9aa14f84ed79a))
+* add `ChunkLoadError` name to chunk loading error ([#1073](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1073)) ([e3f8375](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/e3f837574bdad9dc583028c6f9a9a2f3082d9ecb))
+* adding media, supports and layer for external import ([#1072](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1072)) ([60c5331](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/60c53311c125425d2e742414ed6dbd59cea8cbe4))
+* css experiment detection ([#1067](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1067)) ([82f4a47](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/82f4a47f3ddc7cdbba311bee50d85dd4b3e6bfb1))
+
 ### [2.7.6](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.7.5...v2.7.6) (2023-05-19)
 
 

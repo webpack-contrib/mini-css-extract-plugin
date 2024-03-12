@@ -3,6 +3,7 @@
 const path = require("path");
 
 const { validate } = require("schema-utils");
+const { SyncWaterfallHook } = require("tapable");
 
 // @ts-ignore
 const JsonpChunkLoadingRuntimeModule = require("webpack/lib/web/JsonpChunkLoadingRuntimeModule");
@@ -93,16 +94,23 @@ const CODE_GENERATION_RESULT = {
 };
 
 /** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string, assets?: { [key: string]: TODO }, assetsInfo?: Map<string, AssetInfo> }} CssModule */
-
 /** @typedef {{ context: string | null, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssModuleDependency */
-
 /** @typedef {{ new(dependency: CssModuleDependency): CssModule }} CssModuleConstructor */
-
 /** @typedef {Dependency & CssModuleDependency} CssDependency */
-
 /** @typedef {Omit<LoaderDependency, "context">} CssDependencyOptions */
-
 /** @typedef {{ new(loaderDependency: CssDependencyOptions, context: string | null, identifierIndex: number): CssDependency }} CssDependencyConstructor */
+/**
+ * @typedef {Object} VarNames
+ * @property {string} tag
+ * @property {string} chunkId
+ * @property {string} href
+ * @property {string} resolve
+ * @property {string} reject
+ */
+/**
+ * @typedef {Object} MiniCssExtractPluginCompilationHooks
+ * @property {import("tapable").SyncWaterfallHook<[string, VarNames], string>} beforeTagInsert
+ */
 
 /**
  *
@@ -117,6 +125,9 @@ const cssDependencyCache = new WeakMap();
  * @type {WeakSet<Compiler["webpack"]>}
  */
 const registered = new WeakSet();
+
+/** @type {WeakMap<Compilation, MiniCssExtractPluginCompilationHooks>} */
+const compilationHooksMap = new WeakMap();
 
 class MiniCssExtractPlugin {
   /**
@@ -306,7 +317,9 @@ class MiniCssExtractPlugin {
       updateHash(hash, context) {
         super.updateHash(hash, context);
 
-        hash.update(this.buildInfo.hash);
+        hash.update(
+          /** @type {NonNullable<Module["buildInfo"]>} */ (this.buildInfo).hash
+        );
       }
 
       /**
@@ -514,6 +527,26 @@ class MiniCssExtractPlugin {
     );
 
     return CssDependency;
+  }
+
+  /**
+   * Returns all hooks for the given compilation
+   * @param {Compilation} compilation
+   */
+  static getCompilationHooks(compilation) {
+    let hooks = compilationHooksMap.get(compilation);
+
+    if (!hooks) {
+      hooks = {
+        beforeTagInsert: new SyncWaterfallHook(
+          ["source", "varNames"],
+          "string"
+        ),
+      };
+      compilationHooksMap.set(compilation, hooks);
+    }
+
+    return hooks;
   }
 
   /**
@@ -846,8 +879,11 @@ class MiniCssExtractPlugin {
           const {
             runtimeTemplate,
             outputOptions: { chunkLoadingGlobal, crossOriginLoading },
-          } = this.compilation;
-          const chunkMap = getCssChunkObject(chunk, this.compilation);
+          } = /** @type {Compilation} */ (this.compilation);
+          const chunkMap = getCssChunkObject(
+            /** @type {Chunk} */ (chunk),
+            /** @type {Compilation} */ (this.compilation)
+          );
           const globalObject = runtimeTemplate.globalObject;
           const { linkPreload, linkPrefetch } =
             JsonpChunkLoadingRuntimeModule.getCompilationHooks(compilation);
@@ -876,7 +912,6 @@ class MiniCssExtractPlugin {
           if (!withLoading && !withHmr) {
             return "";
           }
-
           return Template.asString([
             'if (typeof document === "undefined") return;',
             `var createStylesheet = ${runtimeTemplate.basicFunction(
@@ -902,6 +937,11 @@ class MiniCssExtractPlugin {
                       this.runtimeOptions.linkType
                     )};`
                   : "",
+                `if (${RuntimeGlobals.scriptNonce}) {`,
+                Template.indent(
+                  `linkTag.nonce = ${RuntimeGlobals.scriptNonce};`
+                ),
+                "}",
                 `var onLinkComplete = ${runtimeTemplate.basicFunction("event", [
                   "// avoid mem leaks.",
                   "linkTag.onerror = linkTag.onload = null;",
@@ -909,9 +949,11 @@ class MiniCssExtractPlugin {
                   Template.indent(["resolve();"]),
                   "} else {",
                   Template.indent([
-                    "var errorType = event && (event.type === 'load' ? 'missing' : event.type);",
+                    "var errorType = event && event.type;",
                     "var realHref = event && event.target && event.target.href || fullhref;",
-                    'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + realHref + ")");',
+                    'var err = new Error("Loading CSS chunk " + chunkId + " failed.\\n(" + errorType + ": " + realHref + ")");',
+                    'err.name = "ChunkLoadError";',
+                    // TODO remove `code` in the future major release to align with webpack
                     'err.code = "CSS_CHUNK_LOAD_FAILED";',
                     "err.type = errorType;",
                     "err.request = realHref;",
@@ -933,6 +975,15 @@ class MiniCssExtractPlugin {
                       "}",
                     ])
                   : "",
+                MiniCssExtractPlugin.getCompilationHooks(
+                  compilation
+                ).beforeTagInsert.call("", {
+                  tag: "linkTag",
+                  chunkId: "chunkId",
+                  href: "fullhref",
+                  resolve: "resolve",
+                  reject: "reject",
+                }) || "",
                 typeof this.runtimeOptions.insert !== "undefined"
                   ? typeof this.runtimeOptions.insert === "function"
                     ? `(${this.runtimeOptions.insert.toString()})(linkTag)`
@@ -991,7 +1042,7 @@ class MiniCssExtractPlugin {
                   "var installedCssChunks = {",
                   Template.indent(
                     /** @type {string[]} */
-                    (chunk.ids)
+                    (/** @type {Chunk} */ (chunk).ids)
                       .map((id) => `${JSON.stringify(id)}: 0`)
                       .join(",\n")
                   ),
@@ -1332,7 +1383,10 @@ class MiniCssExtractPlugin {
           })
           // eslint-disable-next-line no-undefined
           .filter((item) => item.index !== undefined)
-          .sort((a, b) => b.index - a.index)
+          .sort(
+            (a, b) =>
+              /** @type {number} */ (b.index) - /** @type {number} */ (a.index)
+          )
           .map((item) => item.module);
 
         for (let i = 0; i < sortedModules.length; i++) {
@@ -1530,11 +1584,32 @@ class MiniCssExtractPlugin {
 
         // HACK for IE
         // http://stackoverflow.com/a/14676665/1458162
-        if (module.media) {
+        if (
+          module.media ||
+          module.supports ||
+          typeof module.layer !== "undefined"
+        ) {
+          let atImportExtra = "";
+
+          const needLayer = typeof module.layer !== "undefined";
+
+          if (needLayer) {
+            atImportExtra +=
+              module.layer.length > 0 ? ` layer(${module.layer})` : " layer";
+          }
+
+          if (module.supports) {
+            atImportExtra += ` supports(${module.supports})`;
+          }
+
+          if (module.media) {
+            atImportExtra += ` ${module.media}`;
+          }
+
           // insert media into the @import
           // this is rar
           // TODO improve this and parse the CSS to support multiple medias
-          content = content.replace(/;|\s*$/, module.media);
+          content = content.replace(/;|\s*$/, `${atImportExtra};`);
         }
 
         externalsSource.add(content);
