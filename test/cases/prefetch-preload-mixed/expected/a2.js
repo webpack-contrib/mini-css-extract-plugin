@@ -1,1 +1,10 @@
-(self.webpackChunk=self.webpackChunk||[]).push([[150],{694:()=>{}}]);
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[2],{
+
+/***/ 5:
+/***/ (() => {
+
+
+
+/***/ })
+
+}]);

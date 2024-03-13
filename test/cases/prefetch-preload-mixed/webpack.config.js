@@ -1,10 +1,18 @@
-/** @type {import("../../../").Configuration} */
+import Self from "../../../src";
+
 module.exports = {
-  mode: "production",
-  entry: "./index",
-  stats: {
-    all: false,
-    chunkRelations: true,
-    chunks: true,
+  entry: "./index.js",
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [Self.loader, "css-loader"],
+      },
+    ],
   },
+  plugins: [
+    new Self({
+      filename: "[name].css",
+    }),
+  ],
 };
