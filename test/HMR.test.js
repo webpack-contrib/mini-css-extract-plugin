@@ -5,6 +5,7 @@
 /* eslint-disable no-console */
 
 import hotModuleReplacement from "../src/hmr/hotModuleReplacement";
+import { hotLoaderForTest as hotLoader } from "../src/loader";
 
 function getLoadEvent() {
   const event = document.createEvent("Event");
@@ -360,5 +361,30 @@ describe("HMR", () => {
 
       done();
     }, 100);
+  });
+
+  it("hotLoader works for non-locals", () => {
+    const o = Date.now;
+    Date.now = () => 1;
+    const code = hotLoader("//content;", {
+      loaderContext: {
+        context: __dirname,
+      },
+    });
+    Date.now = o;
+    expect(code).toMatchSnapshot();
+  });
+
+  it("hotLoader works for locals", () => {
+    const o = Date.now;
+    Date.now = () => 1;
+    const code = hotLoader("//content;", {
+      loaderContext: {
+        context: __dirname,
+      },
+      locals: { foo: "bar" },
+    });
+    Date.now = o;
+    expect(code).toMatchSnapshot();
   });
 });

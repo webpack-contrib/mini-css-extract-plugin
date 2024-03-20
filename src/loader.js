@@ -44,22 +44,31 @@ const MiniCssExtractPlugin = require("./index");
  * @returns {string}
  */
 function hotLoader(content, context) {
-  const accept = context.locals
-    ? ""
-    : "module.hot.accept(undefined, cssReload);";
-
+  const localsJsonString = JSON.stringify(JSON.stringify(context.locals));
   return `${content}
     if(module.hot) {
-      // ${Date.now()}
-      var cssReload = require(${stringifyRequest(
-        context.loaderContext,
-        path.join(__dirname, "hmr/hotModuleReplacement.js")
-      )})(module.id, ${JSON.stringify({
-    ...context.options,
-    locals: !!context.locals,
-  })});
-      module.hot.dispose(cssReload);
-      ${accept}
+      (function() {
+        var localsJsonString = ${localsJsonString};
+        // ${Date.now()}
+        var cssReload = require(${stringifyRequest(
+          context.loaderContext,
+          path.join(__dirname, "hmr/hotModuleReplacement.js")
+        )})(module.id, ${JSON.stringify(context.options)});
+        // only invalidate when locals change
+        if (
+          module.hot.data &&
+          module.hot.data.value &&
+          module.hot.data.value !== localsJsonString
+        ) {
+          module.hot.invalidate();
+        } else {
+          module.hot.accept();
+        }
+        module.hot.dispose(function(data) {
+          data.value = localsJsonString;
+          cssReload();
+        });
+      })();
     }
   `;
 }
@@ -554,3 +563,4 @@ function loader(content) {
 
 module.exports = loader;
 module.exports.pitch = pitch;
+module.exports.hotLoaderForTest = hotLoader;
