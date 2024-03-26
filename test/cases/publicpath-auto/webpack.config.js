@@ -2,6 +2,9 @@ import Self from "../../../src";
 
 module.exports = {
   entry: "./index.js",
+  optimization: {
+    realContentHash: true,
+  },
   module: {
     rules: [
       {
