@@ -10,6 +10,10 @@ describe("validate options", () => {
       success: [true, false],
       failure: [1],
     },
+    defaultExport: {
+      success: [true, false],
+      failure: [1],
+    },
     unknown: {
       success: [],
       failure: [1, true, false, "test", /test/, [], {}, { foo: "bar" }],
