@@ -562,7 +562,7 @@ Default: `false`
 
 > **Note**
 >
-> This options will work only when you set `namedExport` to `true` in `css-loader`
+> This option will work only when you set `namedExport` to `true` in `css-loader`
 
 By default, `mini-css-extract-plugin` generates JS modules based on the `esModule` and `namedExport` options in `css-loader`.
 Using the `esModule` and `namedExport` options will allow you to better optimize your code.
