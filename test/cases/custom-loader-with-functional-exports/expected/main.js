@@ -8,14 +8,12 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   cnA: () => (/* binding */ _1),
-/* harmony export */   cnB: () => (/* binding */ _2),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   cnB: () => (/* binding */ _2)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
 var _1 = () => "class-name-a";
 var _2 = () => "class-name-b";
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ "cnA": _1, "cnB": _2 });
 
 
 /***/ })

@@ -9,15 +9,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "a-class": () => (/* binding */ _1),
 /* harmony export */   b__class: () => (/* binding */ _2),
-/* harmony export */   cClass: () => (/* binding */ _3),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   cClass: () => (/* binding */ _3)
 /* harmony export */ });
 // extracted by mini-css-extract-plugin
 var _1 = "Xh041yLR4iCP4RGjge50";
 var _2 = "NMuRsxoDwvW8BhSXhFAY";
 var _3 = "ayWIv09rPsAqE2JznIsI";
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ "a-class": _1, "b__class": _2, "cClass": _3 });
 
 
 /***/ })
