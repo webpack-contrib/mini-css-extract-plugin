@@ -60,6 +60,9 @@ function hotLoader(content, context) {
   })});
       module.hot.dispose(cssReload);
       ${accept}
+      if (module.hot.status() !== "idle") {
+        cssReload();
+      }
     }
   `;
 }

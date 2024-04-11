@@ -255,6 +255,8 @@ function isUrlRequest(url) {
   return true;
 }
 
+const updateFunctionMap = Object.create(null);
+
 /**
  * @param {TODO} moduleId
  * @param {TODO} options
@@ -265,6 +267,11 @@ module.exports = function (moduleId, options) {
     console.log("no window.document found, will not HMR CSS");
 
     return noop;
+  }
+
+  const key = JSON.stringify({ moduleId, options });
+  if (updateFunctionMap[key]) {
+    return updateFunctionMap[key];
   }
 
   const getScriptSrc = getCurrentScriptUrl(moduleId);
@@ -290,7 +297,8 @@ module.exports = function (moduleId, options) {
     }
   }
 
-  return debounce(update, 50);
+  updateFunctionMap[key] = debounce(update, 50);
+  return updateFunctionMap[key];
 };
 
 
@@ -367,6 +375,9 @@ __webpack_require__.r(__webpack_exports__);
       var cssReload = __webpack_require__(/*! ../../../src/hmr/hotModuleReplacement.js */ "../../../src/hmr/hotModuleReplacement.js")(module.id, {"locals":false});
       module.hot.dispose(cssReload);
       module.hot.accept(undefined, cssReload);
+      if (module.hot.status() !== "idle") {
+        cssReload();
+      }
     }
   
 
