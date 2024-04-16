@@ -281,7 +281,16 @@ function pitch(request) {
             .map(([id, key]) => `${id} as ${JSON.stringify(key)}`)
             .join(", ")} }`;
 
-          return `${localsString}\n${exportsString}\n`;
+          const defaultExport =
+            typeof options.defaultExport !== "undefined"
+              ? options.defaultExport
+              : false;
+
+          return defaultExport
+            ? `${localsString}\n${exportsString}\nexport default { ${identifiers
+                .map(([id, key]) => `${JSON.stringify(key)}: ${id}`)
+                .join(", ")} }\n`
+            : `${localsString}\n${exportsString}\n`;
         }
 
         return `\n${

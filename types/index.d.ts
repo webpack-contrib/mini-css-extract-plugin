@@ -148,6 +148,7 @@ type PluginOptions = {
  * @property {boolean} [emit]
  * @property {boolean} [esModule]
  * @property {string} [layer]
+ * @property {boolean} [defaultExport]
  */
 /**
  * @typedef {Object} PluginOptions
@@ -200,6 +201,7 @@ type LoaderOptions = {
   emit?: boolean | undefined;
   esModule?: boolean | undefined;
   layer?: string | undefined;
+  defaultExport?: boolean | undefined;
 };
 type NormalizedPluginOptions = {
   filename: Required<Configuration>["output"]["filename"];

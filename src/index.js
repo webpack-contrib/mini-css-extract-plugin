@@ -37,6 +37,7 @@ const {
  * @property {boolean} [emit]
  * @property {boolean} [esModule]
  * @property {string} [layer]
+ * @property {boolean} [defaultExport]
  */
 
 /**
