@@ -563,4 +563,4 @@ function loader(content) {
 
 module.exports = loader;
 module.exports.pitch = pitch;
-module.exports.hotLoaderForTest = hotLoader;
+module.exports.hotLoader = hotLoader;

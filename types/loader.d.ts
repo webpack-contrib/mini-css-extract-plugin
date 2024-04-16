@@ -10,6 +10,7 @@ declare function loader(
 declare namespace loader {
   export {
     pitch,
+    hotLoader,
     Schema,
     Compiler,
     Compilation,
@@ -33,6 +34,40 @@ declare function pitch(
   this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
   request: string
 ): void;
+/** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
+/** @typedef {import("webpack").Compiler} Compiler */
+/** @typedef {import("webpack").Compilation} Compilation */
+/** @typedef {import("webpack").Chunk} Chunk */
+/** @typedef {import("webpack").Module} Module */
+/** @typedef {import("webpack").sources.Source} Source */
+/** @typedef {import("webpack").AssetInfo} AssetInfo */
+/** @typedef {import("webpack").NormalModule} NormalModule */
+/** @typedef {import("./index.js").LoaderOptions} LoaderOptions */
+/** @typedef {{ [key: string]: string | function }} Locals */
+/** @typedef {any} TODO */
+/**
+ * @typedef {Object} Dependency
+ * @property {string} identifier
+ * @property {string | null} context
+ * @property {Buffer} content
+ * @property {string} media
+ * @property {string} [supports]
+ * @property {string} [layer]
+ * @property {Buffer} [sourceMap]
+ */
+/**
+ * @param {string} content
+ * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: Locals | undefined }} context
+ * @returns {string}
+ */
+declare function hotLoader(
+  content: string,
+  context: {
+    loaderContext: import("webpack").LoaderContext<LoaderOptions>;
+    options: LoaderOptions;
+    locals: Locals | undefined;
+  }
+): string;
 type Schema = import("schema-utils/declarations/validate").Schema;
 type Compiler = import("webpack").Compiler;
 type Compilation = import("webpack").Compilation;

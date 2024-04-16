@@ -5,7 +5,7 @@
 /* eslint-disable no-console */
 
 import hotModuleReplacement from "../src/hmr/hotModuleReplacement";
-import { hotLoaderForTest as hotLoader } from "../src/loader";
+import { hotLoader } from "../src/loader";
 
 function getLoadEvent() {
   const event = document.createEvent("Event");
