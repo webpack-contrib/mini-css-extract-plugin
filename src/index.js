@@ -15,6 +15,7 @@ const {
   compareModulesByIdentifier,
   getUndoPath,
   BASE_URI,
+  compileBooleanMatcher,
 } = require("./utils");
 
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
@@ -106,6 +107,8 @@ const CODE_GENERATION_RESULT = {
 /**
  * @typedef {Object} MiniCssExtractPluginCompilationHooks
  * @property {import("tapable").SyncWaterfallHook<[string, VarNames], string>} beforeTagInsert
+ * @property {SyncWaterfallHook<[string, Chunk]>} linkPreload
+ * @property {SyncWaterfallHook<[string, Chunk]>} linkPrefetch
  */
 
 /**
@@ -527,7 +530,8 @@ class MiniCssExtractPlugin {
 
   /**
    * Returns all hooks for the given compilation
-   * @param {Compilation} compilation
+   * @param {Compilation} compilation the compilation
+   * @returns {MiniCssExtractPluginCompilationHooks} hooks
    */
   static getCompilationHooks(compilation) {
     let hooks = compilationHooksMap.get(compilation);
@@ -538,6 +542,8 @@ class MiniCssExtractPlugin {
           ["source", "varNames"],
           "string"
         ),
+        linkPreload: new SyncWaterfallHook(["source", "chunk"]),
+        linkPrefetch: new SyncWaterfallHook(["source", "chunk"]),
       };
       compilationHooksMap.set(compilation, hooks);
     }
@@ -842,6 +848,20 @@ class MiniCssExtractPlugin {
         return obj;
       };
 
+      /**
+       * @param {Chunk} chunk chunk
+       * @param {ChunkGraph} chunkGraph chunk graph
+       * @returns {boolean} true, when the chunk has css
+       */
+      function chunkHasCss(chunk, chunkGraph) {
+        // this function replace:
+        // const chunkHasCss = require("webpack/lib/css/CssModulesPlugin").chunkHasCss;
+        return !!chunkGraph.getChunkModulesIterableBySourceType(
+          chunk,
+          "css/mini-extract"
+        );
+      }
+
       class CssLoadingRuntimeModule extends RuntimeModule {
         /**
          * @param {Set<string>} runtimeRequirements
@@ -855,7 +875,7 @@ class MiniCssExtractPlugin {
         }
 
         generate() {
-          const { chunk, runtimeRequirements } = this;
+          const { chunkGraph, chunk, runtimeRequirements } = this;
           const {
             runtimeTemplate,
             outputOptions: { crossOriginLoading },
@@ -864,7 +884,6 @@ class MiniCssExtractPlugin {
             /** @type {Chunk} */ (chunk),
             /** @type {Compilation} */ (this.compilation)
           );
-
           const withLoading =
             runtimeRequirements.has(RuntimeGlobals.ensureChunkHandlers) &&
             Object.keys(chunkMap).length > 0;
@@ -875,6 +894,20 @@ class MiniCssExtractPlugin {
           if (!withLoading && !withHmr) {
             return "";
           }
+
+          const conditionMap = /** @type {ChunkGraph} */ (
+            chunkGraph
+          ).getChunkConditionMap(/** @type {Chunk} */ (chunk), chunkHasCss);
+          const hasCssMatcher = compileBooleanMatcher(conditionMap);
+          const withPrefetch = runtimeRequirements.has(
+            RuntimeGlobals.prefetchChunkHandlers
+          );
+          const withPreload = runtimeRequirements.has(
+            RuntimeGlobals.preloadChunkHandlers
+          );
+          const { linkPreload, linkPrefetch } =
+            MiniCssExtractPlugin.getCompilationHooks(compilation);
+
           return Template.asString([
             'if (typeof document === "undefined") return;',
             `var createStylesheet = ${runtimeTemplate.basicFunction(
@@ -1089,6 +1122,87 @@ class MiniCssExtractPlugin {
                   )}`,
                 ])
               : "// no hmr",
+            "",
+            withPrefetch && hasCssMatcher !== false
+              ? `${
+                  RuntimeGlobals.prefetchChunkHandlers
+                }.miniCss = ${runtimeTemplate.basicFunction("chunkId", [
+                  `if((!${
+                    RuntimeGlobals.hasOwnProperty
+                  }(installedCssChunks, chunkId) || installedCssChunks[chunkId] === undefined) && ${
+                    hasCssMatcher === true ? "true" : hasCssMatcher("chunkId")
+                  }) {`,
+                  Template.indent([
+                    "installedCssChunks[chunkId] = null;",
+                    linkPrefetch.call(
+                      Template.asString([
+                        "var link = document.createElement('link');",
+                        crossOriginLoading
+                          ? `link.crossOrigin = ${JSON.stringify(
+                              crossOriginLoading
+                            )};`
+                          : "",
+                        `if (${RuntimeGlobals.scriptNonce}) {`,
+                        Template.indent(
+                          `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
+                        ),
+                        "}",
+                        'link.rel = "prefetch";',
+                        'link.as = "style";',
+                        `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
+                      ]),
+                      /** @type {Chunk} */ (chunk)
+                    ),
+                    "document.head.appendChild(link);",
+                  ]),
+                  "}",
+                ])};`
+              : "// no prefetching",
+            "",
+            withPreload && hasCssMatcher !== false
+              ? `${
+                  RuntimeGlobals.preloadChunkHandlers
+                }.miniCss = ${runtimeTemplate.basicFunction("chunkId", [
+                  `if((!${
+                    RuntimeGlobals.hasOwnProperty
+                  }(installedCssChunks, chunkId) || installedCssChunks[chunkId] === undefined) && ${
+                    hasCssMatcher === true ? "true" : hasCssMatcher("chunkId")
+                  }) {`,
+                  Template.indent([
+                    "installedCssChunks[chunkId] = null;",
+                    linkPreload.call(
+                      Template.asString([
+                        "var link = document.createElement('link');",
+                        "link.charset = 'utf-8';",
+                        `if (${RuntimeGlobals.scriptNonce}) {`,
+                        Template.indent(
+                          `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
+                        ),
+                        "}",
+                        'link.rel = "preload";',
+                        'link.as = "style";',
+                        `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
+                        crossOriginLoading
+                          ? crossOriginLoading === "use-credentials"
+                            ? 'link.crossOrigin = "use-credentials";'
+                            : Template.asString([
+                                "if (link.href.indexOf(window.location.origin + '/') !== 0) {",
+                                Template.indent(
+                                  `link.crossOrigin = ${JSON.stringify(
+                                    crossOriginLoading
+                                  )};`
+                                ),
+                                "}",
+                              ])
+                          : "",
+                      ]),
+                      /** @type {Chunk} */ (chunk)
+                    ),
+                    "document.head.appendChild(link);",
+                  ]),
+                  "}",
+                ])};`
+              : "// no preloaded",
           ]);
         }
       }
@@ -1149,6 +1263,12 @@ class MiniCssExtractPlugin {
         .tap(pluginName, handler);
       compilation.hooks.runtimeRequirementInTree
         .for(RuntimeGlobals.hmrDownloadUpdateHandlers)
+        .tap(pluginName, handler);
+      compilation.hooks.runtimeRequirementInTree
+        .for(RuntimeGlobals.prefetchChunkHandlers)
+        .tap(pluginName, handler);
+      compilation.hooks.runtimeRequirementInTree
+        .for(RuntimeGlobals.preloadChunkHandlers)
         .tap(pluginName, handler);
     });
   }
