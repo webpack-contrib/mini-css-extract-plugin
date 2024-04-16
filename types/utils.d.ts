@@ -65,3 +65,10 @@ export function getUndoPath(
   outputPath: string,
   enforceRelative: boolean
 ): string;
+/**
+ * @param {Record<string|number, boolean>} map value map
+ * @returns {boolean|(function(string): string)} true/false, when unconditionally true/false, or a template function to determine the value at runtime
+ */
+export function compileBooleanMatcher(
+  map: Record<string | number, boolean>
+): boolean | ((arg0: string) => string);
