@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.8.1...v2.9.0) (2024-04-16)
+
+
+### Features
+
+* add support for link preload/prefetch ([#1043](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1043)) ([ee25e51](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/ee25e51a8d06292dd8643f5bf1d6c4faa51c4f4c))
+* added the `defaultExport` option to generate default and named export together ([#1084](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1084)) ([74ae781](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/74ae78184fb5bfeec23b9d254ff8304c6fc854d6))
+
+
+### Bug Fixes
+
+* avoid reloading all csses when hot load ([#1090](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1090)) ([1a56673](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/1a56673d01c441967134beb5d9500a7d6d62e4de))
+
 ### [2.8.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.8.0...v2.8.1) (2024-02-27)
 
 
