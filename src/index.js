@@ -5,11 +5,6 @@ const path = require("path");
 const { validate } = require("schema-utils");
 const { SyncWaterfallHook } = require("tapable");
 
-// @ts-ignore
-const JsonpChunkLoadingRuntimeModule = require("webpack/lib/web/JsonpChunkLoadingRuntimeModule");
-// @ts-ignore
-const compileBooleanMatcher = require("webpack/lib/util/compileBooleanMatcher");
-
 const schema = require("./plugin-options.json");
 const {
   trueFn,
@@ -20,6 +15,7 @@ const {
   compareModulesByIdentifier,
   getUndoPath,
   BASE_URI,
+  compileBooleanMatcher,
 } = require("./utils");
 
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
@@ -110,6 +106,8 @@ const CODE_GENERATION_RESULT = {
 /**
  * @typedef {Object} MiniCssExtractPluginCompilationHooks
  * @property {import("tapable").SyncWaterfallHook<[string, VarNames], string>} beforeTagInsert
+ * @property {SyncWaterfallHook<[string, Chunk]>} linkPreload
+ * @property {SyncWaterfallHook<[string, Chunk]>} linkPrefetch
  */
 
 /**
@@ -531,7 +529,8 @@ class MiniCssExtractPlugin {
 
   /**
    * Returns all hooks for the given compilation
-   * @param {Compilation} compilation
+   * @param {Compilation} compilation the compilation
+   * @returns {MiniCssExtractPluginCompilationHooks} hooks
    */
   static getCompilationHooks(compilation) {
     let hooks = compilationHooksMap.get(compilation);
@@ -542,6 +541,8 @@ class MiniCssExtractPlugin {
           ["source", "varNames"],
           "string"
         ),
+        linkPreload: new SyncWaterfallHook(["source", "chunk"]),
+        linkPrefetch: new SyncWaterfallHook(["source", "chunk"]),
       };
       compilationHooksMap.set(compilation, hooks);
     }
@@ -854,16 +855,9 @@ class MiniCssExtractPlugin {
       function chunkHasCss(chunk, chunkGraph) {
         // this function replace:
         // const chunkHasCss = require("webpack/lib/css/CssModulesPlugin").chunkHasCss;
-        return (
-          !!chunkGraph.getChunkModulesIterableBySourceType(chunk, "css") ||
-          !!chunkGraph.getChunkModulesIterableBySourceType(
-            chunk,
-            "css-import"
-          ) ||
-          !!chunkGraph.getChunkModulesIterableBySourceType(
-            chunk,
-            "css/mini-extract"
-          )
+        return !!chunkGraph.getChunkModulesIterableBySourceType(
+          chunk,
+          "css/mini-extract"
         );
       }
 
@@ -883,39 +877,36 @@ class MiniCssExtractPlugin {
           const { chunkGraph, chunk, runtimeRequirements } = this;
           const {
             runtimeTemplate,
-            outputOptions: { chunkLoadingGlobal, crossOriginLoading },
+            outputOptions: { crossOriginLoading },
           } = /** @type {Compilation} */ (this.compilation);
           const chunkMap = getCssChunkObject(
             /** @type {Chunk} */ (chunk),
             /** @type {Compilation} */ (this.compilation)
           );
-          const { globalObject } = runtimeTemplate;
-          const { linkPreload, linkPrefetch } =
-            JsonpChunkLoadingRuntimeModule.getCompilationHooks(compilation);
-          const conditionMap = /** @type {ChunkGraph} */ (
-            chunkGraph
-          ).getChunkConditionMap(/** @type {Chunk} */ (chunk), chunkHasCss);  
-          const hasCssMatcher = compileBooleanMatcher(conditionMap);
-
           const withLoading =
             runtimeRequirements.has(RuntimeGlobals.ensureChunkHandlers) &&
             Object.keys(chunkMap).length > 0;
           const withHmr = runtimeRequirements.has(
             RuntimeGlobals.hmrDownloadUpdateHandlers
           );
+
+          if (!withLoading && !withHmr) {
+            return "";
+          }
+
+          const conditionMap = /** @type {ChunkGraph} */ (
+            chunkGraph
+          ).getChunkConditionMap(/** @type {Chunk} */ (chunk), chunkHasCss);
+          const hasCssMatcher = compileBooleanMatcher(conditionMap);
           const withPrefetch = runtimeRequirements.has(
             RuntimeGlobals.prefetchChunkHandlers
           );
           const withPreload = runtimeRequirements.has(
             RuntimeGlobals.preloadChunkHandlers
           );
-          const chunkLoadingGlobalExpr = `${globalObject}[${JSON.stringify(
-            chunkLoadingGlobal
-          )}]`;
+          const { linkPreload, linkPrefetch } =
+            MiniCssExtractPlugin.getCompilationHooks(compilation);
 
-          if (!withLoading && !withHmr) {
-            return "";
-          }
           return Template.asString([
             'if (typeof document === "undefined") return;',
             `var createStylesheet = ${runtimeTemplate.basicFunction(
@@ -1052,23 +1043,6 @@ class MiniCssExtractPlugin {
                   ),
                   "};",
                   "",
-                  `var webpackJsonpCallback = ${runtimeTemplate.basicFunction(
-                    "parentChunkLoadingFunction, data",
-                    [
-                      runtimeTemplate.destructureArray(["chunkIds"], "data"),
-                      "for(var i=0;i < chunkIds.length; i++) {",
-                      Template.indent([
-                        "var chunkId = chunkIds[i];",
-                        "installedCssChunks[chunkId] = 0;",
-                      ]),
-                      "}",
-                    ]
-                  )}`,
-                  "",
-                  `var chunkLoadingGlobal = ${chunkLoadingGlobalExpr} = ${chunkLoadingGlobalExpr} || [];`,
-                  "chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));",
-                  "chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));",
-                  "",
                   `${
                     RuntimeGlobals.ensureChunkHandlers
                   }.miniCss = ${runtimeTemplate.basicFunction(
@@ -1158,55 +1132,27 @@ class MiniCssExtractPlugin {
                     hasCssMatcher === true ? "true" : hasCssMatcher("chunkId")
                   }) {`,
                   Template.indent([
-                    `var getLinkElements = function (rel, as) {`,
-                    Template.indent([
-                      `var links = document.getElementsByTagName("link");`,
-                      `var loadedLinks = [];`,
-                      `for (var i = 0; i < links.length; i++) {`,
-                      Template.indent([
-                        `if (`,
-                        Template.indent([
-                          `links[i].getAttribute("rel") === rel &&`,
-                          `links[i].getAttribute("as") === as`,
-                        ]),
-                        `) {`,
-                        Template.indent([
-                          `loadedLinks.push(links[i].getAttribute("href"));`,
-                        ]),
-                        `}`,
+                    "installedCssChunks[chunkId] = null;",
+                    linkPrefetch.call(
+                      Template.asString([
+                        "var link = document.createElement('link');",
+                        crossOriginLoading
+                          ? `link.crossOrigin = ${JSON.stringify(
+                              crossOriginLoading
+                            )};`
+                          : "",
+                        `if (${RuntimeGlobals.scriptNonce}) {`,
+                        Template.indent(
+                          `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
+                        ),
+                        "}",
+                        'link.rel = "prefetch";',
+                        'link.as = "style";',
+                        `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
                       ]),
-                      `}`,
-                      `return loadedLinks;`,
-                    ]),
-                    `};`,
-                    "",
-                    `var loadedPreloadLinkElements = getLinkElements("preload", "style");`,
-                    `var chunkIdHref = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
-                    `if(!loadedPreloadLinkElements.includes(chunkIdHref)) {`,
-                    Template.indent([
-                      "installedCssChunks[chunkId] = null;",
-                      linkPrefetch.call(
-                        Template.asString([
-                          "var link = document.createElement('link');",
-                          crossOriginLoading
-                            ? `link.crossOrigin = ${JSON.stringify(
-                                crossOriginLoading
-                              )};`
-                            : "",
-                          `if (${RuntimeGlobals.scriptNonce}) {`,
-                          Template.indent(
-                            `link.setAttribute("nonce", ${RuntimeGlobals.scriptNonce});`
-                          ),
-                          "}",
-                          'link.rel = "prefetch";',
-                          'link.as = "style";',
-                          `link.href = ${RuntimeGlobals.publicPath} + ${RuntimeGlobals.require}.miniCssF(chunkId);`,
-                        ]),
-                        chunk
-                      ),
-                      "document.head.appendChild(link);",
-                    ]),
-                    `}`,
+                      /** @type {Chunk} */ (chunk)
+                    ),
+                    "document.head.appendChild(link);",
                   ]),
                   "}",
                 ])};`
@@ -1249,7 +1195,7 @@ class MiniCssExtractPlugin {
                               ])
                           : "",
                       ]),
-                      chunk
+                      /** @type {Chunk} */ (chunk)
                     ),
                     "document.head.appendChild(link);",
                   ]),

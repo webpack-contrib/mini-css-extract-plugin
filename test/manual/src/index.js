@@ -102,3 +102,16 @@ worker.postMessage("test");
 worker.addEventListener("message", (event) => {
   console.log(`Received message from worker: ${event.data}`);
 });
+
+makeButton(
+  ".prefetch-button",
+  () => import(/* webpackPrefetch: true */ "./prefetch.css"),
+  false
+);
+
+makeButton(
+  ".preload-button",
+  // eslint-disable-next-line import/extensions
+  () => import("./preload.js"),
+  false
+);

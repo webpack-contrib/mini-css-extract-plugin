@@ -23,6 +23,16 @@
         background: lightgreen;
       }
     </style>
+    <style>
+      html:has(link[rel="prefetch"][as="style"]) .prefetch {
+        background: blue;
+      }
+    </style>
+    <style>
+      html:has(link[rel="preload"][as="style"]) .preload {
+        background: blue;
+      }
+    </style>
     <link rel="stylesheet" type="text/css" href="dist/main.css" />
   </head>
   <body>
@@ -97,6 +107,20 @@
       </p>
     </div>
     <div class="errors"></div>
+    <div class="prefetch">
+      <p>Prefetch CSS: Must be blue and green after click.</p>
+      <p>
+        <button class="prefetch-button">Pressing this button</button> to load
+        prefetched chunk
+      </p>
+    </div>
+    <div class="preload">
+      <p>Preload CSS: Must be white, then blue, then green after click.</p>
+      <p>
+        <button class="preload-button">Pressing this button</button> to load
+        preloaded chunk
+      </p>
+    </div>
     <script async defer src="dist/main.js"></script>
   </body>
 </html>

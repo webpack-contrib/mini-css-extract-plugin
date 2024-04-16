@@ -14,7 +14,8 @@ declare class MiniCssExtractPlugin {
   ): CssDependencyConstructor;
   /**
    * Returns all hooks for the given compilation
-   * @param {Compilation} compilation
+   * @param {Compilation} compilation the compilation
+   * @returns {MiniCssExtractPluginCompilationHooks} hooks
    */
   static getCompilationHooks(
     compilation: Compilation
@@ -118,6 +119,8 @@ type MiniCssExtractPluginCompilationHooks = {
     [string, VarNames],
     string
   >;
+  linkPreload: SyncWaterfallHook<[string, Chunk]>;
+  linkPrefetch: SyncWaterfallHook<[string, Chunk]>;
 };
 type PluginOptions = {
   filename?: Required<Configuration>["output"]["filename"];
@@ -255,3 +258,4 @@ type VarNames = {
   resolve: string;
   reject: string;
 };
+import { SyncWaterfallHook } from "tapable";
