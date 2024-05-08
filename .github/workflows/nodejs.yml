@@ -130,11 +130,21 @@ jobs:
         run: git config --global core.autocrlf input
 
       - uses: actions/checkout@v4
-
+      - uses: actions/github-script@v7
+        id: calculate_architecture
+        with:
+          result-encoding: string
+          script: |
+            if ('${{ matrix.os }}' === 'macos-latest' && ('${{ matrix['node-version'] }}' === '12.x' || '${{ matrix['node-version'] }}' === '14.x')) {
+              return "x64"
+            } else {
+              return ''
+            }
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          architecture: ${{ steps.calculate_architecture.outputs.result }}
           cache: "npm"
 
       - name: Install dependencies
