@@ -592,9 +592,11 @@ module.exports = {
           },
           {
             loader: "css-loader",
-            esModule: true,
-            modules: {
-              namedExport: true,
+            options: {
+              esModule: true,
+              modules: {
+                namedExport: true,
+              },
             },
           },
         ],
