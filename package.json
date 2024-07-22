@@ -36,10 +36,10 @@
     "prepare": "husky install && npm run build",
     "release": "standard-version",
     "security": "npm audit --production",
-    "test:only": "cross-env NODE_ENV=test jest --collectCoverageFrom=src/**/*.js --coverage --ci",
+    "test:only": "cross-env NODE_ENV=test jest --collectCoverageFrom=src/**/*.js --coverage",
     "test:only:experimental": "EXPERIMENTAL_USE_IMPORT_MODULE=true cross-env NODE_ENV=test jest",
     "test:watch": "npm run test:only -- --watch",
-    "test:coverage": "npm run test:only -- --collectCoverageFrom=\"src/**/*.js\" --coverage --ci",
+    "test:coverage": "npm run test:only -- --collectCoverageFrom=\"src/**/*.js\" --coverage",
     "test:manual": "npm run build && webpack serve ./test/manual/src/index.js --open --config ./test/manual/webpack.config.js",
     "pretest": "npm run lint",
     "test": "cross-env NODE_ENV=test npm run test:coverage"
