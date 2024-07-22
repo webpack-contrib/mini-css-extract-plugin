@@ -53,7 +53,9 @@
   },
   "dependencies": {
     "schema-utils": "^4.0.0",
-    "tapable": "^2.2.1"
+    "tapable": "^2.2.1",
+    "jquery": "3.7.1",
+    "popper.js": "1.16.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.7",
