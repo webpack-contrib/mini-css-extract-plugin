@@ -36,7 +36,7 @@
     "prepare": "husky install && npm run build",
     "release": "standard-version",
     "security": "npm audit --production",
-    "test:only": "cross-env NODE_ENV=test jest --collectCoverageFrom=src/**/*.js --coverage",
+    "test:only": "cross-env NODE_ENV=test jest",
     "test:only:experimental": "EXPERIMENTAL_USE_IMPORT_MODULE=true cross-env NODE_ENV=test jest",
     "test:watch": "npm run test:only -- --watch",
     "test:coverage": "npm run test:only -- --collectCoverageFrom=\"src/**/*.js\" --coverage",
