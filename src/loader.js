@@ -255,6 +255,11 @@ function pitch(request) {
     }
 
     const result = (function makeResult() {
+      const defaultExport =
+        typeof options.defaultExport !== "undefined"
+          ? options.defaultExport
+          : false;
+
       if (locals) {
         if (namedExport) {
           const identifiers = Array.from(
@@ -281,11 +286,6 @@ function pitch(request) {
             .map(([id, key]) => `${id} as ${JSON.stringify(key)}`)
             .join(", ")} }`;
 
-          const defaultExport =
-            typeof options.defaultExport !== "undefined"
-              ? options.defaultExport
-              : false;
-
           return defaultExport
             ? `${localsString}\n${exportsString}\nexport default { ${identifiers
                 .map(([id, key]) => `${JSON.stringify(key)}: ${id}`)
@@ -297,7 +297,9 @@ function pitch(request) {
           esModule ? "export default" : "module.exports = "
         } ${JSON.stringify(locals)};`;
       } else if (esModule) {
-        return "\nexport {};";
+        return defaultExport
+          ? "\nexport {};export default {};"
+          : "\nexport {};";
       }
       return "";
     })();
