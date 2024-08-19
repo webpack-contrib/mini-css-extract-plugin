@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.9.0...v2.9.1) (2024-08-19)
+
+
+### Bug Fixes
+
+* add `export default {}` when CSS modules enabled and a file is empty for the `defaultExport` option ([8f77e19](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/8f77e19a89eca97b05f1855d2c851592e98ff774))
+
 ## [2.9.0](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.8.1...v2.9.0) (2024-04-16)
 
 
