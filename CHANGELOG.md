@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.9.1...v2.9.2) (2024-11-01)
+
+
+### Bug Fixes
+
+* prefetch and preload runtime generation ([#1116](https://github.com/webpack-contrib/mini-css-extract-plugin/issues/1116)) ([58c6b74](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/58c6b7422aedfd3fc4d5f3553b196da40eae1f4b))
+
 ### [2.9.1](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.9.0...v2.9.1) (2024-08-19)
 
 
