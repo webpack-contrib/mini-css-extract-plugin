@@ -1123,7 +1123,7 @@ class MiniCssExtractPlugin {
                 ])
               : "// no hmr",
             "",
-            withPrefetch && hasCssMatcher !== false
+            withPrefetch && withLoading && hasCssMatcher !== false
               ? `${
                   RuntimeGlobals.prefetchChunkHandlers
                 }.miniCss = ${runtimeTemplate.basicFunction("chunkId", [
@@ -1159,7 +1159,7 @@ class MiniCssExtractPlugin {
                 ])};`
               : "// no prefetching",
             "",
-            withPreload && hasCssMatcher !== false
+            withPreload && withLoading && hasCssMatcher !== false
               ? `${
                   RuntimeGlobals.preloadChunkHandlers
                 }.miniCss = ${runtimeTemplate.basicFunction("chunkId", [
