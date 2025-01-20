@@ -110,7 +110,7 @@ jobs:
         run: npm run test:coverage -- --ci
 
       - name: Submit coverage data to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -156,6 +156,6 @@ jobs:
           OLD_API: "true"
 
       - name: Submit coverage data to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
