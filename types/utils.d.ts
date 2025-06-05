@@ -13,21 +13,14 @@ export function trueFn(): boolean;
  * @param {string | number} id
  * @returns {null | Module}
  */
-export function findModuleById(
-  compilation: Compilation,
-  id: string | number
-): null | Module;
+export function findModuleById(compilation: Compilation, id: string | number): null | Module;
 /**
  * @param {LoaderContext} loaderContext
  * @param {string | Buffer} code
  * @param {string} filename
  * @returns {object}
  */
-export function evalModuleCode(
-  loaderContext: LoaderContext,
-  code: string | Buffer,
-  filename: string
-): object;
+export function evalModuleCode(loaderContext: LoaderContext, code: string | Buffer, filename: string): object;
 /**
  * @param {Module} a
  * @param {Module} b
@@ -44,10 +37,7 @@ export const SINGLE_DOT_PATH_SEGMENT: "__mini_css_extract_plugin_single_dot_path
  * @param {string} request
  * @returns {string}
  */
-export function stringifyRequest(
-  loaderContext: LoaderContext,
-  request: string
-): string;
+export function stringifyRequest(loaderContext: LoaderContext, request: string): string;
 /**
  *
  * @param {string | function} value
@@ -60,15 +50,9 @@ export function stringifyLocal(value: string | Function): string;
  * @param {boolean} enforceRelative
  * @returns {string}
  */
-export function getUndoPath(
-  filename: string,
-  outputPath: string,
-  enforceRelative: boolean
-): string;
+export function getUndoPath(filename: string, outputPath: string, enforceRelative: boolean): string;
 /**
  * @param {Record<string|number, boolean>} map value map
  * @returns {boolean|(function(string): string)} true/false, when unconditionally true/false, or a template function to determine the value at runtime
  */
-export function compileBooleanMatcher(
-  map: Record<string | number, boolean>
-): boolean | ((arg0: string) => string);
+export function compileBooleanMatcher(map: Record<string | number, boolean>): boolean | ((arg0: string) => string);

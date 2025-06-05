@@ -1,136 +1,95 @@
 export = MiniCssExtractPlugin;
 declare class MiniCssExtractPlugin {
-  /**
-   * @param {Compiler["webpack"]} webpack
-   * @returns {CssModuleConstructor}
-   */
-  static getCssModule(webpack: Compiler["webpack"]): CssModuleConstructor;
-  /**
-   * @param {Compiler["webpack"]} webpack
-   * @returns {CssDependencyConstructor}
-   */
-  static getCssDependency(
-    webpack: Compiler["webpack"]
-  ): CssDependencyConstructor;
-  /**
-   * Returns all hooks for the given compilation
-   * @param {Compilation} compilation the compilation
-   * @returns {MiniCssExtractPluginCompilationHooks} hooks
-   */
-  static getCompilationHooks(
-    compilation: Compilation
-  ): MiniCssExtractPluginCompilationHooks;
-  /**
-   * @param {PluginOptions} [options]
-   */
-  constructor(options?: PluginOptions | undefined);
-  /**
-   * @private
-   * @type {WeakMap<Chunk, Set<CssModule>>}
-   * @private
-   */
-  private _sortedModulesCache;
-  /**
-   * @private
-   * @type {NormalizedPluginOptions}
-   */
-  private options;
-  /**
-   * @private
-   * @type {RuntimeOptions}
-   */
-  private runtimeOptions;
-  /**
-   * @param {Compiler} compiler
-   */
-  apply(compiler: Compiler): void;
-  /**
-   * @private
-   * @param {Chunk} chunk
-   * @param {ChunkGraph} chunkGraph
-   * @returns {Iterable<Module>}
-   */
-  private getChunkModules;
-  /**
-   * @private
-   * @param {Compilation} compilation
-   * @param {Chunk} chunk
-   * @param {CssModule[]} modules
-   * @param {Compilation["requestShortener"]} requestShortener
-   * @returns {Set<CssModule>}
-   */
-  private sortModules;
-  /**
-   * @private
-   * @param {Compiler} compiler
-   * @param {Compilation} compilation
-   * @param {Chunk} chunk
-   * @param {CssModule[]} modules
-   * @param {Compiler["requestShortener"]} requestShortener
-   * @param {string} filenameTemplate
-   * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
-   * @returns {Source}
-   */
-  private renderContentAsset;
+    /**
+     * @param {Compiler["webpack"]} webpack
+     * @returns {CssModuleConstructor}
+     */
+    static getCssModule(webpack: Compiler["webpack"]): CssModuleConstructor;
+    /**
+     * @param {Compiler["webpack"]} webpack
+     * @returns {CssDependencyConstructor}
+     */
+    static getCssDependency(webpack: Compiler["webpack"]): CssDependencyConstructor;
+    /**
+     * Returns all hooks for the given compilation
+     * @param {Compilation} compilation the compilation
+     * @returns {MiniCssExtractPluginCompilationHooks} hooks
+     */
+    static getCompilationHooks(compilation: Compilation): MiniCssExtractPluginCompilationHooks;
+    /**
+     * @param {PluginOptions} [options]
+     */
+    constructor(options?: PluginOptions | undefined);
+    /**
+     * @private
+     * @type {WeakMap<Chunk, Set<CssModule>>}
+     * @private
+     */
+    private _sortedModulesCache;
+    /**
+     * @private
+     * @type {NormalizedPluginOptions}
+     */
+    private options;
+    /**
+     * @private
+     * @type {RuntimeOptions}
+     */
+    private runtimeOptions;
+    /**
+     * @param {Compiler} compiler
+     */
+    apply(compiler: Compiler): void;
+    /**
+     * @private
+     * @param {Chunk} chunk
+     * @param {ChunkGraph} chunkGraph
+     * @returns {Iterable<Module>}
+     */
+    private getChunkModules;
+    /**
+     * @private
+     * @param {Compilation} compilation
+     * @param {Chunk} chunk
+     * @param {CssModule[]} modules
+     * @param {Compilation["requestShortener"]} requestShortener
+     * @returns {Set<CssModule>}
+     */
+    private sortModules;
+    /**
+     * @private
+     * @param {Compiler} compiler
+     * @param {Compilation} compilation
+     * @param {Chunk} chunk
+     * @param {CssModule[]} modules
+     * @param {Compiler["requestShortener"]} requestShortener
+     * @param {string} filenameTemplate
+     * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
+     * @returns {Source}
+     */
+    private renderContentAsset;
 }
 declare namespace MiniCssExtractPlugin {
-  export {
-    pluginName,
-    pluginSymbol,
-    loader,
-    Schema,
-    Compiler,
-    Compilation,
-    ChunkGraph,
-    Chunk,
-    ChunkGroup,
-    Module,
-    Dependency,
-    Source,
-    Configuration,
-    WebpackError,
-    AssetInfo,
-    LoaderDependency,
-    LoaderOptions,
-    PluginOptions,
-    NormalizedPluginOptions,
-    RuntimeOptions,
-    TODO,
-    CssModule,
-    CssModuleDependency,
-    CssModuleConstructor,
-    CssDependency,
-    CssDependencyOptions,
-    CssDependencyConstructor,
-    VarNames,
-    MiniCssExtractPluginCompilationHooks,
-  };
+    export { pluginName, pluginSymbol, loader, Schema, Compiler, Compilation, ChunkGraph, Chunk, ChunkGroup, Module, Dependency, Source, Configuration, WebpackError, AssetInfo, LoaderDependency, LoaderOptions, PluginOptions, NormalizedPluginOptions, RuntimeOptions, TODO, CssModule, CssModuleDependency, CssModuleConstructor, CssDependency, CssDependencyOptions, CssDependencyConstructor, VarNames, MiniCssExtractPluginCompilationHooks };
 }
 type Compiler = import("webpack").Compiler;
 type CssModuleConstructor = new (dependency: CssModuleDependency) => CssModule;
-type CssDependencyConstructor = new (
-  loaderDependency: CssDependencyOptions,
-  context: string | null,
-  identifierIndex: number
-) => CssDependency;
+type CssDependencyConstructor = new (loaderDependency: CssDependencyOptions, context: string | null, identifierIndex: number) => CssDependency;
 type Compilation = import("webpack").Compilation;
 type MiniCssExtractPluginCompilationHooks = {
-  beforeTagInsert: import("tapable").SyncWaterfallHook<
-    [string, VarNames],
-    string
-  >;
-  linkPreload: SyncWaterfallHook<[string, Chunk]>;
-  linkPrefetch: SyncWaterfallHook<[string, Chunk]>;
+    beforeTagInsert: import("tapable").SyncWaterfallHook<[string, VarNames], string>;
+    linkPreload: SyncWaterfallHook<[string, Chunk]>;
+    linkPrefetch: SyncWaterfallHook<[string, Chunk]>;
 };
 type PluginOptions = {
-  filename?: Required<Configuration>["output"]["filename"];
-  chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
-  ignoreOrder?: boolean | undefined;
-  insert?: string | ((linkTag: HTMLLinkElement) => void) | undefined;
-  attributes?: Record<string, string> | undefined;
-  linkType?: string | false | undefined;
-  runtime?: boolean | undefined;
-  experimentalUseImportModule?: boolean | undefined;
+    filename?: Required<Configuration>['output']['filename'];
+    chunkFilename?: Required<Configuration>['output']['chunkFilename'];
+    ignoreOrder?: boolean | undefined;
+    insert?: string | ((linkTag: HTMLLinkElement) => void) | undefined;
+    attributes?: Record<string, string> | undefined;
+    linkType?: string | false | undefined;
+    runtime?: boolean | undefined;
+    experimentalUseImportModule?: boolean | undefined;
 };
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
 /** @typedef {import("webpack").Compiler} Compiler */
@@ -197,67 +156,60 @@ type WebpackError = import("webpack").WebpackError;
 type AssetInfo = import("webpack").AssetInfo;
 type LoaderDependency = import("./loader.js").Dependency;
 type LoaderOptions = {
-  publicPath?:
-    | string
-    | ((resourcePath: string, rootContext: string) => string)
-    | undefined;
-  emit?: boolean | undefined;
-  esModule?: boolean | undefined;
-  layer?: string | undefined;
-  defaultExport?: boolean | undefined;
+    publicPath?: string | ((resourcePath: string, rootContext: string) => string) | undefined;
+    emit?: boolean | undefined;
+    esModule?: boolean | undefined;
+    layer?: string | undefined;
+    defaultExport?: boolean | undefined;
 };
 type NormalizedPluginOptions = {
-  filename: Required<Configuration>["output"]["filename"];
-  chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
-  ignoreOrder: boolean;
-  insert?: string | ((linkTag: HTMLLinkElement) => void) | undefined;
-  attributes?: Record<string, string> | undefined;
-  linkType?: string | false | undefined;
-  runtime: boolean;
-  experimentalUseImportModule?: boolean | undefined;
+    filename: Required<Configuration>['output']['filename'];
+    chunkFilename?: Required<Configuration>['output']['chunkFilename'];
+    ignoreOrder: boolean;
+    insert?: string | ((linkTag: HTMLLinkElement) => void) | undefined;
+    attributes?: Record<string, string> | undefined;
+    linkType?: string | false | undefined;
+    runtime: boolean;
+    experimentalUseImportModule?: boolean | undefined;
 };
 type RuntimeOptions = {
-  insert: string | ((linkTag: HTMLLinkElement) => void) | undefined;
-  linkType: string | false | "text/css";
-  attributes: Record<string, string> | undefined;
+    insert: string | ((linkTag: HTMLLinkElement) => void) | undefined;
+    linkType: string | false | 'text/css';
+    attributes: Record<string, string> | undefined;
 };
 type TODO = any;
 type CssModule = import("webpack").Module & {
-  content: Buffer;
-  media?: string | undefined;
-  sourceMap?: Buffer | undefined;
-  supports?: string | undefined;
-  layer?: string | undefined;
-  assets?:
-    | {
+    content: Buffer;
+    media?: string | undefined;
+    sourceMap?: Buffer | undefined;
+    supports?: string | undefined;
+    layer?: string | undefined;
+    assets?: {
         [key: string]: any;
-      }
-    | undefined;
-  assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
+    } | undefined;
+    assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
 };
 type CssModuleDependency = {
-  context: string | null;
-  identifier: string;
-  identifierIndex: number;
-  content: Buffer;
-  sourceMap?: Buffer | undefined;
-  media?: string | undefined;
-  supports?: string | undefined;
-  layer?: TODO;
-  assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
-  assets?:
-    | {
+    context: string | null;
+    identifier: string;
+    identifierIndex: number;
+    content: Buffer;
+    sourceMap?: Buffer | undefined;
+    media?: string | undefined;
+    supports?: string | undefined;
+    layer?: TODO;
+    assetsInfo?: Map<string, import("webpack").AssetInfo> | undefined;
+    assets?: {
         [key: string]: any;
-      }
-    | undefined;
+    } | undefined;
 };
 type CssDependency = Dependency & CssModuleDependency;
 type CssDependencyOptions = Omit<LoaderDependency, "context">;
 type VarNames = {
-  tag: string;
-  chunkId: string;
-  href: string;
-  resolve: string;
-  reject: string;
+    tag: string;
+    chunkId: string;
+    href: string;
+    resolve: string;
+    reject: string;
 };
 import { SyncWaterfallHook } from "tapable";

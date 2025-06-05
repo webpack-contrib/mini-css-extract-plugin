@@ -3,37 +3,16 @@ export = loader;
  * @this {import("webpack").LoaderContext<LoaderOptions>}
  * @param {string} content
  */
-declare function loader(
-  this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
-  content: string
-): string | undefined;
+declare function loader(this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>, content: string): string | undefined;
 declare namespace loader {
-  export {
-    pitch,
-    hotLoader,
-    Schema,
-    Compiler,
-    Compilation,
-    Chunk,
-    Module,
-    Source,
-    AssetInfo,
-    NormalModule,
-    LoaderOptions,
-    Locals,
-    TODO,
-    Dependency,
-  };
+    export { pitch, hotLoader, Schema, Compiler, Compilation, Chunk, Module, Source, AssetInfo, NormalModule, LoaderOptions, Locals, TODO, Dependency };
 }
 import MiniCssExtractPlugin = require("./index");
 /**
  * @this {import("webpack").LoaderContext<LoaderOptions>}
  * @param {string} request
  */
-declare function pitch(
-  this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
-  request: string
-): void;
+declare function pitch(this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>, request: string): void;
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
 /** @typedef {import("webpack").Compiler} Compiler */
 /** @typedef {import("webpack").Compilation} Compilation */
@@ -60,14 +39,11 @@ declare function pitch(
  * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: Locals | undefined }} context
  * @returns {string}
  */
-declare function hotLoader(
-  content: string,
-  context: {
+declare function hotLoader(content: string, context: {
     loaderContext: import("webpack").LoaderContext<LoaderOptions>;
     options: LoaderOptions;
     locals: Locals | undefined;
-  }
-): string;
+}): string;
 type Schema = import("schema-utils/declarations/validate").Schema;
 type Compiler = import("webpack").Compiler;
 type Compilation = import("webpack").Compilation;
@@ -78,15 +54,15 @@ type AssetInfo = import("webpack").AssetInfo;
 type NormalModule = import("webpack").NormalModule;
 type LoaderOptions = import("./index.js").LoaderOptions;
 type Locals = {
-  [key: string]: string | Function;
+    [key: string]: string | Function;
 };
 type TODO = any;
 type Dependency = {
-  identifier: string;
-  context: string | null;
-  content: Buffer;
-  media: string;
-  supports?: string | undefined;
-  layer?: string | undefined;
-  sourceMap?: Buffer | undefined;
+    identifier: string;
+    context: string | null;
+    content: Buffer;
+    media: string;
+    supports?: string | undefined;
+    layer?: string | undefined;
+    sourceMap?: Buffer | undefined;
 };

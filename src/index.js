@@ -279,7 +279,9 @@ class MiniCssExtractPlugin {
           assetsInfo: this.assetsInfo,
           cacheable: true,
           hash: this._computeHash(
-            /** @type {string} */ (compilation.outputOptions.hashFunction)
+            /** @type {string} */ (
+              compilation.outputOptions.hashFunction
+            ).toString()
           ),
         };
         this.buildMeta = {};
@@ -317,7 +319,8 @@ class MiniCssExtractPlugin {
         super.updateHash(hash, context);
 
         hash.update(
-          /** @type {NonNullable<Module["buildInfo"]>} */ (this.buildInfo).hash
+          /** @type {NonNullable<Module["buildInfo"]>} */ (this.buildInfo)
+            .hash || ""
         );
       }
 
