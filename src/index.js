@@ -320,7 +320,7 @@ class MiniCssExtractPlugin {
 
         hash.update(
           /** @type {NonNullable<Module["buildInfo"]>} */ (this.buildInfo)
-            .hash || ""
+            .hash ?? ""
         );
       }
 
