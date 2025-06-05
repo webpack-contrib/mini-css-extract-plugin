@@ -282,7 +282,7 @@ class MiniCssExtractPlugin {
             /** @type {string} */ (
               compilation.outputOptions.hashFunction
             ).toString()
-          ),
+          ).toString(),
         };
         this.buildMeta = {};
         this._needBuild = false;
