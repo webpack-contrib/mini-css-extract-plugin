@@ -183,7 +183,7 @@ class MiniCssExtractPlugin {
       identifier() {
         return `css|${this._identifier}|${this._identifierIndex}|${
           this.layer || ""
-        }|${this.supports || ""}|${this.media}}}`;
+        }|${this.supports || ""}|${this.media || ""}`;
       }
 
       /**
