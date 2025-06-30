@@ -17,9 +17,9 @@ The issue tracker is for bug reports and feature discussions.
 
 ## <a name="issue"></a> Found an Issue or Bug?
 
-Before you submit an issue, please search the issue tracker, maybe an issue for your problem already exists and the discussion might inform you of workarounds readily available.
+Before you submit an issue, please search the issue tracker, an issue for your problem may already exist, and the discussion might inform you of workarounds readily available.
 
-We want to fix all the issues as soon as possible, but before fixing a bug we need to reproduce and confirm it. In order to reproduce bugs, we ask that you to provide a minimal reproduction scenario (github repo or failing test case). Having a live, reproducible scenario gives us a wealth of important information without going back & forth to you with additional questions like:
+We want to fix all the issues as soon as possible, but before fixing a bug, we need to reproduce and confirm it. In order to reproduce bugs, we ask that you provide a minimal reproduction scenario (GitHub repo or failing test case). Having a live, reproducible scenario gives us a wealth of important information without going back & forth to you with additional questions like:
 
 - version of Webpack used
 - version of the loader / plugin you are creating a bug report for
@@ -27,24 +27,24 @@ We want to fix all the issues as soon as possible, but before fixing a bug we ne
 
 A minimal reproduce scenario allows us to quickly confirm a bug (or point out config problems) as well as confirm that we are fixing the right problem.
 
-We will be insisting on a minimal reproduce scenario in order to save maintainers time and ultimately be able to fix more bugs. We understand that sometimes it might be hard to extract essentials bits of code from a larger code-base but we really need to isolate the problem before we can fix it.
+We will be insisting on a minimal reproduction scenario in order to save the maintainers' time and ultimately be able to fix more bugs. We understand that sometimes it might be hard to extract essential bits of code from a larger codebase, but we really need to isolate the problem before we can fix it.
 
-Unfortunately, we are not able to investigate / fix bugs without a minimal reproduction, so if we don't hear back from you we are going to close an issue that doesn't have enough info to be reproduced.
+Unfortunately, we are unable to investigate or fix bugs without a minimal reproduction, so if we don't hear back from you, we may have to close an issue that doesn't have enough info to be reproduced.
 
 ## <a name="feature"></a> Feature Requests?
 
-You can _request_ a new feature by creating an issue on Github.
+You can _request_ a new feature by creating an issue on GitHub.
 
-If you would like to _implement_ a new feature, please submit an issue with a proposal for your work `first`, to be sure that particular makes sense for the project.
+If you would like to _implement_ a new feature yourself, please **first submit an issue** with a proposal to ensure the idea aligns with the goals of the project.
 
 ## <a name="submit-pr"></a> Pull Request Submission Guidelines
 
 Before you submit your Pull Request (PR) consider the following guidelines:
 
-- Search Github for an open or closed PR that relates to your submission. You don't want to duplicate effort.
-- Commit your changes using a descriptive commit message that follows our [commit message conventions](#commit). Adherence to these conventions is necessary because release notes are automatically generated from these messages.
-- Fill out our `Pull Request Template`. Your pull request will not be considered if it is ignored.
-- Please sign the `Contributor License Agreement (CLA)` when a pull request is opened. We cannot accept your pull request without this. Make sure you sign with the primary email address associated with your local / github account.
+- Search GitHub for an open or closed PR related to your submission to avoid duplicating effort.
+- Commit your changes using a descriptive commit message that follows our [commit message conventions](#commit). This is important because release notes are automatically generated from these messages.
+- Complete the `Pull Request Template`. Pull requests that ignore the template will not be reviewed.
+- Please sign the `Contributor License Agreement (CLA)` when you open your pull request. We cannot accept your contribution without it. Be sure to sign using the primary email address associated with your local and GitHub account.
 
 ## <a name="commit"></a> Webpack Contrib Commit Conventions
 
@@ -61,8 +61,7 @@ format that includes a **type**, a **scope** and a **subject**:
 
 The **header** is mandatory and the **scope** of the header is optional.
 
-Any line of the commit message cannot be longer 100 characters! This allows the message to be easier
-to read on GitHub as well as in various git tools.
+No line in the commit message should exceed 100 characters! This makes the message easier to read on GitHub as well as in various Git tools.
 
 The footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any.
 
@@ -83,7 +82,7 @@ In the body it should say: `This reverts commit <hash>.`, where the hash is the 
 
 ### Type
 
-Must be one of the following:
+Must be one of the following commit types:
 
 - **build**: Changes that affect the build system or external dependencies (example scopes: babel, npm)
 - **chore**: Changes that fall outside of build / docs that do not effect source code (example scopes: package, defaults)
@@ -99,27 +98,26 @@ Must be one of the following:
 
 ### Scope
 
-The scope is subjective & depends on the `type` see above. A good example would be a change to a particular class / module.
+The scope is subjective & depends on the `type` see above. A good example of a scope would be a change to a particular class or module.
 
 ### Subject
 
 The subject contains a succinct description of the change:
 
-- use the imperative, present tense: "change" not "changed" nor "changes"
+- use the imperative, present tense: "change" not "changed" or "changes"
 - don't capitalize the first letter
 - no dot (.) at the end
 
 ### Body
 
-Just as in the **subject**, use the imperative, present tense: "change" not "changed" nor "changes".
-The body should include the motivation for the change and contrast this with previous behavior.
+Just as in the **subject**, use the imperative, present tense: "change" not "changed" or "changes".
+The body should include the motivation for the change and contrast it with previous behavior.
 
 ### Footer
 
-The footer should contain any information about **Breaking Changes** and is also the place to
-reference GitHub issues that this commit **Closes**.
+The footer should include any information about **Breaking Changes** and is also the place to reference GitHub issues that this commit **Closes**.
 
-**Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit message is then used for this.
+**Breaking Changes** must start with the word `BREAKING CHANGE:` followed by a space or two new lines. The rest of the breaking change details should be provided after this.
 
 Example
 
@@ -133,9 +131,7 @@ Migration: see webpack/webpack#5225
 
 ## Testing Your Pull Request
 
-You may have the need to test your changes in a real-world project or dependent
-module. Thankfully, Github provides a means to do this. Add a dependency to the
-`package.json` for such a project as follows:
+You may need to test your changes in a real-world project or a dependent module. Thankfully, GitHub provides a means to do this. To add a dependency to the `package.json` of such a project, use the following syntax:
 
 ```json
 {
@@ -149,11 +145,11 @@ Where `{id}` is the # ID of your Pull Request.
 
 ## Contributor License Agreement
 
-When submitting your contribution, a CLA (Contributor License Agreement) bot will come by to verify that you signed the [CLA](https://easycla.lfx.linuxfoundation.org/#/?version=2).
+When submitting your contribution, a CLA (Contributor License Agreement) bot will verify whether you have signed the [CLA](https://easycla.lfx.linuxfoundation.org/#/?version=2).
 If it is your first time, it will link you to the right place to sign it.
-However, if you have committed your contributions using an email that is not the same as your email used on GitHub, the CLA bot can't accept your contribution.
+However, if the email used in your commits doesn’t match the email associated with your GitHub account, the CLA bot won’t accept your contribution.
 
-Run `git config user.email` to see your Git email, and verify it with [your GitHub email](https://github.com/settings/emails).
+Run `Git config user.email` to see your Git email, and verify it with [your GitHub email](https://github.com/settings/emails).
 
 ## Thanks
 
