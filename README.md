@@ -911,7 +911,7 @@ module.exports = {
   optimization: {
     minimizer: [
       // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`).
-      // Uncomment the next linet o keep JS minimizers and add CSS minimizer:
+      // Uncomment the next line o keep JS minimizers and add CSS minimizer:
       // `...`,
       new CssMinimizerPlugin(),
     ],
