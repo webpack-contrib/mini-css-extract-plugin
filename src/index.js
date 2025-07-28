@@ -316,7 +316,9 @@ class MiniCssExtractPlugin {
       updateHash(hash, context) {
         super.updateHash(hash, context);
 
-        const buildInfoHash = /** @type {NonNullable<Module["buildInfo"]>} */ (this.buildInfo).hash;
+        const buildInfoHash = /** @type {NonNullable<Module["buildInfo"]>} */ (
+          this.buildInfo
+        ).hash;
         if (buildInfoHash) {
           hash.update(buildInfoHash);
         }
