@@ -458,12 +458,12 @@ function pitch(request) {
         (loaderContext, module) => {
           if (module.request === request) {
             // eslint-disable-next-line no-param-reassign
-            module.loaders = loaders.map((loader) => {
+            module.loaders = loaders.map((loaderItem) => {
               return {
                 type: null,
-                loader: loader.path,
-                options: loader.options,
-                ident: loader.ident,
+                loader: loaderItem.path,
+                options: loaderItem.options,
+                ident: loaderItem.ident,
               };
             });
           }

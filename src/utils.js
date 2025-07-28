@@ -236,10 +236,11 @@ const quoteMeta = (str) => str.replace(/[-[\]\\/{}()*+?.^$|]/g, "\\$&");
  * @returns {string} common prefix
  */
 const getCommonPrefix = (items) => {
-  let prefix = items[0];
+  const [firstItem, ...restItems] = items;
+  let prefix = firstItem;
 
-  for (let i = 1; i < items.length; i++) {
-    const item = items[i];
+  for (let i = 0; i < restItems.length; i++) {
+    const item = restItems[i];
     for (let p = 0; p < prefix.length; p++) {
       if (item[p] !== prefix[p]) {
         prefix = prefix.slice(0, p);
@@ -256,10 +257,11 @@ const getCommonPrefix = (items) => {
  * @returns {string} common suffix
  */
 const getCommonSuffix = (items) => {
-  let suffix = items[0];
+  const [firstItem, ...restItems] = items;
+  let suffix = firstItem;
 
-  for (let i = 1; i < items.length; i++) {
-    const item = items[i];
+  for (let i = 0; i < restItems.length; i++) {
+    const item = restItems[i];
     for (let p = item.length - 1, s = suffix.length - 1; s >= 0; p--, s--) {
       if (item[p] !== suffix[s]) {
         suffix = suffix.slice(s + 1);
@@ -285,7 +287,7 @@ const popCommonItems = (itemsSet, getKey, condition) => {
     const key = getKey(item);
     if (key) {
       let list = map.get(key);
-      if (list === undefined) {
+      if (!list) {
         /** @type {Array<string>} */
         list = [];
         map.set(key, list);
@@ -358,7 +360,7 @@ const itemsToRegexp = (itemsArr) => {
 
     if (prefix.length > 0 || suffix.length > 0) {
       return `${quoteMeta(prefix)}${itemsToRegexp(
-        itemsArr.map((i) => i.slice(prefix.length, -suffix.length || undefined))
+        itemsArr.map((i) => i.slice(prefix.length, -suffix.length || 0))
       )}${quoteMeta(suffix)}`;
     }
   }
