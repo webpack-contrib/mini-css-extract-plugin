@@ -291,7 +291,7 @@ class MiniCssExtractPlugin {
       /**
        * @private
        * @param {string} hashFunction
-       * @returns {string | Buffer}
+       * @returns {string}
        */
       _computeHash(hashFunction) {
         const hash = webpack.util.createHash(hashFunction);
@@ -306,7 +306,7 @@ class MiniCssExtractPlugin {
         hash.update(this.media || "");
         hash.update(this.sourceMap || "");
 
-        return hash.digest("hex");
+        return /** @type {string} */ (hash.digest("hex"));
       }
 
       /**
@@ -316,9 +316,10 @@ class MiniCssExtractPlugin {
       updateHash(hash, context) {
         super.updateHash(hash, context);
 
-        hash.update(
-          /** @type {NonNullable<Module["buildInfo"]>} */ (this.buildInfo).hash
-        );
+        const buildInfoHash = /** @type {NonNullable<Module["buildInfo"]>} */ (this.buildInfo).hash;
+        if (buildInfoHash) {
+          hash.update(buildInfoHash);
+        }
       }
 
       /**
