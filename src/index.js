@@ -1248,7 +1248,7 @@ class MiniCssExtractPlugin {
                 ? this.options.filename
                 : this.options.chunkFilename;
             },
-            false
+            set.has(RuntimeGlobals.hmrDownloadUpdateHandlers)
           )
         );
 
