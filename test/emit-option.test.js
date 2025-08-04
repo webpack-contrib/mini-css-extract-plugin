@@ -315,42 +315,38 @@ describe("emit option", () => {
 
     await del([outputPath]);
 
-    const compiler1 = webpack(webpackConfig);
+    const compiler = webpack(webpackConfig);
 
     await new Promise((resolve, reject) => {
-      compiler1.run((error, stats) => {
+      compiler.run((error, stats) => {
         if (error) {
           reject(error);
 
           return;
         }
 
-        compiler1.close(() => {
-          expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
-          );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot(`emittedAssets`);
-          expect(getWarnings(stats)).toMatchSnapshot("warnings");
-          expect(getErrors(stats)).toMatchSnapshot("errors");
+        expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
+          `assets`
+        );
+        expect(
+          Array.from(stats.compilation.emittedAssets).sort()
+        ).toMatchSnapshot(`emittedAssets`);
+        expect(getWarnings(stats)).toMatchSnapshot("warnings");
+        expect(getErrors(stats)).toMatchSnapshot("errors");
 
-          resolve();
-        });
+        resolve();
       });
     });
 
-    const compiler2 = webpack(webpackConfig);
-
     await new Promise((resolve, reject) => {
-      compiler2.run((error, stats) => {
+      compiler.run((error, stats) => {
         if (error) {
           reject(error);
 
           return;
         }
 
-        compiler2.close(() => {
+        compiler.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
             `assets`
           );
