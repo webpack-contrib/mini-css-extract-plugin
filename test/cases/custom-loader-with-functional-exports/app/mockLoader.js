@@ -9,6 +9,6 @@ export default function loader() {
 ];
   
 export var cnA = () => "class-name-a";
-export var cnB = () => "class-name-b";`
+export var cnB = () => "class-name-b";`,
   );
 }
