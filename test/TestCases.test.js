@@ -23,7 +23,7 @@ function clearDirectory(dirPath) {
     for (let i = 0; i < files.length; i++) {
       const filePath = `${dirPath}/${files[i]}`;
 
-      if (fs.statSync(filePath).isFile()) {
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         fs.unlinkSync(filePath);
       } else {
         clearDirectory(filePath);
@@ -31,7 +31,11 @@ function clearDirectory(dirPath) {
     }
   }
 
-  fs.rmdirSync(dirPath);
+  try {
+    fs.rmdirSync(dirPath);
+  } catch (_err) {
+    // Nothing
+  }
 }
 
 function compareDirectory(actual, expected) {
