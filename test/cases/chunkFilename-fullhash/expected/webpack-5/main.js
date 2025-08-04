@@ -73,7 +73,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("f572fe696dd05e7ca379")
+/******/ 		__webpack_require__.h = () => ("822ebaf61ed2879ed559")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
@@ -156,7 +156,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
 /******/ 		var document = __webpack_require__.g.document;
 /******/ 		if (!scriptUrl && document) {
-/******/ 			if (document.currentScript)
+/******/ 			if (document.currentScript && document.currentScript.tagName.toUpperCase() === 'SCRIPT')
 /******/ 				scriptUrl = document.currentScript.src;
 /******/ 			if (!scriptUrl) {
 /******/ 				var scripts = document.getElementsByTagName("script");
@@ -169,7 +169,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
 /******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
 /******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
-/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		scriptUrl = scriptUrl.replace(/^blob:/, "").replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
 /******/ 		__webpack_require__.p = scriptUrl;
 /******/ 	})();
 /******/ 	
@@ -351,7 +351,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);

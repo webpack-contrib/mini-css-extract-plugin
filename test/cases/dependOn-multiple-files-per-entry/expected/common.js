@@ -152,7 +152,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other entry modules.
 (() => {
 var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
@@ -161,7 +161,7 @@ __webpack_require__.r(__webpack_exports__);
 
 })();
 
-// This entry need to be wrapped in an IIFE because it need to be isolated against other entry modules.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other entry modules.
 (() => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _styleD_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
