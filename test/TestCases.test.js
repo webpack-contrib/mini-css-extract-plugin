@@ -31,7 +31,11 @@ function clearDirectory(dirPath) {
     }
   }
 
-  fs.rmdirSync(dirPath);
+  try {
+    fs.rmdirSync(dirPath);
+  } catch (_err) {
+    // Nothing
+  }
 }
 
 function compareDirectory(actual, expected) {
