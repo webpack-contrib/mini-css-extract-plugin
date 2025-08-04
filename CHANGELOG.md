@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.9.3](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.9.2...v2.9.3) (2025-08-04)
+
+
+### Bug Fixes
+
+* should update initial chunks correctly with filename ([dab023f](https://github.com/webpack-contrib/mini-css-extract-plugin/commit/dab023f4a7685bc20ef175e71dacd78d988e3713))
+
 ### [2.9.2](https://github.com/webpack-contrib/mini-css-extract-plugin/compare/v2.9.1...v2.9.2) (2024-11-01)
 
 
