@@ -12,7 +12,7 @@ import {
 } from "./helpers/index";
 
 describe("linkType option", () => {
-  it(`should work without linkType option`, async () => {
+  it("should work without linkType option", async () => {
     const compiler = getCompiler(
       "attributes.js",
       {},
@@ -27,7 +27,7 @@ describe("linkType option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -39,7 +39,7 @@ describe("linkType option", () => {
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work when linkType option is "false"`, async () => {
+  it('should work when linkType option is "false"', async () => {
     const compiler = getCompiler(
       "attributes.js",
       {},
@@ -55,7 +55,7 @@ describe("linkType option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -67,7 +67,7 @@ describe("linkType option", () => {
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work when linkType option is "text/css"`, async () => {
+  it('should work when linkType option is "text/css"', async () => {
     const compiler = getCompiler(
       "attributes.js",
       {},
@@ -83,7 +83,7 @@ describe("linkType option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 

@@ -2,8 +2,8 @@
 import fs from "fs";
 import path from "path";
 
-import webpack from "webpack";
 import del from "del";
+import webpack from "webpack";
 
 import MiniCssExtractPlugin from "../src";
 
@@ -16,7 +16,7 @@ import {
 } from "./helpers/index";
 
 describe("emit option", () => {
-  it(`should work without emit option`, async () => {
+  it("should work without emit option", async () => {
     const compiler = getCompiler(
       "style-url.js",
       {},
@@ -32,18 +32,18 @@ describe("emit option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      "assets"
+      "assets",
     );
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work when emit option is "true"`, async () => {
+  it('should work when emit option is "true"', async () => {
     const compiler = getCompiler(
       "style-url.js",
       {
@@ -60,18 +60,18 @@ describe("emit option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      "assets"
+      "assets",
     );
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work when emit option is "false"`, async () => {
+  it('should work when emit option is "false"', async () => {
     const compiler = getCompiler(
       "style-url.js",
       {
@@ -87,18 +87,18 @@ describe("emit option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
     expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-      "assets"
+      "assets",
     );
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work with locals when emit option is "false"`, async () => {
+  it('should work with locals when emit option is "false"', async () => {
     const compiler = getCompiler(
       "locals.js",
       {},
@@ -133,7 +133,7 @@ describe("emit option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -144,7 +144,7 @@ describe("emit option", () => {
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work with locals and invalidate cache when emit option is "false"`, async () => {
+  it('should work with locals and invalidate cache when emit option is "false"', async () => {
     const modifyAsset = path.resolve(__dirname, "fixtures", "locals/index.css");
     const modifyAssetContent = fs.readFileSync(modifyAsset);
 
@@ -163,7 +163,7 @@ describe("emit option", () => {
             fs.writeFileSync(this.options.file, newContent);
 
             callback();
-          }
+          },
         );
       }
     }
@@ -224,11 +224,11 @@ describe("emit option", () => {
 
         compiler1.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            "assets",
           );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot(`emittedAssets`);
+          expect([...stats.compilation.emittedAssets].sort()).toMatchSnapshot(
+            "emittedAssets",
+          );
           runInJsDom("main.js", compiler1, stats, (dom) => {
             expect(dom.serialize()).toMatchSnapshot("DOM");
           });
@@ -252,11 +252,11 @@ describe("emit option", () => {
 
         compiler2.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            "assets",
           );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot(`emittedAssets`);
+          expect([...stats.compilation.emittedAssets].sort()).toMatchSnapshot(
+            "emittedAssets",
+          );
           runInJsDom("main.js", compiler2, stats, (dom) => {
             expect(dom.serialize()).toMatchSnapshot("DOM");
           });
@@ -326,11 +326,11 @@ describe("emit option", () => {
         }
 
         expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-          `assets`
+          "assets",
         );
-        expect(
-          Array.from(stats.compilation.emittedAssets).sort()
-        ).toMatchSnapshot(`emittedAssets`);
+        expect([...stats.compilation.emittedAssets].sort()).toMatchSnapshot(
+          "emittedAssets",
+        );
         expect(getWarnings(stats)).toMatchSnapshot("warnings");
         expect(getErrors(stats)).toMatchSnapshot("errors");
 
@@ -348,11 +348,11 @@ describe("emit option", () => {
 
         compiler.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            "assets",
           );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot(`emittedAssets`);
+          expect([...stats.compilation.emittedAssets].sort()).toMatchSnapshot(
+            "emittedAssets",
+          );
           expect(getWarnings(stats)).toMatchSnapshot("warnings");
           expect(getErrors(stats)).toMatchSnapshot("errors");
 
@@ -372,10 +372,10 @@ describe("emit option", () => {
         compiler.hooks.emit.tapAsync(
           "AssetsModifyPlugin",
           (compilation, callback) => {
-            fs.writeFileSync(this.options.file, `.a{color: red;}`);
+            fs.writeFileSync(this.options.file, ".a{color: red;}");
 
             callback();
-          }
+          },
         );
       }
     }
@@ -440,11 +440,11 @@ describe("emit option", () => {
 
         compiler1.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            "assets",
           );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot(`emittedAssets`);
+          expect([...stats.compilation.emittedAssets].sort()).toMatchSnapshot(
+            "emittedAssets",
+          );
           expect(getWarnings(stats)).toMatchSnapshot("warnings");
           expect(getErrors(stats)).toMatchSnapshot("errors");
 
@@ -465,11 +465,11 @@ describe("emit option", () => {
 
         compiler2.close(() => {
           expect(Object.keys(stats.compilation.assets).sort()).toMatchSnapshot(
-            `assets`
+            "assets",
           );
-          expect(
-            Array.from(stats.compilation.emittedAssets).sort()
-          ).toMatchSnapshot(`emittedAssets`);
+          expect([...stats.compilation.emittedAssets].sort()).toMatchSnapshot(
+            "emittedAssets",
+          );
           expect(getWarnings(stats)).toMatchSnapshot("warnings");
           expect(getErrors(stats)).toMatchSnapshot("errors");
 

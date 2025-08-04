@@ -1,16 +1,16 @@
 const path = require("path");
 
+const schema = require("./loader-options.json");
 const {
-  findModuleById,
-  evalModuleCode,
-  AUTO_PUBLIC_PATH,
   ABSOLUTE_PUBLIC_PATH,
+  AUTO_PUBLIC_PATH,
   BASE_URI,
   SINGLE_DOT_PATH_SEGMENT,
-  stringifyRequest,
+  evalModuleCode,
+  findModuleById,
   stringifyLocal,
+  stringifyRequest,
 } = require("./utils");
-const schema = require("./loader-options.json");
 
 const MiniCssExtractPlugin = require("./index");
 
@@ -23,36 +23,39 @@ const MiniCssExtractPlugin = require("./index");
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
 /** @typedef {import("webpack").NormalModule} NormalModule */
 /** @typedef {import("./index.js").LoaderOptions} LoaderOptions */
-/** @typedef {{ [key: string]: string | function }} Locals */
 
+// eslint-disable-next-line jsdoc/no-restricted-syntax
+/** @typedef {{[key: string]: string | Function }} Locals */
+
+// eslint-disable-next-line jsdoc/no-restricted-syntax
 /** @typedef {any} TODO */
 
 /**
- * @typedef {Object} Dependency
- * @property {string} identifier
- * @property {string | null} context
- * @property {Buffer} content
- * @property {string} media
- * @property {string} [supports]
- * @property {string} [layer]
- * @property {Buffer} [sourceMap]
+ * @typedef {object} Dependency
+ * @property {string} identifier identifier
+ * @property {string | null} context context
+ * @property {Buffer=} content content
+ * @property {string=} media media
+ * @property {string=} supports supports
+ * @property {string=} layer layer
+ * @property {Buffer=} sourceMap source map
  */
 
 /**
- * @param {string} content
- * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: Locals | undefined }} context
- * @returns {string}
+ * @param {string} code code
+ * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: Locals | undefined }} context context
+ * @returns {string} code and HMR code
  */
-function hotLoader(content, context) {
+function hotLoader(code, context) {
   const localsJsonString = JSON.stringify(JSON.stringify(context.locals));
-  return `${content}
+  return `${code}
     if(module.hot) {
       (function() {
         var localsJsonString = ${localsJsonString};
         // ${Date.now()}
         var cssReload = require(${stringifyRequest(
           context.loaderContext,
-          path.join(__dirname, "hmr/hotModuleReplacement.js")
+          path.join(__dirname, "hmr/hotModuleReplacement.js"),
         )})(module.id, ${JSON.stringify(context.options)});
         // only invalidate when locals change
         if (
@@ -75,7 +78,7 @@ function hotLoader(content, context) {
 
 /**
  * @this {import("webpack").LoaderContext<LoaderOptions>}
- * @param {string} request
+ * @param {string} request request
  */
 function pitch(request) {
   if (
@@ -91,14 +94,13 @@ function pitch(request) {
   ) {
     this.emitWarning(
       new Error(
-        'You can\'t use `experiments.css` (`experiments.futureDefaults` enable built-in CSS support by default) and `mini-css-extract-plugin` together, please set `experiments.css` to `false` or set `{ type: "javascript/auto" }` for rules with `mini-css-extract-plugin` in your webpack config (now `mini-css-extract-plugin` does nothing).'
-      )
+        'You can\'t use `experiments.css` (`experiments.futureDefaults` enable built-in CSS support by default) and `mini-css-extract-plugin` together, please set `experiments.css` to `false` or set `{ type: "javascript/auto" }` for rules with `mini-css-extract-plugin` in your webpack config (now `mini-css-extract-plugin` does nothing).',
+      ),
     );
 
     return;
   }
 
-  // @ts-ignore
   const options = this.getOptions(/** @type {Schema} */ (schema));
   const emit = typeof options.emit !== "undefined" ? options.emit : true;
   const callback = this.async();
@@ -109,8 +111,8 @@ function pitch(request) {
   if (!optionsFromPlugin) {
     callback(
       new Error(
-        "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started"
-      )
+        "You forgot to add 'mini-css-extract-plugin' plugin (i.e. `{ plugins: [new MiniCssExtractPlugin()] }`), please read https://github.com/webpack-contrib/mini-css-extract-plugin#getting-started",
+      ),
     );
 
     return;
@@ -119,10 +121,10 @@ function pitch(request) {
   const { webpack } = /** @type {Compiler} */ (this._compiler);
 
   /**
-   * @param {TODO} originalExports
-   * @param {Compilation} [compilation]
-   * @param {{ [name: string]: Source }} [assets]
-   * @param {Map<string, AssetInfo>} [assetsInfo]
+   * @param {TODO} originalExports original exports
+   * @param {Compilation=} compilation compilation
+   * @param {{ [name: string]: Source }=} assets assets
+   * @param {Map<string, AssetInfo>=} assetsInfo assets info
    * @returns {void}
    */
   const handleExports = (originalExports, compilation, assets, assetsInfo) => {
@@ -134,14 +136,15 @@ function pitch(request) {
       typeof options.esModule !== "undefined" ? options.esModule : true;
 
     /**
-     * @param {Dependency[] | [null, object][]} dependencies
+     * @param {Dependency[] | [null, object][]} dependencies dependencies
      */
     const addDependencies = (dependencies) => {
+      // eslint-disable-next-line no-eq-null, eqeqeq
       if (!Array.isArray(dependencies) && dependencies != null) {
         throw new Error(
           `Exported value was not extracted as an array: ${JSON.stringify(
-            dependencies
-          )}`
+            dependencies,
+          )}`,
         );
       }
 
@@ -150,13 +153,12 @@ function pitch(request) {
 
       for (const dependency of dependencies) {
         if (!(/** @type {Dependency} */ (dependency).identifier) || !emit) {
-          // eslint-disable-next-line no-continue
           continue;
         }
 
         const count =
           identifierCountMap.get(
-            /** @type {Dependency} */ (dependency).identifier
+            /** @type {Dependency} */ (dependency).identifier,
           ) || 0;
         const CssDependency = MiniCssExtractPlugin.getCssDependency(webpack);
 
@@ -167,13 +169,13 @@ function pitch(request) {
             (dependency),
             /** @type {Dependency} */
             (dependency).context,
-            count
-          ))
+            count,
+          )),
         );
         identifierCountMap.set(
           /** @type {Dependency} */
           (dependency).identifier,
-          count + 1
+          count + 1,
         );
       }
 
@@ -184,18 +186,16 @@ function pitch(request) {
     };
 
     try {
-      // eslint-disable-next-line no-underscore-dangle
       const exports = originalExports.__esModule
         ? originalExports.default
         : originalExports;
 
       namedExport =
-        // eslint-disable-next-line no-underscore-dangle
         originalExports.__esModule &&
         (!originalExports.default || !("locals" in originalExports.default));
 
       if (namedExport) {
-        Object.keys(originalExports).forEach((key) => {
+        for (const key of Object.keys(originalExports)) {
           if (key !== "default") {
             if (!locals) {
               locals = {};
@@ -203,12 +203,12 @@ function pitch(request) {
 
             /** @type {Locals} */ (locals)[key] = originalExports[key];
           }
-        });
+        }
       } else {
         locals = exports && exports.locals;
       }
 
-      /** @type {Dependency[] | [null, object][]} */
+      /** @type {Dependency[] | [null, TODO][]} */
       let dependencies;
 
       if (!Array.isArray(exports)) {
@@ -240,16 +240,15 @@ function pitch(request) {
               layer,
               sourceMap: sourceMap
                 ? Buffer.from(JSON.stringify(sourceMap))
-                : // eslint-disable-next-line no-undefined
-                  undefined,
+                : undefined,
             };
-          }
+          },
         );
       }
 
       addDependencies(dependencies);
-    } catch (e) {
-      callback(/** @type {Error} */ (e));
+    } catch (err) {
+      callback(/** @type {Error} */ (err));
 
       return;
     }
@@ -262,8 +261,8 @@ function pitch(request) {
 
       if (locals) {
         if (namedExport) {
-          const identifiers = Array.from(
-            (function* generateIdentifiers() {
+          const identifiers = [
+            ...(function* generateIdentifiers() {
               let identifierId = 0;
 
               for (const key of Object.keys(locals)) {
@@ -271,15 +270,15 @@ function pitch(request) {
 
                 yield [`_${identifierId.toString(16)}`, key];
               }
-            })()
-          );
+            })(),
+          ];
 
           const localsString = identifiers
             .map(
               ([id, key]) =>
                 `\nvar ${id} = ${stringifyLocal(
-                  /** @type {Locals} */ (locals)[key]
-                )};`
+                  /** @type {Locals} */ (locals)[key],
+                )};`,
             )
             .join("");
           const exportsString = `export { ${identifiers
@@ -320,7 +319,6 @@ function pitch(request) {
     (this._compilation).outputOptions;
 
   if (typeof options.publicPath === "string") {
-    // eslint-disable-next-line prefer-destructuring
     publicPath = options.publicPath;
   } else if (typeof options.publicPath === "function") {
     publicPath = options.publicPath(this.resourcePath, this.rootContext);
@@ -338,8 +336,8 @@ function pitch(request) {
     if (!this.importModule) {
       callback(
         new Error(
-          "You are using 'experimentalUseImportModule' but 'this.importModule' is not available in loader context. You need to have at least webpack 5.33.2."
-        )
+          "You are using 'experimentalUseImportModule' but 'this.importModule' is not available in loader context. You need to have at least webpack 5.33.2.",
+        ),
       );
       return;
     }
@@ -348,14 +346,14 @@ function pitch(request) {
 
     if (typeof publicPath === "string") {
       const isAbsolutePublicPath = /^[a-zA-Z][a-zA-Z\d+\-.]*?:/.test(
-        publicPath
+        publicPath,
       );
 
       publicPathForExtract = isAbsolutePublicPath
         ? publicPath
         : `${ABSOLUTE_PUBLIC_PATH}${publicPath.replace(
             /\./g,
-            SINGLE_DOT_PATH_SEGMENT
+            SINGLE_DOT_PATH_SEGMENT,
           )}`;
     } else {
       publicPathForExtract = publicPath;
@@ -369,8 +367,8 @@ function pitch(request) {
         baseUri: `${BASE_URI}/`,
       },
       /**
-       * @param {Error | null | undefined} error
-       * @param {object} exports
+       * @param {Error | null | undefined} error error
+       * @param {object} exports exports
        */
       (error, exports) => {
         if (error) {
@@ -380,7 +378,7 @@ function pitch(request) {
         }
 
         handleExports(exports);
-      }
+      },
     );
     return;
   }
@@ -400,7 +398,7 @@ function pitch(request) {
     /** @type {Compilation} */
     (this._compilation).createChildCompiler(
       `${MiniCssExtractPlugin.pluginName} ${request}`,
-      outputOptions
+      outputOptions,
     );
 
   // The templates are compiled and executed by NodeJS - similar to server side rendering
@@ -418,8 +416,7 @@ function pitch(request) {
   const { NodeTemplatePlugin } = webpack.node;
   const { NodeTargetPlugin } = webpack.node;
 
-  // @ts-ignore
-  new NodeTemplatePlugin(outputOptions).apply(childCompiler);
+  new NodeTemplatePlugin().apply(childCompiler);
   new NodeTargetPlugin().apply(childCompiler);
 
   const { EntryOptionPlugin } = webpack;
@@ -447,7 +444,7 @@ function pitch(request) {
   childCompiler.hooks.thisCompilation.tap(
     `${MiniCssExtractPlugin.pluginName} loader`,
     /**
-     * @param {Compilation} compilation
+     * @param {Compilation} compilation compilation
      */
     (compilation) => {
       const normalModuleHook =
@@ -457,19 +454,16 @@ function pitch(request) {
         `${MiniCssExtractPlugin.pluginName} loader`,
         (loaderContext, module) => {
           if (module.request === request) {
-            // eslint-disable-next-line no-param-reassign
-            module.loaders = loaders.map((loader) => {
-              return {
-                type: null,
-                loader: loader.path,
-                options: loader.options,
-                ident: loader.ident,
-              };
-            });
+            module.loaders = loaders.map((loader) => ({
+              type: null,
+              loader: loader.path,
+              options: loader.options,
+              ident: loader.ident,
+            }));
           }
-        }
+        },
       );
-    }
+    },
   );
 
   /** @type {string | Buffer} */
@@ -478,7 +472,7 @@ function pitch(request) {
   childCompiler.hooks.compilation.tap(
     MiniCssExtractPlugin.pluginName,
     /**
-     * @param {Compilation} compilation
+     * @param {Compilation} compilation compilation
      */
     (compilation) => {
       compilation.hooks.processAssets.tap(
@@ -489,25 +483,27 @@ function pitch(request) {
             compilation.assets[childFilename].source();
 
           // Remove all chunk assets
-          compilation.chunks.forEach((chunk) => {
-            chunk.files.forEach((file) => {
+          for (const chunk of compilation.chunks) {
+            for (const file of chunk.files) {
               compilation.deleteAsset(file);
-            });
-          });
-        }
+            }
+          }
+        },
       );
-    }
+    },
   );
 
-  childCompiler.runAsChild((error, entries, compilation) => {
+  childCompiler.runAsChild((error, entries, compilation_) => {
     if (error) {
       callback(error);
 
       return;
     }
 
-    if (/** @type {Compilation} */ (compilation).errors.length > 0) {
-      callback(/** @type {Compilation} */ (compilation).errors[0]);
+    const compilation = /** @type {Compilation} */ (compilation_);
+
+    if (compilation.errors.length > 0) {
+      callback(compilation.errors[0]);
 
       return;
     }
@@ -517,20 +513,18 @@ function pitch(request) {
     /** @type {Map<string, AssetInfo>} */
     const assetsInfo = new Map();
 
-    for (const asset of /** @type {Compilation} */ (compilation).getAssets()) {
+    for (const asset of compilation.getAssets()) {
       assets[asset.name] = asset.source;
       assetsInfo.set(asset.name, asset.info);
     }
 
-    /** @type {Compilation} */
-    (compilation).fileDependencies.forEach((dep) => {
+    for (const dep of compilation.fileDependencies) {
       this.addDependency(dep);
-    }, this);
+    }
 
-    /** @type {Compilation} */
-    (compilation).contextDependencies.forEach((dep) => {
+    for (const dep of compilation.contextDependencies) {
       this.addContextDependency(dep);
-    }, this);
+    }
 
     if (!source) {
       callback(new Error("Didn't get a result from child compiler"));
@@ -541,8 +535,8 @@ function pitch(request) {
     let originalExports;
     try {
       originalExports = evalModuleCode(this, source, request);
-    } catch (e) {
-      callback(/** @type {Error} */ (e));
+    } catch (err) {
+      callback(/** @type {Error} */ (err));
 
       return;
     }
@@ -553,9 +547,9 @@ function pitch(request) {
 
 /**
  * @this {import("webpack").LoaderContext<LoaderOptions>}
- * @param {string} content
+ * @param {string} content content
+ * @returns {string | undefined} the original content
  */
-// eslint-disable-next-line consistent-return
 function loader(content) {
   if (
     this._compiler &&
@@ -573,5 +567,5 @@ function loader(content) {
 }
 
 module.exports = loader;
-module.exports.pitch = pitch;
 module.exports.hotLoader = hotLoader;
+module.exports.pitch = pitch;

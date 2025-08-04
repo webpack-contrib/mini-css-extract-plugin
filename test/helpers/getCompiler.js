@@ -1,7 +1,7 @@
 import path from "path";
 
+import { Volume, createFsFromVolume } from "memfs";
 import webpack from "webpack";
-import { createFsFromVolume, Volume } from "memfs";
 
 import MiniCssExtractPlugin from "../../src";
 
@@ -32,13 +32,14 @@ export default (fixture, loaderOptions = {}, config = {}) => {
             },
           ],
         },
-      ].concat({
-        test: /\.svg$/,
-        type: "asset/resource",
-        generator: {
-          filename: "[name][ext]",
+        {
+          test: /\.svg$/,
+          type: "asset/resource",
+          generator: {
+            filename: "[name][ext]",
+          },
         },
-      }),
+      ],
     },
     plugins: [
       new MiniCssExtractPlugin({
@@ -53,11 +54,9 @@ export default (fixture, loaderOptions = {}, config = {}) => {
 
   const compiler = webpack(fullConfig);
 
-  if (!outputFileSystem) {
-    compiler.outputFileSystem = createFsFromVolume(new Volume());
-  } else {
-    compiler.outputFileSystem = outputFileSystem;
-  }
+  compiler.outputFileSystem = !outputFileSystem
+    ? createFsFromVolume(new Volume())
+    : outputFileSystem;
 
   return compiler;
 };

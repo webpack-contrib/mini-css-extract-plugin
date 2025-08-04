@@ -5,7 +5,7 @@ export = loader;
  */
 declare function loader(
   this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
-  content: string
+  content: string,
 ): string | undefined;
 declare namespace loader {
   export {
@@ -32,7 +32,7 @@ import MiniCssExtractPlugin = require("./index");
  */
 declare function pitch(
   this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
-  request: string
+  request: string,
 ): void;
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
 /** @typedef {import("webpack").Compiler} Compiler */
@@ -66,7 +66,7 @@ declare function hotLoader(
     loaderContext: import("webpack").LoaderContext<LoaderOptions>;
     options: LoaderOptions;
     locals: Locals | undefined;
-  }
+  },
 ): string;
 type Schema = import("schema-utils/declarations/validate").Schema;
 type Compiler = import("webpack").Compiler;
@@ -88,5 +88,5 @@ type Dependency = {
   media: string;
   supports?: string | undefined;
   layer?: string | undefined;
-  sourceMap?: Buffer | undefined;
+  sourceMap?: Buffer<ArrayBufferLike> | undefined;
 };

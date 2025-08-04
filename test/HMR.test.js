@@ -1,8 +1,8 @@
 /**
- @jest-environment jsdom
+ * @jest-environment jsdom
  */
+/* global document */
 /* eslint-env browser */
-/* eslint-disable no-console */
 
 import hotModuleReplacement from "../src/hmr/hotModuleReplacement";
 import { hotLoader } from "../src/loader";
@@ -48,7 +48,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -71,7 +71,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -89,7 +89,7 @@ describe("HMR", () => {
 
       setTimeout(() => {
         const links2 = Array.prototype.slice.call(
-          document.querySelectorAll("link")
+          document.querySelectorAll("link"),
         );
 
         expect(links2[0].visited).toBe(true);
@@ -116,7 +116,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -141,7 +141,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -167,7 +167,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -194,7 +194,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -221,7 +221,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -248,7 +248,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -275,7 +275,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -301,7 +301,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -324,7 +324,7 @@ describe("HMR", () => {
       expect(console.log.mock.calls[0][0]).toMatchSnapshot();
 
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       expect(links[0].visited).toBe(true);
@@ -343,7 +343,7 @@ describe("HMR", () => {
 
     link.innerHTML = '<link rel="preload stylesheet" href="./dist/main.css" />';
     document.head.appendChild(link);
-    document.head.removeChild = jest.fn();
+    jest.spyOn(document.head, "removeChild").mockImplementation();
 
     const update = hotModuleReplacement("./dist/main.css", {});
 
@@ -351,7 +351,7 @@ describe("HMR", () => {
 
     setTimeout(() => {
       const links = Array.prototype.slice.call(
-        document.querySelectorAll("link")
+        document.querySelectorAll("link"),
       );
 
       links[1].dispatchEvent(getLoadEvent());

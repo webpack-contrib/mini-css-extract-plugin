@@ -1,4 +1,4 @@
-/* eslint-env browser */
+/* global alert */
 /* eslint-disable no-alert */
 
 import "./preloaded1.css";

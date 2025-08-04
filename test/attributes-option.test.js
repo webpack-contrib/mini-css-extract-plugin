@@ -12,7 +12,7 @@ import {
 } from "./helpers/index";
 
 describe("attributes option", () => {
-  it(`should work without attributes option`, async () => {
+  it("should work without attributes option", async () => {
     const compiler = getCompiler(
       "attributes.js",
       {},
@@ -27,7 +27,7 @@ describe("attributes option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -40,7 +40,7 @@ describe("attributes option", () => {
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work with attributes option`, async () => {
+  it("should work with attributes option", async () => {
     const compiler = getCompiler(
       "attributes.js",
       {},
@@ -59,7 +59,7 @@ describe("attributes option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 

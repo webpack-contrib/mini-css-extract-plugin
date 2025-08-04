@@ -1,4 +1,4 @@
-/* eslint-env browser */
+/* global document */
 import path from "path";
 
 import MiniCssExtractPlugin from "../src";
@@ -12,7 +12,7 @@ import {
 } from "./helpers/index";
 
 describe("insert option", () => {
-  it(`should work without insert option`, async () => {
+  it("should work without insert option", async () => {
     const compiler = getCompiler(
       "insert.js",
       {},
@@ -28,7 +28,7 @@ describe("insert option", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -40,7 +40,7 @@ describe("insert option", () => {
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work when insert option is string`, async () => {
+  it("should work when insert option is string", async () => {
     const compiler = getCompiler(
       "insert.js",
       {},
@@ -57,7 +57,7 @@ describe("insert option", () => {
             insert: "#existing-style",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -69,7 +69,7 @@ describe("insert option", () => {
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work when insert option is function`, async () => {
+  it("should work when insert option is function", async () => {
     const compiler = getCompiler(
       "insert.js",
       {},
@@ -92,7 +92,7 @@ describe("insert option", () => {
             },
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 

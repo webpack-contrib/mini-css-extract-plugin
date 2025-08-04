@@ -2,15 +2,20 @@ import jsdom from "jsdom";
 
 import { readAsset } from "./index";
 
+/**
+ * @param {string} assetName asset name
+ * @param {Compiler} compiler compiler
+ * @param {Stats} stats stats
+ * @param {(dom: JSDOM, code: string) => void} testFn test function
+ */
 function runInJsDom(assetName, compiler, stats, testFn) {
   const bundle = readAsset(assetName, compiler, stats);
   const virtualConsole = new jsdom.VirtualConsole();
 
   virtualConsole.sendTo(console);
 
-  try {
-    const dom = new jsdom.JSDOM(
-      `<!doctype html>
+  const dom = new jsdom.JSDOM(
+    `<!doctype html>
 <html>
 <head>
   <title>style-loader test</title>
@@ -23,22 +28,19 @@ function runInJsDom(assetName, compiler, stats, testFn) {
 </body>
 </html>
 `,
-      {
-        resources: "usable",
-        runScripts: "dangerously",
-        virtualConsole,
-      }
-    );
+    {
+      resources: "usable",
+      runScripts: "dangerously",
+      virtualConsole,
+    },
+  );
 
-    dom.window.eval(bundle);
+  dom.window.eval(bundle);
 
-    testFn(dom, bundle);
+  testFn(dom, bundle);
 
-    // free memory associated with the window
-    dom.window.close();
-  } catch (e) {
-    throw e;
-  }
+  // free memory associated with the window
+  dom.window.close();
 }
 
 export default runInJsDom;
