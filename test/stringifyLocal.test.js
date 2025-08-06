@@ -14,7 +14,10 @@ describe("stringifyLocal", () => {
   });
 
   it("function", async () => {
-    const testFn = () => "classA";
+    // eslint-disable-next-line func-style
+    const testFn = function testFn() {
+      return "classA";
+    };
 
     expect(stringifyLocal(testFn)).toBe(
       'function testFn() {\n      return "classA";\n    }',
