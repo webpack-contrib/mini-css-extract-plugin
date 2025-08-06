@@ -99,7 +99,7 @@
     "typescript-eslint": "^8.38.0",
     "webpack": "^5.91.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.13.2"
+    "webpack-dev-server": "^5.2.1"
   },
   "peerDependencies": {
     "webpack": "^5.0.0"
