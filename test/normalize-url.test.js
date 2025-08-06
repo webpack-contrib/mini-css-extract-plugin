@@ -3,7 +3,7 @@ import normalizeUrl from "../src/hmr/normalize-url";
 import dataUrls from "./fixtures/json/data-urls.json";
 
 describe("normalize-url", () => {
-  dataUrls.main.forEach((entry) => {
+  for (const entry of dataUrls.main) {
     const [url, expected] = entry;
 
     it(`should work with "${url}" url`, async () => {
@@ -11,5 +11,5 @@ describe("normalize-url", () => {
 
       expect(result).toBe(expected);
     });
-  });
+  }
 });

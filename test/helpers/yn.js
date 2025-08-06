@@ -1,3 +1,8 @@
+/**
+ * @param {string} value value
+ * @param {boolean} defaultValue default value
+ * @returns {boolean} yes or no
+ */
 function yn(value, defaultValue = false) {
   if (/^(?:y|yes|true|1|on)$/i.test(value)) {
     return true;

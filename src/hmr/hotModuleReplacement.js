@@ -1,10 +1,11 @@
-/* eslint-env browser */
+/* global document */
 /*
   eslint-disable
   no-console,
   func-names
 */
 
+// eslint-disable-next-line jsdoc/no-restricted-syntax
 /** @typedef {any} TODO */
 
 const normalizeUrl = require("./normalize-url");
@@ -15,36 +16,40 @@ const noDocument = typeof document === "undefined";
 
 const { forEach } = Array.prototype;
 
+// eslint-disable-next-line jsdoc/no-restricted-syntax
 /**
- * @param {function} fn
- * @param {number} time
- * @returns {(function(): void)|*}
+ * @param {Function} fn any function
+ * @param {number} time time
+ * @returns {() => void} wrapped function
  */
 function debounce(fn, time) {
   let timeout = 0;
 
   return function () {
-    // @ts-ignore
+    // @ts-expect-error
     const self = this;
     // eslint-disable-next-line prefer-rest-params
     const args = arguments;
-
+    // eslint-disable-next-line func-style
     const functionCall = function functionCall() {
       return fn.apply(self, args);
     };
 
     clearTimeout(timeout);
 
-    // @ts-ignore
+    // @ts-expect-error
     timeout = setTimeout(functionCall, time);
   };
 }
 
+/**
+ * @returns {void}
+ */
 function noop() {}
 
 /**
- * @param {TODO} moduleId
- * @returns {TODO}
+ * @param {string | number} moduleId a module id
+ * @returns {TODO} current script url
  */
 function getCurrentScriptUrl(moduleId) {
   let src = srcByModuleId[moduleId];
@@ -65,8 +70,8 @@ function getCurrentScriptUrl(moduleId) {
   }
 
   /**
-   * @param {string} fileMap
-   * @returns {null | string[]}
+   * @param {string} fileMap file map
+   * @returns {null | string[]} normalized files
    */
   return function (fileMap) {
     if (!src) {
@@ -88,15 +93,30 @@ function getCurrentScriptUrl(moduleId) {
       const reg = new RegExp(`${filename}\\.js$`, "g");
 
       return normalizeUrl(
-        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`)
+        src.replace(reg, `${mapRule.replace(/{fileName}/g, filename)}.css`),
       );
     });
   };
 }
 
 /**
- * @param {TODO} el
- * @param {string} [url]
+ * @param {string} url URL
+ * @returns {boolean} true when URL can be request, otherwise false
+ */
+function isUrlRequest(url) {
+  // An URL is not an request if
+
+  // It is not http or https
+  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(url)) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * @param {TODO} el html link element
+ * @param {string=} url a URL
  */
 function updateCss(el, url) {
   if (!url) {
@@ -118,11 +138,11 @@ function updateCss(el, url) {
     return;
   }
 
+  // eslint-disable-next-line unicorn/prefer-includes
   if (!url || !(url.indexOf(".css") > -1)) {
     return;
   }
 
-  // eslint-disable-next-line no-param-reassign
   el.visited = true;
 
   const newEl = el.cloneNode();
@@ -157,34 +177,34 @@ function updateCss(el, url) {
 }
 
 /**
- * @param {string} href
- * @param {TODO} src
- * @returns {TODO}
+ * @param {string} href href
+ * @param {TODO} src src
+ * @returns {undefined | string} a reload url
  */
 function getReloadUrl(href, src) {
   let ret;
 
-  // eslint-disable-next-line no-param-reassign
   href = normalizeUrl(href);
 
   src.some(
     /**
-     * @param {string} url
+     * @param {string} url url
      */
     // eslint-disable-next-line array-callback-return
     (url) => {
+      // eslint-disable-next-line unicorn/prefer-includes
       if (href.indexOf(src) > -1) {
         ret = url;
       }
-    }
+    },
   );
 
   return ret;
 }
 
 /**
- * @param {string} [src]
- * @returns {boolean}
+ * @param {string=} src source
+ * @returns {boolean} true when loaded, otherwise false
  */
 function reloadStyle(src) {
   if (!src) {
@@ -201,7 +221,7 @@ function reloadStyle(src) {
 
     const url = getReloadUrl(el.href, src);
 
-    if (!isUrlRequest(url)) {
+    if (url && !isUrlRequest(url)) {
       return;
     }
 
@@ -219,6 +239,9 @@ function reloadStyle(src) {
   return loaded;
 }
 
+/**
+ * @returns {void}
+ */
 function reloadAll() {
   const elements = document.querySelectorAll("link");
 
@@ -232,24 +255,9 @@ function reloadAll() {
 }
 
 /**
- * @param {string} url
- * @returns {boolean}
- */
-function isUrlRequest(url) {
-  // An URL is not an request if
-
-  // It is not http or https
-  if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(url)) {
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * @param {TODO} moduleId
- * @param {TODO} options
- * @returns {TODO}
+ * @param {number | string} moduleId a module id
+ * @param {TODO} options options
+ * @returns {TODO} wrapper function
  */
 module.exports = function (moduleId, options) {
   if (noDocument) {
@@ -260,6 +268,9 @@ module.exports = function (moduleId, options) {
 
   const getScriptSrc = getCurrentScriptUrl(moduleId);
 
+  /**
+   * @returns {void}
+   */
   function update() {
     const src = getScriptSrc(options.filename);
     const reloaded = reloadStyle(src);

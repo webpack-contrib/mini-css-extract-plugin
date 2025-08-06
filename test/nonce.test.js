@@ -12,7 +12,7 @@ import {
 } from "./helpers/index";
 
 describe("nonce", () => {
-  it(`should work when __webpack_nonce__ is not defined`, async () => {
+  it("should work when __webpack_nonce__ is not defined", async () => {
     const compiler = getCompiler(
       "no-nonce.js",
       {},
@@ -28,7 +28,7 @@ describe("nonce", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 
@@ -40,7 +40,7 @@ describe("nonce", () => {
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it(`should work when __webpack_nonce__ is defined`, async () => {
+  it("should work when __webpack_nonce__ is defined", async () => {
     const compiler = getCompiler(
       "nonce.js",
       {},
@@ -56,7 +56,7 @@ describe("nonce", () => {
             filename: "[name].css",
           }),
         ],
-      }
+      },
     );
     const stats = await compile(compiler);
 

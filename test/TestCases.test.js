@@ -16,7 +16,7 @@ function clearDirectory(dirPath) {
 
   try {
     files = fs.readdirSync(dirPath);
-  } catch (e) {
+  } catch {
     return;
   }
   if (files.length > 0) {
@@ -33,7 +33,7 @@ function clearDirectory(dirPath) {
 
   try {
     fs.rmdirSync(dirPath);
-  } catch (_err) {
+  } catch {
     // Nothing
   }
 }
@@ -49,24 +49,22 @@ function compareDirectory(actual, expected) {
     if (stats.isDirectory()) {
       compareDirectory(
         path.resolve(actual, file),
-        path.resolve(expected, file)
+        path.resolve(expected, file),
       );
     } else if (stats.isFile()) {
       const content = fs.readFileSync(path.resolve(expected, file), "utf8");
       let actualContent;
 
-      if (/^MISSING/.test(content)) {
+      if (content.startsWith("MISSING")) {
         expect(fs.existsSync(path.resolve(actual, file))).toBe(false);
       } else {
         try {
           actualContent = fs.readFileSync(path.resolve(actual, file), "utf8");
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.log(error);
 
           const dir = fs.readdirSync(actual);
 
-          // eslint-disable-next-line no-console
           console.log({ [actual]: dir });
         }
 
@@ -83,9 +81,10 @@ describe("TestCases", () => {
     const testDirectory = path.join(casesDirectory, test);
     const filterPath = path.join(testDirectory, "test.filter.js");
 
-    // eslint-disable-next-line global-require, import/no-dynamic-require
     if (fs.existsSync(filterPath) && !require(filterPath)()) {
+      // eslint-disable-next-line jest/no-disabled-tests
       describe.skip(test, () => {
+        // eslint-disable-next-line jest/expect-expect
         it("filtered", () => {});
       });
 
@@ -99,7 +98,6 @@ describe("TestCases", () => {
 
   for (const directory of tests) {
     if (!/^(\.|_)/.test(directory)) {
-      // eslint-disable-next-line no-loop-func
       it(`${directory} should compile to the expected result`, (done) => {
         if (directory === "serializingBigStrings") {
           clearDirectory(path.resolve(__dirname, "../node_modules/.cache"));
@@ -107,14 +105,14 @@ describe("TestCases", () => {
 
         const directoryForCase = path.resolve(casesDirectory, directory);
         const outputDirectoryForCase = path.resolve(outputDirectory, directory);
-        // eslint-disable-next-line import/no-dynamic-require, global-require
-        const webpackConfig = require(path.resolve(
-          directoryForCase,
-          "webpack.config.js"
-        ));
+
+        const webpackConfig = require(
+          path.resolve(directoryForCase, "webpack.config.js"),
+        );
+
         const { context } = webpackConfig;
 
-        for (const config of [].concat(webpackConfig)) {
+        for (const config of [webpackConfig].flat()) {
           Object.assign(
             config,
             {
@@ -123,12 +121,10 @@ describe("TestCases", () => {
             },
             config,
             {
-              output: Object.assign(
-                {
-                  path: outputDirectoryForCase,
-                },
-                config.output
-              ),
+              output: {
+                path: outputDirectoryForCase,
+                ...config.output,
+              },
               plugins:
                 config.plugins &&
                 config.plugins.map((p) => {
@@ -145,7 +141,7 @@ describe("TestCases", () => {
                   return p;
                 }),
             },
-            context ? { context } : {}
+            context ? { context } : {},
           );
         }
 
@@ -161,12 +157,12 @@ describe("TestCases", () => {
 
             if (fs.existsSync(errorsPath)) {
               const { errors } = stats.compilation;
-              // eslint-disable-next-line global-require, import/no-dynamic-require
+
               const errorFilters = require(errorsPath);
+
               const filteredErrors = errors.filter(
-                // eslint-disable-next-line no-shadow
                 (error) =>
-                  !errorFilters.some((errorFilter) => errorFilter.test(error))
+                  !errorFilters.some((errorFilter) => errorFilter.test(error)),
               );
 
               if (filteredErrors.length > 0) {
@@ -192,8 +188,8 @@ describe("TestCases", () => {
                   context: path.resolve(__dirname, ".."),
                   errorDetails: true,
                   warnings: true,
-                })
-              )
+                }),
+              ),
             );
 
             return;
@@ -204,10 +200,10 @@ describe("TestCases", () => {
             expectedDirectory,
             `webpack-${webpack.version[0]}${
               yn(process.env.OLD_API) ? "" : "-importModule"
-            }`
+            }`,
           );
 
-          if (/^hmr/.test(directory)) {
+          if (directory.startsWith("hmr")) {
             let res = fs
               .readFileSync(path.resolve(outputDirectoryForCase, "main.js"))
               .toString();
@@ -218,26 +214,26 @@ describe("TestCases", () => {
             res = res.replace(dateRegexp, "");
 
             const matchAll = res.match(
-              /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i
+              /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i,
             );
 
-            const replacer = new Array(matchAll[1].length);
+            const replacer = Array.from({ length: matchAll[1].length });
 
             res = res.replace(
               /__webpack_require__\.h = \(\) => \(("[\d\w].*")\)/i,
-              `__webpack_require__.h = () => ("${replacer.fill("x").join("")}")`
+              `__webpack_require__.h = () => ("${replacer.fill("x").join("")}")`,
             );
 
             fs.writeFileSync(
               path.resolve(outputDirectoryForCase, "main.js"),
-              res
+              res,
             );
           }
 
           if (fs.existsSync(expectedDirectoryByVersion)) {
             compareDirectory(
               outputDirectoryForCase,
-              expectedDirectoryByVersion
+              expectedDirectoryByVersion,
             );
           } else if (fs.existsSync(expectedDirectory)) {
             compareDirectory(outputDirectoryForCase, expectedDirectory);
@@ -250,17 +246,17 @@ describe("TestCases", () => {
               all: false,
               warnings: true,
             });
-            // eslint-disable-next-line global-require, import/no-dynamic-require
+
             const expectedWarnings = require(warningsFile);
 
             expect(
               actualWarnings
                 .trim()
-                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!")
+                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!"),
             ).toBe(
               expectedWarnings
                 .trim()
-                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!")
+                .replace(/\*\scss\s(.*)?!/g, "* css /path/to/loader.js!"),
             );
           }
 

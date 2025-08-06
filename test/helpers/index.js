@@ -1,17 +1,7 @@
-import compile from "./compile";
-import getCompiler from "./getCompiler";
-import source from "./source";
-import readAsset from "./readAsset";
-import runInJsDom from "./runInJsDom";
-import getErrors from "./getErrors";
-import getWarnings from "./getWarnings";
-
-export {
-  source,
-  compile,
-  getCompiler,
-  readAsset,
-  runInJsDom,
-  getErrors,
-  getWarnings,
-};
+export { default as compile } from "./compile";
+export { default as getCompiler } from "./getCompiler";
+export { default as runInJsDom } from "./runInJsDom";
+export { default as getWarnings } from "./getWarnings";
+export { default as getErrors } from "./getErrors";
+export { default as source } from "./source";
+export { default as readAsset } from "./readAsset";

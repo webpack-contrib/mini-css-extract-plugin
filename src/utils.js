@@ -3,19 +3,21 @@ const path = require("path");
 
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").Module} Module */
+
+// eslint-disable-next-line jsdoc/no-restricted-syntax
 /** @typedef {import("webpack").LoaderContext<any>} LoaderContext */
 
 /**
- * @returns {boolean}
+ * @returns {boolean} always returns true
  */
 function trueFn() {
   return true;
 }
 
 /**
- * @param {Compilation} compilation
- * @param {string | number} id
- * @returns {null | Module}
+ * @param {Compilation} compilation compilation
+ * @param {string | number} id module id
+ * @returns {null | Module} the found module
  */
 function findModuleById(compilation, id) {
   const { modules, chunkGraph } = compilation;
@@ -34,29 +36,29 @@ function findModuleById(compilation, id) {
   return null;
 }
 
+// eslint-disable-next-line jsdoc/no-restricted-syntax
 /**
- * @param {LoaderContext} loaderContext
- * @param {string | Buffer} code
- * @param {string} filename
- * @returns {object}
+ * @param {LoaderContext} loaderContext loader context
+ * @param {string | Buffer} code code
+ * @param {string} filename filename
+ * @returns {Record<string, any>} exports of a module
  */
 function evalModuleCode(loaderContext, code, filename) {
-  // @ts-ignore
+  // @ts-expect-error
   const module = new NativeModule(filename, loaderContext);
-
-  // @ts-ignore
-  module.paths = NativeModule._nodeModulePaths(loaderContext.context); // eslint-disable-line no-underscore-dangle
+  // @ts-expect-error
+  module.paths = NativeModule._nodeModulePaths(loaderContext.context);
   module.filename = filename;
-  // @ts-ignore
-  module._compile(code, filename); // eslint-disable-line no-underscore-dangle
+  // @ts-expect-error
+  module._compile(code, filename);
 
   return module.exports;
 }
 
 /**
- * @param {string} a
- * @param {string} b
- * @returns {0 | 1 | -1}
+ * @param {string} a a
+ * @param {string} b b
+ * @returns {0 | 1 | -1} result of comparing
  */
 function compareIds(a, b) {
   if (typeof a !== typeof b) {
@@ -75,9 +77,9 @@ function compareIds(a, b) {
 }
 
 /**
- * @param {Module} a
- * @param {Module} b
- * @returns {0 | 1 | -1}
+ * @param {Module} a a
+ * @param {Module} b b
+ * @returns {0 | 1 | -1} result of comparing
  */
 function compareModulesByIdentifier(a, b) {
   return compareIds(a.identifier(), b.identifier());
@@ -91,8 +93,8 @@ const SINGLE_DOT_PATH_SEGMENT =
   "__mini_css_extract_plugin_single_dot_path_segment__";
 
 /**
- * @param {string} str
- * @returns {boolean}
+ * @param {string} str path
+ * @returns {boolean} true when path is absolute, otherwise false
  */
 function isAbsolutePath(str) {
   return path.posix.isAbsolute(str) || path.win32.isAbsolute(str);
@@ -101,8 +103,8 @@ function isAbsolutePath(str) {
 const RELATIVE_PATH_REGEXP = /^\.\.?[/\\]/;
 
 /**
- * @param {string} str
- * @returns {boolean}
+ * @param {string} str string
+ * @returns {boolean} true when path is relative, otherwise false
  */
 function isRelativePath(str) {
   return RELATIVE_PATH_REGEXP.test(str);
@@ -110,9 +112,9 @@ function isRelativePath(str) {
 
 // TODO simplify for the next major release
 /**
- * @param {LoaderContext} loaderContext
- * @param {string} request
- * @returns {string}
+ * @param {LoaderContext} loaderContext the loader context
+ * @param {string} request a request
+ * @returns {string} a stringified request
  */
 function stringifyRequest(loaderContext, request) {
   if (
@@ -122,8 +124,8 @@ function stringifyRequest(loaderContext, request) {
     return JSON.stringify(
       loaderContext.utils.contextify(
         loaderContext.context || loaderContext.rootContext,
-        request
-      )
+        request,
+      ),
     );
   }
 
@@ -156,27 +158,25 @@ function stringifyRequest(loaderContext, request) {
 
         return singlePath.replace(/\\/g, "/") + query;
       })
-      .join("!")
+      .join("!"),
   );
 }
 
 /**
- * @param {string} filename
- * @param {string} outputPath
- * @param {boolean} enforceRelative
- * @returns {string}
+ * @param {string} filename filename
+ * @param {string} outputPath output path
+ * @param {boolean} enforceRelative true when need to enforce relative path, otherwise false
+ * @returns {string} undo path
  */
 function getUndoPath(filename, outputPath, enforceRelative) {
   let depth = -1;
   let append = "";
 
-  // eslint-disable-next-line no-param-reassign
   outputPath = outputPath.replace(/[\\/]$/, "");
 
   for (const part of filename.split(/[/\\]+/)) {
     if (part === "..") {
       if (depth > -1) {
-        // eslint-disable-next-line no-plusplus
         depth--;
       } else {
         const i = outputPath.lastIndexOf("/");
@@ -189,11 +189,9 @@ function getUndoPath(filename, outputPath, enforceRelative) {
 
         append = `${outputPath.slice(pos + 1)}/${append}`;
 
-        // eslint-disable-next-line no-param-reassign
         outputPath = outputPath.slice(0, pos);
       }
     } else if (part !== ".") {
-      // eslint-disable-next-line no-plusplus
       depth++;
     }
   }
@@ -201,14 +199,14 @@ function getUndoPath(filename, outputPath, enforceRelative) {
   return depth > 0
     ? `${"../".repeat(depth)}${append}`
     : enforceRelative
-    ? `./${append}`
-    : append;
+      ? `./${append}`
+      : append;
 }
 
+// eslint-disable-next-line jsdoc/no-restricted-syntax
 /**
- *
- * @param {string | function} value
- * @returns {string}
+ * @param {string | Function} value local
+ * @returns {string} stringified local
  */
 function stringifyLocal(value) {
   return typeof value === "function" ? value.toString() : JSON.stringify(value);
@@ -219,6 +217,7 @@ function stringifyLocal(value) {
  * @returns {string} string
  */
 const toSimpleString = (str) => {
+  // eslint-disable-next-line no-implicit-coercion
   if (`${+str}` === str) {
     return str;
   }
@@ -236,13 +235,13 @@ const quoteMeta = (str) => str.replace(/[-[\]\\/{}()*+?.^$|]/g, "\\$&");
  * @returns {string} common prefix
  */
 const getCommonPrefix = (items) => {
-  let prefix = items[0];
+  let [prefix] = items;
 
   for (let i = 1; i < items.length; i++) {
     const item = items[i];
-    for (let p = 0; p < prefix.length; p++) {
-      if (item[p] !== prefix[p]) {
-        prefix = prefix.slice(0, p);
+    for (let prefixIndex = 0; prefixIndex < prefix.length; prefixIndex++) {
+      if (item[prefixIndex] !== prefix[prefixIndex]) {
+        prefix = prefix.slice(0, prefixIndex);
         break;
       }
     }
@@ -256,13 +255,17 @@ const getCommonPrefix = (items) => {
  * @returns {string} common suffix
  */
 const getCommonSuffix = (items) => {
-  let suffix = items[0];
+  let [suffix] = items;
 
   for (let i = 1; i < items.length; i++) {
     const item = items[i];
-    for (let p = item.length - 1, s = suffix.length - 1; s >= 0; p--, s--) {
-      if (item[p] !== suffix[s]) {
-        suffix = suffix.slice(s + 1);
+    for (
+      let itemIndex = item.length - 1, suffixIndex = suffix.length - 1;
+      suffixIndex >= 0;
+      itemIndex--, suffixIndex--
+    ) {
+      if (item[itemIndex] !== suffix[suffixIndex]) {
+        suffix = suffix.slice(suffixIndex + 1);
         break;
       }
     }
@@ -326,7 +329,6 @@ const itemsToRegexp = (itemsArr) => {
 
   for (const item of itemsArr) {
     if (item.length === 1) {
-      // eslint-disable-next-line no-plusplus
       countOfSingleCharItems++;
     }
   }
@@ -353,12 +355,14 @@ const itemsToRegexp = (itemsArr) => {
   if (finishedItems.length === 0 && items.size === 2) {
     const prefix = getCommonPrefix(itemsArr);
     const suffix = getCommonSuffix(
-      itemsArr.map((item) => item.slice(prefix.length))
+      itemsArr.map((item) => item.slice(prefix.length)),
     );
 
     if (prefix.length > 0 || suffix.length > 0) {
       return `${quoteMeta(prefix)}${itemsToRegexp(
-        itemsArr.map((i) => i.slice(prefix.length, -suffix.length || undefined))
+        itemsArr.map((i) =>
+          i.slice(prefix.length, -suffix.length || undefined),
+        ),
       )}${quoteMeta(suffix)}`;
     }
   }
@@ -371,7 +375,7 @@ const itemsToRegexp = (itemsArr) => {
     const b = it.next().value;
     if (a.length > 0 && b.length > 0 && a.slice(-1) === b.slice(-1)) {
       return `${itemsToRegexp([a.slice(0, -1), b.slice(0, -1)])}${quoteMeta(
-        a.slice(-1)
+        a.slice(-1),
       )}`;
     }
   }
@@ -384,14 +388,14 @@ const itemsToRegexp = (itemsArr) => {
       if (list.length >= 3) return true;
       if (list.length <= 1) return false;
       return list[0][1] === list[1][1];
-    }
+    },
   );
   for (const prefixedItems of prefixed) {
     const prefix = getCommonPrefix(prefixedItems);
     finishedItems.push(
       `${quoteMeta(prefix)}${itemsToRegexp(
-        prefixedItems.map((i) => i.slice(prefix.length))
-      )}`
+        prefixedItems.map((i) => i.slice(prefix.length)),
+      )}`,
     );
   }
 
@@ -403,20 +407,20 @@ const itemsToRegexp = (itemsArr) => {
       if (list.length >= 3) return true;
       if (list.length <= 1) return false;
       return list[0].slice(-2) === list[1].slice(-2);
-    }
+    },
   );
   for (const suffixedItems of suffixed) {
     const suffix = getCommonSuffix(suffixedItems);
     finishedItems.push(
       `${itemsToRegexp(
-        suffixedItems.map((i) => i.slice(0, -suffix.length))
-      )}${quoteMeta(suffix)}`
+        suffixedItems.map((i) => i.slice(0, -suffix.length)),
+      )}${quoteMeta(suffix)}`,
     );
   }
 
   // TODO further optimize regexp, i. e.
   // use ranges: (1|2|3|4|a) => [1-4a]
-  const conditional = finishedItems.concat(Array.from(items, quoteMeta));
+  const conditional = [...finishedItems, ...Array.from(items, quoteMeta)];
   if (conditional.length === 1) return conditional[0];
   return `(${conditional.join("|")})`;
 };
@@ -424,7 +428,7 @@ const itemsToRegexp = (itemsArr) => {
 /**
  * @param {string[]} positiveItems positive items
  * @param {string[]} negativeItems negative items
- * @returns {function(string): string} a template function to determine the value at runtime
+ * @returns {(val: string) => string} a template function to determine the value at runtime
  */
 const compileBooleanMatcherFromLists = (positiveItems, negativeItems) => {
   if (positiveItems.length === 0) {
@@ -455,8 +459,8 @@ const compileBooleanMatcherFromLists = (positiveItems, negativeItems) => {
 
 // TODO simplify in the next major release and use it from webpack
 /**
- * @param {Record<string|number, boolean>} map value map
- * @returns {boolean|(function(string): string)} true/false, when unconditionally true/false, or a template function to determine the value at runtime
+ * @param {Record<string | number, boolean>} map value map
+ * @returns {boolean | ((value: string) => string)} true/false, when unconditionally true/false, or a template function to determine the value at runtime
  */
 const compileBooleanMatcher = (map) => {
   const positiveItems = Object.keys(map).filter((i) => map[i]);
@@ -474,17 +478,17 @@ const compileBooleanMatcher = (map) => {
 };
 
 module.exports = {
-  trueFn,
-  findModuleById,
-  evalModuleCode,
-  compareModulesByIdentifier,
-  MODULE_TYPE,
-  AUTO_PUBLIC_PATH,
   ABSOLUTE_PUBLIC_PATH,
+  AUTO_PUBLIC_PATH,
   BASE_URI,
+  MODULE_TYPE,
   SINGLE_DOT_PATH_SEGMENT,
-  stringifyRequest,
-  stringifyLocal,
-  getUndoPath,
+  compareModulesByIdentifier,
   compileBooleanMatcher,
+  evalModuleCode,
+  findModuleById,
+  getUndoPath,
+  stringifyLocal,
+  stringifyRequest,
+  trueFn,
 };

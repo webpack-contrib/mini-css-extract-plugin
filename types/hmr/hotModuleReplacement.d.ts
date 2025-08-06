@@ -1,3 +1,6 @@
-declare function _exports(moduleId: TODO, options: TODO): TODO;
+declare namespace _exports {
+  export { TODO };
+}
+declare function _exports(moduleId: number | string, options: TODO): TODO;
 export = _exports;
-export type TODO = any;
+type TODO = any;

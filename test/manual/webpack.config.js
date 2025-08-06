@@ -1,5 +1,5 @@
-const yn = require("../helpers/yn");
 const Self = require("../../");
+const yn = require("../helpers/yn");
 
 const ENABLE_HMR =
   typeof process.env.ENABLE_HMR !== "undefined"

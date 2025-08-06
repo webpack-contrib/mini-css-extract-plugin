@@ -1,3 +1,8 @@
+/**
+ * @param {string} name name
+ * @param {Stats} stats stats
+ * @returns {undefined | string | Buffer} source
+ */
 export default function getSource(name, stats) {
   const { modules } = stats.toJson({ source: true });
 
@@ -15,6 +20,5 @@ export default function getSource(name, stats) {
     }
   }
 
-  // eslint-disable-next-line no-undefined
   return undefined;
 }

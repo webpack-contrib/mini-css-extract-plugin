@@ -201,8 +201,8 @@ Allows to override default behavior and insert styles at any position.
 
 ```js
 new MiniCssExtractPlugin({
-  insert: function (linkTag) {
-    var reference = document.querySelector("#some-element");
+  insert(linkTag) {
+    const reference = document.querySelector("#some-element");
     if (reference) {
       reference.parentNode.insertBefore(linkTag, reference);
     }
@@ -217,7 +217,7 @@ A new `<link>` tag will be inserted before the element with the ID `some-element
 Type:
 
 ```ts
-type attributes = Record<string, string>};
+type attributes = Record<string, string>;
 ```
 
 Default: `{}`
@@ -483,9 +483,8 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: (resourcePath, context) => {
-                return path.relative(path.dirname(resourcePath), context) + "/";
-              },
+              publicPath: (resourcePath, context) =>
+                `${path.relative(path.dirname(resourcePath), context)}/`,
             },
           },
           "css-loader",
@@ -620,6 +619,7 @@ For `development` mode (including `webpack-dev-server`) you can use [style-loade
 
 ```js
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 const devMode = process.env.NODE_ENV !== "production";
 
 module.exports = {
@@ -638,7 +638,7 @@ module.exports = {
       },
     ],
   },
-  plugins: [].concat(devMode ? [] : [new MiniCssExtractPlugin()]),
+  plugins: [devMode ? [] : [new MiniCssExtractPlugin()]].flat(),
 };
 ```
 
@@ -702,7 +702,7 @@ module.exports = {
 **index.js**
 
 ```js
-import { fooBaz, bar } from "./styles.css";
+import { bar, fooBaz } from "./styles.css";
 
 console.log(fooBaz, bar);
 ```
@@ -767,12 +767,11 @@ module.exports = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: (resourcePath, context) => {
+              publicPath: (resourcePath, context) =>
                 // publicPath is the relative path of the resource to the context
                 // e.g. for ./css/admin/main.css the publicPath will be ../../
                 // while for ./css/main.css the publicPath will be ../
-                return path.relative(path.dirname(resourcePath), context) + "/";
-              },
+                `${path.relative(path.dirname(resourcePath), context)}/`,
             },
           },
           "css-loader",
@@ -797,8 +796,9 @@ You should not use `HotModuleReplacementPlugin` plugin if you are using a `webpa
 **webpack.config.js**
 
 ```js
-const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require("webpack");
+
 const devMode = process.env.NODE_ENV !== "production";
 
 const plugins = [
@@ -848,8 +848,8 @@ You should not use `HotModuleReplacementPlugin` plugin if you are using a `webpa
 **webpack.config.js**
 
 ```js
-const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require("webpack");
 
 const plugins = [
   new MiniCssExtractPlugin({
@@ -890,8 +890,8 @@ To minify the output, use a plugin like [css-minimizer-webpack-plugin](https://g
 **webpack.config.js**
 
 ```js
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   plugins: [
@@ -992,17 +992,13 @@ module.exports = {
         fooStyles: {
           type: "css/mini-extract",
           name: "styles_foo",
-          chunks: (chunk) => {
-            return chunk.name === "foo";
-          },
+          chunks: (chunk) => chunk.name === "foo",
           enforce: true,
         },
         barStyles: {
           type: "css/mini-extract",
           name: "styles_bar",
-          chunks: (chunk) => {
-            return chunk.name === "bar";
-          },
+          chunks: (chunk) => chunk.name === "bar",
           enforce: true,
         },
       },
@@ -1129,7 +1125,7 @@ module.exports = {
               {
                 loader: "sass-loader",
                 options: {
-                  additionalData: `@use 'dark-theme/vars' as vars;`,
+                  additionalData: "@use 'dark-theme/vars' as vars;",
                 },
               },
             ],
@@ -1141,7 +1137,7 @@ module.exports = {
               {
                 loader: "sass-loader",
                 options: {
-                  additionalData: `@use 'light-theme/vars' as vars;`,
+                  additionalData: "@use 'light-theme/vars' as vars;",
                 },
               },
             ],
@@ -1163,7 +1159,7 @@ module.exports = {
 
 **src/index.js**
 
-```js
+```
 import "./style.scss";
 
 let theme = "light";
@@ -1172,7 +1168,6 @@ const themes = {};
 themes[theme] = document.querySelector("#theme");
 
 async function loadTheme(newTheme) {
-  // eslint-disable-next-line no-console
   console.log(`CHANGE THEME - ${newTheme}`);
 
   const themeElement = document.querySelector("#theme");
@@ -1182,7 +1177,6 @@ async function loadTheme(newTheme) {
   }
 
   if (themes[newTheme]) {
-    // eslint-disable-next-line no-console
     console.log(`THEME ALREADY LOADED - ${newTheme}`);
 
     document.head.appendChild(themes[newTheme]);
@@ -1191,13 +1185,11 @@ async function loadTheme(newTheme) {
   }
 
   if (newTheme === "dark") {
-    // eslint-disable-next-line no-console
     console.log(`LOADING THEME - ${newTheme}`);
 
     import(/* webpackChunkName: "dark" */ "./style.scss?dark").then(() => {
       themes[newTheme] = document.querySelector("#theme");
 
-      // eslint-disable-next-line no-console
       console.log(`LOADED - ${newTheme}`);
     });
   }
@@ -1275,7 +1267,7 @@ MiniCssExtractPlugin.getCompilationHooks(compilation).beforeTagInsert.tap(
     Template.asString([
       source,
       `${varNames.tag}.setAttribute("href", "https://github.com/webpack-contrib/mini-css-extract-plugin");`,
-    ])
+    ]),
 );
 ```
 

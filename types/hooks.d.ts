@@ -1,5 +1,5 @@
 export function getCompilationHooks(
-  compilation: Compilation
+  compilation: Compilation,
 ): MiniCssExtractPluginCompilationHooks;
 export type Compilation = import("webpack").Compilation;
 export type VarNames = {
