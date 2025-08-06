@@ -1,7 +1,8 @@
 export = loader;
 /**
  * @this {import("webpack").LoaderContext<LoaderOptions>}
- * @param {string} content
+ * @param {string} content content
+ * @returns {string | undefined} the original content
  */
 declare function loader(
   this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
@@ -9,8 +10,8 @@ declare function loader(
 ): string | undefined;
 declare namespace loader {
   export {
-    pitch,
     hotLoader,
+    pitch,
     Schema,
     Compiler,
     Compilation,
@@ -26,14 +27,6 @@ declare namespace loader {
   };
 }
 import MiniCssExtractPlugin = require("./index");
-/**
- * @this {import("webpack").LoaderContext<LoaderOptions>}
- * @param {string} request
- */
-declare function pitch(
-  this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
-  request: string,
-): void;
 /** @typedef {import("schema-utils/declarations/validate").Schema} Schema */
 /** @typedef {import("webpack").Compiler} Compiler */
 /** @typedef {import("webpack").Compilation} Compilation */
@@ -43,31 +36,39 @@ declare function pitch(
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
 /** @typedef {import("webpack").NormalModule} NormalModule */
 /** @typedef {import("./index.js").LoaderOptions} LoaderOptions */
-/** @typedef {{ [key: string]: string | function }} Locals */
+/** @typedef {{[key: string]: string | Function }} Locals */
 /** @typedef {any} TODO */
 /**
- * @typedef {Object} Dependency
- * @property {string} identifier
- * @property {string | null} context
- * @property {Buffer} content
- * @property {string} media
- * @property {string} [supports]
- * @property {string} [layer]
- * @property {Buffer} [sourceMap]
+ * @typedef {object} Dependency
+ * @property {string} identifier identifier
+ * @property {string | null} context context
+ * @property {Buffer=} content content
+ * @property {string=} media media
+ * @property {string=} supports supports
+ * @property {string=} layer layer
+ * @property {Buffer=} sourceMap source map
  */
 /**
- * @param {string} content
- * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: Locals | undefined }} context
- * @returns {string}
+ * @param {string} code code
+ * @param {{ loaderContext: import("webpack").LoaderContext<LoaderOptions>, options: LoaderOptions, locals: Locals | undefined }} context context
+ * @returns {string} code and HMR code
  */
 declare function hotLoader(
-  content: string,
+  code: string,
   context: {
     loaderContext: import("webpack").LoaderContext<LoaderOptions>;
     options: LoaderOptions;
     locals: Locals | undefined;
   },
 ): string;
+/**
+ * @this {import("webpack").LoaderContext<LoaderOptions>}
+ * @param {string} request request
+ */
+declare function pitch(
+  this: import("webpack").LoaderContext<MiniCssExtractPlugin.LoaderOptions>,
+  request: string,
+): void;
 type Schema = import("schema-utils/declarations/validate").Schema;
 type Compiler = import("webpack").Compiler;
 type Compilation = import("webpack").Compilation;
@@ -82,11 +83,32 @@ type Locals = {
 };
 type TODO = any;
 type Dependency = {
+  /**
+   * identifier
+   */
   identifier: string;
+  /**
+   * context
+   */
   context: string | null;
-  content: Buffer;
-  media: string;
+  /**
+   * content
+   */
+  content?: Buffer | undefined;
+  /**
+   * media
+   */
+  media?: string | undefined;
+  /**
+   * supports
+   */
   supports?: string | undefined;
+  /**
+   * layer
+   */
   layer?: string | undefined;
-  sourceMap?: Buffer<ArrayBufferLike> | undefined;
+  /**
+   * source map
+   */
+  sourceMap?: Buffer | undefined;
 };

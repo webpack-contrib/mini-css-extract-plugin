@@ -1,13 +1,13 @@
 export = MiniCssExtractPlugin;
 declare class MiniCssExtractPlugin {
   /**
-   * @param {Compiler["webpack"]} webpack
-   * @returns {CssModuleConstructor}
+   * @param {Compiler["webpack"]} webpack webpack
+   * @returns {CssModuleConstructor} CSS module constructor
    */
   static getCssModule(webpack: Compiler["webpack"]): CssModuleConstructor;
   /**
-   * @param {Compiler["webpack"]} webpack
-   * @returns {CssDependencyConstructor}
+   * @param {Compiler["webpack"]} webpack webpack
+   * @returns {CssDependencyConstructor} CSS dependency constructor
    */
   static getCssDependency(
     webpack: Compiler["webpack"],
@@ -21,13 +21,12 @@ declare class MiniCssExtractPlugin {
     compilation: Compilation,
   ): MiniCssExtractPluginCompilationHooks;
   /**
-   * @param {PluginOptions} [options]
+   * @param {PluginOptions=} options options
    */
-  constructor(options?: PluginOptions);
+  constructor(options?: PluginOptions | undefined);
   /**
    * @private
    * @type {WeakMap<Chunk, Set<CssModule>>}
-   * @private
    */
   private _sortedModulesCache;
   /**
@@ -41,35 +40,35 @@ declare class MiniCssExtractPlugin {
    */
   private runtimeOptions;
   /**
-   * @param {Compiler} compiler
+   * @param {Compiler} compiler compiler
    */
   apply(compiler: Compiler): void;
   /**
    * @private
-   * @param {Chunk} chunk
-   * @param {ChunkGraph} chunkGraph
-   * @returns {Iterable<Module>}
+   * @param {Chunk} chunk chunk
+   * @param {ChunkGraph} chunkGraph chunk graph
+   * @returns {Iterable<Module>} modules
    */
   private getChunkModules;
   /**
    * @private
-   * @param {Compilation} compilation
-   * @param {Chunk} chunk
-   * @param {CssModule[]} modules
-   * @param {Compilation["requestShortener"]} requestShortener
-   * @returns {Set<CssModule>}
+   * @param {Compilation} compilation compilation
+   * @param {Chunk} chunk chunk
+   * @param {CssModule[]} modules modules
+   * @param {Compilation["requestShortener"]} requestShortener request shortener
+   * @returns {Set<CssModule>} css modules
    */
   private sortModules;
   /**
    * @private
-   * @param {Compiler} compiler
-   * @param {Compilation} compilation
-   * @param {Chunk} chunk
-   * @param {CssModule[]} modules
-   * @param {Compiler["requestShortener"]} requestShortener
-   * @param {string} filenameTemplate
-   * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData
-   * @returns {Source}
+   * @param {Compiler} compiler compiler
+   * @param {Compilation} compilation compilation
+   * @param {Chunk} chunk chunk
+   * @param {CssModule[]} modules modules
+   * @param {Compiler["requestShortener"]} requestShortener request shortener
+   * @param {string} filenameTemplate filename template
+   * @param {Parameters<Exclude<Required<Configuration>['output']['filename'], string | undefined>>[0]} pathData path data
+   * @returns {Source} source
    */
   private renderContentAsset;
 }
@@ -120,40 +119,40 @@ declare namespace MiniCssExtractPlugin {
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
 /** @typedef {import("./loader.js").Dependency} LoaderDependency */
 /**
- * @typedef {Object} LoaderOptions
- * @property {string | ((resourcePath: string, rootContext: string) => string)} [publicPath]
- * @property {boolean} [emit]
- * @property {boolean} [esModule]
- * @property {string} [layer]
- * @property {boolean} [defaultExport]
+ * @typedef {object} LoaderOptions
+ * @property {string | ((resourcePath: string, rootContext: string) => string)=} publicPath public path
+ * @property {boolean=} emit true when need to emit, otherwise false
+ * @property {boolean=} esModule need to generate ES module syntax
+ * @property {string=} layer a layer
+ * @property {boolean=} defaultExport true when need to use default export, otherwise false
  */
 /**
- * @typedef {Object} PluginOptions
- * @property {Required<Configuration>['output']['filename']} [filename]
- * @property {Required<Configuration>['output']['chunkFilename']} [chunkFilename]
- * @property {boolean} [ignoreOrder]
- * @property {string | ((linkTag: HTMLLinkElement) => void)} [insert]
- * @property {Record<string, string>} [attributes]
- * @property {string | false | 'text/css'} [linkType]
- * @property {boolean} [runtime]
- * @property {boolean} [experimentalUseImportModule]
+ * @typedef {object} PluginOptions
+ * @property {Required<Configuration>['output']['filename']=} filename filename
+ * @property {Required<Configuration>['output']['chunkFilename']=} chunkFilename chunk filename
+ * @property {boolean=} ignoreOrder true when need to ignore order, otherwise false
+ * @property {string | ((linkTag: HTMLLinkElement) => void)=} insert link insert place or a custom insert function
+ * @property {Record<string, string>=} attributes link attributes
+ * @property {string | false | 'text/css'=} linkType value of a link type attribute
+ * @property {boolean=} runtime true when need to generate runtime code, otherwise false
+ * @property {boolean=} experimentalUseImportModule true when need to use `experimentalUseImportModule` API, otherwise false
  */
 /**
- * @typedef {Object} NormalizedPluginOptions
- * @property {Required<Configuration>['output']['filename']} filename
- * @property {Required<Configuration>['output']['chunkFilename']} [chunkFilename]
- * @property {boolean} ignoreOrder
- * @property {string | ((linkTag: HTMLLinkElement) => void)} [insert]
- * @property {Record<string, string>} [attributes]
- * @property {string | false | 'text/css'} [linkType]
- * @property {boolean} runtime
- * @property {boolean} [experimentalUseImportModule]
+ * @typedef {object} NormalizedPluginOptions
+ * @property {Required<Configuration>['output']['filename']} filename filename
+ * @property {Required<Configuration>['output']['chunkFilename']=} chunkFilename chunk filename
+ * @property {boolean} ignoreOrder true when need to ignore order, otherwise false
+ * @property {string | ((linkTag: HTMLLinkElement) => void)=} insert a link insert place or a custom insert function
+ * @property {Record<string, string>=} attributes link attributes
+ * @property {string | false | 'text/css'=} linkType value of a link type attribute
+ * @property {boolean} runtime true when need to generate runtime code, otherwise false
+ * @property {boolean=} experimentalUseImportModule true when need to use `experimentalUseImportModule` API, otherwise false
  */
 /**
- * @typedef {Object} RuntimeOptions
- * @property {string | ((linkTag: HTMLLinkElement) => void) | undefined} insert
- * @property {string | false | 'text/css'} linkType
- * @property {Record<string, string> | undefined} attributes
+ * @typedef {object} RuntimeOptions
+ * @property {string | ((linkTag: HTMLLinkElement) => void)=} insert a link insert place or a custom insert function
+ * @property {string | false | 'text/css'} linkType value of a link type attribute
+ * @property {Record<string, string>=} attributes link attributes
  */
 /** @typedef {any} TODO */
 declare const pluginName: "mini-css-extract-plugin";
@@ -173,39 +172,114 @@ type WebpackError = import("webpack").WebpackError;
 type AssetInfo = import("webpack").AssetInfo;
 type LoaderDependency = import("./loader.js").Dependency;
 type LoaderOptions = {
+  /**
+   * public path
+   */
   publicPath?:
-    | string
-    | ((resourcePath: string, rootContext: string) => string)
+    | (string | ((resourcePath: string, rootContext: string) => string))
     | undefined;
+  /**
+   * true when need to emit, otherwise false
+   */
   emit?: boolean | undefined;
+  /**
+   * need to generate ES module syntax
+   */
   esModule?: boolean | undefined;
+  /**
+   * a layer
+   */
   layer?: string | undefined;
+  /**
+   * true when need to use default export, otherwise false
+   */
   defaultExport?: boolean | undefined;
 };
 type PluginOptions = {
-  filename?: Required<Configuration>["output"]["filename"];
-  chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
+  /**
+   * filename
+   */
+  filename?: Required<Configuration>["output"]["filename"] | undefined;
+  /**
+   * chunk filename
+   */
+  chunkFilename?:
+    | Required<Configuration>["output"]["chunkFilename"]
+    | undefined;
+  /**
+   * true when need to ignore order, otherwise false
+   */
   ignoreOrder?: boolean | undefined;
-  insert?: string | ((linkTag: HTMLLinkElement) => void) | undefined;
+  /**
+   * link insert place or a custom insert function
+   */
+  insert?: (string | ((linkTag: HTMLLinkElement) => void)) | undefined;
+  /**
+   * link attributes
+   */
   attributes?: Record<string, string> | undefined;
-  linkType?: string | false | undefined;
+  /**
+   * value of a link type attribute
+   */
+  linkType?: (string | false | "text/css") | undefined;
+  /**
+   * true when need to generate runtime code, otherwise false
+   */
   runtime?: boolean | undefined;
+  /**
+   * true when need to use `experimentalUseImportModule` API, otherwise false
+   */
   experimentalUseImportModule?: boolean | undefined;
 };
 type NormalizedPluginOptions = {
+  /**
+   * filename
+   */
   filename: Required<Configuration>["output"]["filename"];
-  chunkFilename?: Required<Configuration>["output"]["chunkFilename"];
+  /**
+   * chunk filename
+   */
+  chunkFilename?:
+    | Required<Configuration>["output"]["chunkFilename"]
+    | undefined;
+  /**
+   * true when need to ignore order, otherwise false
+   */
   ignoreOrder: boolean;
-  insert?: string | ((linkTag: HTMLLinkElement) => void) | undefined;
+  /**
+   * a link insert place or a custom insert function
+   */
+  insert?: (string | ((linkTag: HTMLLinkElement) => void)) | undefined;
+  /**
+   * link attributes
+   */
   attributes?: Record<string, string> | undefined;
-  linkType?: string | false | undefined;
+  /**
+   * value of a link type attribute
+   */
+  linkType?: (string | false | "text/css") | undefined;
+  /**
+   * true when need to generate runtime code, otherwise false
+   */
   runtime: boolean;
+  /**
+   * true when need to use `experimentalUseImportModule` API, otherwise false
+   */
   experimentalUseImportModule?: boolean | undefined;
 };
 type RuntimeOptions = {
-  insert: string | ((linkTag: HTMLLinkElement) => void) | undefined;
+  /**
+   * a link insert place or a custom insert function
+   */
+  insert?: (string | ((linkTag: HTMLLinkElement) => void)) | undefined;
+  /**
+   * value of a link type attribute
+   */
   linkType: string | false | "text/css";
-  attributes: Record<string, string> | undefined;
+  /**
+   * link attributes
+   */
+  attributes?: Record<string, string> | undefined;
 };
 type TODO = any;
 type CssModule = Module & {
@@ -246,18 +320,42 @@ type CssDependencyConstructor = {
   ): CssDependency;
 };
 type VarNames = {
+  /**
+   * tag
+   */
   tag: string;
+  /**
+   * chunk id
+   */
   chunkId: string;
+  /**
+   * href
+   */
   href: string;
+  /**
+   * resolve
+   */
   resolve: string;
+  /**
+   * reject
+   */
   reject: string;
 };
 type MiniCssExtractPluginCompilationHooks = {
+  /**
+   * before tag insert hook
+   */
   beforeTagInsert: import("tapable").SyncWaterfallHook<
     [string, VarNames],
     string
   >;
+  /**
+   * link preload hook
+   */
   linkPreload: SyncWaterfallHook<[string, Chunk]>;
+  /**
+   * link prefetch hook
+   */
   linkPrefetch: SyncWaterfallHook<[string, Chunk]>;
 };
 import { SyncWaterfallHook } from "tapable";
