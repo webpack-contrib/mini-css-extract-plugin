@@ -31,9 +31,9 @@ module.exports = function normalizeUrl(urlString) {
     return urlString;
   }
 
-  const protocol = urlString.includes("//")
-    ? `${urlString.split("//")[0]}//`
-    : "";
+  const protocol =
+    // eslint-disable-next-line unicorn/prefer-includes
+    urlString.indexOf("//") !== -1 ? `${urlString.split("//")[0]}//` : "";
   const components = urlString
     .replace(new RegExp(protocol, "i"), "")
     .split("/");

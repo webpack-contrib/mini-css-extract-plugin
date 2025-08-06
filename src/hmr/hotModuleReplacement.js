@@ -100,8 +100,8 @@ function getCurrentScriptUrl(moduleId) {
 }
 
 /**
- * @param {string} url url
- * @returns {boolean} true when is url can be requested, otherwise false
+ * @param {string} url URL
+ * @returns {boolean} true when URL can be request, otherwise false
  */
 function isUrlRequest(url) {
   // An URL is not an request if
@@ -138,7 +138,8 @@ function updateCss(el, url) {
     return;
   }
 
-  if (!url || !url.includes(".css")) {
+  // eslint-disable-next-line unicorn/prefer-includes
+  if (!url || !(url.indexOf(".css") > -1)) {
     return;
   }
 
@@ -191,7 +192,8 @@ function getReloadUrl(href, src) {
      */
     // eslint-disable-next-line array-callback-return
     (url) => {
-      if (href.includes(src)) {
+      // eslint-disable-next-line unicorn/prefer-includes
+      if (href.indexOf(src) > -1) {
         ret = url;
       }
     },
