@@ -158,7 +158,7 @@ jobs:
       - name: Install dependencies (old Node.js version)
         run: |
           rm package-lock.json
-          npm install --ignore-engines
+          npm install --ignore-engines --ignore-scripts
           npm install -D typescript@4
         if: matrix.node-version == '12.x' || matrix.node-version == '14.x' || matrix.node-version == '16.x' || matrix.node-version == '18.x'
 
