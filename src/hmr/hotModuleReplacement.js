@@ -150,7 +150,7 @@ function updateCss(el, url) {
   newEl.isLoaded = false;
 
   newEl.addEventListener("load", () => {
-    if (newEl.isLoaded) {
+    if (newEl.isLoaded || el.parentNode === null) {
       return;
     }
 
@@ -159,7 +159,7 @@ function updateCss(el, url) {
   });
 
   newEl.addEventListener("error", () => {
-    if (newEl.isLoaded) {
+    if (newEl.isLoaded || el.parentNode === null) {
       return;
     }
 
