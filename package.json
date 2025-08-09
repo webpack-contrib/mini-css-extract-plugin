@@ -65,7 +65,7 @@
     "@eslint/markdown": "^7.0.0",
     "@stylistic/eslint-plugin": "^5.2.2",
     "@types/node": "^18.15.11",
-    "bootstrap": "^4.6.2",
+    "bootstrap": "^5.0.0",
     "cross-env": "^7.0.3",
     "cspell": "^6.31.1",
     "css-loader": "^6.10.0",
