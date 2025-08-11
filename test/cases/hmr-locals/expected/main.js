@@ -119,10 +119,10 @@ function isUrlRequest(url) {
   return true;
 }
 
-/** @typedef {HTMLLinkElement & { isLoaded: boolean, visited: boolean }} HMRHTMLLinkElement */
+/** @typedef {HTMLLinkElement & { isLoaded: boolean, visited: boolean }} HotHTMLLinkElement */
 
 /**
- * @param {HMRHTMLLinkElement} el html link element
+ * @param {HotHTMLLinkElement} el html link element
  * @param {string=} url a URL
  */
 function updateCss(el, url) {
@@ -153,7 +153,7 @@ function updateCss(el, url) {
   el.visited = true;
 
   const newEl =
-    /** @type {HMRHTMLLinkElement} */
+    /** @type {HotHTMLLinkElement} */
     (el.cloneNode());
 
   newEl.isLoaded = false;
