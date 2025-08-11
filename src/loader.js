@@ -28,13 +28,13 @@ const MiniCssExtractPlugin = require("./index");
 /** @typedef {{[key: string]: string | Function }} Locals */
 
 // eslint-disable-next-line jsdoc/no-restricted-syntax
-/** @typedef {any} TODO */
+/** @typedef {any} EXPECTED_ANY */
 
 /**
  * @typedef {object} Dependency
  * @property {string} identifier identifier
  * @property {string | null} context context
- * @property {Buffer=} content content
+ * @property {Buffer} content content
  * @property {string=} media media
  * @property {string=} supports supports
  * @property {string=} layer layer
@@ -104,9 +104,9 @@ function pitch(request) {
   const options = this.getOptions(/** @type {Schema} */ (schema));
   const emit = typeof options.emit !== "undefined" ? options.emit : true;
   const callback = this.async();
-  const optionsFromPlugin = /** @type {TODO} */ (this)[
-    MiniCssExtractPlugin.pluginSymbol
-  ];
+  const optionsFromPlugin =
+    // @ts-expect-error
+    this[MiniCssExtractPlugin.pluginSymbol];
 
   if (!optionsFromPlugin) {
     callback(
@@ -121,7 +121,7 @@ function pitch(request) {
   const { webpack } = /** @type {Compiler} */ (this._compiler);
 
   /**
-   * @param {TODO} originalExports original exports
+   * @param {EXPECTED_ANY} originalExports original exports
    * @param {Compilation=} compilation compilation
    * @param {{ [name: string]: Source }=} assets assets
    * @param {Map<string, AssetInfo>=} assetsInfo assets info
@@ -201,14 +201,15 @@ function pitch(request) {
               locals = {};
             }
 
-            /** @type {Locals} */ (locals)[key] = originalExports[key];
+            /** @type {Locals} */
+            (locals)[key] = originalExports[key];
           }
         }
       } else {
         locals = exports && exports.locals;
       }
 
-      /** @type {Dependency[] | [null, TODO][]} */
+      /** @type {Dependency[] | [null, Record<string, string>][]} */
       let dependencies;
 
       if (!Array.isArray(exports)) {

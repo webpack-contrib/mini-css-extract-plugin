@@ -1,6 +1,16 @@
 declare namespace _exports {
-  export { TODO };
+  export { GetScriptSrc, HotHTMLLinkElement };
 }
-declare function _exports(moduleId: number | string, options: TODO): TODO;
+declare function _exports(
+  moduleId: number | string,
+  options: {
+    filename?: string;
+    locals?: boolean;
+  },
+): () => void;
 export = _exports;
-type TODO = any;
+type GetScriptSrc = (filename?: string) => string[];
+type HotHTMLLinkElement = HTMLLinkElement & {
+  isLoaded: boolean;
+  visited: boolean;
+};

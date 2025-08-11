@@ -14,9 +14,6 @@
   func-names
 */
 
-// eslint-disable-next-line jsdoc/no-restricted-syntax
-/** @typedef {any} TODO */
-
 const normalizeUrl = __webpack_require__(/*! ./normalize-url */ "../../../src/hmr/normalize-url.js");
 
 const srcByModuleId = Object.create(null);
@@ -56,9 +53,11 @@ function debounce(fn, time) {
  */
 function noop() {}
 
+/** @typedef {(filename?: string) => string[]} GetScriptSrc */
+
 /**
  * @param {string | number} moduleId a module id
- * @returns {TODO} current script url
+ * @returns {GetScriptSrc} current script url
  */
 function getCurrentScriptUrl(moduleId) {
   let src = srcByModuleId[moduleId];
@@ -78,13 +77,10 @@ function getCurrentScriptUrl(moduleId) {
     srcByModuleId[moduleId] = src;
   }
 
-  /**
-   * @param {string} fileMap file map
-   * @returns {null | string[]} normalized files
-   */
+  /** @type {GetScriptSrc} */
   return function (fileMap) {
     if (!src) {
-      return null;
+      return [];
     }
 
     const splitResult = src.split(/([^\\/]+)\.js$/);
@@ -123,8 +119,10 @@ function isUrlRequest(url) {
   return true;
 }
 
+/** @typedef {HTMLLinkElement & { isLoaded: boolean, visited: boolean }} HMRHTMLLinkElement */
+
 /**
- * @param {TODO} el html link element
+ * @param {HMRHTMLLinkElement} el html link element
  * @param {string=} url a URL
  */
 function updateCss(el, url) {
@@ -154,7 +152,9 @@ function updateCss(el, url) {
 
   el.visited = true;
 
-  const newEl = el.cloneNode();
+  const newEl =
+    /** @type {HMRHTMLLinkElement} */
+    (el.cloneNode());
 
   newEl.isLoaded = false;
 
@@ -164,7 +164,10 @@ function updateCss(el, url) {
     }
 
     newEl.isLoaded = true;
-    el.parentNode.removeChild(el);
+
+    if (el.parentNode) {
+      el.parentNode.removeChild(el);
+    }
   });
 
   newEl.addEventListener("error", () => {
@@ -173,21 +176,26 @@ function updateCss(el, url) {
     }
 
     newEl.isLoaded = true;
-    el.parentNode.removeChild(el);
+
+    if (el.parentNode) {
+      el.parentNode.removeChild(el);
+    }
   });
 
   newEl.href = `${url}?${Date.now()}`;
 
-  if (el.nextSibling) {
-    el.parentNode.insertBefore(newEl, el.nextSibling);
-  } else {
-    el.parentNode.appendChild(newEl);
+  if (el.parentNode) {
+    if (el.nextSibling) {
+      el.parentNode.insertBefore(newEl, el.nextSibling);
+    } else {
+      el.parentNode.appendChild(newEl);
+    }
   }
 }
 
 /**
  * @param {string} href href
- * @param {TODO} src src
+ * @param {string[]} src src
  * @returns {undefined | string} a reload url
  */
 function getReloadUrl(href, src) {
@@ -201,6 +209,7 @@ function getReloadUrl(href, src) {
      */
     // eslint-disable-next-line array-callback-return
     (url) => {
+      // @ts-expect-error fix me in the next major release
       // eslint-disable-next-line unicorn/prefer-includes
       if (href.indexOf(src) > -1) {
         ret = url;
@@ -212,14 +221,10 @@ function getReloadUrl(href, src) {
 }
 
 /**
- * @param {string=} src source
+ * @param {string[]} src source
  * @returns {boolean} true when loaded, otherwise false
  */
 function reloadStyle(src) {
-  if (!src) {
-    return false;
-  }
-
   const elements = document.querySelectorAll("link");
   let loaded = false;
 
@@ -265,8 +270,8 @@ function reloadAll() {
 
 /**
  * @param {number | string} moduleId a module id
- * @param {TODO} options options
- * @returns {TODO} wrapper function
+ * @param {{ filename?: string, locals?: boolean }} options options
+ * @returns {() => void} wrapper function
  */
 module.exports = function (moduleId, options) {
   if (noDocument) {
