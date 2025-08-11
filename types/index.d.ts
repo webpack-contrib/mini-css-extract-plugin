@@ -90,13 +90,14 @@ declare namespace MiniCssExtractPlugin {
     WebpackError,
     AssetInfo,
     LoaderDependency,
+    Filename,
+    ChunkFilename,
     LoaderOptions,
     PluginOptions,
     NormalizedPluginOptions,
     RuntimeOptions,
-    TODO,
-    CssModule,
     CssModuleDependency,
+    CssModule,
     CssModuleConstructor,
     CssDependency,
     CssDependencyOptions,
@@ -110,7 +111,7 @@ declare namespace MiniCssExtractPlugin {
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").ChunkGraph} ChunkGraph */
 /** @typedef {import("webpack").Chunk} Chunk */
-/** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
+/** @typedef {import("webpack").ChunkGroup} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
 /** @typedef {import("webpack").Dependency} Dependency */
 /** @typedef {import("webpack").sources.Source} Source */
@@ -118,6 +119,8 @@ declare namespace MiniCssExtractPlugin {
 /** @typedef {import("webpack").WebpackError} WebpackError */
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
 /** @typedef {import("./loader.js").Dependency} LoaderDependency */
+/** @typedef {NonNullable<Required<Configuration>['output']['filename']>} Filename */
+/** @typedef {NonNullable<Required<Configuration>['output']['chunkFilename']>} ChunkFilename */
 /**
  * @typedef {object} LoaderOptions
  * @property {string | ((resourcePath: string, rootContext: string) => string)=} publicPath public path
@@ -128,8 +131,8 @@ declare namespace MiniCssExtractPlugin {
  */
 /**
  * @typedef {object} PluginOptions
- * @property {Required<Configuration>['output']['filename']=} filename filename
- * @property {Required<Configuration>['output']['chunkFilename']=} chunkFilename chunk filename
+ * @property {Filename=} filename filename
+ * @property {ChunkFilename=} chunkFilename chunk filename
  * @property {boolean=} ignoreOrder true when need to ignore order, otherwise false
  * @property {string | ((linkTag: HTMLLinkElement) => void)=} insert link insert place or a custom insert function
  * @property {Record<string, string>=} attributes link attributes
@@ -139,8 +142,8 @@ declare namespace MiniCssExtractPlugin {
  */
 /**
  * @typedef {object} NormalizedPluginOptions
- * @property {Required<Configuration>['output']['filename']} filename filename
- * @property {Required<Configuration>['output']['chunkFilename']=} chunkFilename chunk filename
+ * @property {Filename} filename filename
+ * @property {ChunkFilename=} chunkFilename chunk filename
  * @property {boolean} ignoreOrder true when need to ignore order, otherwise false
  * @property {string | ((linkTag: HTMLLinkElement) => void)=} insert a link insert place or a custom insert function
  * @property {Record<string, string>=} attributes link attributes
@@ -154,7 +157,6 @@ declare namespace MiniCssExtractPlugin {
  * @property {string | false | 'text/css'} linkType value of a link type attribute
  * @property {Record<string, string>=} attributes link attributes
  */
-/** @typedef {any} TODO */
 declare const pluginName: "mini-css-extract-plugin";
 declare const pluginSymbol: unique symbol;
 declare var loader: string;
@@ -163,7 +165,7 @@ type Compiler = import("webpack").Compiler;
 type Compilation = import("webpack").Compilation;
 type ChunkGraph = import("webpack").ChunkGraph;
 type Chunk = import("webpack").Chunk;
-type ChunkGroup = Parameters<import("webpack").Chunk["isInGroup"]>[0];
+type ChunkGroup = import("webpack").ChunkGroup;
 type Module = import("webpack").Module;
 type Dependency = import("webpack").Dependency;
 type Source = import("webpack").sources.Source;
@@ -171,6 +173,10 @@ type Configuration = import("webpack").Configuration;
 type WebpackError = import("webpack").WebpackError;
 type AssetInfo = import("webpack").AssetInfo;
 type LoaderDependency = import("./loader.js").Dependency;
+type Filename = NonNullable<Required<Configuration>["output"]["filename"]>;
+type ChunkFilename = NonNullable<
+  Required<Configuration>["output"]["chunkFilename"]
+>;
 type LoaderOptions = {
   /**
    * public path
@@ -199,13 +205,11 @@ type PluginOptions = {
   /**
    * filename
    */
-  filename?: Required<Configuration>["output"]["filename"] | undefined;
+  filename?: Filename | undefined;
   /**
    * chunk filename
    */
-  chunkFilename?:
-    | Required<Configuration>["output"]["chunkFilename"]
-    | undefined;
+  chunkFilename?: ChunkFilename | undefined;
   /**
    * true when need to ignore order, otherwise false
    */
@@ -235,13 +239,11 @@ type NormalizedPluginOptions = {
   /**
    * filename
    */
-  filename: Required<Configuration>["output"]["filename"];
+  filename: Filename;
   /**
    * chunk filename
    */
-  chunkFilename?:
-    | Required<Configuration>["output"]["chunkFilename"]
-    | undefined;
+  chunkFilename?: ChunkFilename | undefined;
   /**
    * true when need to ignore order, otherwise false
    */
@@ -281,18 +283,6 @@ type RuntimeOptions = {
    */
   attributes?: Record<string, string> | undefined;
 };
-type TODO = any;
-type CssModule = Module & {
-  content: Buffer;
-  media?: string;
-  sourceMap?: Buffer;
-  supports?: string;
-  layer?: string;
-  assets?: {
-    [key: string]: TODO;
-  };
-  assetsInfo?: Map<string, AssetInfo>;
-};
 type CssModuleDependency = {
   context: string | null;
   identifier: string;
@@ -301,11 +291,22 @@ type CssModuleDependency = {
   sourceMap?: Buffer;
   media?: string;
   supports?: string;
-  layer?: TODO;
+  layer?: any;
   assetsInfo?: Map<string, AssetInfo>;
   assets?: {
-    [key: string]: TODO;
+    [key: string]: Source;
   };
+};
+type CssModule = Module & {
+  content: Buffer;
+  media?: string;
+  sourceMap?: Buffer;
+  supports?: string;
+  layer?: string;
+  assets?: {
+    [key: string]: Source;
+  };
+  assetsInfo?: Map<string, AssetInfo>;
 };
 type CssModuleConstructor = {
   new (dependency: CssModuleDependency): CssModule;

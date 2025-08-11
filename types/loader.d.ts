@@ -22,7 +22,7 @@ declare namespace loader {
     NormalModule,
     LoaderOptions,
     Locals,
-    TODO,
+    EXPECTED_ANY,
     Dependency,
   };
 }
@@ -37,12 +37,12 @@ import MiniCssExtractPlugin = require("./index");
 /** @typedef {import("webpack").NormalModule} NormalModule */
 /** @typedef {import("./index.js").LoaderOptions} LoaderOptions */
 /** @typedef {{[key: string]: string | Function }} Locals */
-/** @typedef {any} TODO */
+/** @typedef {any} EXPECTED_ANY */
 /**
  * @typedef {object} Dependency
  * @property {string} identifier identifier
  * @property {string | null} context context
- * @property {Buffer=} content content
+ * @property {Buffer} content content
  * @property {string=} media media
  * @property {string=} supports supports
  * @property {string=} layer layer
@@ -81,7 +81,7 @@ type LoaderOptions = import("./index.js").LoaderOptions;
 type Locals = {
   [key: string]: string | Function;
 };
-type TODO = any;
+type EXPECTED_ANY = any;
 type Dependency = {
   /**
    * identifier
@@ -94,7 +94,7 @@ type Dependency = {
   /**
    * content
    */
-  content?: Buffer | undefined;
+  content: Buffer;
   /**
    * media
    */

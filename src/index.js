@@ -21,7 +21,7 @@ const {
 /** @typedef {import("webpack").Compilation} Compilation */
 /** @typedef {import("webpack").ChunkGraph} ChunkGraph */
 /** @typedef {import("webpack").Chunk} Chunk */
-/** @typedef {Parameters<import("webpack").Chunk["isInGroup"]>[0]} ChunkGroup */
+/** @typedef {import("webpack").ChunkGroup} ChunkGroup */
 /** @typedef {import("webpack").Module} Module */
 /** @typedef {import("webpack").Dependency} Dependency */
 /** @typedef {import("webpack").sources.Source} Source */
@@ -29,6 +29,9 @@ const {
 /** @typedef {import("webpack").WebpackError} WebpackError */
 /** @typedef {import("webpack").AssetInfo} AssetInfo */
 /** @typedef {import("./loader.js").Dependency} LoaderDependency */
+
+/** @typedef {NonNullable<Required<Configuration>['output']['filename']>} Filename */
+/** @typedef {NonNullable<Required<Configuration>['output']['chunkFilename']>} ChunkFilename */
 
 /**
  * @typedef {object} LoaderOptions
@@ -41,8 +44,8 @@ const {
 
 /**
  * @typedef {object} PluginOptions
- * @property {Required<Configuration>['output']['filename']=} filename filename
- * @property {Required<Configuration>['output']['chunkFilename']=} chunkFilename chunk filename
+ * @property {Filename=} filename filename
+ * @property {ChunkFilename=} chunkFilename chunk filename
  * @property {boolean=} ignoreOrder true when need to ignore order, otherwise false
  * @property {string | ((linkTag: HTMLLinkElement) => void)=} insert link insert place or a custom insert function
  * @property {Record<string, string>=} attributes link attributes
@@ -53,8 +56,8 @@ const {
 
 /**
  * @typedef {object} NormalizedPluginOptions
- * @property {Required<Configuration>['output']['filename']} filename filename
- * @property {Required<Configuration>['output']['chunkFilename']=} chunkFilename chunk filename
+ * @property {Filename} filename filename
+ * @property {ChunkFilename=} chunkFilename chunk filename
  * @property {boolean} ignoreOrder true when need to ignore order, otherwise false
  * @property {string | ((linkTag: HTMLLinkElement) => void)=} insert a link insert place or a custom insert function
  * @property {Record<string, string>=} attributes link attributes
@@ -69,9 +72,6 @@ const {
  * @property {string | false | 'text/css'} linkType value of a link type attribute
  * @property {Record<string, string>=} attributes link attributes
  */
-
-// eslint-disable-next-line jsdoc/no-restricted-syntax
-/** @typedef {any} TODO */
 
 const pluginName = "mini-css-extract-plugin";
 const pluginSymbol = Symbol(pluginName);
@@ -89,8 +89,9 @@ const CODE_GENERATION_RESULT = {
   runtimeRequirements: new Set(),
 };
 
-/** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string, assets?: { [key: string]: TODO }, assetsInfo?: Map<string, AssetInfo> }} CssModule */
-/** @typedef {{ context: string | null, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: TODO, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: TODO }}} CssModuleDependency */
+// eslint-disable-next-line jsdoc/no-restricted-syntax
+/** @typedef {{ context: string | null, identifier: string, identifierIndex: number, content: Buffer, sourceMap?: Buffer, media?: string, supports?: string, layer?: any, assetsInfo?: Map<string, AssetInfo>, assets?: { [key: string]: Source }}} CssModuleDependency */
+/** @typedef {Module & { content: Buffer, media?: string, sourceMap?: Buffer, supports?: string, layer?: string, assets?: { [key: string]: Source }, assetsInfo?: Map<string, AssetInfo> }} CssModule */
 /** @typedef {{ new(dependency: CssModuleDependency): CssModule }} CssModuleConstructor */
 /** @typedef {Dependency & CssModuleDependency} CssDependency */
 /** @typedef {Omit<LoaderDependency, "context">} CssDependencyOptions */
@@ -437,10 +438,8 @@ class MiniCssExtractPlugin {
         this.sourceMap = sourceMap;
         this.context = context;
         /** @type {{ [key: string]: Source } | undefined}} */
-
         this.assets = undefined;
         /** @type {Map<string, AssetInfo> | undefined} */
-
         this.assetsInfo = undefined;
       }
 
@@ -486,7 +485,6 @@ class MiniCssExtractPlugin {
       }
     }
 
-    // @ts-expect-error
     cssDependencyCache.set(webpack, CssDependency);
 
     webpack.util.serialization.register(
@@ -525,7 +523,6 @@ class MiniCssExtractPlugin {
       },
     );
 
-    // @ts-expect-error
     return CssDependency;
   }
 
@@ -574,7 +571,6 @@ class MiniCssExtractPlugin {
       filename: DEFAULT_FILENAME,
       ignoreOrder: false,
       // TODO remove in the next major release
-
       experimentalUseImportModule: undefined,
       runtime: true,
       ...options,
@@ -639,7 +635,7 @@ class MiniCssExtractPlugin {
     ) {
       /** @type {Compiler["options"]["experiments"] & { executeModule?: boolean }} */
 
-      // @ts-expect-error
+      // @ts-expect-error TODO remove in the next major release
       compiler.options.experiments.executeModule = true;
     }
 
@@ -692,7 +688,7 @@ class MiniCssExtractPlugin {
       class CssModuleFactory {
         /**
          * @param {{ dependencies: Dependency[] }} dependencies
-         * @param {(arg0?: Error, arg1?: TODO) => void} callback
+         * @param {(err?: null | Error, result?: CssModule) => void} callback
          */
 
         create({ dependencies: [dependency] }, callback) {
@@ -705,6 +701,7 @@ class MiniCssExtractPlugin {
 
       compilation.dependencyFactories.set(
         CssDependency,
+        // @ts-expect-error TODO fix in the next major release and fix using `CssModuleFactory extends webpack.ModuleFactory`
         new CssModuleFactory(),
       );
 
@@ -722,7 +719,7 @@ class MiniCssExtractPlugin {
         /**
          * @param {ReturnType<Compilation["getRenderManifest"]>} result result
          * @param {Parameters<Compilation["getRenderManifest"]>[0]} chunk chunk
-         * @returns {TODO} a rendered manifest
+         * @returns {ReturnType<Compilation["getRenderManifest"]>} a rendered manifest
          */
         (result, { chunk }) => {
           const { chunkGraph } = compilation;
@@ -731,7 +728,7 @@ class MiniCssExtractPlugin {
           // We don't need hot update chunks for css
           // We will use the real asset instead to update
           if (chunk instanceof HotUpdateChunk) {
-            return;
+            return result;
           }
 
           const renderedModules =
@@ -774,6 +771,8 @@ class MiniCssExtractPlugin {
               hash: chunk.contentHash[MODULE_TYPE],
             });
           }
+
+          return result;
         },
       );
 
@@ -1232,7 +1231,7 @@ class MiniCssExtractPlugin {
             `${RuntimeGlobals.require}.miniCssF`,
             /**
              * @param {Chunk} referencedChunk a referenced chunk
-             * @returns {TODO} a template value
+             * @returns {ReturnType<import("webpack").runtime.GetChunkFilenameRuntimeModule["getFilenameForChunk"]>} a template value
              */
             (referencedChunk) => {
               if (!referencedChunk.contentHash[MODULE_TYPE]) {
@@ -1240,8 +1239,8 @@ class MiniCssExtractPlugin {
               }
 
               return referencedChunk.canBeInitial()
-                ? this.options.filename
-                : this.options.chunkFilename;
+                ? /** @type {Filename} */ (this.options.filename)
+                : /** @type {ChunkFilename} */ (this.options.chunkFilename);
             },
             set.has(RuntimeGlobals.hmrDownloadUpdateHandlers),
           ),
